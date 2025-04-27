@@ -1,4 +1,4 @@
-import { TMDBError } from "./errors/tmdb";
+import { TMDBAPIErrorResponse, TMDBError } from "./errors/tmdb";
 
 export class ApiClient {
 	private accessToken: string;
@@ -32,13 +32,15 @@ export class ApiClient {
 		try {
 			const errorBody = await res.json();
 			if (errorBody && typeof errorBody === "object") {
-				errorMessage = errorBody.status_message || errorMessage;
-				tmdbStatusCode = errorBody.status_code;
+				const err: TMDBAPIErrorResponse = errorBody;
+				errorMessage = err.status_message || errorMessage;
+				tmdbStatusCode = err.status_code || -1;
 			}
 		} catch (_) {
 			// If response is not JSON, fallback to HTTP status text
 		}
 
-		throw new TMDBError(errorMessage, res.status, tmdbStatusCode);
+		const error = new TMDBError(errorMessage, res.status, tmdbStatusCode);
+		throw error;
 	}
 }

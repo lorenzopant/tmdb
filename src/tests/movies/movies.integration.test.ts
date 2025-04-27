@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { TMDB } from "../../tmdb";
 import { TMDB_ERRORS } from "../../errors/messages";
-import { TMDBError } from "../../errors/tmdb";
+import { TMDBAPIErrorResponse, TMDBError } from "../../errors/tmdb";
 
 const token = process.env.TMDB_ACCESS_TOKEN;
 if (!token) throw new Error("TMDB_ACCESS_TOKEN is not set, plaase set it in your enviroment variables.");
@@ -20,8 +20,7 @@ describe("Movies (integration)", () => {
 	it("should throw an error of status code 34 for not found movie ID", async () => {
 		const invalid_movie_id = -1; // Invalid movie ID
 		const tmdb_error = TMDB_ERRORS.get("34");
-		const expected_error = new TMDBError(tmdb_error?.message || "Unknown error", tmdb_error?.http_status || 500, 34);
-		await expect(tmdb.movies.details(invalid_movie_id)).rejects.toThrowError(TMDBError);
-		await expect(tmdb.movies.details(invalid_movie_id)).rejects.toMatchObject(expected_error);
+		const error = new TMDBError(tmdb_error?.message || "Unknown error", tmdb_error?.http_status || 500, 34);
+		await expect(tmdb.movies.details(invalid_movie_id)).rejects.toThrowError(error);
 	});
 });

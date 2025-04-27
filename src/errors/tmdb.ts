@@ -1,4 +1,17 @@
 /**
+ * Represents the structure of an error response returned by the TMDB API.
+ *
+ * @property success - Indicates whether the API request was successful. This will typically be `false` for error responses.
+ * @property status_code - The numeric code representing the type of error encountered.
+ * @property status_message - A descriptive message providing details about the error.
+ */
+export type TMDBAPIErrorResponse = {
+	success: boolean;
+	status_code: number;
+	status_message: string;
+};
+
+/**
  * Represents a generic error or an error specific to the TMDB (The Movie Database) API.
  * This error class extends the built-in `Error` class and includes additional
  * properties to provide more context about the error.
