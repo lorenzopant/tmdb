@@ -1,4 +1,5 @@
 import { ApiClient } from "../client";
+import { Changes } from "../types/common";
 import { MovieAlternativeTitles, MovieCredits, MovieDetails, MovieExternalIDs, MovieKeywords } from "../types/movies";
 
 export const MOVIE_ENDPOINTS = {
@@ -7,6 +8,7 @@ export const MOVIE_ENDPOINTS = {
 	CREDITS: "/credits",
 	EXTERNAL_IDS: "/external_ids",
 	KEYWORDS: "/keywords",
+	CHANGES: "/changes",
 };
 
 export class MoviesAPI {
@@ -94,5 +96,25 @@ export class MoviesAPI {
 	async keywords(movie_id: number): Promise<MovieKeywords> {
 		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${movie_id}${MOVIE_ENDPOINTS.KEYWORDS}`;
 		return this.client.request<MovieKeywords>(endpoint);
+	}
+
+	/**
+	 * Changes
+	 * GET - https://api.themoviedb.org/3/movie/{movie_id}/changes
+	 *
+	 * Get the changes for a movie. This is a list of all the changes that have been made to a movie.
+	 * By default, only the last 24 hours are returned.
+	 * You can query up to 14 days in a single query by using the start_date and end_date query parameters.
+	 * @param movie_id The ID of the movie.
+	 * @param page Page number of the results to return. Defaults to 1.
+	 * @param start_date Optional start date for the changes. Format: YYYY-MM-DD.
+	 * @param end_date Optional end date for the changes. Format: YYYY-MM-DD.
+	 * @returns A promise that resolves to the changes made to the movie.
+	 * @reference https://developer.themoviedb.org/reference/movie-changes
+	 */
+	async changes(movie_id: number, page: number = 1, start_date: string = "", end_date: string = ""): Promise<Changes> {
+		const params: Record<string, string | number> = { page, start_date, end_date };
+		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${movie_id}${MOVIE_ENDPOINTS.CHANGES}`;
+		return this.client.request<Changes>(endpoint, params);
 	}
 }

@@ -1,6 +1,6 @@
 // src/types/movies.ts
 
-import { Cast, Collection, Crew, Genre, Keyword, ProductionCompany, ProductionCountry, SpokenLanguage } from "./common";
+import { Cast, Change, Collection, Crew, Genre, Keyword, ProductionCompany, ProductionCountry, SpokenLanguage } from "./common";
 
 export type MovieDetails = {
 	adult: boolean;

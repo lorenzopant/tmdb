@@ -65,4 +65,11 @@ describe("Movies (integration)", () => {
 		expect(keywords.id).toBe(movie_id);
 		expect(keywords.keywords.length).toBeGreaterThan(0);
 	});
+
+	it("(MOVIE CHANGES) should get movie changes", async () => {
+		const movie_id = 550; // Fight Club
+		const changes = await tmdb.movies.changes(movie_id);
+		expect(changes).toBeDefined();
+		expect(changes.changes).toBeDefined();
+	});
 });

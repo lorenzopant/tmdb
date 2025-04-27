@@ -156,3 +156,21 @@ export type Keyword = {
 	// ** The name of the keyword
 	name: string;
 };
+
+export type Changes = {
+	changes: Change[];
+};
+
+export type Change = {
+	key: string;
+	items: ChangeItem[];
+};
+
+export type ChangeItem = {
+	id: number;
+	action: string;
+	time: string;
+	iso_639_1: string;
+	iso_3166_1: string;
+	value: any;
+};
