@@ -1,6 +1,18 @@
 // src/types/movies.ts
 
-import { Cast, Change, Collection, Crew, Genre, ImageItem, Keyword, ProductionCompany, ProductionCountry, SpokenLanguage } from "./common";
+import {
+	Cast,
+	Change,
+	Collection,
+	Crew,
+	Genre,
+	ImageItem,
+	Keyword,
+	ProductionCompany,
+	ProductionCountry,
+	SpokenLanguage,
+	VideoItem,
+} from "./common";
 import { ReleaseType } from "./enums";
 
 export type MovieDetails = {
@@ -123,4 +135,9 @@ export type MovieTranslationResults = {
 		tagline: string;
 		title: string;
 	};
+};
+
+export type MovieVideos = {
+	id: number;
+	results: VideoItem[];
 };

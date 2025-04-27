@@ -10,6 +10,7 @@ import {
 	MovieReleaseDates,
 	MovieResultItem,
 	MovieTranslations,
+	MovieVideos,
 } from "../types/movies";
 import { PaginatedResponse } from "../types/params";
 
@@ -247,5 +248,20 @@ export class MoviesAPI {
 	async translations(movie_id: number): Promise<MovieTranslations> {
 		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${movie_id}${MOVIE_ENDPOINTS.TRANSLATIONS}`;
 		return this.client.request<MovieTranslations>(endpoint);
+	}
+
+	/**
+	 * Videos
+	 * GET - https://api.themoviedb.org/3/movie/{movie_id}/videos
+	 *
+	 * Get the available videos for a movie.
+	 * @param movie_id The ID of the movie
+	 * @returns A promise that resolves to a list of videos for the movie.
+	 * @reference https://developer.themoviedb.org/reference/movie-videos
+	 */
+	async videos(movie_id: number, language?: string): Promise<MovieVideos> {
+		const params: Record<string, string | undefined> = { language };
+		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${movie_id}${MOVIE_ENDPOINTS.VIDEOS}`;
+		return this.client.request<MovieVideos>(endpoint, params);
 	}
 }
