@@ -19,9 +19,9 @@ jobs:
                   node-version: 20
 
             - name: Install dependencies
-              run: pnpm Install
+              run: npm Install
 
             - name: Run tests
-              run: pnpm run test
+              run: npm run test
               env:
                   TMDB_ACCESS_TOKEN: ${{ secrets.TMDB_ACCESS_TOKEN }}
