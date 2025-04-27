@@ -148,3 +148,11 @@ export type Crew = {
 	// ** The specific job performed by the crew member
 	job: string;
 };
+
+export type Keyword = {
+	// ** The unique identifier for the keyword
+	id: number;
+
+	// ** The name of the keyword
+	name: string;
+};

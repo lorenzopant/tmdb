@@ -1,11 +1,12 @@
 import { ApiClient } from "../client";
-import { MovieAlternativeTitles, MovieCredits, MovieDetails, MovieExternalIDs } from "../types/movies";
+import { MovieAlternativeTitles, MovieCredits, MovieDetails, MovieExternalIDs, MovieKeywords } from "../types/movies";
 
 export const MOVIE_ENDPOINTS = {
 	MOVIE: "/movie",
 	ALTERNATIVE_TITLES: "/alternative_titles",
 	CREDITS: "/credits",
 	EXTERNAL_IDS: "/external_ids",
+	KEYWORDS: "/keywords",
 };
 
 export class MoviesAPI {
@@ -78,5 +79,20 @@ export class MoviesAPI {
 	async external_ids(movie_id: number): Promise<MovieExternalIDs> {
 		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${movie_id}${MOVIE_ENDPOINTS.EXTERNAL_IDS}`;
 		return this.client.request<MovieExternalIDs>(endpoint);
+	}
+
+	/**
+	 * Keywords
+	 * GET - https://api.themoviedb.org/3/movie/{movie_id}/keywords
+	 *
+	 * Get the keywords that have been added to a movie.
+	 * This is a list of keywords that have been added to the movie.
+	 * @param movie_id The ID of the movie.
+	 * @returns A promise that resolves to the movie keywords.
+	 * @reference https://developer.themoviedb.org/reference/movie-keywords
+	 */
+	async keywords(movie_id: number): Promise<MovieKeywords> {
+		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${movie_id}${MOVIE_ENDPOINTS.KEYWORDS}`;
+		return this.client.request<MovieKeywords>(endpoint);
 	}
 }

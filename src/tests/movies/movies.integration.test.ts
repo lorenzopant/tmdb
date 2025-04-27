@@ -57,4 +57,12 @@ describe("Movies (integration)", () => {
 		expect(external_ids.id).toBe(movie_id);
 		expect(external_ids.imdb_id).toBe("tt0137523");
 	});
+
+	it("(MOVIE KEYWORDS) should get movie keywords", async () => {
+		const movie_id = 550; // Fight Club
+		const keywords = await tmdb.movies.keywords(movie_id);
+		expect(keywords).toBeDefined();
+		expect(keywords.id).toBe(movie_id);
+		expect(keywords.keywords.length).toBeGreaterThan(0);
+	});
 });

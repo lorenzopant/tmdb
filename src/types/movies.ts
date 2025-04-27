@@ -1,6 +1,6 @@
 // src/types/movies.ts
 
-import { Cast, Collection, Crew, Genre, ProductionCompany, ProductionCountry, SpokenLanguage } from "./common";
+import { Cast, Collection, Crew, Genre, Keyword, ProductionCompany, ProductionCountry, SpokenLanguage } from "./common";
 
 export type MovieDetails = {
 	adult: boolean;
@@ -54,4 +54,9 @@ export type MovieExternalIDs = {
 	facebook_id: string | null;
 	twitter_id: string | null;
 	instagram_id: string | null;
+};
+
+export type MovieKeywords = {
+	id: number;
+	keywords: Keyword[];
 };
