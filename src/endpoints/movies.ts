@@ -1,6 +1,15 @@
 import { ApiClient } from "../client";
 import { Changes } from "../types/common";
-import { MovieAlternativeTitles, MovieCredits, MovieDetails, MovieExternalIDs, MovieImages, MovieKeywords } from "../types/movies";
+import {
+	MovieAlternativeTitles,
+	MovieCredits,
+	MovieDetails,
+	MovieExternalIDs,
+	MovieImages,
+	MovieKeywords,
+	MovieResultItem,
+} from "../types/movies";
+import { PagedResponse } from "../types/params";
 
 export const MOVIE_ENDPOINTS = {
 	MOVIE: "/movie",
@@ -157,5 +166,23 @@ export class MoviesAPI {
 	async latest(): Promise<MovieDetails> {
 		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}${MOVIE_ENDPOINTS.LATEST}`;
 		return this.client.request<MovieDetails>(endpoint);
+	}
+
+	/**
+	 * Recommendations
+	 * GET - https://api.themoviedb.org/3/movie/{movie_id}/recommendations
+	 *
+	 * Get a list of recommended movies for a specific movie.
+	 * This is based on the movie's popularity and user ratings.
+	 * @param movie_id The ID of the movie.
+	 * @param page Page number of the results to return. Defaults to 1.
+	 * @param language Language code to filter the results. Default is "en-US".
+	 * @returns A promise that resolves to a paginated response of similar movies.
+	 * @reference https://developer.themoviedb.org/reference/movie-recommendations
+	 */
+	async recommendations(movie_id: number, page?: number, language?: string): Promise<PagedResponse<MovieResultItem>> {
+		const params: Record<string, string | number | undefined> = { page, language };
+		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${movie_id}${MOVIE_ENDPOINTS.RECOMMENDATIONS}`;
+		return this.client.request<PagedResponse<MovieResultItem>>(endpoint, params);
 	}
 }

@@ -98,4 +98,15 @@ describe("Movies (integration)", () => {
 		expect(latestMovie.id).toBeDefined();
 		expect(latestMovie.title).toBeDefined();
 	});
+
+	it("(MOVIE RECOMMENDATIONS) should get movie recommendations", async () => {
+		const movie_id = 550; // Fight Club
+		const recommendations = await tmdb.movies.recommendations(movie_id);
+		expect(recommendations).toBeDefined();
+		expect(recommendations.results.length).toBeGreaterThan(0);
+		expect(recommendations.results[0].id).toBeDefined();
+		expect(recommendations.page).toBe(1);
+		expect(recommendations.total_results).toBeGreaterThan(0);
+		expect(recommendations.total_pages).toBeGreaterThan(0);
+	});
 });
