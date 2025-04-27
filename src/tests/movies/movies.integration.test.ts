@@ -109,4 +109,14 @@ describe("Movies (integration)", () => {
 		expect(recommendations.total_results).toBeGreaterThan(0);
 		expect(recommendations.total_pages).toBeGreaterThan(0);
 	});
+
+	it("(MOVIE RELEASE DATES) should get movie release dates", async () => {
+		const movie_id = 550; // Fight Club
+		const release_dates = await tmdb.movies.release_dates(movie_id);
+		expect(release_dates).toBeDefined();
+		expect(release_dates.id).toBe(movie_id);
+		expect(release_dates.results.length).toBeGreaterThan(0);
+		expect(release_dates.results[0].iso_3166_1).toBeDefined();
+		expect(release_dates.results[0].release_dates.length).toBeGreaterThan(0);
+	});
 });

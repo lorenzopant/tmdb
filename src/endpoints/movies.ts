@@ -7,6 +7,7 @@ import {
 	MovieExternalIDs,
 	MovieImages,
 	MovieKeywords,
+	MovieReleaseDates,
 	MovieResultItem,
 } from "../types/movies";
 import { PagedResponse } from "../types/params";
@@ -184,5 +185,26 @@ export class MoviesAPI {
 		const params: Record<string, string | number | undefined> = { page, language };
 		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${movie_id}${MOVIE_ENDPOINTS.RECOMMENDATIONS}`;
 		return this.client.request<PagedResponse<MovieResultItem>>(endpoint, params);
+	}
+
+	/**
+	 * Release Dates
+	 * GET - https://api.themoviedb.org/3/movie/{movie_id}/release_dates
+	 *
+	 * Get the release dates and certifications for a movie. For different countries and release types.
+	 * The release types and statuses used on TMDB are the following:
+	 * - 1: Premiere
+	 * - 2: Theatrical (Limited)
+	 * - 3: Theatrical
+	 * - 4: Digital
+	 * - 5: Physical
+	 * - 6: TV
+	 * @param movie_id The ID of the movie.
+	 * @returns A promise that resolves to the release dates for the movie.
+	 * @reference https://developer.themoviedb.org/reference/movie-release-dates
+	 */
+	async release_dates(movie_id: number): Promise<MovieReleaseDates> {
+		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${movie_id}${MOVIE_ENDPOINTS.RELEASE_DATES}`;
+		return this.client.request<MovieReleaseDates>(endpoint);
 	}
 }

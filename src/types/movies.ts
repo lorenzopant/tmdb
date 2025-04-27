@@ -1,6 +1,7 @@
 // src/types/movies.ts
 
 import { Cast, Change, Collection, Crew, Genre, ImageItem, Keyword, ProductionCompany, ProductionCountry, SpokenLanguage } from "./common";
+import { ReleaseType } from "./enums";
 
 export type MovieDetails = {
 	adult: boolean;
@@ -84,4 +85,23 @@ export type MovieImages = {
 	backdrops: ImageItem[];
 	logos: ImageItem[];
 	posters: ImageItem[];
+};
+
+export type MovieReleaseDates = {
+	id: number;
+	results: MovieReleaseDateResult[];
+};
+
+export type MovieReleaseDateResult = {
+	iso_3166_1: string;
+	release_dates: MovieReleaseDate[];
+};
+
+export type MovieReleaseDate = {
+	certification: string;
+	iso_639_1: string;
+	release_date: string;
+	type: ReleaseType | number;
+	note: string;
+	descriptors: any[];
 };
