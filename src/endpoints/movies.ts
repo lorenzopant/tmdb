@@ -144,4 +144,18 @@ export class MoviesAPI {
 		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${movie_id}${MOVIE_ENDPOINTS.IMAGES}`;
 		return this.client.request<MovieImages>(endpoint, params);
 	}
+
+	/**
+	 * Latest
+	 * GET - https://api.themoviedb.org/3/movie/latest
+	 *
+	 * Get the newest movie ID.
+	 * This is the most recent movie that has been added to TMDB. This is a live response will continuously change as new movies are added.
+	 * @returns A promise that resolves to the latest movie details.
+	 * @reference https://developer.themoviedb.org/reference/movie-latest-id
+	 */
+	async latest(): Promise<MovieDetails> {
+		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}${MOVIE_ENDPOINTS.LATEST}`;
+		return this.client.request<MovieDetails>(endpoint);
+	}
 }

@@ -91,4 +91,11 @@ describe("Movies (integration)", () => {
 		expect(images.backdrops.length).toBeGreaterThan(0);
 		expect(images.posters.length).toBeGreaterThan(0);
 	});
+
+	it("(MOVIE LATEST) should get the latest movie details", async () => {
+		const latestMovie = await tmdb.movies.latest();
+		expect(latestMovie).toBeDefined();
+		expect(latestMovie.id).toBeDefined();
+		expect(latestMovie.title).toBeDefined();
+	});
 });
