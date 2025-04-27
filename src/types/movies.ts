@@ -105,3 +105,22 @@ export type MovieReleaseDate = {
 	note: string;
 	descriptors: any[];
 };
+
+export type MovieTranslations = {
+	id: number;
+	translations: MovieTranslationResults[];
+};
+
+export type MovieTranslationResults = {
+	iso_3166_1: string;
+	iso_639_1: string;
+	name: string;
+	english_name: string;
+	data: {
+		homepage: string;
+		overview: string;
+		runtime: number;
+		tagline: string;
+		title: string;
+	};
+};

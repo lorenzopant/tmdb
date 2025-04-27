@@ -9,6 +9,7 @@ import {
 	MovieKeywords,
 	MovieReleaseDates,
 	MovieResultItem,
+	MovieTranslations,
 } from "../types/movies";
 import { PaginatedResponse } from "../types/params";
 
@@ -215,7 +216,7 @@ export class MoviesAPI {
 
 	/**
 	 * Similar
-	 * GET - https://developer.themoviedb.org/reference/movie-similar
+	 * GET -https://api.themoviedb.org/3/movie/{movie_id}/similar
 	 *
 	 * Get the similar movies based on genres and keywords.
 	 * This method only looks for other items based on genres and plot keywords.
@@ -230,5 +231,21 @@ export class MoviesAPI {
 		const params: Record<string, string | number | undefined> = { page, language };
 		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${movie_id}${MOVIE_ENDPOINTS.SIMILAR}`;
 		return this.client.request<PaginatedResponse<MovieResultItem>>(endpoint, params);
+	}
+
+	/**
+	 * Translations
+	 * GET - https://api.themoviedb.org/3/movie/{movie_id}/translations
+	 *
+	 * Get the translations for a movie.
+	 * Take a read through our language documentation for more information about languages on TMDB.
+	 * https://developer.themoviedb.org/docs/languages
+	 * @param movie_id The ID of the movie
+	 * @returns A promise that resolves to the translations of the movie.
+	 * @reference https://developer.themoviedb.org/reference/movie-translations
+	 */
+	async translations(movie_id: number): Promise<MovieTranslations> {
+		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${movie_id}${MOVIE_ENDPOINTS.TRANSLATIONS}`;
+		return this.client.request<MovieTranslations>(endpoint);
 	}
 }

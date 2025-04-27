@@ -130,4 +130,14 @@ describe("Movies (integration)", () => {
 		expect(similar.total_results).toBeGreaterThan(0);
 		expect(similar.total_pages).toBeGreaterThan(0);
 	});
+
+	it("(MOVIE TRANSLATIONS) should get translations for a movie", async () => {
+		const movie_id = 550;
+		const translations = await tmdb.movies.translations(movie_id);
+		expect(translations).toBeDefined();
+		expect(translations.id).toBe(movie_id);
+		expect(translations.translations).toBeDefined();
+		expect(translations.translations.length).toBeGreaterThan(0);
+		expect(translations.translations[0].data).toBeDefined();
+	});
 });
