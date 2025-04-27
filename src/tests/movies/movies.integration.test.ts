@@ -68,8 +68,12 @@ describe("Movies (integration)", () => {
 
 	it("(MOVIE CHANGES) should get movie changes", async () => {
 		const movie_id = 550; // Fight Club
-		const changes = await tmdb.movies.changes(movie_id);
+		const start_date = "2024-12-20";
+		const end_date = "2024-12-24";
+		const changes = await tmdb.movies.changes(movie_id, 1, start_date, end_date);
 		expect(changes).toBeDefined();
 		expect(changes.changes).toBeDefined();
+		expect(changes.changes[0].key).toBe("images");
+		expect(changes.changes[0].items.length).toBeGreaterThan(0);
 	});
 });
