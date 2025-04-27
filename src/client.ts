@@ -1,3 +1,5 @@
+import { TMDBError } from "./errors/tmdb";
+
 export class ApiClient {
 	private accessToken: string;
 	private baseUrl: string = "https://api.themoviedb.org/3";
@@ -19,7 +21,24 @@ export class ApiClient {
 			},
 		});
 
-		if (!res.ok) throw new Error(`Error: ${res.status} ${res.statusText}`);
+		if (!res.ok) await this.handleError(res);
 		return res.json();
+	}
+
+	private async handleError(res: Response): Promise<never> {
+		let errorMessage = res.statusText;
+		let tmdbStatusCode: number = -1;
+
+		try {
+			const errorBody = await res.json();
+			if (errorBody && typeof errorBody === "object") {
+				errorMessage = errorBody.status_message || errorMessage;
+				tmdbStatusCode = errorBody.status_code;
+			}
+		} catch (_) {
+			// If response is not JSON, fallback to HTTP status text
+		}
+
+		throw new TMDBError(errorMessage, res.status, tmdbStatusCode);
 	}
 }

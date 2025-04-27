@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { TMDB } from "../tmdb";
-import { Errors } from "../errors";
+import { Errors } from "../errors/messages";
 
 describe("TMDB API Client", () => {
 	it("should throw an error if no access token is provided", () => {

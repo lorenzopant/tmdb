@@ -2,7 +2,7 @@
 
 import { ApiClient } from "./client";
 import { MoviesAPI } from "./endpoints/movies";
-import { Errors } from "./errors";
+import { Errors } from "./errors/messages";
 
 export class TMDB {
 	private client: ApiClient;
