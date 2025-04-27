@@ -1,6 +1,6 @@
 import { ApiClient } from "../client";
 import { Changes } from "../types/common";
-import { MovieAlternativeTitles, MovieCredits, MovieDetails, MovieExternalIDs, MovieKeywords } from "../types/movies";
+import { MovieAlternativeTitles, MovieCredits, MovieDetails, MovieExternalIDs, MovieImages, MovieKeywords } from "../types/movies";
 
 export const MOVIE_ENDPOINTS = {
 	MOVIE: "/movie",
@@ -9,6 +9,15 @@ export const MOVIE_ENDPOINTS = {
 	EXTERNAL_IDS: "/external_ids",
 	KEYWORDS: "/keywords",
 	CHANGES: "/changes",
+	IMAGES: "/images",
+	LATEST: "/latest",
+	RECOMMENDATIONS: "/recommendations",
+	RELEASE_DATES: "/release_dates",
+	REVIEWS: "/reviews",
+	SIMILAR: "/similar",
+	TRANSLATIONS: "/translations",
+	VIDEOS: "/videos",
+	WATCH_PROVIDERS: "/watch/providers",
 };
 
 export class MoviesAPI {
@@ -112,9 +121,15 @@ export class MoviesAPI {
 	 * @returns A promise that resolves to the changes made to the movie.
 	 * @reference https://developer.themoviedb.org/reference/movie-changes
 	 */
-	async changes(movie_id: number, page: number = 1, start_date: string = "", end_date: string = ""): Promise<Changes> {
-		const params: Record<string, string | number> = { page, start_date, end_date };
+	async changes(movie_id: number, page?: number, start_date?: string, end_date?: string): Promise<Changes> {
+		const params: Record<string, string | number | undefined> = { page, start_date, end_date };
 		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${movie_id}${MOVIE_ENDPOINTS.CHANGES}`;
 		return this.client.request<Changes>(endpoint, params);
+	}
+
+	async images(movie_id: number, language?: string, include_image_language?: string): Promise<MovieImages> {
+		const params: Record<string, string | undefined> = { language, include_image_language };
+		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${movie_id}${MOVIE_ENDPOINTS.IMAGES}`;
+		return this.client.request<MovieImages>(endpoint, params);
 	}
 }

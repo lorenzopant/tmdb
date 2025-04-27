@@ -11,6 +11,7 @@ export class ApiClient {
 	async request<T>(endpoint: string, params: Record<string, any | undefined> = {}): Promise<T> {
 		const url = new URL(`${this.baseUrl}${endpoint}`);
 		for (const [key, value] of Object.entries(params)) {
+			if (value === undefined) continue;
 			url.searchParams.append(key, String(value));
 		}
 
