@@ -82,4 +82,13 @@ describe("Movies (integration)", () => {
 		expect(images.backdrops.length).toBeGreaterThan(0);
 		expect(images.posters.length).toBeGreaterThan(0);
 	});
+
+	it("(MOVIE IMAGES) should get movie images for a specific language", async () => {
+		const movie_id = 550; // Fight Club
+		const images = await tmdb.movies.images(movie_id, "en");
+		expect(images).toBeDefined();
+		expect(images.id).toBe(movie_id);
+		expect(images.backdrops.length).toBeGreaterThan(0);
+		expect(images.posters.length).toBeGreaterThan(0);
+	});
 });

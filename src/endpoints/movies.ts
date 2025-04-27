@@ -127,6 +127,18 @@ export class MoviesAPI {
 		return this.client.request<Changes>(endpoint, params);
 	}
 
+	/**
+	 * Images
+	 * GET - https://api.themoviedb.org/3/movie/{movie_id}/images
+	 *
+	 * Fetches images related to a specific movie, such as posters and backdrops.
+	 * The images are returned in various sizes and formats.
+	 * @param movie_id - The unique identifier of the movie.
+	 * @param language - (Optional) The language code to filter the images by language.
+	 * @param include_image_language - (Optional) A comma-separated list of language codes to include images for.
+	 * @returns A promise that resolves to a `MovieImages` object containing the movie's images.
+	 * @reference https://developer.themoviedb.org/reference/movie-images
+	 */
 	async images(movie_id: number, language?: string, include_image_language?: string): Promise<MovieImages> {
 		const params: Record<string, string | undefined> = { language, include_image_language };
 		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${movie_id}${MOVIE_ENDPOINTS.IMAGES}`;
