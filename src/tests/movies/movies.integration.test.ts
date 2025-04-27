@@ -19,8 +19,16 @@ describe("Movies (integration)", () => {
 
 	it("should throw an error of status code 34 for not found movie ID", async () => {
 		const invalid_movie_id = -1; // Invalid movie ID
-		const tmdb_error = TMDB_ERRORS.get("34");
-		const error = new TMDBError(tmdb_error?.message || "Unknown error", tmdb_error?.http_status || 500, 34);
-		await expect(tmdb.movies.details(invalid_movie_id)).rejects.toThrowError(error);
+		const tmdb_error = TMDB_ERRORS.get(34)!;
+
+		try {
+			await tmdb.movies.details(invalid_movie_id);
+			throw new Error("Expected TMDBError was not thrown");
+		} catch (error) {
+			expect(error).toBeInstanceOf(TMDBError);
+			expect((error as TMDBError).tmdb_status_code).toBe(34);
+			expect((error as TMDBError).http_status_code).toBe(tmdb_error.http_status);
+			expect((error as TMDBError).message).toBe(tmdb_error.message);
+		}
 	});
 });
