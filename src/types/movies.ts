@@ -1,8 +1,8 @@
 // src/types/movies.ts
 
-import { Collection, Genre, ProductionCompany, ProductionCountry, SpokenLanguage } from "./common";
+import { Cast, Collection, Crew, Genre, ProductionCompany, ProductionCountry, SpokenLanguage } from "./common";
 
-export interface MovieDetails {
+export type MovieDetails = {
 	adult: boolean;
 	backdrop_path: string | null;
 	belongs_to_collection: Collection | null;
@@ -29,4 +29,29 @@ export interface MovieDetails {
 	video: boolean;
 	vote_average: number;
 	vote_count: number;
-}
+};
+
+export type MovieAlternativeTitles = {
+	id: number;
+	titles: MovieAlternativeTitle[];
+};
+
+export type MovieAlternativeTitle = {
+	title: string;
+	iso_3166_1: string;
+	type: string;
+};
+
+export type MovieCredits = {
+	id: number;
+	cast: Cast[];
+	crew: Crew[];
+};
+
+export type MovieExternalIDs = {
+	id: number;
+	imdb_id: string | null;
+	facebook_id: string | null;
+	twitter_id: string | null;
+	instagram_id: string | null;
+};
