@@ -119,4 +119,15 @@ describe("Movies (integration)", () => {
 		expect(release_dates.results[0].iso_3166_1).toBeDefined();
 		expect(release_dates.results[0].release_dates.length).toBeGreaterThan(0);
 	});
+
+	it("(MOVIE SIMILAR) should get similar movies", async () => {
+		const movie_id = 550;
+		const similar = await tmdb.movies.similar(movie_id);
+		expect(similar).toBeDefined();
+		expect(similar.results.length).toBeGreaterThan(0);
+		expect(similar.results[0].id).toBeDefined();
+		expect(similar.page).toBe(1);
+		expect(similar.total_results).toBeGreaterThan(0);
+		expect(similar.total_pages).toBeGreaterThan(0);
+	});
 });

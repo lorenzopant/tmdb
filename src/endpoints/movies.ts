@@ -10,7 +10,7 @@ import {
 	MovieReleaseDates,
 	MovieResultItem,
 } from "../types/movies";
-import { PagedResponse } from "../types/params";
+import { PaginatedResponse } from "../types/params";
 
 export const MOVIE_ENDPOINTS = {
 	MOVIE: "/movie",
@@ -23,11 +23,16 @@ export const MOVIE_ENDPOINTS = {
 	LATEST: "/latest",
 	RECOMMENDATIONS: "/recommendations",
 	RELEASE_DATES: "/release_dates",
-	REVIEWS: "/reviews",
 	SIMILAR: "/similar",
 	TRANSLATIONS: "/translations",
 	VIDEOS: "/videos",
 	WATCH_PROVIDERS: "/watch/providers",
+	// Missing:
+	// ACCOUNT_STATES
+	// LISTS
+	// REVIEWS
+	// ADD RATING
+	// DELETE RATING
 };
 
 export class MoviesAPI {
@@ -181,10 +186,10 @@ export class MoviesAPI {
 	 * @returns A promise that resolves to a paginated response of similar movies.
 	 * @reference https://developer.themoviedb.org/reference/movie-recommendations
 	 */
-	async recommendations(movie_id: number, page?: number, language?: string): Promise<PagedResponse<MovieResultItem>> {
+	async recommendations(movie_id: number, page?: number, language?: string): Promise<PaginatedResponse<MovieResultItem>> {
 		const params: Record<string, string | number | undefined> = { page, language };
 		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${movie_id}${MOVIE_ENDPOINTS.RECOMMENDATIONS}`;
-		return this.client.request<PagedResponse<MovieResultItem>>(endpoint, params);
+		return this.client.request<PaginatedResponse<MovieResultItem>>(endpoint, params);
 	}
 
 	/**
@@ -206,5 +211,24 @@ export class MoviesAPI {
 	async release_dates(movie_id: number): Promise<MovieReleaseDates> {
 		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${movie_id}${MOVIE_ENDPOINTS.RELEASE_DATES}`;
 		return this.client.request<MovieReleaseDates>(endpoint);
+	}
+
+	/**
+	 * Similar
+	 * GET - https://developer.themoviedb.org/reference/movie-similar
+	 *
+	 * Get the similar movies based on genres and keywords.
+	 * This method only looks for other items based on genres and plot keywords.
+	 * As such, the results found here are not always going to be 💯. Use it with that in mind.
+	 * @param movie_id The ID of the movie
+	 * @param page Page number of the results to return. Defaults to 1.
+	 * @param language Language code to filter the results. Default is "en-US".
+	 * @returns A promise that resolves to a paginated response of similar movies.
+	 * @reference https://developer.themoviedb.org/reference/movie-similar
+	 */
+	async similar(movie_id: number, language?: string, page?: number): Promise<PaginatedResponse<MovieResultItem>> {
+		const params: Record<string, string | number | undefined> = { page, language };
+		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${movie_id}${MOVIE_ENDPOINTS.SIMILAR}`;
+		return this.client.request<PaginatedResponse<MovieResultItem>>(endpoint, params);
 	}
 }
