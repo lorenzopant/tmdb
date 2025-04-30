@@ -11,6 +11,7 @@ import {
 	MovieResultItem,
 	MovieTranslations,
 	MovieVideos,
+	MovieWatchProvider,
 } from "../types/movies";
 import { PaginatedResponse } from "../types/params";
 
@@ -263,5 +264,26 @@ export class MoviesAPI {
 		const params: Record<string, string | undefined> = { language };
 		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${movie_id}${MOVIE_ENDPOINTS.VIDEOS}`;
 		return this.client.request<MovieVideos>(endpoint, params);
+	}
+
+	/**
+	 * Watch Providers
+	 * GET - https://api.themoviedb.org/3/movie/{movie_id}/watch/providers
+	 *
+	 * Get the list of streaming providers we have for a movie.
+	 * Powered by our partnership with JustWatch, you can query this method to get a list of the streaming/rental/purchase availabilities per country by provider.
+	 * This is not going to return full deep links, but rather, it's just enough information to display what's available where.
+	 * You can link to the provided TMDB URL to help support TMDB and provide the actual deep links to the content.
+	 *
+	 * JustWatch ATTRIBUTION REQUIRED
+	 * In order to use this data you must attribute the source of the data as JustWatch.
+	 * If we find any usage not complying with these terms we will revoke access to the API.
+	 * @param movie_id The ID of the movie
+	 * @returns A promise that resolves to a list of videos for the movie.
+	 * @reference https://developer.themoviedb.org/reference/movie-videos
+	 */
+	async watch_providers(movie_id: number): Promise<MovieWatchProvider> {
+		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${movie_id}${MOVIE_ENDPOINTS.WATCH_PROVIDERS}`;
+		return this.client.request<MovieWatchProvider>(endpoint);
 	}
 }

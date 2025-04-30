@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { TMDB } from "../../tmdb";
 import { TMDB_ERRORS } from "../../errors/messages";
 import { TMDBAPIErrorResponse, TMDBError } from "../../errors/tmdb";
+import { ISO3166Country } from "../../types/utility";
 
 const token = process.env.TMDB_ACCESS_TOKEN;
 if (!token) throw new Error("TMDB_ACCESS_TOKEN is not set, plaase set it in your enviroment variables.");
@@ -149,5 +150,14 @@ describe("Movies (integration)", () => {
 		expect(videos.results).toBeDefined();
 		expect(videos.results.length).toBeGreaterThan(0);
 		expect(videos.results[0].id).toBeDefined();
+	});
+
+	it("(MOVIE WATCH PROVIDERS) should get watch providers for a movie", async () => {
+		const movie_id = 550;
+		const watch_providers = await tmdb.movies.watch_providers(movie_id);
+		expect(watch_providers).toBeDefined();
+		expect(watch_providers.id).toBe(movie_id);
+		expect(watch_providers.results).toBeDefined();
+		expect(watch_providers.results[ISO3166Country.US]).toBeDefined();
 	});
 });

@@ -1,4 +1,10 @@
 src/
-tsconfig.json
-.gitignore
-*.md
+tests/
+__tests__/
+vitest.config.ts
+*.test.ts
+*.spec.ts
+.github/
+node_modules/
+coverage/
+README.md

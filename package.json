@@ -1,18 +1,24 @@
 {
   "name": "tmdb-api-ts",
   "version": "1.0.0",
-  "description": "A completely type-safe \"The Movie DB\" API wrapper for typescript applications",
-  "main": "index.ts",
-  "types": "index.d.ts",
+  "description": "A completely type-safe The Movie Database (TMDB) API wrapper for typescript applications.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lorenzopantano/tmdb-api-ts"
+  },
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc --watch",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage"
+    "test:coverage": "vitest --coverage",
+    "prepare": "npm run build"
   },
   "author": "Lorenzo Pantano",
-  "license": "ISC",
+  "license": "MIT",
+  "keywords": ["tmdb", "typescript", "api", "movies"],
   "devDependencies": {
     "@types/node": "^22.15.2",
     "@vitest/coverage-v8": "^3.1.2",

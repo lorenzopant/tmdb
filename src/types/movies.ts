@@ -14,6 +14,7 @@ import {
 	VideoItem,
 } from "./common";
 import { ReleaseType } from "./enums";
+import { ISO3166Country } from "./utility";
 
 export type MovieDetails = {
 	adult: boolean;
@@ -140,4 +141,23 @@ export type MovieTranslationResults = {
 export type MovieVideos = {
 	id: number;
 	results: VideoItem[];
+};
+
+export type MovieWatchProvider = {
+	id: number;
+	results: Record<ISO3166Country, WatchProvider[]>;
+};
+
+export type WatchProvider = {
+	link: string;
+	flatrate: WatchProviderItem[];
+	rent: WatchProviderItem[];
+	buy: WatchProviderItem[];
+};
+
+export type WatchProviderItem = {
+	logo_path: string;
+	provider_id: number;
+	provider_name: string;
+	display_priority: number;
 };
