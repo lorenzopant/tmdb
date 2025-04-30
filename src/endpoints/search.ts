@@ -27,7 +27,7 @@ export class SearchAPI {
 	 * @param year Year
 	 * @reference https://developer.themoviedb.org/reference/search-movie
 	 */
-	async search(
+	async movies(
 		query: string,
 		include_adult: boolean = false,
 		language: string = "en-US",

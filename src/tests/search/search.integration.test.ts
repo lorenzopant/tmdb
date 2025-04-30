@@ -8,7 +8,7 @@ const tmdb = new TMDB(token);
 
 describe("Search (integration)", () => {
 	it("(SEARCH MOVIE) should search for a particular movie", async () => {
-		const movies = await tmdb.search.search("Fight Club");
+		const movies = await tmdb.search.movies("Fight Club");
 		expect(movies.page).toBe(1);
 		expect(movies.total_results).toBeGreaterThan(0);
 		expect(movies.results.length).toBeGreaterThan(0);

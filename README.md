@@ -2,6 +2,10 @@
 
 A **TypeScript-first** lightweight client for [The Movie Database (TMDB)](https://developer.themoviedb.org/docs/getting-started) API.
 
+🚧🚧🚧🚧🚧🚧 **WIP** This package is still cookin. It will be updated regularly with new features.
+Feel free to open pull requests on the project repository here:
+[tmdb-api-ts](https://github.com/lorenzopantano/tmdb-api-ts)
+
 - 📦 Full TypeScript support
 - 🔥 Simple and tiny wrapper
 - 🚀 Designed for server-side and frontend use (React, Vue, etc.)
@@ -54,7 +58,7 @@ searchMovies();
 
 ### `TMDB`
 
-The main client class.
+The main client class. **Each API method supports all the parameters supported by TMDB API**, for example the search method supports: query, language, region, year, primary_release_year and so on...
 
 #### Constructor
 
@@ -66,12 +70,45 @@ const tmdb = new TMDB(accessToken: string);
 
 ---
 
-### `tmdb.search.movies`
+### `Search`
 
 Search for movies:
 
 ```typescript
-tmdb.search.movies({ query: string, page?: number });
+tmdb.search.movies("Fight Club");
+```
+
+Returns a **typed response** containing movies.
+
+---
+
+### `Movie Lists`
+
+Now Playing, Popular, Top Rated and Upcoming movies:
+
+```typescript
+tmdb.movie_lists.now_playing();
+tmdb.movie_lists.top_rated();
+tmdb.movie_lists.popular();
+tmdb.movie_lists.upcoming();
+```
+
+Returns a **typed response** containing movies.
+
+---
+
+### `Movie`
+
+Now Playing, Popular, Top Rated and Upcoming movies:
+
+```typescript
+tmdb.movie.details(550);
+tmdb.movie.alternative_titles(550);
+tmdb.movie.changes(550);
+tmdb.movie.credits(550);
+tmdb.movie.external_ids(550);
+
+...
 ```
 
 Returns a **typed response** containing movies.
