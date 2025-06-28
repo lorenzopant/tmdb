@@ -28,3 +28,16 @@ export type {
 	Cast,
 	Crew,
 } from "./types/common";
+export type {
+	SearchMoviesParams,
+	MovieDetailsParams,
+	MovieListParams,
+	PaginatedResponse,
+	MovieAlternativeTitlesParams,
+} from "./types/params";
+
+// ** Internationalization
+export type { CountryISO3166_1 } from "./types/countries";
+export { TMDBCountries } from "./types/countries";
+export type { LanguageISO6391 } from "./types/lang";
+export { Languages } from "./types/lang";
