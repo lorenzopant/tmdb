@@ -14,7 +14,7 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
-    "prepare": "npm run build",
+    "prepare": "husky",
     "lint": "eslint ."
   },
   "author": "Lorenzo Pantano",
@@ -38,6 +38,7 @@
     "eslint": "^9.30.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-import": "^2.32.0",
+    "husky": "^9.1.7",
     "pino": "^9.7.0",
     "release-it": "^19.0.3",
     "release-it-pnpm": "^4.6.6",

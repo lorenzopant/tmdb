@@ -12,7 +12,6 @@ import {
 	MovieKeywords,
 	MovieRecommendations,
 	MovieReleaseDates,
-	MovieResultItem,
 	MovieReviews,
 	MovieSimilar,
 	MovieTranslations,
@@ -34,7 +33,6 @@ import {
 	MovieTranslationsParams,
 	MovieVideosParams,
 	MovieWathProvidersParams,
-	PaginatedResponse,
 } from "../types/params";
 
 export const MOVIE_ENDPOINTS = {

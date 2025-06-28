@@ -1,8 +1,7 @@
 import { describe, expect, it } from "vitest";
 
+import { TMDBError } from "../../errors/tmdb";
 import { TMDB } from "../../tmdb";
-import { TMDB_ERRORS } from "../../errors/messages";
-import { TMDBAPIErrorResponse, TMDBError } from "../../errors/tmdb";
 import { ISO3166Country } from "../../types/utility";
 
 const token = process.env.TMDB_ACCESS_TOKEN;

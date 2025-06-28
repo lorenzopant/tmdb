@@ -1,11 +1,8 @@
-import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiClient } from "../../client";
 import { MoviesAPI } from "../../endpoints/movies";
-import { TMDB } from "../../tmdb";
 import { MovieAppendToResponseNamespace } from "../../types/movies";
-
-const tmdb: TMDB = new TMDB("valid_access_token");
 
 describe("MoviesAPI", () => {
 	let clientMock: ApiClient;
@@ -44,7 +41,7 @@ describe("MoviesAPI", () => {
 
 	it("should return the result from client.request", async () => {
 		const fakeResponse = { id: 550, title: "Fight Club" };
-		(clientMock.request as any).mockResolvedValue(fakeResponse);
+		(clientMock.request as ReturnType<typeof vi.fn>).mockResolvedValue(fakeResponse);
 		const result = await moviesAPI.details({ movie_id: 550 });
 		expect(result).toEqual(fakeResponse);
 	});

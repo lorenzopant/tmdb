@@ -1,4 +1,3 @@
-import { loadEnvFile } from "process";
 import { defineConfig } from "vitest/config";
 import { loadEnv } from "vite";
 

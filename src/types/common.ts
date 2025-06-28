@@ -172,7 +172,7 @@ export type ChangeItem = {
 	time: string;
 	iso_639_1: string;
 	iso_3166_1: string;
-	value: any;
+	value: object;
 };
 
 export type ImageItem = {

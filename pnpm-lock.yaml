@@ -41,6 +41,9 @@ devDependencies:
   eslint-plugin-import:
     specifier: ^2.32.0
     version: 2.32.0(@typescript-eslint/parser@8.35.0)(eslint@9.30.0)
+  husky:
+    specifier: ^9.1.7
+    version: 9.1.7
   pino:
     specifier: ^9.7.0
     version: 9.7.0
@@ -2851,6 +2854,12 @@ packages:
   /human-signals@8.0.1:
     resolution: {integrity: sha512-eKCa6bwnJhvxj14kZk5NCPc6Hb6BdsU9DZcOnmQKSnO1VKrfV0zCvtttPZUsBvjmNDn8rpcJfpwSYnHBjc95MQ==}
     engines: {node: '>=18.18.0'}
+    dev: true
+
+  /husky@9.1.7:
+    resolution: {integrity: sha512-5gs5ytaNjBrh5Ow3zrvdUUY+0VxIuWVL4i9irt6friV+BqdCfmV11CQTWMiBYWHbXhco+J1kHfTOUkePhCDvMA==}
+    engines: {node: '>=18'}
+    hasBin: true
     dev: true
 
   /iconv-lite@0.4.24:

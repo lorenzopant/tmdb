@@ -2,7 +2,6 @@
 
 import {
 	Cast,
-	Change,
 	Changes,
 	Collection,
 	Crew,
@@ -123,7 +122,7 @@ export type MovieReleaseDate = {
 	release_date: string;
 	type: ReleaseType | number;
 	note: string;
-	descriptors: any[];
+	descriptors: unknown[];
 };
 
 export type MovieReviews = PaginatedResponse<MovieReview>;

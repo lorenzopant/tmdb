@@ -1,4 +1,5 @@
 import { TMDBAPIErrorResponse, TMDBError } from "./errors/tmdb";
+import { logger } from "./logger";
 
 export class ApiClient {
 	private accessToken: string;
@@ -8,7 +9,7 @@ export class ApiClient {
 		this.accessToken = accessToken;
 	}
 
-	async request<T>(endpoint: string, params: Record<string, any | undefined> = {}): Promise<T> {
+	async request<T>(endpoint: string, params: Record<string, unknown | undefined> = {}): Promise<T> {
 		const url = new URL(`${this.baseUrl}${endpoint}`);
 		for (const [key, value] of Object.entries(params)) {
 			if (value === undefined) continue;
@@ -37,7 +38,8 @@ export class ApiClient {
 				errorMessage = err.status_message || errorMessage;
 				tmdbStatusCode = err.status_code || -1;
 			}
-		} catch (_) {
+		} catch (error) {
+			logger.error(`Unknown error: ${error}`);
 			// If response is not JSON, fallback to HTTP status text
 		}
 
