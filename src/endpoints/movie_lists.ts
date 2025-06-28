@@ -1,9 +1,11 @@
 import { ApiClient } from "../client";
 import { MovieResultItem } from "../types/movies";
-import { PaginatedResponse } from "../types/params";
+import { MovieListParams, PaginatedResponse } from "../types/params";
 import { MOVIE_ENDPOINTS } from "./movies";
 import { TMDBOptions } from "../tmdb";
 import { mergeParams } from "../utils/params";
+import { LanguageISO6391 } from "../types/lang";
+import { CountryISO3166_1 } from "../types/countries";
 
 export enum MovieListEndpoints {
 	NOW_PLAYING = "/now_playing",
@@ -11,12 +13,6 @@ export enum MovieListEndpoints {
 	TOP_RATED = "/top_rated",
 	UPCOMING = "/upcoming",
 }
-
-export type MovieListParams = {
-	language?: string;
-	page?: number;
-	region?: string;
-};
 
 export class MovieListsAPI {
 	private client: ApiClient;

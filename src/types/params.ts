@@ -1,3 +1,4 @@
+import { CountryISO3166_1 } from "./countries";
 import { LanguageISO6391 } from "./lang";
 
 export type PaginatedResponse<T> = {
@@ -13,8 +14,14 @@ export type SearchMoviesParams = {
 	language?: LanguageISO6391;
 	page?: number;
 	primary_release_year?: string;
-	region?: string;
+	region?: CountryISO3166_1;
 	year?: string;
+};
+
+export type MovieListParams = {
+	language?: LanguageISO6391;
+	page?: number;
+	region?: CountryISO3166_1;
 };
 
 export type MovieDetailsParams = {
@@ -25,5 +32,5 @@ export type MovieDetailsParams = {
 
 export type MovieAlternativeTitlesParams = {
 	movie_id: number;
-	country?: string;
+	country?: CountryISO3166_1;
 };
