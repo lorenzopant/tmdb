@@ -23,6 +23,7 @@ describe("MoviesAPI", () => {
 		await moviesAPI.details({ movie_id, append_to_response, language });
 		expect(clientMock.request).toHaveBeenCalledOnce();
 		expect(clientMock.request).toHaveBeenCalledWith("/movie/550", {
+			movie_id,
 			append_to_response,
 			language,
 		});
@@ -33,6 +34,7 @@ describe("MoviesAPI", () => {
 		await moviesAPI.details({ movie_id });
 		expect(clientMock.request).toHaveBeenCalledOnce();
 		expect(clientMock.request).toHaveBeenCalledWith("/movie/550", {
+			movie_id,
 			append_to_response: undefined,
 			language: undefined,
 		});
