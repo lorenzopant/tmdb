@@ -15,7 +15,7 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
     "prepare": "npm run build",
-    "lint": "eslint . --ext .ts,.tsx,.js,.jsx"
+    "lint": "eslint ."
   },
   "author": "Lorenzo Pantano",
   "license": "MIT",
@@ -38,9 +38,11 @@
     "eslint": "^9.30.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-import": "^2.32.0",
+    "pino": "^9.7.0",
     "release-it": "^19.0.3",
     "release-it-pnpm": "^4.6.6",
     "typescript": "^5.8.3",
+    "typescript-eslint": "^8.35.0",
     "vite": "^7.0.0",
     "vitest": "^3.2.4"
   }
