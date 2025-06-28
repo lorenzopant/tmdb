@@ -35,7 +35,6 @@ export class MovieListsAPI {
 	 */
 	private fetch_movie_list(endpoint: string, params: MovieListParams = {}): Promise<PaginatedResponse<MovieResultItem>> {
 		const mergedParams = { ...this.defaultOptions, ...params };
-		console.log("Merged params", mergedParams);
 		return this.client.request<PaginatedResponse<MovieResultItem>>(MOVIE_ENDPOINTS.MOVIE + endpoint, mergedParams);
 	}
 

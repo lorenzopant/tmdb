@@ -11,6 +11,5 @@ export function mergeParams<TParams extends object>(defaults: TMDBOptions, param
 			obj[key] = defaults[key as keyof TMDBOptions];
 			return obj;
 		}, {});
-	console.log("Filtered defaults", filteredDefaults);
 	return { ...filteredDefaults, ...params };
 }

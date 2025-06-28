@@ -35,7 +35,6 @@ export class SearchAPI {
 		const endpoint = `${SEARCH_ENDPOINTS.MOVIE}`;
 		// Merge defaultOptions with params, giving precedence to params
 		const mergedParams = { ...this.defaultOptions, ...params };
-		console.log("Params", mergedParams);
 		return this.client.request<PaginatedResponse<MovieResultItem>>(endpoint, mergedParams);
 	}
 }
