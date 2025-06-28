@@ -12,7 +12,7 @@ const tmdb = new TMDB(token);
 describe("Movies (integration)", () => {
 	it("(MOVIE DETAILS) should get movie details", async () => {
 		const movie_id = 550; // Fight Club
-		const movie = await tmdb.movies.details(movie_id);
+		const movie = await tmdb.movies.details({ movie_id });
 		expect(movie).toBeDefined();
 		expect(movie.id).toBe(movie_id);
 		expect(movie.title).toBe("Fight Club");
@@ -23,7 +23,7 @@ describe("Movies (integration)", () => {
 
 		// ** Can't test the specific error because API is not returning the same error for the same request
 		try {
-			await tmdb.movies.details(invalid_movie_id);
+			await tmdb.movies.details({ movie_id: invalid_movie_id });
 			throw new Error("Expected TMDBError was not thrown");
 		} catch (error) {
 			expect(error).toBeInstanceOf(TMDBError);
@@ -32,7 +32,7 @@ describe("Movies (integration)", () => {
 
 	it("(MOVIE ALTERNATIVE TITLES) should get movie alternative titles", async () => {
 		const movie_id = 550; // Fight Club
-		const movie_titles = await tmdb.movies.alternative_titles(movie_id);
+		const movie_titles = await tmdb.movies.alternative_titles({ movie_id });
 		expect(movie_titles).toBeDefined();
 		expect(movie_titles.id).toBe(movie_id);
 		expect(movie_titles.titles.length).toBeGreaterThan(0);

@@ -1,4 +1,5 @@
 import { ApiClient } from "../client";
+import { TMDBOptions } from "../tmdb";
 import { Changes } from "../types/common";
 import {
 	MovieAlternativeTitles,
@@ -13,7 +14,8 @@ import {
 	MovieVideos,
 	MovieWatchProvider,
 } from "../types/movies";
-import { PaginatedResponse } from "../types/params";
+import { MovieAlternativeTitlesParams, MovieDetailsParams, PaginatedResponse } from "../types/params";
+import { mergeParams } from "../utils/params";
 
 export const MOVIE_ENDPOINTS = {
 	MOVIE: "/movie",
@@ -40,9 +42,11 @@ export const MOVIE_ENDPOINTS = {
 
 export class MoviesAPI {
 	private client: ApiClient;
+	private defaultOptions: TMDBOptions;
 
-	constructor(client: ApiClient) {
+	constructor(client: ApiClient, options: TMDBOptions = {}) {
 		this.client = client;
+		this.defaultOptions = options;
 	}
 
 	/**
@@ -56,10 +60,10 @@ export class MoviesAPI {
 	 * @returns A promise that resolves to the movie details.
 	 * @reference https://developer.themoviedb.org/reference/movie-details
 	 */
-	async details(movie_id: number, append_to_response?: string[], language?: string): Promise<MovieDetails> {
-		const params: Record<string, string | string[] | undefined> = { append_to_response, language };
-		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${movie_id}`;
-		return this.client.request<MovieDetails>(endpoint, params);
+	async details(params: MovieDetailsParams): Promise<MovieDetails> {
+		const mergedParams = { ...this.defaultOptions, ...params };
+		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${mergedParams.movie_id}`;
+		return this.client.request<MovieDetails>(endpoint, mergedParams);
 	}
 
 	/**
@@ -72,10 +76,10 @@ export class MoviesAPI {
 	 * @returns A promise that resolves to the movie alternative titles.
 	 * @reference https://developer.themoviedb.org/reference/movie-alternative-titles
 	 */
-	async alternative_titles(movie_id: number, country?: string): Promise<MovieAlternativeTitles> {
-		const params: Record<string, string | undefined> = { country: country || "" };
-		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${movie_id}${MOVIE_ENDPOINTS.ALTERNATIVE_TITLES}`;
-		return this.client.request<MovieAlternativeTitles>(endpoint, params);
+	async alternative_titles(params: MovieAlternativeTitlesParams): Promise<MovieAlternativeTitles> {
+		const mergedParams = mergeParams(this.defaultOptions, params);
+		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${mergedParams.movie_id}${MOVIE_ENDPOINTS.ALTERNATIVE_TITLES}`;
+		return this.client.request<MovieAlternativeTitles>(endpoint, mergedParams);
 	}
 
 	/**

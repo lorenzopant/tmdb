@@ -18,9 +18,9 @@ describe("MoviesAPI", () => {
 	it("should call client.request with the correct parameters", async () => {
 		const movie_id = 550;
 		const append_to_response = ["credits", "images"];
-		const language = "en-US";
+		const language = "en";
 
-		await moviesAPI.details(movie_id, append_to_response, language);
+		await moviesAPI.details({ movie_id, append_to_response, language });
 		expect(clientMock.request).toHaveBeenCalledOnce();
 		expect(clientMock.request).toHaveBeenCalledWith("/movie/550", {
 			append_to_response,
@@ -30,7 +30,7 @@ describe("MoviesAPI", () => {
 
 	it("should work correctly without optional parameters", async () => {
 		const movie_id = 550;
-		await moviesAPI.details(movie_id);
+		await moviesAPI.details({ movie_id });
 		expect(clientMock.request).toHaveBeenCalledOnce();
 		expect(clientMock.request).toHaveBeenCalledWith("/movie/550", {
 			append_to_response: undefined,
@@ -41,7 +41,7 @@ describe("MoviesAPI", () => {
 	it("should return the result from client.request", async () => {
 		const fakeResponse = { id: 550, title: "Fight Club" };
 		(clientMock.request as any).mockResolvedValue(fakeResponse);
-		const result = await moviesAPI.details(550);
+		const result = await moviesAPI.details({ movie_id: 550 });
 		expect(result).toEqual(fakeResponse);
 	});
 });

@@ -4,7 +4,7 @@ import { TMDB } from "../../tmdb";
 const token = process.env.TMDB_ACCESS_TOKEN;
 if (!token) throw new Error("TMDB_ACCESS_TOKEN is not set, plaase set it in your enviroment variables.");
 
-const tmdb = new TMDB(token);
+const tmdb = new TMDB(token, { language: "it-IT", region: "IT", country: "IT" });
 
 describe("Movie List (integration)", () => {
 	it("(NOW PLAYING) should get now playing movies", async () => {
