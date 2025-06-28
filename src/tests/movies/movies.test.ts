@@ -1,10 +1,11 @@
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+
 import { ApiClient } from "../../client";
 import { MoviesAPI } from "../../endpoints/movies";
 import { TMDB } from "../../tmdb";
 import { MovieAppendToResponseNamespace } from "../../types/movies";
 
-let tmdb: TMDB = new TMDB("valid_access_token");
+const tmdb: TMDB = new TMDB("valid_access_token");
 
 describe("MoviesAPI", () => {
 	let clientMock: ApiClient;

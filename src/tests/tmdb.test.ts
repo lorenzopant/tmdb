@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+
 import { TMDB } from "../tmdb";
 import { Errors } from "../errors/messages";
 

@@ -1,8 +1,9 @@
 import { ApiClient } from "../client";
 import { MovieResultItem } from "../types/movies";
 import { MovieListParams, PaginatedResponse } from "../types/params";
-import { MOVIE_ENDPOINTS } from "./movies";
 import { TMDBOptions } from "../tmdb";
+
+import { MOVIE_ENDPOINTS } from "./movies";
 
 export enum MovieListEndpoints {
 	NOW_PLAYING = "/now_playing",

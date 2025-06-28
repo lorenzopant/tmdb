@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+
 import { TMDB } from "../../tmdb";
 
 const token = process.env.TMDB_ACCESS_TOKEN;
