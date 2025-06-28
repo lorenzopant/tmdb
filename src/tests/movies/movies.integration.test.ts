@@ -30,6 +30,16 @@ describe("Movies (integration)", () => {
 		}
 	});
 
+	it("(MOVIE DETAILS) should get movie details with appended response", async () => {
+		const movie_id = 550; // Fight Club
+		const movie = await tmdb.movies.details({ movie_id, append_to_response: ["reviews"] });
+		expect(movie).toBeDefined();
+		expect(movie.id).toBe(movie_id);
+		expect(movie.title).toBe("Fight Club");
+		expect(movie.reviews.results).toBeDefined();
+		expect(movie.reviews.results.length).toBeGreaterThanOrEqual(0);
+	});
+
 	it("(MOVIE ALTERNATIVE TITLES) should get movie alternative titles", async () => {
 		const movie_id = 550; // Fight Club
 		const movie_titles = await tmdb.movies.alternative_titles({ movie_id });
@@ -119,6 +129,17 @@ describe("Movies (integration)", () => {
 		expect(release_dates.results.length).toBeGreaterThan(0);
 		expect(release_dates.results[0].iso_3166_1).toBeDefined();
 		expect(release_dates.results[0].release_dates.length).toBeGreaterThan(0);
+	});
+
+	it("(MOVIE REVIEWS) should get movie reviews", async () => {
+		const movie_id = 550; // Fight Club
+		const reviews = await tmdb.movies.reviews({ movie_id });
+		expect(reviews).toBeDefined();
+		expect(reviews.results.length).toBeGreaterThan(0);
+		expect(reviews.results[0].id).toBeDefined();
+		expect(reviews.page).toBe(1);
+		expect(reviews.total_results).toBeGreaterThan(0);
+		expect(reviews.total_pages).toBeGreaterThan(0);
 	});
 
 	it("(MOVIE SIMILAR) should get similar movies", async () => {

@@ -3,6 +3,7 @@
 import {
 	Cast,
 	Change,
+	Changes,
 	Collection,
 	Crew,
 	Genre,
@@ -14,6 +15,7 @@ import {
 	VideoItem,
 } from "./common";
 import { ReleaseType } from "./enums";
+import { PaginatedResponse } from "./params";
 import { ISO3166Country } from "./utility";
 
 export type MovieDetails = {
@@ -74,6 +76,8 @@ export type MovieAlternativeTitle = {
 	type: string;
 };
 
+export type MovieChanges = Changes;
+
 export type MovieCredits = {
 	id: number;
 	cast: Cast[];
@@ -100,6 +104,9 @@ export type MovieImages = {
 	posters: ImageItem[];
 };
 
+export type MovieRecommendations = PaginatedResponse<MovieResultItem>;
+export type MovieSimilar = PaginatedResponse<MovieResultItem>;
+
 export type MovieReleaseDates = {
 	id: number;
 	results: MovieReleaseDateResult[];
@@ -117,6 +124,25 @@ export type MovieReleaseDate = {
 	type: ReleaseType | number;
 	note: string;
 	descriptors: any[];
+};
+
+export type MovieReviews = PaginatedResponse<MovieReview>;
+
+export type MovieReview = {
+	author: string;
+	author_details: MovieReviewAuthorDetails;
+	content: string;
+	created_at: string;
+	id: string;
+	updated_at: string;
+	url: string;
+};
+
+export type MovieReviewAuthorDetails = {
+	name: string;
+	username: string;
+	avatar_path?: string;
+	rating?: number;
 };
 
 export type MovieTranslations = {
@@ -160,4 +186,38 @@ export type WatchProviderItem = {
 	provider_id: number;
 	provider_name: string;
 	display_priority: number;
+};
+
+/** Append To Response */
+export type MovieAppendToResponseNamespace =
+	| "alternative_titles"
+	| "changes"
+	| "credits"
+	| "external_ids"
+	| "images"
+	| "keywords"
+	| "recommendations"
+	| "release_dates"
+	| "reviews"
+	| "similar"
+	| "translations"
+	| "videos";
+
+export type MovieAppendableMap = {
+	alternative_titles: MovieAlternativeTitles;
+	changes: MovieChanges;
+	credits: MovieCredits;
+	external_ids: MovieExternalIDs;
+	images: MovieImages;
+	keywords: MovieKeywords;
+	recommendations: MovieRecommendations;
+	release_dates: MovieReleaseDates;
+	reviews: MovieReviews;
+	similar: MovieSimilar;
+	translations: MovieTranslations;
+	videos: MovieVideos;
+};
+
+export type MovieDetailsWithAppends<T extends readonly MovieAppendToResponseNamespace[]> = MovieDetails & {
+	[K in T[number]]: MovieAppendableMap[K];
 };

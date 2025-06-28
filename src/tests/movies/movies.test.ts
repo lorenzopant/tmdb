@@ -2,6 +2,7 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { ApiClient } from "../../client";
 import { MoviesAPI } from "../../endpoints/movies";
 import { TMDB } from "../../tmdb";
+import { MovieAppendToResponseNamespace } from "../../types/movies";
 
 let tmdb: TMDB = new TMDB("valid_access_token");
 
@@ -17,10 +18,10 @@ describe("MoviesAPI", () => {
 
 	it("should call client.request with the correct parameters", async () => {
 		const movie_id = 550;
-		const append_to_response = ["credits", "images"];
 		const language = "en";
+		const append_to_response: MovieAppendToResponseNamespace[] = ["credits", "images"];
 
-		await moviesAPI.details({ movie_id, append_to_response, language });
+		await moviesAPI.details({ movie_id, language, append_to_response });
 		expect(clientMock.request).toHaveBeenCalledOnce();
 		expect(clientMock.request).toHaveBeenCalledWith("/movie/550", {
 			movie_id,

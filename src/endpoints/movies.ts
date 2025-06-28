@@ -3,13 +3,18 @@ import { TMDBOptions } from "../tmdb";
 import { Changes } from "../types/common";
 import {
 	MovieAlternativeTitles,
+	MovieAppendToResponseNamespace,
 	MovieCredits,
 	MovieDetails,
+	MovieDetailsWithAppends,
 	MovieExternalIDs,
 	MovieImages,
 	MovieKeywords,
+	MovieRecommendations,
 	MovieReleaseDates,
 	MovieResultItem,
+	MovieReviews,
+	MovieSimilar,
 	MovieTranslations,
 	MovieVideos,
 	MovieWatchProvider,
@@ -24,6 +29,7 @@ import {
 	MovieKeywordsParams,
 	MovieRecommendationsParams,
 	MovieReleaseDatesParams,
+	MovieReviewsParams,
 	MovieSimilarParams,
 	MovieTranslationsParams,
 	MovieVideosParams,
@@ -46,10 +52,10 @@ export const MOVIE_ENDPOINTS = {
 	TRANSLATIONS: "/translations",
 	VIDEOS: "/videos",
 	WATCH_PROVIDERS: "/watch/providers",
+	REVIEWS: "/reviews",
 	// Missing:
 	// ACCOUNT_STATES
 	// LISTS
-	// REVIEWS
 	// ADD RATING
 	// DELETE RATING
 };
@@ -74,10 +80,12 @@ export class MoviesAPI {
 	 * @returns A promise that resolves to the movie details.
 	 * @reference https://developer.themoviedb.org/reference/movie-details
 	 */
-	async details(params: MovieDetailsParams): Promise<MovieDetails> {
+	async details<T extends readonly MovieAppendToResponseNamespace[] = []>(
+		params: MovieDetailsParams & { append_to_response?: T[number] | T }
+	): Promise<T extends [] ? MovieDetails : MovieDetailsWithAppends<T>> {
 		const { language = this.defaultOptions.language, ...rest } = params;
 		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}`;
-		return this.client.request<MovieDetails>(endpoint, { language, ...rest });
+		return this.client.request(endpoint, { language, ...rest });
 	}
 
 	/**
@@ -208,10 +216,10 @@ export class MoviesAPI {
 	 * @returns A promise that resolves to a paginated response of similar movies.
 	 * @reference https://developer.themoviedb.org/reference/movie-recommendations
 	 */
-	async recommendations(params: MovieRecommendationsParams): Promise<PaginatedResponse<MovieResultItem>> {
+	async recommendations(params: MovieRecommendationsParams): Promise<MovieRecommendations> {
 		const { language = this.defaultOptions.language, ...rest } = params;
 		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}${MOVIE_ENDPOINTS.RECOMMENDATIONS}`;
-		return this.client.request<PaginatedResponse<MovieResultItem>>(endpoint, { language, ...rest });
+		return this.client.request<MovieRecommendations>(endpoint, { language, ...rest });
 	}
 
 	/**
@@ -236,6 +244,23 @@ export class MoviesAPI {
 	}
 
 	/**
+	 * Reviews
+	 * GET - https://api.themoviedb.org/3/movie/{movie_id}/reviews
+	 *
+	 * Get the user reviews for a movie.
+	 * @param movie_id The ID of the movie.
+	 * @param page Page number of the results to return. Defaults to 1.
+	 * @param language Language code to filter the results. Default is "en-US".
+	 * @returns A promise that resolves to a paginated response of movies reviews.
+	 * @reference https://developer.themoviedb.org/reference/movie-reviews
+	 */
+	async reviews(params: MovieReviewsParams): Promise<MovieReviews> {
+		const { language = this.defaultOptions.language, ...rest } = params;
+		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}${MOVIE_ENDPOINTS.REVIEWS}`;
+		return this.client.request<MovieReviews>(endpoint, { language, ...rest });
+	}
+
+	/**
 	 * Similar
 	 * GET -https://api.themoviedb.org/3/movie/{movie_id}/similar
 	 *
@@ -248,10 +273,10 @@ export class MoviesAPI {
 	 * @returns A promise that resolves to a paginated response of similar movies.
 	 * @reference https://developer.themoviedb.org/reference/movie-similar
 	 */
-	async similar(params: MovieSimilarParams): Promise<PaginatedResponse<MovieResultItem>> {
+	async similar(params: MovieSimilarParams): Promise<MovieSimilar> {
 		const { language = this.defaultOptions.language, ...rest } = params;
 		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}${MOVIE_ENDPOINTS.SIMILAR}`;
-		return this.client.request<PaginatedResponse<MovieResultItem>>(endpoint, { language, ...rest });
+		return this.client.request<MovieSimilar>(endpoint, { language, ...rest });
 	}
 
 	/**

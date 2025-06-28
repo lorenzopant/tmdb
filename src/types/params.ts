@@ -1,5 +1,6 @@
 import { CountryISO3166_1 } from "./countries";
 import { LanguageISO6391 } from "./lang";
+import { MovieAppendToResponseNamespace } from "./movies";
 
 export type PaginatedResponse<T> = {
 	page: number;
@@ -26,7 +27,7 @@ export type MovieListParams = {
 
 export type MovieDetailsParams = {
 	movie_id: number;
-	append_to_response?: string[];
+	append_to_response?: MovieAppendToResponseNamespace[];
 	language?: LanguageISO6391;
 };
 
@@ -70,3 +71,4 @@ export type MovieRecommendationsParams = {
 
 export type MovieSimilarParams = MovieRecommendationsParams;
 export type MovieVideosParams = MovieCreditsParams;
+export type MovieReviewsParams = MovieRecommendationsParams;
