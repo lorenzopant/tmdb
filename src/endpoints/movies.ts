@@ -14,8 +14,22 @@ import {
 	MovieVideos,
 	MovieWatchProvider,
 } from "../types/movies";
-import { MovieAlternativeTitlesParams, MovieDetailsParams, PaginatedResponse } from "../types/params";
-import { mergeParams } from "../utils/params";
+import {
+	MovieAlternativeTitlesParams,
+	MovieChangesParams,
+	MovieCreditsParams,
+	MovieDetailsParams,
+	MovieExternalIDsParams,
+	MovieImagesParams,
+	MovieKeywordsParams,
+	MovieRecommendationsParams,
+	MovieReleaseDatesParams,
+	MovieSimilarParams,
+	MovieTranslationsParams,
+	MovieVideosParams,
+	MovieWathProvidersParams,
+	PaginatedResponse,
+} from "../types/params";
 
 export const MOVIE_ENDPOINTS = {
 	MOVIE: "/movie",
@@ -61,9 +75,9 @@ export class MoviesAPI {
 	 * @reference https://developer.themoviedb.org/reference/movie-details
 	 */
 	async details(params: MovieDetailsParams): Promise<MovieDetails> {
-		const mergedParams = { ...this.defaultOptions, ...params };
-		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${mergedParams.movie_id}`;
-		return this.client.request<MovieDetails>(endpoint, mergedParams);
+		const { language = this.defaultOptions.language, ...rest } = params;
+		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}`;
+		return this.client.request<MovieDetails>(endpoint, { language, ...rest });
 	}
 
 	/**
@@ -77,9 +91,8 @@ export class MoviesAPI {
 	 * @reference https://developer.themoviedb.org/reference/movie-alternative-titles
 	 */
 	async alternative_titles(params: MovieAlternativeTitlesParams): Promise<MovieAlternativeTitles> {
-		const mergedParams = mergeParams(this.defaultOptions, params);
-		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${mergedParams.movie_id}${MOVIE_ENDPOINTS.ALTERNATIVE_TITLES}`;
-		return this.client.request<MovieAlternativeTitles>(endpoint, mergedParams);
+		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}${MOVIE_ENDPOINTS.ALTERNATIVE_TITLES}`;
+		return this.client.request<MovieAlternativeTitles>(endpoint, params);
 	}
 
 	/**
@@ -92,10 +105,10 @@ export class MoviesAPI {
 	 * @returns A promise that resolves to the movie credits.
 	 * @reference https://developer.themoviedb.org/reference/movie-credits
 	 */
-	async credits(movie_id: number, language: string = "en-US"): Promise<MovieCredits> {
-		const params: Record<string, string | undefined> = { language };
-		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${movie_id}${MOVIE_ENDPOINTS.CREDITS}`;
-		return this.client.request<MovieCredits>(endpoint, params);
+	async credits(params: MovieCreditsParams): Promise<MovieCredits> {
+		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}${MOVIE_ENDPOINTS.CREDITS}`;
+		const { language = this.defaultOptions.language, ...rest } = params;
+		return this.client.request<MovieCredits>(endpoint, { language, ...rest });
 	}
 
 	/**
@@ -109,8 +122,8 @@ export class MoviesAPI {
 	 * @returns A promise that resolves to the movie external IDs.
 	 * @reference https://developer.themoviedb.org/reference/movie-external-ids
 	 */
-	async external_ids(movie_id: number): Promise<MovieExternalIDs> {
-		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${movie_id}${MOVIE_ENDPOINTS.EXTERNAL_IDS}`;
+	async external_ids(params: MovieExternalIDsParams): Promise<MovieExternalIDs> {
+		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}${MOVIE_ENDPOINTS.EXTERNAL_IDS}`;
 		return this.client.request<MovieExternalIDs>(endpoint);
 	}
 
@@ -124,8 +137,8 @@ export class MoviesAPI {
 	 * @returns A promise that resolves to the movie keywords.
 	 * @reference https://developer.themoviedb.org/reference/movie-keywords
 	 */
-	async keywords(movie_id: number): Promise<MovieKeywords> {
-		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${movie_id}${MOVIE_ENDPOINTS.KEYWORDS}`;
+	async keywords(params: MovieKeywordsParams): Promise<MovieKeywords> {
+		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}${MOVIE_ENDPOINTS.KEYWORDS}`;
 		return this.client.request<MovieKeywords>(endpoint);
 	}
 
@@ -143,9 +156,8 @@ export class MoviesAPI {
 	 * @returns A promise that resolves to the changes made to the movie.
 	 * @reference https://developer.themoviedb.org/reference/movie-changes
 	 */
-	async changes(movie_id: number, page?: number, start_date?: string, end_date?: string): Promise<Changes> {
-		const params: Record<string, string | number | undefined> = { page, start_date, end_date };
-		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${movie_id}${MOVIE_ENDPOINTS.CHANGES}`;
+	async changes(params: MovieChangesParams): Promise<Changes> {
+		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}${MOVIE_ENDPOINTS.CHANGES}`;
 		return this.client.request<Changes>(endpoint, params);
 	}
 
@@ -155,16 +167,19 @@ export class MoviesAPI {
 	 *
 	 * Fetches images related to a specific movie, such as posters and backdrops.
 	 * The images are returned in various sizes and formats.
+	 *
+	 * If you have a language specified, it will act as a filter on the returned items. You can use the include_image_language param to query additional languages.
+	 *
 	 * @param movie_id - The unique identifier of the movie.
 	 * @param language - (Optional) The language code to filter the images by language.
 	 * @param include_image_language - (Optional) A comma-separated list of language codes to include images for.
 	 * @returns A promise that resolves to a `MovieImages` object containing the movie's images.
 	 * @reference https://developer.themoviedb.org/reference/movie-images
 	 */
-	async images(movie_id: number, language?: string, include_image_language?: string): Promise<MovieImages> {
-		const params: Record<string, string | undefined> = { language, include_image_language };
-		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${movie_id}${MOVIE_ENDPOINTS.IMAGES}`;
-		return this.client.request<MovieImages>(endpoint, params);
+	async images(params: MovieImagesParams): Promise<MovieImages> {
+		const { language = this.defaultOptions.language, ...rest } = params;
+		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}${MOVIE_ENDPOINTS.IMAGES}`;
+		return this.client.request<MovieImages>(endpoint, { language, ...rest });
 	}
 
 	/**
@@ -193,10 +208,10 @@ export class MoviesAPI {
 	 * @returns A promise that resolves to a paginated response of similar movies.
 	 * @reference https://developer.themoviedb.org/reference/movie-recommendations
 	 */
-	async recommendations(movie_id: number, page?: number, language?: string): Promise<PaginatedResponse<MovieResultItem>> {
-		const params: Record<string, string | number | undefined> = { page, language };
-		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${movie_id}${MOVIE_ENDPOINTS.RECOMMENDATIONS}`;
-		return this.client.request<PaginatedResponse<MovieResultItem>>(endpoint, params);
+	async recommendations(params: MovieRecommendationsParams): Promise<PaginatedResponse<MovieResultItem>> {
+		const { language = this.defaultOptions.language, ...rest } = params;
+		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}${MOVIE_ENDPOINTS.RECOMMENDATIONS}`;
+		return this.client.request<PaginatedResponse<MovieResultItem>>(endpoint, { language, ...rest });
 	}
 
 	/**
@@ -215,8 +230,8 @@ export class MoviesAPI {
 	 * @returns A promise that resolves to the release dates for the movie.
 	 * @reference https://developer.themoviedb.org/reference/movie-release-dates
 	 */
-	async release_dates(movie_id: number): Promise<MovieReleaseDates> {
-		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${movie_id}${MOVIE_ENDPOINTS.RELEASE_DATES}`;
+	async release_dates(params: MovieReleaseDatesParams): Promise<MovieReleaseDates> {
+		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}${MOVIE_ENDPOINTS.RELEASE_DATES}`;
 		return this.client.request<MovieReleaseDates>(endpoint);
 	}
 
@@ -233,10 +248,10 @@ export class MoviesAPI {
 	 * @returns A promise that resolves to a paginated response of similar movies.
 	 * @reference https://developer.themoviedb.org/reference/movie-similar
 	 */
-	async similar(movie_id: number, language?: string, page?: number): Promise<PaginatedResponse<MovieResultItem>> {
-		const params: Record<string, string | number | undefined> = { page, language };
-		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${movie_id}${MOVIE_ENDPOINTS.SIMILAR}`;
-		return this.client.request<PaginatedResponse<MovieResultItem>>(endpoint, params);
+	async similar(params: MovieSimilarParams): Promise<PaginatedResponse<MovieResultItem>> {
+		const { language = this.defaultOptions.language, ...rest } = params;
+		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}${MOVIE_ENDPOINTS.SIMILAR}`;
+		return this.client.request<PaginatedResponse<MovieResultItem>>(endpoint, { language, ...rest });
 	}
 
 	/**
@@ -250,8 +265,8 @@ export class MoviesAPI {
 	 * @returns A promise that resolves to the translations of the movie.
 	 * @reference https://developer.themoviedb.org/reference/movie-translations
 	 */
-	async translations(movie_id: number): Promise<MovieTranslations> {
-		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${movie_id}${MOVIE_ENDPOINTS.TRANSLATIONS}`;
+	async translations(params: MovieTranslationsParams): Promise<MovieTranslations> {
+		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}${MOVIE_ENDPOINTS.TRANSLATIONS}`;
 		return this.client.request<MovieTranslations>(endpoint);
 	}
 
@@ -264,10 +279,10 @@ export class MoviesAPI {
 	 * @returns A promise that resolves to a list of videos for the movie.
 	 * @reference https://developer.themoviedb.org/reference/movie-videos
 	 */
-	async videos(movie_id: number, language?: string): Promise<MovieVideos> {
-		const params: Record<string, string | undefined> = { language };
-		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${movie_id}${MOVIE_ENDPOINTS.VIDEOS}`;
-		return this.client.request<MovieVideos>(endpoint, params);
+	async videos(params: MovieVideosParams): Promise<MovieVideos> {
+		const { language = this.defaultOptions.language, ...rest } = params;
+		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}${MOVIE_ENDPOINTS.VIDEOS}`;
+		return this.client.request<MovieVideos>(endpoint, { language, ...rest });
 	}
 
 	/**
@@ -286,8 +301,8 @@ export class MoviesAPI {
 	 * @returns A promise that resolves to a list of videos for the movie.
 	 * @reference https://developer.themoviedb.org/reference/movie-videos
 	 */
-	async watch_providers(movie_id: number): Promise<MovieWatchProvider> {
-		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${movie_id}${MOVIE_ENDPOINTS.WATCH_PROVIDERS}`;
+	async watch_providers(params: MovieWathProvidersParams): Promise<MovieWatchProvider> {
+		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}${MOVIE_ENDPOINTS.WATCH_PROVIDERS}`;
 		return this.client.request<MovieWatchProvider>(endpoint);
 	}
 }

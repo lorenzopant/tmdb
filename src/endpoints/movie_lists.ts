@@ -3,9 +3,6 @@ import { MovieResultItem } from "../types/movies";
 import { MovieListParams, PaginatedResponse } from "../types/params";
 import { MOVIE_ENDPOINTS } from "./movies";
 import { TMDBOptions } from "../tmdb";
-import { mergeParams } from "../utils/params";
-import { LanguageISO6391 } from "../types/lang";
-import { CountryISO3166_1 } from "../types/countries";
 
 export enum MovieListEndpoints {
 	NOW_PLAYING = "/now_playing",
@@ -23,6 +20,11 @@ export class MovieListsAPI {
 		this.defaultOptions = defaultOptions;
 	}
 
+	private withDefaults(params: MovieListParams): MovieListParams {
+		const { language = this.defaultOptions.language, region = this.defaultOptions.region, ...rest } = params;
+		return { language, region, ...rest };
+	}
+
 	/**
 	 * Fetch Movie List Wrapper
 	 * @param endpoint Endpoint to call
@@ -30,8 +32,7 @@ export class MovieListsAPI {
 	 * @returns Specific to endpoint (MovieListResult)
 	 */
 	private fetch_movie_list(endpoint: string, params: MovieListParams = {}): Promise<PaginatedResponse<MovieResultItem>> {
-		const mergedParams = { ...this.defaultOptions, ...params };
-		return this.client.request<PaginatedResponse<MovieResultItem>>(MOVIE_ENDPOINTS.MOVIE + endpoint, mergedParams);
+		return this.client.request<PaginatedResponse<MovieResultItem>>(MOVIE_ENDPOINTS.MOVIE + endpoint, this.withDefaults(params));
 	}
 
 	/**

@@ -16,7 +16,7 @@ describe("Search (integration)", () => {
 	});
 
 	it("(SEARCH MOVIE) should search for a movie with default options", async () => {
-		const tmdb = new TMDB(token, { language: "it-IT", region: "IT" });
+		const tmdb = new TMDB(token, { language: "it", region: "IT" });
 		const movies = await tmdb.search.movies({ query: "Fight Club" });
 		expect(movies.page).toBe(1);
 		expect(movies.total_results).toBeGreaterThan(0);

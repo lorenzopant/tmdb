@@ -2,7 +2,6 @@ import { ApiClient } from "../client";
 import { MovieResultItem } from "../types/movies";
 import { PaginatedResponse, SearchMoviesParams } from "../types/params";
 import { TMDBOptions } from "../tmdb";
-import { mergeParams } from "../utils/params";
 
 export const SEARCH_ENDPOINTS = {
 	MOVIE: "/search/movie",
@@ -15,6 +14,11 @@ export class SearchAPI {
 	constructor(client: ApiClient, defaultOptions: TMDBOptions = {}) {
 		this.client = client;
 		this.defaultOptions = defaultOptions;
+	}
+
+	public withDefaults(params: SearchMoviesParams): SearchMoviesParams {
+		const { language = this.defaultOptions.language, region = this.defaultOptions.region, ...rest }: SearchMoviesParams = params;
+		return { language, region, ...rest };
 	}
 
 	/**
@@ -33,8 +37,6 @@ export class SearchAPI {
 	 */
 	async movies(params: SearchMoviesParams): Promise<PaginatedResponse<MovieResultItem>> {
 		const endpoint = `${SEARCH_ENDPOINTS.MOVIE}`;
-		// Merge defaultOptions with params, giving precedence to params
-		const mergedParams = { ...this.defaultOptions, ...params };
-		return this.client.request<PaginatedResponse<MovieResultItem>>(endpoint, mergedParams);
+		return this.client.request<PaginatedResponse<MovieResultItem>>(endpoint, this.withDefaults(params));
 	}
 }

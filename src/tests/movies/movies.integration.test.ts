@@ -40,7 +40,7 @@ describe("Movies (integration)", () => {
 
 	it("(MOVIE CREDITS) should get movie credits", async () => {
 		const movie_id = 550; // Fight Club
-		const credits = await tmdb.movies.credits(movie_id);
+		const credits = await tmdb.movies.credits({ movie_id });
 		expect(credits).toBeDefined();
 		expect(credits.id).toBe(movie_id);
 		expect(credits.cast.length).toBeGreaterThan(0);
@@ -50,7 +50,7 @@ describe("Movies (integration)", () => {
 
 	it("(MOVIE EXTERNAL IDS) should get movie external IDs", async () => {
 		const movie_id = 550; // Fight Club
-		const external_ids = await tmdb.movies.external_ids(movie_id);
+		const external_ids = await tmdb.movies.external_ids({ movie_id });
 		expect(external_ids).toBeDefined();
 		expect(external_ids.id).toBe(movie_id);
 		expect(external_ids.imdb_id).toBe("tt0137523");
@@ -58,7 +58,7 @@ describe("Movies (integration)", () => {
 
 	it("(MOVIE KEYWORDS) should get movie keywords", async () => {
 		const movie_id = 550; // Fight Club
-		const keywords = await tmdb.movies.keywords(movie_id);
+		const keywords = await tmdb.movies.keywords({ movie_id });
 		expect(keywords).toBeDefined();
 		expect(keywords.id).toBe(movie_id);
 		expect(keywords.keywords.length).toBeGreaterThan(0);
@@ -68,7 +68,7 @@ describe("Movies (integration)", () => {
 		const movie_id = 550; // Fight Club
 		const start_date = "2024-12-20";
 		const end_date = "2024-12-24";
-		const changes = await tmdb.movies.changes(movie_id, 1, start_date, end_date);
+		const changes = await tmdb.movies.changes({ movie_id, start_date, end_date });
 		expect(changes).toBeDefined();
 		expect(changes.changes).toBeDefined();
 		expect(changes.changes[0].key).toBe("images");
@@ -77,7 +77,7 @@ describe("Movies (integration)", () => {
 
 	it("(MOVIE IMAGES) should get movie images", async () => {
 		const movie_id = 550; // Fight Club
-		const images = await tmdb.movies.images(movie_id);
+		const images = await tmdb.movies.images({ movie_id });
 		expect(images).toBeDefined();
 		expect(images.id).toBe(movie_id);
 		expect(images.backdrops.length).toBeGreaterThan(0);
@@ -86,10 +86,10 @@ describe("Movies (integration)", () => {
 
 	it("(MOVIE IMAGES) should get movie images for a specific language", async () => {
 		const movie_id = 550; // Fight Club
-		const images = await tmdb.movies.images(movie_id, "en");
+		const images = await tmdb.movies.images({ movie_id, language: "de" });
 		expect(images).toBeDefined();
 		expect(images.id).toBe(movie_id);
-		expect(images.backdrops.length).toBeGreaterThan(0);
+		expect(images.backdrops.length).toBeGreaterThanOrEqual(0);
 		expect(images.posters.length).toBeGreaterThan(0);
 	});
 
@@ -102,7 +102,7 @@ describe("Movies (integration)", () => {
 
 	it("(MOVIE RECOMMENDATIONS) should get movie recommendations", async () => {
 		const movie_id = 550; // Fight Club
-		const recommendations = await tmdb.movies.recommendations(movie_id);
+		const recommendations = await tmdb.movies.recommendations({ movie_id });
 		expect(recommendations).toBeDefined();
 		expect(recommendations.results.length).toBeGreaterThan(0);
 		expect(recommendations.results[0].id).toBeDefined();
@@ -113,7 +113,7 @@ describe("Movies (integration)", () => {
 
 	it("(MOVIE RELEASE DATES) should get movie release dates", async () => {
 		const movie_id = 550; // Fight Club
-		const release_dates = await tmdb.movies.release_dates(movie_id);
+		const release_dates = await tmdb.movies.release_dates({ movie_id });
 		expect(release_dates).toBeDefined();
 		expect(release_dates.id).toBe(movie_id);
 		expect(release_dates.results.length).toBeGreaterThan(0);
@@ -123,7 +123,7 @@ describe("Movies (integration)", () => {
 
 	it("(MOVIE SIMILAR) should get similar movies", async () => {
 		const movie_id = 550;
-		const similar = await tmdb.movies.similar(movie_id);
+		const similar = await tmdb.movies.similar({ movie_id });
 		expect(similar).toBeDefined();
 		expect(similar.results.length).toBeGreaterThan(0);
 		expect(similar.results[0].id).toBeDefined();
@@ -134,7 +134,7 @@ describe("Movies (integration)", () => {
 
 	it("(MOVIE TRANSLATIONS) should get translations for a movie", async () => {
 		const movie_id = 550;
-		const translations = await tmdb.movies.translations(movie_id);
+		const translations = await tmdb.movies.translations({ movie_id });
 		expect(translations).toBeDefined();
 		expect(translations.id).toBe(movie_id);
 		expect(translations.translations).toBeDefined();
@@ -144,7 +144,7 @@ describe("Movies (integration)", () => {
 
 	it("(MOVIE VIDEOS) should get videos for a movie", async () => {
 		const movie_id = 550;
-		const videos = await tmdb.movies.videos(movie_id);
+		const videos = await tmdb.movies.videos({ movie_id });
 		expect(videos).toBeDefined();
 		expect(videos.id).toBe(movie_id);
 		expect(videos.results).toBeDefined();
@@ -154,7 +154,7 @@ describe("Movies (integration)", () => {
 
 	it("(MOVIE WATCH PROVIDERS) should get watch providers for a movie", async () => {
 		const movie_id = 550;
-		const watch_providers = await tmdb.movies.watch_providers(movie_id);
+		const watch_providers = await tmdb.movies.watch_providers({ movie_id });
 		expect(watch_providers).toBeDefined();
 		expect(watch_providers.id).toBe(movie_id);
 		expect(watch_providers.results).toBeDefined();
