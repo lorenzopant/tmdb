@@ -1,6 +1,6 @@
 import { ApiClient } from "../client";
 import { MovieResultItem } from "../types/movies";
-import { PaginatedResponse } from "../types/params";
+import { PaginatedResponse, SearchMoviesParams } from "../types/params";
 
 export const SEARCH_ENDPOINTS = {
 	MOVIE: "/search/movie",
@@ -27,24 +27,7 @@ export class SearchAPI {
 	 * @param year Year
 	 * @reference https://developer.themoviedb.org/reference/search-movie
 	 */
-	async movies(
-		query: string,
-		include_adult: boolean = false,
-		language: string = "en-US",
-		page: number = 1,
-		primary_release_year?: string,
-		region?: string,
-		year?: string
-	): Promise<PaginatedResponse<MovieResultItem>> {
-		const params: Record<string, number | string | boolean | undefined> = {
-			query,
-			include_adult,
-			language,
-			page,
-			primary_release_year,
-			year,
-			region,
-		};
+	async movies(params: SearchMoviesParams): Promise<PaginatedResponse<MovieResultItem>> {
 		const endpoint = `${SEARCH_ENDPOINTS.MOVIE}`;
 		return this.client.request<PaginatedResponse<MovieResultItem>>(endpoint, params);
 	}

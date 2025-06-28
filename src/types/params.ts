@@ -4,3 +4,13 @@ export type PaginatedResponse<T> = {
 	total_results: number;
 	results: T[];
 };
+
+export type SearchMoviesParams = {
+	query: string;
+	include_adult?: boolean;
+	language?: string;
+	page?: number;
+	primary_release_year?: string;
+	region?: string;
+	year?: string;
+};
