@@ -5,6 +5,7 @@ import { MovieListsAPI } from "./endpoints/movie_lists";
 import { MoviesAPI } from "./endpoints/movies";
 import { SearchAPI } from "./endpoints/search";
 import { Errors } from "./errors/messages";
+import { ImageAPI } from "./images/images";
 import { TMDBOptions } from "./types";
 
 export class TMDB {
@@ -13,6 +14,7 @@ export class TMDB {
 	public movies: MoviesAPI;
 	public movie_lists: MovieListsAPI;
 	public search: SearchAPI;
+	public images: ImageAPI;
 	// etc...
 
 	/**
@@ -27,5 +29,6 @@ export class TMDB {
 		this.movies = new MoviesAPI(this.client, this.options);
 		this.movie_lists = new MovieListsAPI(this.client, this.options);
 		this.search = new SearchAPI(this.client, this.options);
+		this.images = new ImageAPI(this.options.secure_images_url);
 	}
 }
