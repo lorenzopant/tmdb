@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 
 import { TMDBError } from "../../errors/tmdb";
 import { TMDB } from "../../tmdb";
-import { ISO3166Country } from "../../types/utility";
 
 const token = process.env.TMDB_ACCESS_TOKEN;
 if (!token) throw new Error("TMDB_ACCESS_TOKEN is not set, plaase set it in your enviroment variables.");
@@ -179,6 +178,6 @@ describe("Movies (integration)", () => {
 		expect(watch_providers).toBeDefined();
 		expect(watch_providers.id).toBe(movie_id);
 		expect(watch_providers.results).toBeDefined();
-		expect(watch_providers.results[ISO3166Country.US]).toBeDefined();
+		expect(watch_providers.results["US"]).toBeDefined();
 	});
 });
