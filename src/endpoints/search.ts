@@ -1,7 +1,7 @@
 import { ApiClient } from "../client";
+import { TMDBOptions } from "../types";
 import { MovieResultItem } from "../types/movies";
 import { PaginatedResponse, SearchMoviesParams } from "../types/params";
-import { TMDBOptions } from "../tmdb";
 
 export const SEARCH_ENDPOINTS = {
 	MOVIE: "/search/movie",

@@ -1,5 +1,5 @@
 import { ApiClient } from "../client";
-import { TMDBOptions } from "../tmdb";
+import { TMDBOptions } from "../types";
 import { Changes } from "../types/common";
 import {
 	MovieAlternativeTitles,
