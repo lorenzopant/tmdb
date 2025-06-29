@@ -1,2 +1,15 @@
 pnpm run lint
+RESULT=$?
+if [ $RESULT -ne 0 ]; then
+  echo "\n❌ Lint errors found. Commit aborted."
+  exit 1
+fi
+
+pnpm run build
+RESULT=$?
+if [ $RESULT -ne 0 ]; then
+  echo "\n❌ Build failed. Commit aborted."
+  exit 1
+fi
+
 pnpm test
