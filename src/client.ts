@@ -1,5 +1,4 @@
 import { TMDBAPIErrorResponse, TMDBError } from "./errors/tmdb";
-import { logger } from "./logger";
 
 export class ApiClient {
 	private accessToken: string;
@@ -39,7 +38,7 @@ export class ApiClient {
 				tmdbStatusCode = err.status_code || -1;
 			}
 		} catch (error) {
-			logger.error(`Unknown error: ${error}`);
+			console.error(`Unknown error: ${error}`);
 			// If response is not JSON, fallback to HTTP status text
 		}
 
