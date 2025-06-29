@@ -13,9 +13,9 @@ import {
 	SpokenLanguage,
 	VideoItem,
 } from "./common";
+import { CountryISO3166_1 } from "./countries";
 import { ReleaseType } from "./enums";
 import { PaginatedResponse } from "./params";
-import { ISO3166Country } from "./utility";
 
 export type MovieDetails = {
 	adult: boolean;
@@ -170,7 +170,7 @@ export type MovieVideos = {
 
 export type MovieWatchProvider = {
 	id: number;
-	results: Record<ISO3166Country, WatchProvider[]>;
+	results: Record<CountryISO3166_1, WatchProvider[]>;
 };
 
 export type WatchProvider = {
