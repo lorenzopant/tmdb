@@ -48,7 +48,7 @@ export type MovieKeywordsParams = {
 export type MovieExternalIDsParams = MovieKeywordsParams;
 export type MovieReleaseDatesParams = MovieKeywordsParams;
 export type MovieTranslationsParams = MovieKeywordsParams;
-export type MovieWathProvidersParams = MovieKeywordsParams;
+export type MovieWatchProvidersParams = MovieKeywordsParams;
 
 export type MovieChangesParams = {
 	movie_id: number;

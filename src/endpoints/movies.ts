@@ -32,7 +32,7 @@ import {
 	MovieSimilarParams,
 	MovieTranslationsParams,
 	MovieVideosParams,
-	MovieWathProvidersParams,
+	MovieWatchProvidersParams,
 } from "../types/params";
 
 export const MOVIE_ENDPOINTS = {
@@ -324,7 +324,7 @@ export class MoviesAPI {
 	 * @returns A promise that resolves to a list of videos for the movie.
 	 * @reference https://developer.themoviedb.org/reference/movie-videos
 	 */
-	async watch_providers(params: MovieWathProvidersParams): Promise<MovieWatchProvider> {
+	async watch_providers(params: MovieWatchProvidersParams): Promise<MovieWatchProvider> {
 		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}${MOVIE_ENDPOINTS.WATCH_PROVIDERS}`;
 		return this.client.request<MovieWatchProvider>(endpoint);
 	}

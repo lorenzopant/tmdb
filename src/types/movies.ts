@@ -175,9 +175,9 @@ export type MovieWatchProvider = {
 
 export type WatchProvider = {
 	link: string;
-	flatrate: WatchProviderItem[];
-	rent: WatchProviderItem[];
-	buy: WatchProviderItem[];
+	flatrate?: WatchProviderItem[];
+	rent?: WatchProviderItem[];
+	buy?: WatchProviderItem[];
 };
 
 export type WatchProviderItem = {
