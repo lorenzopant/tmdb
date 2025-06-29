@@ -14,4 +14,10 @@ export type TMDBOptions = {
 	 * If not set, TMDB may fall back to a default or global data.
 	 */
 	region?: CountryISO3166_1;
+	/**
+	 * Whether to use the secure (HTTPS) image base URL.
+	 * Defaults to true. Set to false only if working in an environment where HTTPS is not supported
+	 * or where you explicitly need non-secure image URLs.
+	 */
+	secure_images_url?: boolean;
 };
