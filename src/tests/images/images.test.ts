@@ -14,9 +14,15 @@ describe("ImageAPI", () => {
 
 	test("should generate non-secure poster URL when configured", () => {
 		const poster_path = "/1E5baAaEse26fej7uHcjOgEE2t2.jpg"; // Fast X
-		const imageAPI = new ImageAPI(false);
+		const imageAPI = new ImageAPI({ secure_images_url: false });
 		const url = imageAPI.poster(poster_path);
 		expect(url).toBe(`${IMAGE_BASE_URL}w500${poster_path}`);
+	});
+
+	test("should use default image sizes if defined", () => {
+		const imageAPI = new ImageAPI({ default_image_sizes: { posters: "original" } });
+		const url = imageAPI.poster(path);
+		expect(url).toBe(`${IMAGE_SECURE_BASE_URL}original${path}`);
 	});
 
 	test("should generate backdrop URL", () => {

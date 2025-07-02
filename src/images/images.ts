@@ -1,34 +1,35 @@
+import { ImagesConfig } from "../types";
 import { BackdropSize, IMAGE_BASE_URL, IMAGE_SECURE_BASE_URL, LogoSize, PosterSize, ProfileSize, StillSize } from "../types/images";
 
 export class ImageAPI {
-	private useSecure: boolean;
+	private options: ImagesConfig;
 
-	constructor(useSecure: boolean = true) {
-		this.useSecure = useSecure;
+	constructor(options: ImagesConfig = {}) {
+		this.options = { secure_images_url: true, ...options };
 	}
 
 	private buildUrl(path: string, size: string): string {
-		const baseUrl = this.useSecure ? IMAGE_SECURE_BASE_URL : IMAGE_BASE_URL;
+		const baseUrl = this.options.secure_images_url ? IMAGE_SECURE_BASE_URL : IMAGE_BASE_URL;
 		return `${baseUrl}${size}${path}`;
 	}
 
-	public backdrop(path: string, size: BackdropSize = "w780"): string {
+	public backdrop(path: string, size: BackdropSize = this.options.default_image_sizes?.backdrops || "w780"): string {
 		return this.buildUrl(path, size);
 	}
 
-	public logo(path: string, size: LogoSize = "w185"): string {
+	public logo(path: string, size: LogoSize = this.options.default_image_sizes?.logos || "w185"): string {
 		return this.buildUrl(path, size);
 	}
 
-	public poster(path: string, size: PosterSize = "w500"): string {
+	public poster(path: string, size: PosterSize = this.options.default_image_sizes?.posters || "w500"): string {
 		return this.buildUrl(path, size);
 	}
 
-	public profile(path: string, size: ProfileSize = "w185"): string {
+	public profile(path: string, size: ProfileSize = this.options.default_image_sizes?.profiles || "w185"): string {
 		return this.buildUrl(path, size);
 	}
 
-	public still(path: string, size: StillSize = "w300"): string {
+	public still(path: string, size: StillSize = this.options.default_image_sizes?.still || "w300"): string {
 		return this.buildUrl(path, size);
 	}
 }

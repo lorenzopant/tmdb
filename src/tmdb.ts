@@ -29,6 +29,6 @@ export class TMDB {
 		this.movies = new MoviesAPI(this.client, this.options);
 		this.movie_lists = new MovieListsAPI(this.client, this.options);
 		this.search = new SearchAPI(this.client, this.options);
-		this.images = new ImageAPI(this.options.secure_images_url);
+		this.images = new ImageAPI(this.options.images);
 	}
 }
