@@ -24,7 +24,7 @@ npm install @lorenzopant/tmdb
 ## Usage
 
 ```typescript
-import { TMDB } from 'tmdb-api-ts';
+import { TMDB } from '@lorenzopant/tmdb';
 
 const tmdb = new TMDB('your_access_token');
 
