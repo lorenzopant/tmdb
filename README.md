@@ -2,27 +2,21 @@
 
 A **TypeScript-first** lightweight client for [The Movie Database (TMDB)](https://developer.themoviedb.org/docs/getting-started) API.
 
-🚧🚧🚧🚧🚧🚧 **WIP** This package is still cookin. It will be updated regularly with new features.
-Feel free to open pull requests on the project repository here:
-[tmdb-api-ts](https://github.com/lorenzopantano/tmdb-api-ts)
+This package is open-source and will be updated regularly with new features.
+Feel free to open pull requests on the project repository.
 
 - 📦 Full TypeScript support
 - 🔥 Simple and tiny wrapper
-- 🚀 Designed for server-side and frontend use (React, Vue, etc.)
-- 🛡️ Proper error handling with `TMDBError`
+- 🚀 Designed for server-side and frontend use (NextJS, React, Vue, etc.)
+
+## Full documentation is available at [@lorenzopant/tmdb](https://lorenzopant-docs.vercel.app/)
 
 ---
 
 ## Installation
 
 ```bash
-npm install tmdb-api-ts
-```
-
-or
-
-```bash
-yarn add tmdb-api-ts
+npm install @lorenzopant/tmdb
 ```
 
 ---
@@ -108,36 +102,10 @@ tmdb.movie.changes(550);
 tmdb.movie.credits(550);
 tmdb.movie.external_ids(550);
 
-...
+...and more
 ```
 
 Returns a **typed response** containing movies.
-
----
-
-## Error Handling
-
-All errors thrown from the TMDB API are wrapped in a `TMDBError` class.
-
-You can catch them:
-
-```typescript
-catch (error) {
-  if (error instanceof TMDBError) {
-    console.log(error.message);
-    console.log(error.http_status_code);
-    console.log(error.tmdb_status_code);
-  }
-}
-```
-
-Properties available:
-
-- `message`
-- `http_status_code`
-- `tmdb_status_code`
-
-If the TMDB service is unreachable or returns unexpected errors, `tmdb_status_code` is set to `-1`.
 
 ---
 
