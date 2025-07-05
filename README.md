@@ -69,7 +69,7 @@ const tmdb = new TMDB(accessToken: string);
 Search for movies:
 
 ```typescript
-tmdb.search.movies("Fight Club");
+tmdb.search.movies({ query: "Fight Club" });
 ```
 
 Returns a **typed response** containing movies.
@@ -93,14 +93,14 @@ Returns a **typed response** containing movies.
 
 ### `Movie`
 
-Now Playing, Popular, Top Rated and Upcoming movies:
+Details, alternative titles, changes, credits, external IDs and more:
 
 ```typescript
-tmdb.movie.details(550);
-tmdb.movie.alternative_titles(550);
-tmdb.movie.changes(550);
-tmdb.movie.credits(550);
-tmdb.movie.external_ids(550);
+tmdb.movie.details({ movie_id: 550 });
+tmdb.movie.alternative_titles({ movie_id: 550 });
+tmdb.movie.changes({ movie_id: 550 });
+tmdb.movie.credits({ movie_id: 550 });
+tmdb.movie.external_ids({ movie_id: 550 });
 
 ...and more
 ```
