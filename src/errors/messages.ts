@@ -32,13 +32,7 @@ export const TMDB_ERRORS: Map<number, { message: string; http_status: number }> 
 	[19, { message: "Invalid accept header.", http_status: 406 }],
 	[20, { message: "Invalid date range: Should be a range no longer than 14 days.", http_status: 422 }],
 	[21, { message: "Entry not found: The item you are trying to edit cannot be found.", http_status: 200 }],
-	[
-		22,
-		{
-			message: "Invalid page: Pages start at 1 and max at 500. They are expected to be an integer.",
-			http_status: 400,
-		},
-	],
+	[22, { message: "Invalid page: Pages start at 1 and max at 500. They are expected to be an integer.", http_status: 400 }],
 	[23, { message: "Invalid date: Format needs to be YYYY-MM-DD.", http_status: 400 }],
 	[24, { message: "Your request to the backend server timed out. Try again.", http_status: 504 }],
 	[25, { message: "Your request count (#) is over the allowed limit of (40).", http_status: 429 }],

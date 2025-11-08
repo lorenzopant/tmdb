@@ -9,6 +9,11 @@ export type PaginatedResponse<T> = {
 	results: T[];
 };
 
+export interface TMDBCommonParams {
+	language?: LanguageISO6391;
+	region?: CountryISO3166_1;
+}
+
 export type SearchMoviesParams = {
 	query: string;
 	include_adult?: boolean;
@@ -41,10 +46,7 @@ export type MovieCreditsParams = {
 	language?: LanguageISO6391;
 };
 
-export type MovieKeywordsParams = {
-	movie_id: number;
-};
-
+export type MovieKeywordsParams = { movie_id: number };
 export type MovieExternalIDsParams = MovieKeywordsParams;
 export type MovieReleaseDatesParams = MovieKeywordsParams;
 export type MovieTranslationsParams = MovieKeywordsParams;

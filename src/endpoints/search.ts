@@ -1,26 +1,12 @@
-import { ApiClient } from "../client";
-import { TMDBOptions } from "../types";
 import { MovieResultItem } from "../types/movies";
 import { PaginatedResponse, SearchMoviesParams } from "../types/params";
+import { TMDBAPIBase } from "./base";
 
 export const SEARCH_ENDPOINTS = {
 	MOVIE: "/search/movie",
 };
 
-export class SearchAPI {
-	private client: ApiClient;
-	private defaultOptions: TMDBOptions; // ** Default options for all requests
-
-	constructor(client: ApiClient, defaultOptions: TMDBOptions = {}) {
-		this.client = client;
-		this.defaultOptions = defaultOptions;
-	}
-
-	public withDefaults(params: SearchMoviesParams): SearchMoviesParams {
-		const { language = this.defaultOptions.language, region = this.defaultOptions.region, ...rest }: SearchMoviesParams = params;
-		return { language, region, ...rest };
-	}
-
+export class SearchAPI extends TMDBAPIBase {
 	/**
 	 * Search
 	 * GET - https://api.themoviedb.org/3/search/movie
@@ -37,6 +23,6 @@ export class SearchAPI {
 	 */
 	async movies(params: SearchMoviesParams): Promise<PaginatedResponse<MovieResultItem>> {
 		const endpoint = `${SEARCH_ENDPOINTS.MOVIE}`;
-		return this.client.request<PaginatedResponse<MovieResultItem>>(endpoint, this.withDefaults(params));
+		return this.client.request<PaginatedResponse<MovieResultItem>>(endpoint, this.applyDefaults(params));
 	}
 }
