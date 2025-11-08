@@ -1,6 +1,7 @@
 // src.tmdb.ts
 
 import { ApiClient } from "./client";
+import { ConfigurationAPI } from "./endpoints/configuration";
 import { MovieListsAPI } from "./endpoints/movie_lists";
 import { MoviesAPI } from "./endpoints/movies";
 import { SearchAPI } from "./endpoints/search";
@@ -15,6 +16,7 @@ export class TMDB {
 	public movie_lists: MovieListsAPI;
 	public search: SearchAPI;
 	public images: ImageAPI;
+	public config: ConfigurationAPI;
 	// etc...
 
 	/**
@@ -30,5 +32,6 @@ export class TMDB {
 		this.movie_lists = new MovieListsAPI(this.client, this.options);
 		this.search = new SearchAPI(this.client, this.options);
 		this.images = new ImageAPI(this.options.images);
+		this.config = new ConfigurationAPI(this.client, this.options);
 	}
 }
