@@ -6,7 +6,7 @@
   "types": "dist/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lorenzopantano/tmdb-api-ts"
+    "url": "git+https://github.com/lorenzopant/tmdb"
   },
   "scripts": {
     "build": "tsc",
@@ -15,7 +15,8 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
     "prepare": "husky",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "patch": "npm version patch && npm publish"
   },
   "author": "Lorenzo Pantano",
   "license": "MIT",
