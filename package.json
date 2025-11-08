@@ -8,6 +8,10 @@
     "type": "git",
     "url": "git+https://github.com/lorenzopant/tmdb"
   },
+  "homepage": "https://lorenzopant-docs.vercel.app/",
+  "bugs": {
+    "url": "https://github.com/lorenzopant/tmdb/issues"
+  },
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc --watch",
