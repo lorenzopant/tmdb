@@ -1,5 +1,5 @@
 import { ApiClient } from "../client";
-import { TMDBOptions } from "../types";
+import { LanguageISO6391, TMDBOptions } from "../types";
 
 export abstract class TMDBAPIBase {
 	protected client: ApiClient;
@@ -14,7 +14,19 @@ export abstract class TMDBAPIBase {
 	 * Merges the endpoint's params with TMDB-wide defaults (language, region).
 	 * Works only for param types that include optional `language` and `region` fields.
 	 */
-	protected applyDefaults<T extends object>(params: T): T {
-		return { ...this.defaultOptions, ...params };
+	protected applyDefaults<T extends object>(params?: T): T | undefined {
+		return { ...this.defaultOptions, ...params } as T;
+	}
+
+	/**
+	 * Ensures params contains a language: prefer explicit param, fallback to defaultOptions.language.
+	 * If neither is present, returns the original params unmodified.
+	 */
+	protected withLanguage<T extends { language?: LanguageISO6391 }>(params?: T): T | undefined {
+		if (!params) return undefined; // Handle undefined params
+		if (params.language !== undefined) return params;
+		const defaultLang = this.defaultOptions?.language;
+		if (defaultLang === undefined) return params;
+		return { ...params, language: defaultLang } as T;
 	}
 }

@@ -1,4 +1,6 @@
-export const TMDBCountries: { iso_3166_1: CountryISO3166_1; english_name: string; native_name: string }[] = [
+export type Country = { iso_3166_1: CountryISO3166_1; english_name: string; native_name: string };
+
+export const TMDBCountries: Country[] = [
 	{
 		iso_3166_1: "AD",
 		english_name: "Andorra",

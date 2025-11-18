@@ -35,10 +35,16 @@ describe("Configuration API", () => {
 		expect(Array.isArray(config.change_keys)).toBe(true);
 	});
 
-	it("(POPULAR) should get popular movies", async () => {
-		const popular = await tmdb.movie_lists.popular();
-		expect(popular.page).toBe(1);
-		expect(popular.total_results).toBeGreaterThan(0);
-		expect(popular.results.length).toBeGreaterThan(0);
+	it("(COUNTRIES) should get list of countries used in TMDB", async () => {
+		const countries = await tmdb.config.countries();
+		expect(countries.length).toBeGreaterThan(1);
+		expect(countries[0].iso_3166_1).toBe("AD");
+	});
+
+	it("(COUNTRIES) should get list of countries used in TMDB with specifed language", async () => {
+		const countries = await tmdb.config.countries({ language: "it" });
+		expect(countries.length).toBeGreaterThan(1);
+		expect(countries[1]).toBeDefined();
+		expect(countries[1].native_name).toBe("Emirati Arabi Uniti");
 	});
 });

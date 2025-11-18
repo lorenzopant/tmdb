@@ -1,4 +1,6 @@
-export interface ImageConfiguration {
+import { LanguageISO6391 } from "./lang";
+
+export type ImageConfiguration = {
 	base_url: string;
 	secure_base_url: string;
 	backdrop_sizes: string[];
@@ -6,9 +8,13 @@ export interface ImageConfiguration {
 	poster_sizes: string[];
 	profile_sizes: string[];
 	still_sizes: string[];
-}
+};
 
-export interface TMDBConfigurationResponse {
+export type ConfigurationResponse = {
 	images: ImageConfiguration;
 	change_keys: string[];
-}
+};
+
+export type ConfigurationCountriesParams = {
+	language?: LanguageISO6391;
+};

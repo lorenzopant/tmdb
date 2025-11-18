@@ -9,10 +9,10 @@ export type PaginatedResponse<T> = {
 	results: T[];
 };
 
-export interface TMDBCommonParams {
+export type TMDBCommonParams = {
 	language?: LanguageISO6391;
 	region?: CountryISO3166_1;
-}
+};
 
 export type SearchMoviesParams = {
 	query: string;
