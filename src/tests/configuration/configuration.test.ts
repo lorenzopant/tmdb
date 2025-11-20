@@ -62,4 +62,13 @@ describe("Configuration API", () => {
 		expect(languages[0].iso_639_1).toBeDefined();
 		expect(languages[0].english_name).toBeDefined();
 	});
+
+	it("(TIMEZONES) should get list of timezones used in TMDB", async () => {
+		const timezones = await tmdb.config.timezones();
+		expect(timezones.length).toBeGreaterThan(1);
+		expect(timezones[0]).toBeDefined();
+		expect(timezones[0].iso_3166_1).toBeDefined();
+		expect(timezones[0].zones).toBeDefined();
+		expect(timezones[0].zones.length).toBeGreaterThan(0);
+	});
 });

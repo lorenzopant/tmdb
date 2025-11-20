@@ -1,6 +1,12 @@
 import { ENDPOINTS } from "../routes";
 import { Country } from "../types";
-import { ConfigurationCountriesParams, ConfigurationJob, ConfigurationLanguage, ConfigurationResponse } from "../types/configuration";
+import {
+	ConfigurationCountriesParams,
+	ConfigurationJob,
+	ConfigurationLanguage,
+	ConfigurationResponse,
+	ConfigurationTimezone,
+} from "../types/configuration";
 import { TMDBAPIBase } from "./base";
 
 export class ConfigurationAPI extends TMDBAPIBase {
@@ -50,5 +56,16 @@ export class ConfigurationAPI extends TMDBAPIBase {
 	 */
 	async languages(): Promise<ConfigurationLanguage[]> {
 		return this.client.request<ConfigurationLanguage[]>(ENDPOINTS.CONFIGURATION.LANGUAGES);
+	}
+
+	/**
+	 * Timezones
+	 * GET -  https://api.themoviedb.org/3/configuration/timezones
+	 *
+	 * Get the list of timezones used throughout TMDB.
+	 * @reference https://developer.themoviedb.org/reference/configuration-timezones
+	 */
+	async timezones(): Promise<ConfigurationTimezone[]> {
+		return this.client.request<ConfigurationTimezone[]>(ENDPOINTS.CONFIGURATION.TIMEZONES);
 	}
 }

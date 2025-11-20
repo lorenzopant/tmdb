@@ -29,3 +29,8 @@ export type ConfigurationLanguage = {
 	english_name: string;
 	name: string;
 };
+
+export type ConfigurationTimezone = {
+	iso_3166_1: string;
+	zones: string[];
+};

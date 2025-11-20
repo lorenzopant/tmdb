@@ -4,5 +4,6 @@ export const ENDPOINTS = {
 		COUNTRIES: "/configuration/countries",
 		JOBS: "/configuration/jobs",
 		LANGUAGES: "/configuration/languages",
+		TIMEZONES: "/configuration/timezones",
 	},
 };
