@@ -47,4 +47,11 @@ describe("Configuration API", () => {
 		expect(countries[1]).toBeDefined();
 		expect(countries[1].native_name).toBe("Emirati Arabi Uniti");
 	});
+
+	it("(JOBS) should get list of jobs used in TMDB", async () => {
+		const jobs = await tmdb.config.jobs();
+		expect(jobs.length).toBeGreaterThan(1);
+		expect(jobs[0].department).toBeDefined();
+		expect(jobs[0].jobs.length).toBeGreaterThan(0);
+	});
 });

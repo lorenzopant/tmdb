@@ -1,6 +1,6 @@
 import { ENDPOINTS } from "../routes";
 import { Country } from "../types";
-import { ConfigurationCountriesParams, ConfigurationResponse } from "../types/configuration";
+import { ConfigurationCountriesParams, ConfigurationJob, ConfigurationResponse } from "../types/configuration";
 import { TMDBAPIBase } from "./base";
 
 export class ConfigurationAPI extends TMDBAPIBase {
@@ -28,5 +28,16 @@ export class ConfigurationAPI extends TMDBAPIBase {
 	 */
 	async countries(params?: ConfigurationCountriesParams): Promise<Country[]> {
 		return this.client.request<Country[]>(ENDPOINTS.CONFIGURATION.COUNTRIES, this.withLanguage(params));
+	}
+
+	/**
+	 * Jobs
+	 * GET -  https://api.themoviedb.org/3/configuration/jobs
+	 *
+	 * Get the list of the jobs and departments used throughout TMDB.
+	 * @reference https://developer.themoviedb.org/reference/configuration-jobs
+	 */
+	async jobs(): Promise<ConfigurationJob[]> {
+		return this.client.request<ConfigurationJob[]>(ENDPOINTS.CONFIGURATION.JOBS);
 	}
 }

@@ -18,3 +18,8 @@ export type ConfigurationResponse = {
 export type ConfigurationCountriesParams = {
 	language?: LanguageISO6391;
 };
+
+export type ConfigurationJob = {
+	department: string;
+	jobs: string[];
+};
