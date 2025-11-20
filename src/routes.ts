@@ -5,5 +5,6 @@ export const ENDPOINTS = {
 		JOBS: "/configuration/jobs",
 		LANGUAGES: "/configuration/languages",
 		TIMEZONES: "/configuration/timezones",
+		PRIMARY_TRANSLATIONS: "/configuration/primary_translations",
 	},
 };

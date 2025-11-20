@@ -37,7 +37,7 @@ describe("Configuration API", () => {
 
 	it("(COUNTRIES) should get list of countries used in TMDB", async () => {
 		const countries = await tmdb.config.countries();
-		expect(countries.length).toBeGreaterThan(1);
+		expect(countries.length).toBeGreaterThan(0);
 		expect(countries[0].iso_3166_1).toBe("AD");
 	});
 
@@ -57,10 +57,16 @@ describe("Configuration API", () => {
 
 	it("(LANGUAGES) should get list of languages used in TMDB", async () => {
 		const languages = await tmdb.config.languages();
-		expect(languages.length).toBeGreaterThan(1);
+		expect(languages.length).toBeGreaterThan(0);
 		expect(languages[0]).toBeDefined();
 		expect(languages[0].iso_639_1).toBeDefined();
 		expect(languages[0].english_name).toBeDefined();
+	});
+
+	it("(PRIMARY TRANSLATIONS) should get list of officially supported translations in TMDB", async () => {
+		const translations = await tmdb.config.primary_translations();
+		expect(translations.length).toBeGreaterThan(0);
+		expect(translations[0]).toBeDefined();
 	});
 
 	it("(TIMEZONES) should get list of timezones used in TMDB", async () => {

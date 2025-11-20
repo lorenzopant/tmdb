@@ -59,6 +59,32 @@ export class ConfigurationAPI extends TMDBAPIBase {
 	}
 
 	/**
+	 * Primary Translations
+	 * GET -  https://api.themoviedb.org/3/configuration/primary_translations
+	 *
+	 * Get a list of the officially supported translations on TMDB.
+	 *
+	 * While it's technically possible to add a translation in any one of the languages we have added to TMDB
+	 * (we don't restrict content), the ones listed in this method are the ones
+	 * we also support for localizing the website with which means they are "primary" translations.
+	 *
+	 * These are all specified as IETF tags to identify the languages we use on TMDB. There is one exception which is image languages.
+	 * They are currently only designated by a ISO-639-1 tag.
+	 * This is a planned upgrade for the future.
+	 *
+	 * We're always open to adding more if you think one should be added.
+	 * You can ask about getting a new primary translation added by posting on the forums.
+	 *
+	 * One more thing to mention, these are the translations that map to our website translation project.
+	 * You can view and contribute to that project here.
+	 *
+	 * @reference https://developer.themoviedb.org/reference/configuration-primary-translations
+	 */
+	async primary_translations(): Promise<string[]> {
+		return this.client.request<string[]>(ENDPOINTS.CONFIGURATION.PRIMARY_TRANSLATIONS);
+	}
+
+	/**
 	 * Timezones
 	 * GET -  https://api.themoviedb.org/3/configuration/timezones
 	 *
