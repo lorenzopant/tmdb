@@ -1,6 +1,6 @@
 import { ENDPOINTS } from "../routes";
 import { Country } from "../types";
-import { ConfigurationCountriesParams, ConfigurationJob, ConfigurationResponse } from "../types/configuration";
+import { ConfigurationCountriesParams, ConfigurationJob, ConfigurationLanguage, ConfigurationResponse } from "../types/configuration";
 import { TMDBAPIBase } from "./base";
 
 export class ConfigurationAPI extends TMDBAPIBase {
@@ -39,5 +39,16 @@ export class ConfigurationAPI extends TMDBAPIBase {
 	 */
 	async jobs(): Promise<ConfigurationJob[]> {
 		return this.client.request<ConfigurationJob[]>(ENDPOINTS.CONFIGURATION.JOBS);
+	}
+
+	/**
+	 * Languages
+	 * GET -  https://api.themoviedb.org/3/configuration/languages
+	 *
+	 * Get the list of the languages (ISO 639-1 tags) used throughout TMDB.
+	 * @reference https://developer.themoviedb.org/reference/configuration-languages
+	 */
+	async languages(): Promise<ConfigurationLanguage[]> {
+		return this.client.request<ConfigurationLanguage[]>(ENDPOINTS.CONFIGURATION.LANGUAGES);
 	}
 }

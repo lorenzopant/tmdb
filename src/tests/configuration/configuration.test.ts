@@ -54,4 +54,12 @@ describe("Configuration API", () => {
 		expect(jobs[0].department).toBeDefined();
 		expect(jobs[0].jobs.length).toBeGreaterThan(0);
 	});
+
+	it("(LANGUAGES) should get list of languages used in TMDB", async () => {
+		const languages = await tmdb.config.languages();
+		expect(languages.length).toBeGreaterThan(1);
+		expect(languages[0]).toBeDefined();
+		expect(languages[0].iso_639_1).toBeDefined();
+		expect(languages[0].english_name).toBeDefined();
+	});
 });

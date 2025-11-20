@@ -23,3 +23,9 @@ export type ConfigurationJob = {
 	department: string;
 	jobs: string[];
 };
+
+export type ConfigurationLanguage = {
+	iso_639_1: string;
+	english_name: string;
+	name: string;
+};
