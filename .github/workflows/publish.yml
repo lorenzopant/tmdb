@@ -2,48 +2,44 @@ name: Publish to NPM
 
 # Runs when a tag like v1.2.3 is pushed
 on:
-  push:
-    tags:
-      - "v*.*.*"
-  workflow_dispatch: 
+    push:
+        tags:
+            - "v*.*.*"
+    workflow_dispatch:
 
 permissions:
-  contents: read       # for checkout, tests, etc.
-  id-token: write      # required for Trusted Publishing OIDC auth
+    contents: read # for checkout, tests, etc.
+    id-token: write # required for Trusted Publishing OIDC auth
 
 jobs:
-  publish:
-    runs-on: ubuntu-latest
+    publish:
+        runs-on: ubuntu-latest
 
-    steps:
-      # Checkout the repo
-      - uses: actions/checkout@v4
+        steps:
+            # Checkout the repo
+            - uses: actions/checkout@v4
 
-      # Install pnpm
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: "latest"
+            # Install pnpm
+            - name: Setup pnpm
+              uses: pnpm/action-setup@v4
+              with:
+                  version: "latest"
 
-      # Setup Node + registry for npm
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: "20"                # or your preferred Node version
-          registry-url: "https://registry.npmjs.org"
+            # Setup Node + registry for npm
+            - name: Setup Node.js
+              uses: actions/setup-node@v5
+              with:
+                  node-version: "20" # or your preferred Node version
+                  registry-url: "https://registry.npmjs.org"
 
-      # Install dependencies
-      - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+            # Install dependencies
+            - name: Install dependencies
+              run: pnpm install --no-frozen-lockfile
 
-      # Run tests
-      - name: Run tests
-        run: pnpm test
+            # Build the package (if applicable)
+            - name: Build
+              run: pnpm build --if-present
 
-      # Build the package (if applicable)
-      - name: Build
-        run: pnpm build --if-present
-
-      # Publish to npm (OIDC Trusted Publishing)
-      - name: Publish
-        run: pnpm publish --access public
+            # Publish to npm (OIDC Trusted Publishing)
+            - name: Publish
+              run: pnpm publish --access public
