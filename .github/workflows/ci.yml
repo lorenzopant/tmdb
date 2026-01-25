@@ -30,7 +30,7 @@ jobs:
             - name: Create Env file
               run: |
                   touch .env
-                  echo ENGINE_API_KEY=${{ secrets.TMDB_ACCESS_TOKEN }} >> .env
+                  echo TMDB_ACCESS_TOKEN=${{ env.TMDB_ACCESS_TOKEN }} >> .env
 
             - name: Install dependencies
               run: pnpm install
