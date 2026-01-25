@@ -9,19 +9,26 @@ on:
 jobs:
     tests:
         runs-on: ubuntu-latest
+        env:
+            TMDB_ACCESS_TOKEN: ${{ secrets.TMDB_ACCESS_TOKEN }}
+
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
+
+            - name: Setup action
+              uses: pnpm/action-setup@v2
+              with:
+                  version: 9
 
             - name: Set up Node.js
               uses: actions/setup-node@v4
               with:
                   node-version: 20
+                  cache: pnpm
 
             - name: Install dependencies
-              run: npm install
+              run: pnpm install
 
             - name: Run tests
-              run: npm run test
-              env:
-                  TMDB_ACCESS_TOKEN: ${{ secrets.TMDB_ACCESS_TOKEN }}
+              run: pnpm run test
