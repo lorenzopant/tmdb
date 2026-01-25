@@ -27,6 +27,11 @@ jobs:
                   node-version: 20
                   cache: pnpm
 
+            - name: Create Env file
+              run: |
+                  touch .env
+                  echo ENGINE_API_KEY=${{ secrets.TMDB_ACCESS_TOKEN }} >> .env
+
             - name: Install dependencies
               run: pnpm install
 
