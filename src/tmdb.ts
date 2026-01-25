@@ -2,6 +2,7 @@
 
 import { ApiClient } from "./client";
 import { ConfigurationAPI } from "./endpoints/configuration";
+import { GenresAPI } from "./endpoints/genres";
 import { MovieListsAPI } from "./endpoints/movie_lists";
 import { MoviesAPI } from "./endpoints/movies";
 import { SearchAPI } from "./endpoints/search";
@@ -17,6 +18,7 @@ export class TMDB {
 	public search: SearchAPI;
 	public images: ImageAPI;
 	public config: ConfigurationAPI;
+	public genres: GenresAPI;
 	// etc...
 
 	/**
@@ -33,5 +35,6 @@ export class TMDB {
 		this.search = new SearchAPI(this.client, this.options);
 		this.images = new ImageAPI(this.options.images);
 		this.config = new ConfigurationAPI(this.client, this.options);
+		this.genres = new GenresAPI(this.client, this.options);
 	}
 }
