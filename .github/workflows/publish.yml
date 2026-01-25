@@ -38,7 +38,7 @@ jobs:
 
             # Build the package (if applicable)
             - name: Build
-              run: pnpm build --if-present
+              run: pnpm build
 
             # Publish to npm (OIDC Trusted Publishing)
             - name: Publish
