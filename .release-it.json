@@ -1,8 +1,15 @@
 {
-  "plugins": {
-    "release-it-pnpm": {}
-  },
-  "git": {
-    "commitMessage": "chore: release v${version}"
-  }
+	"plugins": {
+		"release-it-pnpm": {}
+	},
+	"git": {
+		"commitMessage": "chore: release v${version}",
+		"release": true
+	},
+	"npm": {
+		"skipChecks": true
+	},
+	"publishConfig": {
+		"access": "public"
+	}
 }
