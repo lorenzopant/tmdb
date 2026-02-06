@@ -19,8 +19,10 @@ jobs:
 
         steps:
             - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
 
-             # Install pnpm
+              # Install pnpm
             - uses: pnpm/action-setup@v4
               with:
                   version: 8.8.0
@@ -37,8 +39,8 @@ jobs:
 
             - name: Configure git identity
               run: |
-                    git config --global user.name "github-actions[bot]"
-                    git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+                  git config --global user.name "github-actions[bot]"
+                  git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
             # Install dependencies with pnpm
             - run: pnpm install --frozen-lockfile
