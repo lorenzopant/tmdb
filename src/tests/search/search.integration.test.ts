@@ -80,4 +80,15 @@ describe("Search (integration)", () => {
 		expect(keywords.total_results).toBeGreaterThan(0);
 		expect(keywords.results.length).toBeGreaterThan(0);
 	});
+
+	it("(SEARCH PERSON) should search for a person", async () => {
+		const tmdb = new TMDB(token);
+		const persons = await tmdb.search.person({ query: "Brad Pitt" });
+
+		expect(persons.page).toBe(1);
+		expect(persons.total_results).toBeGreaterThan(0);
+		expect(persons.results.length).toBeGreaterThan(0);
+		expect(persons.results[0].name).toBe("Brad Pitt");
+		expect(persons.results[0].known_for[0].media_type).toBe("movie");
+	});
 });

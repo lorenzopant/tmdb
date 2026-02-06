@@ -10,7 +10,7 @@ export const SEARCH_ENDPOINTS = {
 	MOVIE: "/search/movie",
 	COLLECTION: "/search/collection",
 	COMPANY: "/search/company",
-	KEYWORK: "/search/keyword",
+	KEYWORD: "/search/keyword",
 	MULTI: "/search/multi",
 	PERSON: "/search/person",
 	TV: "/search/tv",
@@ -77,7 +77,7 @@ export class SearchAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/search-keyword
 	 */
 	async keyword(params: SearchKeywordsParams): Promise<PaginatedResponse<SearchKeywordItem>> {
-		const endpoint = `${SEARCH_ENDPOINTS.COMPANY}`;
+		const endpoint = `${SEARCH_ENDPOINTS.KEYWORD}`;
 		return this.client.request<PaginatedResponse<SearchKeywordItem>>(endpoint, this.applyDefaults(params));
 	}
 
@@ -91,7 +91,7 @@ export class SearchAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/search-person
 	 */
 	async person(params: SearchPersonParams): Promise<PaginatedResponse<PersonResultItem>> {
-		const endpoint = `${SEARCH_ENDPOINTS.COMPANY}`;
+		const endpoint = `${SEARCH_ENDPOINTS.PERSON}`;
 		return this.client.request<PaginatedResponse<PersonResultItem>>(endpoint, this.applyDefaults(params));
 	}
 }
