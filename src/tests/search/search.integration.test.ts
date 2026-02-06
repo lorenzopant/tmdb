@@ -71,4 +71,13 @@ describe("Search (integration)", () => {
 		expect(companies.results.length).toBeGreaterThan(0);
 		expect(!companies.results[1].origin_country).toBeDefined();
 	});
+
+	it("(SEARCH KEYWORDS) should search for a keyword", async () => {
+		const tmdb = new TMDB(token);
+		const keywords = await tmdb.search.keyword({ query: "love" });
+
+		expect(keywords.page).toBe(1);
+		expect(keywords.total_results).toBeGreaterThan(0);
+		expect(keywords.results.length).toBeGreaterThan(0);
+	});
 });

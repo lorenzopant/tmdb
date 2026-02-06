@@ -1,5 +1,6 @@
 import { SearchCollectionItem } from "../types/collections";
 import { SearchCompanyItem, SearchCompanyParams } from "../types/companies";
+import { SearchKeywordItem, SearchKeywordsParams } from "../types/keywords";
 import { MovieResultItem } from "../types/movies";
 import { PaginatedResponse, SearchCollectionsParams, SearchMoviesParams } from "../types/params";
 import { TMDBAPIBase } from "./base";
@@ -63,5 +64,19 @@ export class SearchAPI extends TMDBAPIBase {
 	async company(params: SearchCompanyParams): Promise<PaginatedResponse<SearchCompanyItem>> {
 		const endpoint = `${SEARCH_ENDPOINTS.COMPANY}`;
 		return this.client.request<PaginatedResponse<SearchCompanyItem>>(endpoint, this.applyDefaults(params));
+	}
+
+	/**
+	 * Search Keyword
+	 * GET - https://api.themoviedb.org/3/search/keyword
+	 *
+	 * Search for keywords by their name.
+	 * @param query Search query (required)
+	 * @param page Page (Defaults to 1)
+	 * @reference https://developer.themoviedb.org/reference/search-keyword
+	 */
+	async keyword(params: SearchKeywordsParams): Promise<PaginatedResponse<SearchKeywordItem>> {
+		const endpoint = `${SEARCH_ENDPOINTS.COMPANY}`;
+		return this.client.request<PaginatedResponse<SearchKeywordItem>>(endpoint, this.applyDefaults(params));
 	}
 }
