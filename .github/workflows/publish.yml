@@ -24,7 +24,7 @@ jobs:
                   registry-url: "https://registry.npmjs.org"
 
             # Update npm for OIDC publishing compatibility
-            - run: npm install -g npm@latest
+            - run: npm install -g npm@11.5.1
 
             # Install pnpm
             - uses: pnpm/action-setup@v4
