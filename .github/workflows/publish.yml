@@ -18,6 +18,12 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
+             # Install pnpm
+            - uses: pnpm/action-setup@v4
+              with:
+                  version: 8.8.0
+                  run_install: false
+
             - uses: actions/setup-node@v5
               with:
                   node-version: "20"
@@ -25,12 +31,6 @@ jobs:
 
             # Update npm for OIDC publishing compatibility
             - run: npm install -g npm@11.5.1
-
-            # Install pnpm
-            - uses: pnpm/action-setup@v4
-              with:
-                  version: 8.8.0
-                  run_install: false
 
             # Install dependencies with pnpm
             - run: pnpm install --frozen-lockfile
