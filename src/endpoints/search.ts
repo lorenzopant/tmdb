@@ -3,6 +3,7 @@ import { SearchCompanyItem, SearchCompanyParams } from "../types/companies";
 import { SearchKeywordItem, SearchKeywordsParams } from "../types/keywords";
 import { MovieResultItem } from "../types/movies";
 import { PaginatedResponse, SearchCollectionsParams, SearchMoviesParams } from "../types/params";
+import { PersonResultItem, SearchPersonParams } from "../types/person";
 import { TMDBAPIBase } from "./base";
 
 export const SEARCH_ENDPOINTS = {
@@ -78,5 +79,19 @@ export class SearchAPI extends TMDBAPIBase {
 	async keyword(params: SearchKeywordsParams): Promise<PaginatedResponse<SearchKeywordItem>> {
 		const endpoint = `${SEARCH_ENDPOINTS.COMPANY}`;
 		return this.client.request<PaginatedResponse<SearchKeywordItem>>(endpoint, this.applyDefaults(params));
+	}
+
+	/**
+	 * Search Person
+	 * GET - https://api.themoviedb.org/3/search/person
+	 *
+	 * Search for people by their name and also known as names.
+	 * @param query Search query (required)
+	 * @param page Page (Defaults to 1)
+	 * @reference https://developer.themoviedb.org/reference/search-person
+	 */
+	async person(params: SearchPersonParams): Promise<PaginatedResponse<PersonResultItem>> {
+		const endpoint = `${SEARCH_ENDPOINTS.COMPANY}`;
+		return this.client.request<PaginatedResponse<PersonResultItem>>(endpoint, this.applyDefaults(params));
 	}
 }
