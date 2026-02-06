@@ -20,7 +20,10 @@
 		"test:coverage": "vitest --coverage",
 		"prepare": "husky",
 		"lint": "eslint .",
-		"patch": "npm version patch && npm publish"
+		"release": "pnpm release:patch",
+		"release:patch": "pnpm version patch --git-tag-version && git push --follow-tags",
+		"release:minor": "pnpm version minor --git-tag-version && git push --follow-tags",
+		"release:major": "pnpm version major --git-tag-version && git push --follow-tags"
 	},
 	"author": "Lorenzo Pantano",
 	"license": "MIT",
