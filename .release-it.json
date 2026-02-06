@@ -2,6 +2,9 @@
 	"plugins": {
 		"release-it-pnpm": {}
 	},
+	"github": {
+		"release": true
+	},
 	"git": {
 		"commitMessage": "chore: release v${version}",
 		"release": true
