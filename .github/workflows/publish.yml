@@ -14,6 +14,8 @@ jobs:
         permissions:
             contents: write # For git operations
             id-token: write # REQUIRED FOR OIDC
+        env:
+            TMDB_ACCESS_TOKEN: ${{ secrets.TMDB_ACCESS_TOKEN }}
 
         steps:
             - uses: actions/checkout@v4
