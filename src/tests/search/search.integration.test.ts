@@ -43,4 +43,52 @@ describe("Search (integration)", () => {
 		// Expect movie title to be in English since we overrode the default
 		expect(movies.results[0].title).toBe("Fight Club");
 	});
+
+	it("(SEARCH COLLECTIONS) should search for a collection", async () => {
+		const tmdb = new TMDB(token);
+		const collections = await tmdb.search.collections({ query: "Avengers" });
+
+		expect(collections.page).toBe(1);
+		expect(collections.total_results).toBeGreaterThan(0);
+		expect(collections.results.length).toBeGreaterThan(0);
+	});
+
+	it("(SEARCH COMPANY) should search for a company", async () => {
+		const tmdb = new TMDB(token);
+		const companies = await tmdb.search.company({ query: "HBO" });
+
+		expect(companies.page).toBe(1);
+		expect(companies.total_results).toBeGreaterThan(0);
+		expect(companies.results.length).toBeGreaterThan(0);
+	});
+
+	it("(SEARCH COMPANY) should search for a company with empty country", async () => {
+		const tmdb = new TMDB(token);
+		const companies = await tmdb.search.company({ query: "HBO" });
+
+		expect(companies.page).toBe(1);
+		expect(companies.total_results).toBeGreaterThan(0);
+		expect(companies.results.length).toBeGreaterThan(0);
+		expect(!companies.results[1].origin_country).toBeDefined();
+	});
+
+	it("(SEARCH KEYWORDS) should search for a keyword", async () => {
+		const tmdb = new TMDB(token);
+		const keywords = await tmdb.search.keyword({ query: "love" });
+
+		expect(keywords.page).toBe(1);
+		expect(keywords.total_results).toBeGreaterThan(0);
+		expect(keywords.results.length).toBeGreaterThan(0);
+	});
+
+	it("(SEARCH PERSON) should search for a person", async () => {
+		const tmdb = new TMDB(token);
+		const persons = await tmdb.search.person({ query: "Brad Pitt" });
+
+		expect(persons.page).toBe(1);
+		expect(persons.total_results).toBeGreaterThan(0);
+		expect(persons.results.length).toBeGreaterThan(0);
+		expect(persons.results[0].name).toBe("Brad Pitt");
+		expect(persons.results[0].known_for[0].media_type).toBe("movie");
+	});
 });

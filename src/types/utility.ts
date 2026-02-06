@@ -41,3 +41,5 @@ export type DefaultImageSizesConfig = {
 	profiles?: ProfileSize;
 	still?: StillSize;
 };
+
+export type MediaType = "movie" | "tv";
