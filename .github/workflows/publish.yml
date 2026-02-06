@@ -33,6 +33,11 @@ jobs:
             # Update npm for OIDC publishing compatibility
             - run: npm install -g npm@11.5.1
 
+            - name: Configure git identity
+              run: |
+                    git config --global user.name "github-actions[bot]"
+                    git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
             # Install dependencies with pnpm
             - run: pnpm install --frozen-lockfile
 
