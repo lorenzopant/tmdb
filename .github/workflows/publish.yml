@@ -33,7 +33,7 @@ jobs:
           run_install: false
 
       # Install dependencies with pnpm
-      - run: pnpm install --frozen-lockfile
+      - run: pnpm install --no-frozen-lockfile
 
       # Run release
       - run: pnpm exec release-it --ci
