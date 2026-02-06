@@ -24,6 +24,8 @@ export type SearchMoviesParams = {
 	year?: string;
 };
 
+export type SearchCollectionsParams = Omit<SearchMoviesParams, "primary_release_year" | "year">;
+
 export type MovieListParams = {
 	language?: LanguageISO6391;
 	page?: number;
