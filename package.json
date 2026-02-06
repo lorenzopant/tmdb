@@ -30,6 +30,7 @@
 		"api",
 		"movies"
 	],
+	"packageManager": "pnpm@8.8.0",
 	"devDependencies": {
 		"@eslint/compat": "^2.0.0",
 		"@eslint/eslintrc": "^3.3.1",
