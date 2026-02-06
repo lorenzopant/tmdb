@@ -9,33 +9,33 @@ on:
 
 # GitHub Actions example
 jobs:
-  release:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write # For git operations
-      id-token: write # REQUIRED FOR OIDC
+    release:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write # For git operations
+            id-token: write # REQUIRED FOR OIDC
 
-    steps:
-      - uses: actions/checkout@v4
+        steps:
+            - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v5
-        with:
-          node-version: "lts/*"
-          registry-url: "https://registry.npmjs.org"
+            - uses: actions/setup-node@v5
+              with:
+                  node-version: "lts/*"
+                  registry-url: "https://registry.npmjs.org"
 
-      # Update npm for OIDC publishing compatibility
-      - run: npm install -g npm@latest
+            # Update npm for OIDC publishing compatibility
+            - run: npm install -g npm@latest
 
-      # Install pnpm
-      - uses: pnpm/action-setup@v4
-        with:
-          version: latest
-          run_install: false
+            # Install pnpm
+            - uses: pnpm/action-setup@v4
+              with:
+                  version: latest
+                  run_install: false
 
-      # Install dependencies with pnpm
-      - run: pnpm install --no-frozen-lockfile
+            # Install dependencies with pnpm
+            - run: pnpm install --frozen-lockfile
 
-      # Run release
-      - run: pnpm exec release-it --ci
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            # Run release
+            - run: pnpm exec release-it --ci
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
