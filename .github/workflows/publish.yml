@@ -46,6 +46,10 @@ jobs:
             # Install dependencies with pnpm
             - run: pnpm install --frozen-lockfile
 
+            # Build
+            - name: Build
+              run: pnpm build
+
             # Run release
             - run: pnpm exec release-it --ci
               env:
