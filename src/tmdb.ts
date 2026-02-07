@@ -6,6 +6,7 @@ import { GenresAPI } from "./endpoints/genres";
 import { MovieListsAPI } from "./endpoints/movie_lists";
 import { MoviesAPI } from "./endpoints/movies";
 import { SearchAPI } from "./endpoints/search";
+import { TVSeriesListsAPI } from "./endpoints/tv_series_lists";
 import { Errors } from "./errors/messages";
 import { ImageAPI } from "./images/images";
 import { TMDBOptions } from "./types";
@@ -19,6 +20,7 @@ export class TMDB {
 	public images: ImageAPI;
 	public config: ConfigurationAPI;
 	public genres: GenresAPI;
+	public tv_lists: TVSeriesListsAPI;
 	// etc...
 
 	/**
@@ -36,5 +38,6 @@ export class TMDB {
 		this.images = new ImageAPI(this.options.images);
 		this.config = new ConfigurationAPI(this.client, this.options);
 		this.genres = new GenresAPI(this.client, this.options);
+		this.tv_lists = new TVSeriesListsAPI(this.client, this.options);
 	}
 }
