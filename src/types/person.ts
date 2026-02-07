@@ -1,8 +1,5 @@
 import { MovieResultItem } from "./movies";
-import { SearchMoviesParams } from "./params";
 import { MediaType } from "./utility";
-
-export type SearchPersonParams = Pick<SearchMoviesParams, "query" | "page" | "include_adult" | "language">;
 
 export type PersonResultItem = {
 	adult: boolean;

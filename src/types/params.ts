@@ -25,6 +25,9 @@ export type SearchMoviesParams = {
 };
 
 export type SearchCollectionsParams = Omit<SearchMoviesParams, "primary_release_year" | "year">;
+export type SearchKeywordsParams = Pick<SearchMoviesParams, "query" | "page">;
+export type SearchCompanyParams = Pick<SearchMoviesParams, "query" | "page">;
+export type SearchPersonParams = Pick<SearchMoviesParams, "query" | "page" | "include_adult" | "language">;
 
 export type MovieListParams = {
 	language?: LanguageISO6391;
