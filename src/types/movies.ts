@@ -53,7 +53,6 @@ export type MovieResultItem = {
 	original_title: string;
 	overview: string;
 	poster_path: string;
-	media_type: string;
 	adult: boolean;
 	original_language: string;
 	genre_ids: number[];

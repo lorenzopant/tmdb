@@ -1,6 +1,7 @@
 import { CountryISO3166_1 } from "./countries";
 import { BackdropSize, LogoSize, PosterSize, ProfileSize, StillSize } from "./images";
 import { LanguageISO6391 } from "./lang";
+import { Timezone } from "./timezones";
 
 export type TMDBOptions = {
 	/**
@@ -19,6 +20,13 @@ export type TMDBOptions = {
 	 * Provide images default configuration
 	 */
 	images?: ImagesConfig;
+	/**
+	 * Provide a timezone default for all the TV Series related queries
+	 * which support the timezone param.
+	 * The timezone is used to calculate the “today” for airing TV shows.
+	 * Read more: https://www.themoviedb.org/talk/54c554679251416eae010d6d
+	 */
+	timezone?: Timezone;
 };
 
 export type ImagesConfig = {
