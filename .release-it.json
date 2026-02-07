@@ -1,6 +1,10 @@
 {
 	"plugins": {
-		"release-it-pnpm": {}
+		"release-it-pnpm": {},
+		"@release-it/conventional-changelog": {
+			"preset": "conventionalcommits",
+			"infile": "CHANGELOG.md"
+		}
 	},
 	"github": {
 		"release": true
