@@ -2,7 +2,7 @@ import { CountryISO3166_1 } from "./countries";
 import { LanguageISO6391 } from "./lang";
 import { MovieAppendToResponseNamespace } from "./movies";
 import { Timezone } from "./timezones";
-import { TVAppendToResponseNamespace } from "./tv";
+import { TVAppendToResponseNamespace } from "./tv/tv_series";
 
 export type PaginatedResponse<T> = {
 	page: number;

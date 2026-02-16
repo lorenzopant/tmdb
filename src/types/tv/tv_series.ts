@@ -1,8 +1,8 @@
-import { Cast, Crew, Genre, ImageItem, Keyword, ProductionCompany, ProductionCountry, SpokenLanguage, VideoItem } from "./common";
-import { CountryISO3166_1 } from "./countries";
-import { NetworkItem } from "./networks";
-import { PaginatedResponse } from "./params";
+import { Credit, Genre, ProductionCompany, ProductionCountry, SpokenLanguage } from "../common";
+import { CountryISO3166_1 } from "../countries";
+import { NetworkItem } from "../networks";
 import { TVEpisodeItem } from "./tv_episodes";
+import { TVCredits, TVExternalIDs, TVImages, TVKeywords, TVRecommendations, TVSimilar, TVVideos } from "./tv_others";
 import { TVSeasonItem } from "./tv_seasons";
 
 /**
@@ -43,38 +43,10 @@ export type TVSeriesResultItem = {
 	original_title: string;
 };
 
-export type TVCredits = {
-	id: number;
-	cast: Cast[];
-	crew: Crew[];
-};
-
-export type TVExternalIDs = {
-	id: number;
-	imdb_id: string | null;
-	facebook_id: string | null;
-	twitter_id: string | null;
-	instagram_id: string | null;
-};
-
-export type TVKeywords = { id: number; results: Keyword[] };
-
-export type TVImages = {
-	id: number;
-	backdrops: ImageItem[];
-	logos: ImageItem[];
-	posters: ImageItem[];
-	stills?: ImageItem[];
-};
-
-export type TVVideos = { id: number; results: VideoItem[] };
-
-export type TVRecommendations = PaginatedResponse<TVSeriesResultItem>;
-export type TVSimilar = PaginatedResponse<TVSeriesResultItem>;
-
 export type TVDetails = {
+	/** Relative path to the backdrop image for the series (nullable on some responses). */
 	backdrop_path: string | null;
-	created_by: { id: number; credit_id: string; name: string; gender?: number; profile_path?: string }[];
+	created_by: Pick<Credit, "id" | "credit_id" | "gender" | "name" | "profile_path">[];
 	episode_run_time: number[];
 	first_air_date: string;
 	genres: Genre[];

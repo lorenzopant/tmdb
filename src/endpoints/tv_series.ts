@@ -1,6 +1,6 @@
 import { ApiClient } from "../client";
 import { TMDBOptions } from "../types";
-import { TVDetails, TVDetailsWithAppends, TVAppendToResponseNamespace } from "../types/tv";
+import { TVDetails, TVDetailsWithAppends, TVAppendToResponseNamespace } from "../types/tv/tv_series";
 import { TVDetailsParams } from "../types/params";
 
 export const TV_SERIES_ENDPOINTS = {
