@@ -1,10 +1,12 @@
 import { Cast, Crew, ImageItem, Keyword, VideoItem } from "../common";
 import { PaginatedResponse } from "../params";
+import { TVAggregateCreditsCastItem, TVAggregateCreditsCrewItem } from "./tv_credits";
 import { TVSeriesResultItem } from "./tv_series";
 
 /**
- * The credits for a TV show.
- * Lists of all known cast and crew members.
+ * This is the original TV credits method which returns the latest season credit data.
+ * If you would like to request the aggregate view (which is what you see on the TMDB website)
+ * you should use the aggregate_credits method.
  */
 export type TVCredits = {
 	/** TMDB unique identifier for the TV show. */
@@ -80,3 +82,17 @@ export type TVRecommendations = PaginatedResponse<TVSeriesResultItem>;
 
 /** List of TV shows that are similar to a TV show. */
 export type TVSimilar = PaginatedResponse<TVSeriesResultItem>;
+
+/**
+ * Aggregate credits for a TV show, including cast and crew across all seasons and episodes.
+ */
+export type TVAggregateCredits = {
+	/** TMDB unique identifier for the TV show. */
+	id: number;
+
+	/** List of all the known cast for the TV show. */
+	cast: TVAggregateCreditsCastItem[];
+
+	/** List of all the known crew members for the TV show. */
+	crew: TVAggregateCreditsCrewItem[];
+};

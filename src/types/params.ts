@@ -1,8 +1,6 @@
 import { CountryISO3166_1 } from "./countries";
 import { Language, LanguageISO6391 } from "./lang";
 import { MovieAppendToResponseNamespace } from "./movies";
-import { Timezone } from "./timezones";
-import { TVAppendToResponseNamespace } from "./tv/tv_series";
 
 export type PaginatedResponse<T> = {
 	page: number;
@@ -94,16 +92,3 @@ export type MovieRecommendationsParams = {
 export type MovieSimilarParams = MovieRecommendationsParams;
 export type MovieVideosParams = MovieCreditsParams;
 export type MovieReviewsParams = MovieRecommendationsParams;
-
-/** TV Series */
-export type TVSeriesListParams = {
-	language?: Language;
-	page?: number;
-	timezone?: Timezone;
-};
-
-export type TVDetailsParams = {
-	series_id: number;
-	append_to_response?: TVAppendToResponseNamespace[];
-	language?: Language;
-};
