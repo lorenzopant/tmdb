@@ -1,4 +1,4 @@
-import { LanguageISO6391 } from "./lang";
+import { Language } from "./lang";
 
 export type ImageConfiguration = {
 	base_url: string;
@@ -16,7 +16,7 @@ export type ConfigurationResponse = {
 };
 
 export type ConfigurationCountriesParams = {
-	language?: LanguageISO6391;
+	language?: Language;
 };
 
 export type ConfigurationJob = {

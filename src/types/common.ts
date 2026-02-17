@@ -71,16 +71,16 @@ export type Collection = {
 };
 
 /**
- * Represents a cast member in a movie or TV show.
+ * Represents common class for cast and crew types
  */
-export type Cast = {
+export type Credit = {
 	// ** Indicates whether the cast member is an adult
 	adult: boolean;
 
 	// ** The gender of the cast member, or null if not specified (1 = female, 2 = male)
 	gender: number | null;
 
-	// ** The unique identifier for the cast member
+	// ** The unique identifier for the crew/cast member
 	id: number;
 
 	// ** The department the cast member is known for
@@ -98,14 +98,19 @@ export type Cast = {
 	// ** The path to the profile image of the cast member, or null if not available
 	profile_path?: string | null;
 
+	// ** The unique identifier for the credit
+	credit_id: string;
+};
+
+/**
+ * Represents a cast member in a movie or TV show.
+ */
+export type Cast = Credit & {
 	// ** The unique identifier for the cast credit
 	cast_id: number;
 
 	// ** The character played by the cast member
 	character: string;
-
-	// ** The unique identifier for the credit
-	credit_id: string;
 
 	// ** The order of the cast member in the credits
 	order: number;
@@ -114,34 +119,7 @@ export type Cast = {
 /**
  * Represents a crew member in a movie or TV show.
  */
-export type Crew = {
-	// ** Indicates whether the crew member is an adult
-	adult: boolean;
-
-	// ** The gender of the crew member, or null if not specified (1 = female, 2 = male)
-	gender: number | null;
-
-	// ** The unique identifier for the crew member
-	id: number;
-
-	// ** The department the crew member is known for
-	known_for_department: string;
-
-	// ** The name of the crew member
-	name: string;
-
-	// ** The original name of the crew member
-	original_name: string;
-
-	// ** The popularity score of the crew member
-	popularity: number;
-
-	// ** The path to the profile image of the crew member, or null if not available
-	profile_path?: string | null;
-
-	// ** The unique identifier for the credit
-	credit_id: string;
-
+export type Crew = Credit & {
 	// ** The department the crew member worked in
 	department: string;
 

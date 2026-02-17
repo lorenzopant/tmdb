@@ -1,7 +1,6 @@
 import { CountryISO3166_1 } from "./countries";
-import { LanguageISO6391 } from "./lang";
+import { Language, LanguageISO6391 } from "./lang";
 import { MovieAppendToResponseNamespace } from "./movies";
-import { Timezone } from "./timezones";
 
 export type PaginatedResponse<T> = {
 	page: number;
@@ -11,14 +10,14 @@ export type PaginatedResponse<T> = {
 };
 
 export type TMDBCommonParams = {
-	language?: LanguageISO6391;
+	language?: Language;
 	region?: CountryISO3166_1;
 };
 
 export type SearchMoviesParams = {
 	query: string;
 	include_adult?: boolean;
-	language?: LanguageISO6391;
+	language?: Language;
 	page?: number;
 	primary_release_year?: string;
 	region?: CountryISO3166_1;
@@ -31,7 +30,7 @@ export type SearchCompanyParams = Pick<SearchMoviesParams, "query" | "page">;
 export type SearchPersonParams = Pick<SearchMoviesParams, "query" | "page" | "include_adult" | "language">;
 
 export type MovieListParams = {
-	language?: LanguageISO6391;
+	language?: Language;
 	page?: number;
 	region?: CountryISO3166_1;
 };
@@ -39,7 +38,7 @@ export type MovieListParams = {
 export type MovieDetailsParams = {
 	movie_id: number;
 	append_to_response?: MovieAppendToResponseNamespace[];
-	language?: LanguageISO6391;
+	language?: Language;
 };
 
 export type MovieAlternativeTitlesParams = {
@@ -49,7 +48,7 @@ export type MovieAlternativeTitlesParams = {
 
 export type MovieCreditsParams = {
 	movie_id: number;
-	language?: LanguageISO6391;
+	language?: Language;
 };
 
 export type MovieKeywordsParams = { movie_id: number };
@@ -65,25 +64,31 @@ export type MovieChangesParams = {
 	end_date?: string;
 };
 
+/**
+ * MovieImagesParams
+ * language and include_image_language params still only support
+ * ISO_6391 language definition according to TMDB docs:
+ *
+ * "These are all specified as IETF tags to identify the languages we use on TMDB.
+ * There is one exception which is image languages.
+ * They are currently only designated by a ISO-639-1 tag. This is a planned upgrade for the future."
+ * https://developer.themoviedb.org/reference/configuration-primary-translations
+ *
+ * But as for my tests, language in format "en-US" is still a valid param and it is accepted.
+ * So we allow for both.
+ */
 export type MovieImagesParams = {
 	movie_id: number;
-	language?: LanguageISO6391;
-	include_image_language?: LanguageISO6391;
+	language?: Language | LanguageISO6391;
+	include_image_language?: Language | LanguageISO6391;
 };
 
 export type MovieRecommendationsParams = {
 	movie_id: number;
 	page?: number;
-	language?: LanguageISO6391;
+	language?: Language;
 };
 
 export type MovieSimilarParams = MovieRecommendationsParams;
 export type MovieVideosParams = MovieCreditsParams;
 export type MovieReviewsParams = MovieRecommendationsParams;
-
-/** TV Series */
-export type TVSeriesListParams = {
-	language?: LanguageISO6391;
-	page?: number;
-	timezone?: Timezone;
-};

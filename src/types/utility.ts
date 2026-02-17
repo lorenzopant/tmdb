@@ -1,6 +1,6 @@
 import { CountryISO3166_1 } from "./countries";
 import { BackdropSize, LogoSize, PosterSize, ProfileSize, StillSize } from "./images";
-import { LanguageISO6391 } from "./lang";
+import { Language } from "./lang";
 import { Timezone } from "./timezones";
 
 export type TMDBOptions = {
@@ -8,7 +8,7 @@ export type TMDBOptions = {
 	 * The language to use for requests (ISO 639-1 code)
 	 * This provides localization and translated data.
 	 */
-	language?: LanguageISO6391;
+	language?: Language;
 	/**
 	 * Region codes follow ISO 3166-1 (e.g. 'US', 'IT', 'JP') and are used to localize results.
 	 * They affect release dates, age certifications, watch providers, and filtered movie lists.
@@ -51,3 +51,9 @@ export type DefaultImageSizesConfig = {
 };
 
 export type MediaType = "movie" | "tv";
+
+/**
+ * Forces TypeScript to resolve and display the final shape of a type.
+ * Useful for seeing the actual properties when hovering in the IDE.
+ */
+export type Prettify<T> = T extends object ? (T extends infer O ? { [K in keyof O]: Prettify<O[K]> } : never) : T;
