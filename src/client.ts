@@ -23,7 +23,40 @@ export class ApiClient {
 		});
 
 		if (!res.ok) await this.handleError(res);
-		return res.json();
+		const data = await res.json();
+		return this.sanitizeNulls<T>(data);
+	}
+
+	/**
+	 * Recursively converts null values to undefined in API responses.
+	 * This allows TypeScript optional properties to work as expected.
+	 * This will automatically convert null or empty responses from TMDB into undefined values.
+	 */
+	private sanitizeNulls<T>(value: unknown): T {
+		// Only convert null to undefined, keep undefined as-is
+		if (value === null) {
+			return undefined as T;
+		}
+
+		if (value === undefined) {
+			return undefined as T;
+		}
+
+		if (typeof value !== "object") {
+			return value as T;
+		}
+
+		if (Array.isArray(value)) {
+			return value.map((v) => this.sanitizeNulls<unknown>(v)) as T;
+		}
+
+		const sanitized: Record<string, unknown> = {};
+		for (const key in value) {
+			if (Object.prototype.hasOwnProperty.call(value, key)) {
+				sanitized[key] = this.sanitizeNulls<unknown>((value as Record<string, unknown>)[key]);
+			}
+		}
+		return sanitized as T;
 	}
 
 	private async handleError(res: Response): Promise<never> {
