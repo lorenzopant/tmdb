@@ -51,3 +51,9 @@ export type DefaultImageSizesConfig = {
 };
 
 export type MediaType = "movie" | "tv";
+
+/**
+ * Forces TypeScript to resolve and display the final shape of a type.
+ * Useful for seeing the actual properties when hovering in the IDE.
+ */
+export type Prettify<T> = T extends object ? (T extends infer O ? { [K in keyof O]: Prettify<O[K]> } : never) : T;
