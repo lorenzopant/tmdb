@@ -16,7 +16,7 @@ describe("MoviesAPI", () => {
 
 	it("should call client.request with the correct parameters", async () => {
 		const movie_id = 550;
-		const language = "en";
+		const language = "en-US";
 		const append_to_response: MovieAppendToResponseNamespace[] = ["credits", "images"];
 
 		await moviesAPI.details({ movie_id, language, append_to_response });

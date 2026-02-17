@@ -5,7 +5,7 @@ import { TMDB } from "../../tmdb";
 const token = process.env.TMDB_ACCESS_TOKEN;
 if (!token) throw new Error("TMDB_ACCESS_TOKEN is not set, plaase set it in your enviroment variables.");
 
-const tmdb = new TMDB(token, { language: "it", region: "IT", timezone: "Europe/Rome" });
+const tmdb = new TMDB(token, { language: "it-IT", region: "IT", timezone: "Europe/Rome" });
 
 describe("TV Series (integration)", () => {
 	it("(DETAILS) should get now details about a tv show", async () => {

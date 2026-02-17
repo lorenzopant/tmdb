@@ -5,7 +5,7 @@ import { TMDB } from "../../tmdb";
 const token = process.env.TMDB_ACCESS_TOKEN;
 if (!token) throw new Error("TMDB_ACCESS_TOKEN is not set, plaase set it in your enviroment variables.");
 
-const tmdb = new TMDB(token, { language: "it", region: "IT" });
+const tmdb = new TMDB(token, { language: "it-IT", region: "IT" });
 
 describe("Configuration API", () => {
 	it("should fetch the configuration successfully", async () => {
@@ -42,7 +42,7 @@ describe("Configuration API", () => {
 	});
 
 	it("(COUNTRIES) should get list of countries used in TMDB with specifed language", async () => {
-		const countries = await tmdb.config.countries({ language: "it" });
+		const countries = await tmdb.config.countries({ language: "it-IT" });
 		expect(countries.length).toBeGreaterThan(1);
 		expect(countries[1]).toBeDefined();
 		expect(countries[1].native_name).toBe("Emirati Arabi Uniti");
