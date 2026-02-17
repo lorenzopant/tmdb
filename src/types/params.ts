@@ -81,7 +81,7 @@ export type MovieChangesParams = {
  */
 export type MovieImagesParams = {
 	movie_id: number;
-	language?: Language;
+	language?: Language | LanguageISO6391;
 	include_image_language?: Language | LanguageISO6391;
 };
 
