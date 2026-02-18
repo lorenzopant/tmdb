@@ -1,6 +1,6 @@
 {
 	"name": "@lorenzopant/tmdb",
-	"version": "1.1.3",
+	"version": "1.1.4",
 	"description": "A completely type-safe The Movie Database (TMDB) API wrapper for typescript applications.",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
