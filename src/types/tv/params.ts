@@ -29,3 +29,8 @@ export type TVAggregateCreditsParams = Prettify<TVBaseParam & WithParams<"langua
  * Parameters for fetching tv show change history.
  */
 export type TVChangeParams = Prettify<TVBaseParam & WithParams<"page"> & DateRange>;
+
+/**
+ * Parameters for fetching tv show credits (cast and crew last season).
+ */
+export type TVCreditsParams = Prettify<TVBaseParam & WithParams<"language">>;

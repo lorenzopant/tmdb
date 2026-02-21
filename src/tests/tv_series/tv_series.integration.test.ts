@@ -44,4 +44,11 @@ describe("TV Series (integration)", () => {
 		expect(show.results[0].iso_3166_1).toBe("DE");
 		expect(show.results[0].rating).toBe("16");
 	});
+
+	it("(CREDITS) should get credits for a tv show", async () => {
+		const show = await tmdb.tv_series.credits({ series_id: 1396 });
+		expect(Array.isArray(show.cast)).toBe(true);
+		expect(show.cast[0].name).toBe("Bryan Cranston");
+		expect(show.crew[0].name).toBe("Thomas Schnauz");
+	});
 });

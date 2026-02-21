@@ -1,4 +1,13 @@
-import { TVAggregateCreditsParams, TVAlternativeTitles, TVBaseParam, TVChangeParams, TVDetailsParams, TVSeriesChanges } from "../types/tv";
+import {
+	TVAggregateCreditsParams,
+	TVAlternativeTitles,
+	TVBaseParam,
+	TVChangeParams,
+	TVCredits,
+	TVCreditsParams,
+	TVDetailsParams,
+	TVSeriesChanges,
+} from "../types/tv";
 import { TVAggregateCredits } from "../types/tv/aggregate_credits";
 import { TVContentRatings } from "../types/tv/content_ratings";
 import { TVAppendToResponseNamespace, TVDetails, TVDetailsWithAppends } from "../types/tv/tv_series";
@@ -10,12 +19,13 @@ export const TV_SERIES_ENDPOINTS = {
 	TV_ALTERNATIVE_TITLES: "/alternative_titles",
 	TV_CHANGES: "/changes",
 	TV_CONTENT_RATINGS: "/content_ratings",
+	TV_CREDITS: "/credits",
 };
 
 export class TVSeriesAPI extends TMDBAPIBase {
 	/**
 	 * Details
-	 * GET - https://api.themoviedb.org/3/tv/{tv_id}
+	 * GET - https://api.themoviedb.org/3/tv/{series_id}
 	 *
 	 * Get the top level details of a TV series by ID.
 	 * @param series_id The ID of the TV series.
@@ -34,7 +44,7 @@ export class TVSeriesAPI extends TMDBAPIBase {
 
 	/**
 	 * Aggregate Credits
-	 * GET - https://api.themoviedb.org/3/tv/{tv_id}/aggregate_credits
+	 * GET - https://api.themoviedb.org/3/tv/{series_id}/aggregate_credits
 	 *
 	 * Get the aggregate credits (cast and crew) that have been added to a TV show.
 	 *
@@ -53,7 +63,7 @@ export class TVSeriesAPI extends TMDBAPIBase {
 
 	/**
 	 * Alternative Titles
-	 * GET - https://api.themoviedb.org/3/tv/{tv_id}/alternative_tiles
+	 * GET - https://api.themoviedb.org/3/tv/{series_id}/alternative_tiles
 	 *
 	 * Get the alternative titles that have been added to a TV show.
 	 * @param series_id The ID of the TV series.
@@ -67,7 +77,7 @@ export class TVSeriesAPI extends TMDBAPIBase {
 
 	/**
 	 * Changes
-	 * GET - https://api.themoviedb.org/3/tv/{tv_id}/changes
+	 * GET - https://api.themoviedb.org/3/tv/{series_id}/changes
 	 *
 	 * Get the changes for a TV show. By default only the last 24 hours are returned.
 	 * You can query up to 14 days in a single query by using the start_date and end_date query parameters.
@@ -89,7 +99,7 @@ export class TVSeriesAPI extends TMDBAPIBase {
 
 	/**
 	 * Content Ratings
-	 * GET - https://api.themoviedb.org/3/tv/{tv_id}/content_ratings
+	 * GET - https://api.themoviedb.org/3/tv/{series_id}/content_ratings
 	 *
 	 * Get the content ratings that have been added to a TV show.
 	 * @param series_id The ID of the TV series.
@@ -99,5 +109,25 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	async content_ratings(params: TVBaseParam): Promise<TVContentRatings> {
 		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_CONTENT_RATINGS}`;
 		return this.client.request(endpoint);
+	}
+
+	/**
+	 * Credits
+	 * GET - https://api.themoviedb.org/3/tv/{series_id}/credits
+	 *
+	 * Get the latest season credits of a TV show.
+	 *
+	 * This is the original TV credits method which returns the latest season credit data.
+	 * If you would like to request the aggregate view (which is what you see on our website)
+	 * you should use the /aggregate_credits method.
+	 * @param series_id The ID of the TV series.
+	 * @param language The Language for the credits
+	 * @returns A promise that resolves to the TV series credits.
+	 * @reference https://developer.themoviedb.org/reference/tv-series-credits
+	 */
+	async credits(params: TVCreditsParams): Promise<TVCredits> {
+		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_CREDITS}`;
+		const { language = this.defaultOptions.language, ...rest } = params;
+		return this.client.request(endpoint, { language, ...rest });
 	}
 }
