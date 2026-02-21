@@ -1,4 +1,4 @@
-// src/types/common.ts
+// src/types/common/media.ts
 
 /**
  * Represents a genre of a movie or TV show.
@@ -135,43 +135,28 @@ export type Keyword = {
 	name: string;
 };
 
-export type Changes = {
-	changes: Change[];
-};
-
-export type Change = {
-	key: string;
-	items: ChangeItem[];
-};
-
-export type ChangeItem = {
-	id: number;
-	action: string;
-	time: string;
-	iso_639_1: string;
-	iso_3166_1: string;
-	value: object;
-};
-
-export type ImageItem = {
-	aspect_ratio: number;
-	height: number;
-	iso_639_1: string | null;
-	file_path: string;
-	vote_average: number;
-	vote_count: number;
-	width: number;
-};
-
+/**
+ * Video metadata and details
+ */
 export type VideoItem = {
+	/** ISO 639-1 language code of the video */
 	iso_649_1: string;
+	/** ISO 3166-1 country code where the video is available */
 	iso_3166_1: string;
+	/** Video title or name */
 	name: string;
+	/** Unique video key/ID on the hosting platform */
 	key: string;
+	/** Video hosting platform (e.g., "YouTube", "Vimeo") */
 	site: string;
+	/** Video resolution/size (e.g., 1080, 720) */
 	size: number;
+	/** Type of video (e.g., "Trailer", "Teaser", "Clip", "Featurette", "Behind the Scenes") */
 	type: string;
+	/** Whether this is an official video from the content distributor */
 	official: boolean;
+	/** Publication date and time (ISO 8601 format) */
 	published_at: string;
+	/** Unique video identifier in TMDB */
 	id: string;
 };

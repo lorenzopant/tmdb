@@ -2,7 +2,6 @@
 
 import {
 	Cast,
-	Changes,
 	Collection,
 	Crew,
 	Genre,
@@ -15,6 +14,7 @@ import {
 } from "./common";
 import { CountryISO3166_1 } from "./config/countries";
 import { ReleaseType } from "./enums";
+import { MovieChanges } from "./movies/changes";
 import { PaginatedResponse } from "./params";
 
 export type MovieDetails = {
@@ -73,8 +73,6 @@ export type MovieAlternativeTitle = {
 	iso_3166_1: string;
 	type: string;
 };
-
-export type MovieChanges = Changes;
 
 export type MovieCredits = {
 	id: number;

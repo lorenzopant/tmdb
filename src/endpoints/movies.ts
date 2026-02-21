@@ -1,6 +1,5 @@
 import { ApiClient } from "../client";
 import { TMDBOptions } from "../types";
-import { Changes } from "../types/common";
 import {
 	MovieAlternativeTitles,
 	MovieAppendToResponseNamespace,
@@ -18,6 +17,7 @@ import {
 	MovieVideos,
 	MovieWatchProvider,
 } from "../types/movies";
+import { MovieChanges } from "../types/movies/changes";
 import {
 	MovieAlternativeTitlesParams,
 	MovieChangesParams,
@@ -79,7 +79,7 @@ export class MoviesAPI {
 	 * @reference https://developer.themoviedb.org/reference/movie-details
 	 */
 	async details<T extends readonly MovieAppendToResponseNamespace[] = []>(
-		params: MovieDetailsParams & { append_to_response?: T[number] | T }
+		params: MovieDetailsParams & { append_to_response?: T[number] | T },
 	): Promise<T extends [] ? MovieDetails : MovieDetailsWithAppends<T>> {
 		const { language = this.defaultOptions.language, ...rest } = params;
 		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}`;
@@ -162,9 +162,9 @@ export class MoviesAPI {
 	 * @returns A promise that resolves to the changes made to the movie.
 	 * @reference https://developer.themoviedb.org/reference/movie-changes
 	 */
-	async changes(params: MovieChangesParams): Promise<Changes> {
+	async changes(params: MovieChangesParams): Promise<MovieChanges> {
 		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}${MOVIE_ENDPOINTS.CHANGES}`;
-		return this.client.request<Changes>(endpoint, params);
+		return this.client.request<MovieChanges>(endpoint, params);
 	}
 
 	/**
