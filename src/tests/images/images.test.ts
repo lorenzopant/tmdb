@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { IMAGE_SECURE_BASE_URL, IMAGE_BASE_URL } from "../../types/images";
+import { IMAGE_SECURE_BASE_URL, IMAGE_BASE_URL } from "../../types/config/images";
 import { ImageAPI } from "../../images/images";
 
 describe("ImageAPI", () => {

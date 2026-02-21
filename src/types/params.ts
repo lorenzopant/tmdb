@@ -1,5 +1,5 @@
-import { CountryISO3166_1 } from "./countries";
-import { Language, LanguageISO6391 } from "./lang";
+import { CountryISO3166_1 } from "./config/countries";
+import { Language, LanguageISO6391 } from "./config/lang";
 import { MovieAppendToResponseNamespace } from "./movies";
 
 export type PaginatedResponse<T> = {

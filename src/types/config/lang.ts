@@ -1217,5 +1217,6 @@ export type PrimaryTranslations =
 /**
  * As per TMDB documentation:
  * https://developer.themoviedb.org/reference/configuration-primary-translations
+ * @remkars THE LANGUAGE
  */
 export type Language = PrimaryTranslations | LanguageISO6391;

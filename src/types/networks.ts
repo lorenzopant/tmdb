@@ -1,4 +1,4 @@
-import { CountryISO3166_1 } from "./countries";
+import { CountryISO3166_1 } from "./config/countries";
 
 export type NetworkItem = {
 	id: number;

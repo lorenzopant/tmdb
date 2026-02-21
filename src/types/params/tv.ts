@@ -1,4 +1,4 @@
-import { Timezone } from "../timezones";
+import { Timezone } from "../config/timezones";
 import { TVAppendToResponseNamespace } from "../tv/tv_series";
 import { Prettify } from "../utility";
 import { WithLanguagePage, WithParams } from "./common";

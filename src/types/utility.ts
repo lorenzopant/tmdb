@@ -1,7 +1,7 @@
-import { CountryISO3166_1 } from "./countries";
-import { BackdropSize, LogoSize, PosterSize, ProfileSize, StillSize } from "./images";
-import { Language } from "./lang";
-import { Timezone } from "./timezones";
+import { CountryISO3166_1 } from "./config/countries";
+import { BackdropSize, LogoSize, PosterSize, ProfileSize, StillSize } from "./config/images";
+import { Language } from "./config/lang";
+import { Timezone } from "./config/timezones";
 
 export type TMDBOptions = {
 	/**

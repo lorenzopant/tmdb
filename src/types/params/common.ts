@@ -1,5 +1,5 @@
-import { CountryISO3166_1 } from "../countries";
-import { Language } from "../lang";
+import { CountryISO3166_1 } from "../config/countries";
+import { Language } from "../config/lang";
 
 /**
  * Most of the commonly used params for

@@ -1,4 +1,11 @@
-export type Country = { iso_3166_1: CountryISO3166_1; english_name: string; native_name: string };
+export type Country = {
+	/** ISO 3166-1 alpha-2 country code */
+	iso_3166_1: CountryISO3166_1;
+	/** English name of the country */
+	english_name: string;
+	/** Native name of the country in its local language */
+	native_name: string;
+};
 
 export const TMDBCountries: Country[] = [
 	{

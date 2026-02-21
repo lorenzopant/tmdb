@@ -1,5 +1,5 @@
 import { Credit, Genre, ProductionCompany, ProductionCountry, SpokenLanguage } from "../common";
-import { CountryISO3166_1 } from "../countries";
+import { CountryISO3166_1 } from "../config/countries";
 import { NetworkItem } from "../networks";
 import { TVEpisodeItem } from "./tv_episodes";
 import { TVCredits, TVExternalIDs, TVImages, TVKeywords, TVRecommendations, TVSimilar, TVVideos } from "./tv_others";
@@ -91,7 +91,7 @@ export type TVDetails = {
 	last_air_date: string;
 
 	/** Details of the last episode that aired, if available */
-	last_episode_to_air?: TVEpisodeItem;
+	last_episode_to_air?: TVEpisodeItem | null;
 
 	/** The title of the TV show */
 	name: string;

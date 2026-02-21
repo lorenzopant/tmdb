@@ -1,5 +1,5 @@
 import { ImagesConfig } from "../types";
-import { BackdropSize, IMAGE_BASE_URL, IMAGE_SECURE_BASE_URL, LogoSize, PosterSize, ProfileSize, StillSize } from "../types/images";
+import { BackdropSize, IMAGE_BASE_URL, IMAGE_SECURE_BASE_URL, LogoSize, PosterSize, ProfileSize, StillSize } from "../types/config/images";
 
 export class ImageAPI {
 	private options: ImagesConfig;
