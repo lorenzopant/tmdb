@@ -15,6 +15,7 @@
 	"scripts": {
 		"build": "tsc",
 		"build:watch": "tsc --watch",
+		"generate-docs": "typedoc && tsc --project tsconfig.docs.json && node scripts/generate-docs.js && rm -rf docs-temp scripts/generate-docs.js scripts/generate-docs.d.ts",
 		"test": "vitest",
 		"test:ui": "vitest --ui",
 		"test:coverage": "vitest --coverage",
@@ -50,6 +51,8 @@
 		"husky": "^9.1.7",
 		"release-it": "^19.0.3",
 		"release-it-pnpm": "^4.6.6",
+		"typedoc": "^0.28.17",
+		"typedoc-plugin-markdown": "^4.10.0",
 		"typescript": "^5.8.3",
 		"typescript-eslint": "^8.35.0",
 		"vite": "^7.0.0",
