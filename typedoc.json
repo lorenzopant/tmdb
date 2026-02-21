@@ -1,14 +1,14 @@
 {
-  "entryPoints": ["src/index.ts"],
-  "out": "docs-temp",
-  "json": "docs-temp/docs.json",
-  "excludeExternals": true,
-  "excludePrivate": true,
-  "excludeProtected": true,
-  "excludeInternal": false,
-  "plugin": ["typedoc-plugin-markdown"],
-  "readme": "none",
-  "emit": "docs",
-  "pretty": true,
-  "tsconfig": "tsconfig.json"
+	"entryPoints": ["src/index.ts"],
+	"out": "docs-temp",
+	"json": "docs-temp/docs.json",
+	"excludeExternals": true,
+	"excludePrivate": true,
+	"excludeProtected": true,
+	"excludeInternal": false,
+	"plugin": ["typedoc-plugin-markdown"],
+	"readme": "none",
+	"emit": "docs",
+	"pretty": true,
+	"tsconfig": "tsconfig.json"
 }
