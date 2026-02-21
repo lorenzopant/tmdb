@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, mkdirSync, existsSync, rmSync } from "fs";
+import { readFileSync, writeFileSync, mkdirSync } from "fs";
 import { resolve } from "path";
 import ts from "typescript";
 
@@ -51,7 +51,7 @@ const CLASS_TO_SOURCE_FILE: Record<string, string> = {
 	TVSeriesAPI: "src/endpoints/tv_series.ts",
 };
 
-const GROUPED_ENDPOINTS = ["movie-lists", "tv-lists", "images", "configuration", "genres"];
+// All endpoints now follow the same structure: {endpoint}/{method}/index.mdx
 
 function extractJSDocInfo(node: ts.Node): JSDocInfo {
 	const info: JSDocInfo = {
@@ -217,7 +217,7 @@ function extractEndpointInfo(apiClassName: string, sourceFile: string): Endpoint
 	// Extract method documentation
 	for (const member of classNode.members) {
 		if (ts.isMethodDeclaration(member)) {
-			const methodInfo = extractMethodInfo(member, endpointName);
+			const methodInfo = extractMethodInfo(member);
 			if (methodInfo) {
 				methods.push(methodInfo);
 			}
@@ -255,14 +255,8 @@ description: API reference for ${endpoint.apiClassName}
 	mdx += `|--------|-------------|\n`;
 
 	for (const method of endpoint.methods) {
-		// For grouped endpoints, don't create links (no method subfolders exist)
-		// For non-grouped endpoints, create links to individual method pages
-		if (GROUPED_ENDPOINTS.includes(endpoint.endpointName)) {
-			mdx += `| \`${method.name}()\` | ${method.description} |\n`;
-		} else {
-			const methodPath = `/api-reference/${endpoint.endpointName}/${method.name}`;
-			mdx += `| [\`${method.name}()\`](${methodPath}) | ${method.description} |\n`;
-		}
+		const methodPath = `/api-reference/${endpoint.endpointName}/${method.name}`;
+		mdx += `| [\`${method.name}()\`](${methodPath}) | ${method.description} |\n`;
 	}
 
 	return mdx;
@@ -271,6 +265,15 @@ description: API reference for ${endpoint.apiClassName}
 function generateMethodMdx(endpoint: EndpointInfo, method: MethodInfo): string {
 	const title = camelToTitle(method.name);
 	const endpointTitle = endpointNameToTitle(endpoint.endpointName);
+
+	// Collect types used in this method
+	const methodTypes = new Set<string>();
+	methodTypes.add(method.returnType);
+	for (const param of method.params) {
+		methodTypes.add(param.type);
+	}
+	// Remove primitive types
+	const relevantTypes = Array.from(methodTypes).filter((t) => !["void", "string", "number", "boolean", "any", "unknown"].includes(t)).sort();
 
 	const mdx = `---
 title: ${title}
@@ -283,7 +286,8 @@ ${method.fullMethodDocs}
 
 ## Related Types
 
-See the [${endpointTitle} Types](/docs/types/${endpoint.endpointName}) for complete type definitions used in this method.
+See [${endpointTitle} Types](/docs/types/${endpoint.endpointName}) for complete type definitions.
+${relevantTypes.length > 0 ? `\n**Types used in this method:**\n${relevantTypes.map((t) => `- \`${t}\``).join("\n")}\n` : ""}
 `;
 
 	return mdx;
@@ -386,32 +390,24 @@ export const ROUTES: EachRoute[] = [
         items: [
 ${endpoints
 	.map((endpoint) => {
-			const title = endpointNameToTitle(endpoint.endpointName);
-
-		if (GROUPED_ENDPOINTS.includes(endpoint.endpointName)) {
-			return `            {
-                title: "${title}",
-                href: "/${endpoint.endpointName}",
-            },`;
-		} else {
-			const methodItems = endpoint.methods
-				.map((method) => {
-					const methodTitle = camelToTitle(method.name);
-					return `                    {
+		const title = endpointNameToTitle(endpoint.endpointName);
+		const methodItems = endpoint.methods
+			.map((method) => {
+				const methodTitle = camelToTitle(method.name);
+				return `                    {
                         title: "${methodTitle}",
                         href: "/${method.name}",
                     },`;
-				})
-				.join("\n");
+			})
+			.join("\n");
 
-			return `            {
+		return `            {
                 title: "${title}",
                 href: "/${endpoint.endpointName}",
                 items: [
 ${methodItems}
                 ],
             },`;
-		}
 	})
 	.join("\n")}
         ],
@@ -422,7 +418,7 @@ ${methodItems}
         items: [
 ${endpoints
 	.map((endpoint) => {
-			const title = endpointNameToTitle(endpoint.endpointName);
+		const title = endpointNameToTitle(endpoint.endpointName);
 		return `            {
                 title: "${title}",
                 href: "/${endpoint.endpointName}",
@@ -454,13 +450,11 @@ export const page_routes = ROUTES.map((it) => getRecurrsiveAllLinks(it)).flat();
 }
 
 async function main() {
-	const docsDir = resolve(__dirname, "../docs-temp");
-	const apiRefDir = resolve(docsDir, "api-reference");
-	const typesDir = resolve(docsDir, "types");
+	const docsProjectPath = resolve(__dirname, "../../tmdb-docs");
+	const apiRefDir = resolve(docsProjectPath, "contents/docs/api-reference");
+	const typesDir = resolve(docsProjectPath, "contents/docs/types");
 
-	// Clean and create directories
-	if (existsSync(docsDir)) rmSync(docsDir, { recursive: true });
-	mkdirSync(docsDir, { recursive: true });
+	// Create directories
 	mkdirSync(apiRefDir, { recursive: true });
 	mkdirSync(typesDir, { recursive: true });
 
@@ -489,18 +483,16 @@ async function main() {
 		// Generate endpoint index
 		const indexMdx = generateEndpointIndexMdx(endpoint);
 		writeFileSync(resolve(endpointDir, "index.mdx"), indexMdx);
-		console.log(`✓ Generated ${endpoint.endpointName}/index.mdx`);
+		console.log(`✓ Generated api-reference/${endpoint.endpointName}/index.mdx`);
 
-		// For non-grouped endpoints, generate individual method pages
-		if (!GROUPED_ENDPOINTS.includes(endpoint.endpointName)) {
-			for (const method of endpoint.methods) {
-				const methodDir = resolve(endpointDir, method.name);
-				mkdirSync(methodDir, { recursive: true });
+		// Generate individual method pages
+		for (const method of endpoint.methods) {
+			const methodDir = resolve(endpointDir, method.name);
+			mkdirSync(methodDir, { recursive: true });
 
-				const methodMdx = generateMethodMdx(endpoint, method);
-				writeFileSync(resolve(methodDir, "index.mdx"), methodMdx);
-				console.log(`✓ Generated ${endpoint.endpointName}/${method.name}/index.mdx`);
-			}
+			const methodMdx = generateMethodMdx(endpoint, method);
+			writeFileSync(resolve(methodDir, "index.mdx"), methodMdx);
+			console.log(`✓ Generated api-reference/${endpoint.endpointName}/${method.name}/index.mdx`);
 		}
 	}
 
@@ -521,11 +513,10 @@ async function main() {
 
 	// Generate Routes Config
 	const routesConfig = generateRoutesConfig(endpoints);
-	const docsProjectPath = resolve(__dirname, "../../tmdb-docs");
 	const routesConfigPath = resolve(docsProjectPath, "lib/routes-config.ts");
 	mkdirSync(resolve(docsProjectPath, "lib"), { recursive: true });
 	writeFileSync(routesConfigPath, routesConfig);
-	console.log(`✓ Generated routes-config.ts`);
+	console.log(`✓ Generated lib/routes-config.ts`);
 
 	console.log("\nDocumentation generation complete!");
 }
