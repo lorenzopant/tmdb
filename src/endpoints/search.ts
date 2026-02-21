@@ -1,9 +1,9 @@
+import { PaginatedResponse } from "../types";
 import { SearchCollectionItem } from "../types/collections";
 import { SearchCompanyItem } from "../types/companies";
 import { SearchKeywordItem } from "../types/keywords";
 import { MovieResultItem } from "../types/movies";
 import {
-	PaginatedResponse,
 	SearchCollectionsParams,
 	SearchCompanyParams,
 	SearchKeywordsParams,

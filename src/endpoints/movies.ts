@@ -33,7 +33,7 @@ import {
 	MovieTranslationsParams,
 	MovieVideosParams,
 	MovieWatchProvidersParams,
-} from "../types/params";
+} from "../types/movies/params";
 
 export const MOVIE_ENDPOINTS = {
 	MOVIE: "/movie",
