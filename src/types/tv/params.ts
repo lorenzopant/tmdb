@@ -1,7 +1,7 @@
 import { Timezone } from "../config/timezones";
 import { TVAppendToResponseNamespace } from "../tv/tv_series";
 import { Prettify } from "../utility";
-import { WithLanguagePage, WithParams } from "../common/params";
+import { DateRange, WithLanguagePage, WithParams } from "../common/params";
 
 /**
  * Almost every query within the TV Series domain
@@ -24,3 +24,8 @@ export type TVDetailsParams = Prettify<TVBaseParam & { append_to_response?: TVAp
  * Parameters for fetching aggregate credits for a TV show (cast and crew across all seasons).
  */
 export type TVAggregateCreditsParams = Prettify<TVBaseParam & WithParams<"language">>;
+
+/**
+ * Parameters for fetching tv show change history.
+ */
+export type TVChangeParams = Prettify<TVBaseParam & WithParams<"page"> & DateRange>;

@@ -11,6 +11,16 @@ export type TMDBQueryParams = {
 	region?: CountryISO3166_1;
 };
 
+/**
+ * Specify a date range with start and end date.
+ */
+export type DateRange = {
+	/** Start date for changes in ISO 8601 format (YYYY-MM-DD) */
+	start_date?: string;
+	/** End date for changes in ISO 8601 format (YYYY-MM-DD) */
+	end_date?: string;
+};
+
 /** Generic utility */
 export type WithParams<T extends keyof TMDBQueryParams> = Pick<TMDBQueryParams, T>;
 

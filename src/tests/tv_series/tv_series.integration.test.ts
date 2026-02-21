@@ -32,4 +32,9 @@ describe("TV Series (integration)", () => {
 		expect(Array.isArray(show.results)).toBe(true);
 		expect(show.results[1].title).toBe("Breaking Bad: A Química do Mal");
 	});
+
+	it("(CHANGES) should get changes for a tv show", async () => {
+		const show = await tmdb.tv_series.changes({ series_id: 1396 });
+		expect(Array.isArray(show.changes)).toBe(true);
+	});
 });

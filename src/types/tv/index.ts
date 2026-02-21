@@ -11,3 +11,4 @@ export * from "./seasons";
 export * from "./similar";
 export * from "./tv_series";
 export * from "./videos";
+export * from "./changes";

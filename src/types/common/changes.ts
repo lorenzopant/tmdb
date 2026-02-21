@@ -32,4 +32,6 @@ export type ChangeItem = {
 	iso_3166_1: string;
 	/** The changed data object (structure varies by change type) */
 	value: object;
+	/** The original data object (structure varies by change type) */
+	original_value?: object;
 };

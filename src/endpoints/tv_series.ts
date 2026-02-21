@@ -1,4 +1,4 @@
-import { TVAggregateCreditsParams, TVAlternativeTitles, TVBaseParam, TVDetailsParams } from "../types/tv";
+import { TVAggregateCreditsParams, TVAlternativeTitles, TVBaseParam, TVChangeParams, TVDetailsParams, TVSeriesChanges } from "../types/tv";
 import { TVAggregateCredits } from "../types/tv/aggregate_credits";
 import { TVAppendToResponseNamespace, TVDetails, TVDetailsWithAppends } from "../types/tv/tv_series";
 import { TMDBAPIBase } from "./base";
@@ -62,5 +62,27 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	async alternative_titles(params: TVBaseParam): Promise<TVAlternativeTitles> {
 		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_ALTERNATIVE_TITLES}`;
 		return this.client.request(endpoint);
+	}
+
+	/**
+	 * Changes
+	 * GET - https://api.themoviedb.org/3/tv/{tv_id}/changes
+	 *
+	 * Get the changes for a TV show. By default only the last 24 hours are returned.
+	 * You can query up to 14 days in a single query by using the start_date and end_date query parameters.
+	 *
+	 * NOTE: TV show changes are a little different than movie changes in that there are some edits
+	 * on seasons and episodes that will create a top level change entry at the show level.
+	 * These can be found under the season and episode keys.
+	 * These keys will contain a series_id and episode_id.
+	 * You can use the season changes and episode changes methods to look these up individually.
+	 *
+	 * @param series_id The ID of the TV series.
+	 * @returns A promise that resolves to the TV series changes history.
+	 * @reference https://developer.themoviedb.org/reference/tv-series-changes
+	 */
+	async changes(params: TVChangeParams): Promise<TVSeriesChanges> {
+		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_CHANGES}`;
+		return this.client.request(endpoint, { ...params });
 	}
 }
