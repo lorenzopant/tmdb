@@ -1,5 +1,5 @@
-import { TMDBCommonParams } from "../types";
-import { GenresResponse } from "../types/genres";
+import { WithLanguage } from "../types";
+import { GenresResponse } from "../types/common/media";
 import { TMDBAPIBase } from "./base";
 
 export const GENRES_ENDPOINTS = {
@@ -17,7 +17,7 @@ export class GenresAPI extends TMDBAPIBase {
 	 * @returns A promise that resolves to the genres list.
 	 * @reference https://developer.themoviedb.org/reference/genre-movie-list
 	 */
-	async movie_list(params?: Pick<TMDBCommonParams, "language">): Promise<GenresResponse> {
+	async movie_list(params?: WithLanguage): Promise<GenresResponse> {
 		return this.client.request<GenresResponse>(GENRES_ENDPOINTS.MOVIE_LIST, this.withLanguage(params));
 	}
 
@@ -30,7 +30,7 @@ export class GenresAPI extends TMDBAPIBase {
 	 * @returns A promise that resolves to the genres list.
 	 * @reference https://developer.themoviedb.org/reference/genre-tv-list
 	 */
-	async tv_list(params?: Pick<TMDBCommonParams, "language">): Promise<GenresResponse> {
+	async tv_list(params?: WithLanguage): Promise<GenresResponse> {
 		return this.client.request<GenresResponse>(GENRES_ENDPOINTS.TV_LIST, this.withLanguage(params));
 	}
 }

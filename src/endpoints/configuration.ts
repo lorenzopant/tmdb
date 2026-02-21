@@ -6,7 +6,7 @@ import {
 	ConfigurationLanguage,
 	ConfigurationResponse,
 	ConfigurationTimezone,
-} from "../types/configuration";
+} from "../types/config/configuration";
 import { TMDBAPIBase } from "./base";
 
 export class ConfigurationAPI extends TMDBAPIBase {

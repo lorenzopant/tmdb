@@ -1,6 +1,6 @@
 {
 	"name": "@lorenzopant/tmdb",
-	"version": "1.0.20",
+	"version": "1.1.7",
 	"description": "A completely type-safe The Movie Database (TMDB) API wrapper for typescript applications.",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -23,7 +23,11 @@
 		"release": "pnpm release:patch",
 		"release:patch": "pnpm version patch --git-tag-version && git push --follow-tags",
 		"release:minor": "pnpm version minor --git-tag-version && git push --follow-tags",
-		"release:major": "pnpm version major --git-tag-version && git push --follow-tags"
+		"release:major": "pnpm version major --git-tag-version && git push --follow-tags",
+		"generate-indexes": "tsx src/scripts/generate-index-files.ts",
+		"generate-exports": "tsx src/scripts/generate-explicit-exports.ts",
+		"prebuild": "npm run generate-indexes",
+		"check-exports": "tsx src/scripts/check-exports.ts"
 	},
 	"author": "Lorenzo Pantano",
 	"license": "MIT",
@@ -50,6 +54,8 @@
 		"husky": "^9.1.7",
 		"release-it": "^19.0.3",
 		"release-it-pnpm": "^4.6.6",
+		"ts-morph": "^27.0.2",
+		"tsx": "^4.21.0",
 		"typescript": "^5.8.3",
 		"typescript-eslint": "^8.35.0",
 		"vite": "^7.0.0",

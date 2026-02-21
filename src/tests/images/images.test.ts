@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
-import { IMAGE_SECURE_BASE_URL, IMAGE_BASE_URL } from "../../types/images";
 import { ImageAPI } from "../../images/images";
+import { IMAGE_BASE_URL, IMAGE_SECURE_BASE_URL } from "../../types";
 
 describe("ImageAPI", () => {
 	const path = "/sample.jpg";
