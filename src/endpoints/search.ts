@@ -6,7 +6,7 @@ import {
 	SearchKeywordsParams,
 	SearchMoviesParams,
 	SearchPersonParams,
-} from "../types/params";
+} from "../types/search/params";
 import { PersonResultItem } from "../types/person";
 import { SearchCollectionItem } from "../types/search/collection";
 import { SearchCompanyItem } from "../types/search/company";
