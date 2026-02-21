@@ -1,5 +1,6 @@
 import { ApiClient } from "../client";
-import { Language, TMDBOptions } from "../types";
+import { Language } from "../types";
+import { TMDBOptions } from "../types/config";
 
 export abstract class TMDBAPIBase {
 	protected client: ApiClient;

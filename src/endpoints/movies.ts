@@ -1,5 +1,5 @@
 import { ApiClient } from "../client";
-import { TMDBOptions } from "../types";
+import { TMDBOptions } from "../types/config";
 import {
 	MovieAlternativeTitles,
 	MovieAppendToResponseNamespace,

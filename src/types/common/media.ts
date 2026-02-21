@@ -1,5 +1,7 @@
 // src/types/common/media.ts
 
+import { CountryISO3166_1 } from "../config/countries";
+
 /**
  * Represents a genre of a movie or TV show.
  */
@@ -188,3 +190,58 @@ export type ImageItem = {
 	/** Image width in pixels */
 	width: number;
 };
+
+/**
+ * Base properties shared between movie and TV show results
+ */
+type BaseKnownForItem = {
+	adult: boolean;
+	backdrop_path: string | null;
+	id: number;
+	original_language: string;
+	overview: string;
+	poster_path: string | null;
+	genre_ids: number[];
+	popularity: number;
+	vote_average: number;
+	vote_count: number;
+};
+
+/**
+ * Movie item in known_for array
+ */
+export type KnownForMovie = BaseKnownForItem & {
+	/** Media type discriminator */
+	media_type: "movie";
+	/** Movie title (localized) */
+	title: string;
+	/** Original title in the original language */
+	original_title: string;
+	/** Release date in ISO 8601 format (YYYY-MM-DD) */
+	release_date: string;
+	/** Whether a video is available on TMDB */
+	video: boolean;
+};
+
+/**
+ * TV show item in known_for array
+ */
+export type KnownForTV = BaseKnownForItem & {
+	/** Media type discriminator */
+	media_type: "tv";
+	/** Series name (localized) */
+	name: string;
+	/** Original series name */
+	original_name: string;
+	/** First air date (YYYY-MM-DD) */
+	first_air_date: string;
+	/** Origin country codes (ISO 3166-1 array) */
+	origin_country: CountryISO3166_1[];
+};
+
+/**
+ * Union type for items in the known_for array (can be either movie or TV show)
+ */
+export type KnownForItem = KnownForMovie | KnownForTV;
+
+export type MediaType = "movie" | "tv";
