@@ -42,3 +42,24 @@ export type ImageSizeTypes = {
 	/** Union of all available image sizes */
 	ImageSize: ImageSize;
 };
+
+export type DefaultImageSizesConfig = {
+	posters?: PosterSize;
+	backdrops?: BackdropSize;
+	logos?: LogoSize;
+	profiles?: ProfileSize;
+	still?: StillSize;
+};
+
+export type ImagesConfig = {
+	/**
+	 * Whether to use the secure (HTTPS) image base URL.
+	 * Defaults to true. Set to false only if working in an environment where HTTPS is not supported
+	 * or where you explicitly need non-secure image URLs.
+	 */
+	secure_images_url?: boolean;
+	/**
+	 * Provide default image size configuration for each type of images.
+	 */
+	default_image_sizes?: Partial<DefaultImageSizesConfig>;
+};

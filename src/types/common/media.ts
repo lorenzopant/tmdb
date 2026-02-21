@@ -1,4 +1,6 @@
-// src/types/common.ts
+// src/types/common/media.ts
+
+import { CountryISO3166_1 } from "../config/countries";
 
 /**
  * Represents a genre of a movie or TV show.
@@ -9,6 +11,14 @@ export type Genre = {
 
 	// ** The name of the genre
 	name: string;
+};
+
+/**
+ * Response containing available genres
+ */
+export type GenresResponse = {
+	/** Array of genre objects with ID and name */
+	genres: Genre[];
 };
 
 /**
@@ -135,43 +145,103 @@ export type Keyword = {
 	name: string;
 };
 
-export type Changes = {
-	changes: Change[];
-};
-
-export type Change = {
-	key: string;
-	items: ChangeItem[];
-};
-
-export type ChangeItem = {
-	id: number;
-	action: string;
-	time: string;
-	iso_639_1: string;
+/**
+ * Video metadata and details
+ */
+export type VideoItem = {
+	/** ISO 639-1 language code of the video */
+	iso_649_1: string;
+	/** ISO 3166-1 country code where the video is available */
 	iso_3166_1: string;
-	value: object;
+	/** Video title or name */
+	name: string;
+	/** Unique video key/ID on the hosting platform */
+	key: string;
+	/** Video hosting platform (e.g., "YouTube", "Vimeo") */
+	site: string;
+	/** Video resolution/size (e.g., 1080, 720) */
+	size: number;
+	/** Type of video (e.g., "Trailer", "Teaser", "Clip", "Featurette", "Behind the Scenes") */
+	type: string;
+	/** Whether this is an official video from the content distributor */
+	official: boolean;
+	/** Publication date and time (ISO 8601 format) */
+	published_at: string;
+	/** Unique video identifier in TMDB */
+	id: string;
 };
 
+/**
+ * Image metadata and details
+ */
 export type ImageItem = {
+	/** Aspect ratio of the image (width/height) */
 	aspect_ratio: number;
+	/** Image height in pixels */
 	height: number;
+	/** ISO 639-1 language code if image contains text, null otherwise */
 	iso_639_1: string | null;
+	/** Relative path to the image file (append to base URL) */
 	file_path: string;
+	/** Average user rating for this image */
 	vote_average: number;
+	/** Total number of votes for this image */
 	vote_count: number;
+	/** Image width in pixels */
 	width: number;
 };
 
-export type VideoItem = {
-	iso_649_1: string;
-	iso_3166_1: string;
-	name: string;
-	key: string;
-	site: string;
-	size: number;
-	type: string;
-	official: boolean;
-	published_at: string;
-	id: string;
+/**
+ * Base properties shared between movie and TV show results
+ */
+type BaseKnownForItem = {
+	adult: boolean;
+	backdrop_path: string | null;
+	id: number;
+	original_language: string;
+	overview: string;
+	poster_path: string | null;
+	genre_ids: number[];
+	popularity: number;
+	vote_average: number;
+	vote_count: number;
 };
+
+/**
+ * Movie item in known_for array
+ */
+export type KnownForMovie = BaseKnownForItem & {
+	/** Media type discriminator */
+	media_type: "movie";
+	/** Movie title (localized) */
+	title: string;
+	/** Original title in the original language */
+	original_title: string;
+	/** Release date in ISO 8601 format (YYYY-MM-DD) */
+	release_date: string;
+	/** Whether a video is available on TMDB */
+	video: boolean;
+};
+
+/**
+ * TV show item in known_for array
+ */
+export type KnownForTV = BaseKnownForItem & {
+	/** Media type discriminator */
+	media_type: "tv";
+	/** Series name (localized) */
+	name: string;
+	/** Original series name */
+	original_name: string;
+	/** First air date (YYYY-MM-DD) */
+	first_air_date: string;
+	/** Origin country codes (ISO 3166-1 array) */
+	origin_country: CountryISO3166_1[];
+};
+
+/**
+ * Union type for items in the known_for array (can be either movie or TV show)
+ */
+export type KnownForItem = KnownForMovie | KnownForTV;
+
+export type MediaType = "movie" | "tv";

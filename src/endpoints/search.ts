@@ -1,16 +1,16 @@
-import { SearchCollectionItem } from "../types/collections";
-import { SearchCompanyItem } from "../types/companies";
-import { SearchKeywordItem } from "../types/keywords";
+import { PaginatedResponse } from "../types";
 import { MovieResultItem } from "../types/movies";
 import {
-	PaginatedResponse,
 	SearchCollectionsParams,
 	SearchCompanyParams,
 	SearchKeywordsParams,
 	SearchMoviesParams,
 	SearchPersonParams,
-} from "../types/params";
+} from "../types/search/params";
 import { PersonResultItem } from "../types/person";
+import { SearchCollectionItem } from "../types/search/collection";
+import { SearchCompanyItem } from "../types/search/company";
+import { SearchKeywordItem } from "../types/search/keyword";
 import { TMDBAPIBase } from "./base";
 
 export const SEARCH_ENDPOINTS = {

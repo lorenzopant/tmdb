@@ -10,7 +10,7 @@ import { TVSeriesAPI } from "./endpoints/tv_series";
 import { TVSeriesListsAPI } from "./endpoints/tv_series_lists";
 import { Errors } from "./errors/messages";
 import { ImageAPI } from "./images/images";
-import { TMDBOptions } from "./types";
+import { TMDBOptions } from "./types/config";
 
 export class TMDB {
 	private client: ApiClient;

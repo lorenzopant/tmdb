@@ -1,5 +1,4 @@
-import { MovieResultItem } from "./movies";
-import { MediaType } from "./utility";
+import { KnownForItem } from "../common";
 
 export type PersonResultItem = {
 	adult: boolean;
@@ -10,5 +9,5 @@ export type PersonResultItem = {
 	original_name: string;
 	popularity: number;
 	profile_path: string;
-	known_for: [MovieResultItem & { media_type: MediaType }];
+	known_for: KnownForItem[];
 };

@@ -1,7 +1,7 @@
 import { Timezone } from "../config/timezones";
 import { TVAppendToResponseNamespace } from "../tv/tv_series";
 import { Prettify } from "../utility";
-import { WithLanguagePage, WithParams } from "./common";
+import { WithLanguagePage, WithParams } from "../common/params";
 
 /**
  * Almost every query within the TV Series domain

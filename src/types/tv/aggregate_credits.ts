@@ -1,6 +1,20 @@
 import { Credit } from "../common";
 
 /**
+ * Aggregate credits for a TV show, including cast and crew across all seasons and episodes.
+ */
+export type TVAggregateCredits = {
+	/** TMDB unique identifier for the TV show. */
+	id: number;
+
+	/** List of all the known cast for the TV show. */
+	cast: TVAggregateCreditsCastItem[];
+
+	/** List of all the known crew members for the TV show. */
+	crew: TVAggregateCreditsCrewItem[];
+};
+
+/**
  * Cast member in TV show aggregate credits with their roles across all seasons.
  */
 export type TVAggregateCreditsCastItem = Omit<Credit, "credit_id"> & {
