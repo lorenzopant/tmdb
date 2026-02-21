@@ -1,5 +1,4 @@
-import { PaginatedResponse } from "../types";
-import { MovieResultItem } from "../types/movies";
+import { MovieResultItem, PaginatedResponse } from "../types";
 import {
 	SearchCollectionsParams,
 	SearchCompanyParams,

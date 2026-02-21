@@ -1,8 +1,7 @@
 import { ApiClient } from "../client";
-import { PaginatedResponse } from "../types";
+import { PaginatedResponse, TVSeriesResultItem } from "../types";
 import { TMDBOptions } from "../types/config";
 import { TVSeriesListParams } from "../types/tv";
-import { TVSeriesResultItem } from "../types/tv/tv_series";
 
 import { TV_SERIES_ENDPOINTS } from "./tv_series";
 

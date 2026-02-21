@@ -1,7 +1,7 @@
 import { ApiClient } from "../client";
-import { PaginatedResponse } from "../types";
+import { MovieResultItem, PaginatedResponse } from "../types";
 import { TMDBOptions } from "../types/config";
-import { MovieListParams, MovieResultItem } from "../types/movies";
+import { MovieListParams } from "../types/movies";
 
 import { MOVIE_ENDPOINTS } from "./movies";
 
