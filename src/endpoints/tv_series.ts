@@ -173,18 +173,18 @@ export class TVSeriesAPI extends TMDBAPIBase {
 
 	/**
 	 * Images
-	 * GET - https://api.themoviedb.org/3/movie/{movie_id}/images
+	 * GET - https://api.themoviedb.org/3/tv/{series_id}/images
 	 *
-	 * Fetches images related to a specific movie, such as posters and backdrops.
+	 * Fetches images related to a specific tv show, such as posters and backdrops.
 	 * The images are returned in various sizes and formats.
 	 *
-	 * If you have a language specified, it will act as a filter on the returned items. You can use the include_image_language param to query additional languages.
+	 * NOTE: If you have a language specified, it will act as a filter on the returned items. You can use the include_image_language param to query additional languages.
 	 *
-	 * @param movie_id - The unique identifier of the movie.
+	 * @param series_id - The unique identifier of the tv show.
 	 * @param language - (Optional) The language code to filter the images by language.
 	 * @param include_image_language - (Optional) A comma-separated list of language codes to include images for.
-	 * @returns A promise that resolves to a `MovieImages` object containing the movie's images.
-	 * @reference https://developer.themoviedb.org/reference/movie-images
+	 * @returns A promise that resolves to a `TVImages` object containing the tv show's images.
+	 * @reference https://developer.themoviedb.org/reference/tv-series-images
 	 */
 	async images(params: TVImagesParams): Promise<TVImages> {
 		const { language = this.defaultOptions.language, ...rest } = params;
