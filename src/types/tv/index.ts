@@ -1,4 +1,5 @@
 export * from "./aggregate_credits";
+export * from "./alternative_titles";
 export * from "./credits";
 export * from "./episodes";
 export * from "./external_ids";

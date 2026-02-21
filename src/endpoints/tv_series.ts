@@ -1,21 +1,24 @@
 import { ApiClient } from "../client";
-import { TVDetails, TVDetailsWithAppends, TVAppendToResponseNamespace } from "../types/tv/tv_series";
-import { TVAggregateCreditsParams, TVDetailsParams } from "../types/tv";
+import { TMDBOptions } from "../types";
+import { TVAggregateCreditsParams, TVBaseParam, TVDetailsParams } from "../types/tv";
 import { TVAggregateCredits } from "../types/tv/aggregate_credits";
-import { TMDBOptions } from "../types/config";
+import { TVAppendToResponseNamespace, TVDetails, TVDetailsWithAppends } from "../types/tv/tv_series";
 
 export const TV_SERIES_ENDPOINTS = {
 	TV: "/tv",
 	TV_AGGREGATE_CREDITS: "/aggregate_credits",
+	TV_ALTERNATIVE_TITLES: "/alternative_titles",
+	TV_CHANGES: "/changes",
+	TV_CONTENT_RATINGS: "/content_ratings",
 };
 
 export class TVSeriesAPI {
 	private client: ApiClient;
 	private defaultOptions: TMDBOptions;
 
-	constructor(client: ApiClient, defaultOptions: TMDBOptions = {}) {
+	constructor(client: ApiClient, options: TMDBOptions = {}) {
 		this.client = client;
-		this.defaultOptions = defaultOptions;
+		this.defaultOptions = options;
 	}
 
 	/**
@@ -47,12 +50,26 @@ export class TVSeriesAPI {
 	 * Instead, it is a view of all the entire cast & crew for all episodes belonging to a TV show.
 	 * @param series_id The ID of the TV series.
 	 * @param language The language to use for the response.
-	 * @returns A promise that resolves to the TV series details.
+	 * @returns A promise that resolves to the TV series aggregate credits.
 	 * @reference https://developer.themoviedb.org/reference/tv-series-aggregate-credits
 	 */
 	async aggregate_credits(params: TVAggregateCreditsParams): Promise<TVAggregateCredits> {
 		const { language = this.defaultOptions.language, ...rest } = params;
 		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_AGGREGATE_CREDITS}`;
 		return this.client.request(endpoint, { language, ...rest });
+	}
+
+	/**
+	 * Alternative Titles
+	 * GET - https://api.themoviedb.org/3/tv/{tv_id}/alternative_tiles
+	 *
+	 * Get the alternative titles that have been added to a TV show.
+	 * @param series_id The ID of the TV series.
+	 * @returns A promise that resolves to the TV series alternative tiles.
+	 * @reference https://developer.themoviedb.org/reference/tv-series-alternative-titles
+	 */
+	async alternative_titles(params: TVBaseParam): Promise<TVAggregateCredits> {
+		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_ALTERNATIVE_TITLES}`;
+		return this.client.request(endpoint);
 	}
 }

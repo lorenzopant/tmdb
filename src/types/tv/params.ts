@@ -8,7 +8,7 @@ import { WithLanguagePage, WithParams } from "../common/params";
  * will take this required param to identify the
  * tv show.
  */
-type TVBaseParam = { series_id: number };
+export type TVBaseParam = { series_id: number };
 
 /**
  * Parameters for TV series list endpoints (popular, top rated, airing today, on the air).
