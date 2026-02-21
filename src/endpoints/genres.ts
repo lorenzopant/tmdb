@@ -1,5 +1,5 @@
 import { TMDBCommonParams } from "../types";
-import { GenresResponse } from "../types/genres";
+import { GenresResponse } from "../types/common/media";
 import { TMDBAPIBase } from "./base";
 
 export const GENRES_ENDPOINTS = {

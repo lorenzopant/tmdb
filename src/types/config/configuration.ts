@@ -1,4 +1,4 @@
-import { Language } from "./lang";
+import { Language } from "./languages";
 
 export type ImageConfiguration = {
 	/** Base URL for constructing image URLs (HTTP) */

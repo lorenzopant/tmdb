@@ -1,6 +1,6 @@
 import { CountryISO3166_1 } from "./config/countries";
 import { BackdropSize, LogoSize, PosterSize, ProfileSize, StillSize } from "./config/images";
-import { Language } from "./config/lang";
+import { Language } from "./config/languages";
 import { Timezone } from "./config/timezones";
 
 export type TMDBOptions = {

@@ -1,5 +1,5 @@
-import { Cast, Crew, ImageItem, Keyword, VideoItem } from "../common";
-import { PaginatedResponse } from "../params";
+import { Cast, Crew, Keyword, VideoItem, ImageItem } from "../common";
+import { PaginatedResponse } from "../common/pagination";
 import { TVAggregateCreditsCastItem, TVAggregateCreditsCrewItem } from "./tv_credits";
 import { TVSeriesResultItem } from "./tv_series";
 
