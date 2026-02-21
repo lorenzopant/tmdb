@@ -24,7 +24,7 @@ interface EndpointInfo {
 	sourceFile: string;
 	description: string;
 	methods: MethodInfo[];
-	types: Map<string, string>;
+	typeImports: Set<string>;
 }
 
 // Map API class names to output filenames
@@ -131,7 +131,61 @@ function endpointNameToTitle(endpointName: string): string {
 		.map((part) => part.charAt(0).toUpperCase() + part.slice(1))
 		.join(" ");
 }
+function extractImportedTypes(sourceFile: string): Map<string, string> {
+	const typeDefinitions = new Map<string, string>();
+	const source = readFileSync(sourceFile, "utf-8");
+	const sourceNode = ts.createSourceFile(sourceFile, source, ts.ScriptTarget.Latest, true);
 
+	// Find all import statements and collect imported types
+	ts.forEachChild(sourceNode, (node) => {
+		if (ts.isImportDeclaration(node)) {
+			const importClause = node.importClause;
+			if (importClause?.namedBindings && ts.isNamedImports(importClause.namedBindings)) {
+				importClause.namedBindings.elements.forEach((el) => {
+					const name = el.propertyName?.text || el.name.text;
+					const moduleName = (node.moduleSpecifier as ts.StringLiteral).text;
+					typeDefinitions.set(name, moduleName);
+				});
+			}
+		}
+	});
+
+	return typeDefinitions;
+}
+
+function getFullTypeDefinition(typeName: string, importPath: string): string {
+	try {
+		// Handle relative paths
+		let resolvedPath = importPath;
+		if (resolvedPath.startsWith("./")) {
+			resolvedPath = resolvedPath.substring(2);
+		}
+		if (resolvedPath.startsWith("../")) {
+			resolvedPath = resolvedPath.replace(/\.\.\//g, "");
+		}
+		
+		// Add .ts extension if missing
+		if (!resolvedPath.endsWith(".ts")) {
+			resolvedPath += ".ts";
+		}
+
+		const typeSourcePath = resolve(__dirname, "../src", resolvedPath);
+		const typeSource = readFileSync(typeSourcePath, "utf-8");
+		const typeSourceNode = ts.createSourceFile(typeSourcePath, typeSource, ts.ScriptTarget.Latest, true);
+
+		let typeDefinition = "";
+		ts.forEachChild(typeSourceNode, (node) => {
+			if (ts.isTypeAliasDeclaration(node) && (node.name as ts.PropertyName & { escapedText: string })?.escapedText === typeName) {
+				const printer = ts.createPrinter();
+				typeDefinition = printer.printNode(ts.EmitHint.Unspecified, node, typeSourceNode);
+			}
+		});
+
+		return typeDefinition || "";
+	} catch {
+		return "";
+	}
+}
 function extractMethodInfo(method: ts.MethodDeclaration): MethodInfo | null {
 	const methodName = (method.name as ts.PropertyName & { escapedText: string })?.escapedText;
 	if (!methodName || methodName.startsWith("_")) return null;
@@ -212,7 +266,6 @@ function extractEndpointInfo(apiClassName: string, sourceFile: string): Endpoint
 	if (!classNode) return null;
 
 	const methods: MethodInfo[] = [];
-	const types: Map<string, string> = new Map();
 
 	// Extract method documentation
 	for (const member of classNode.members) {
@@ -230,7 +283,7 @@ function extractEndpointInfo(apiClassName: string, sourceFile: string): Endpoint
 		sourceFile,
 		description: classInfo.description,
 		methods,
-		types,
+		typeImports: new Set(),
 	};
 }
 
@@ -273,7 +326,9 @@ function generateMethodMdx(endpoint: EndpointInfo, method: MethodInfo): string {
 		methodTypes.add(param.type);
 	}
 	// Remove primitive types
-	const relevantTypes = Array.from(methodTypes).filter((t) => !["void", "string", "number", "boolean", "any", "unknown"].includes(t)).sort();
+	const relevantTypes = Array.from(methodTypes)
+		.filter((t) => !["void", "string", "number", "boolean", "any", "unknown"].includes(t))
+		.sort();
 
 	const mdx = `---
 title: ${title}
@@ -295,34 +350,51 @@ ${relevantTypes.length > 0 ? `\n**Types used in this method:**\n${relevantTypes.
 
 function generateEndpointTypesMdx(endpoint: EndpointInfo): string {
 	const title = endpointNameToTitle(endpoint.endpointName);
+	const importedTypes = extractImportedTypes(endpoint.sourceFile);
 
 	let mdx = `---
 title: ${title} Types
 description: TypeScript type definitions for ${title} API
 ---
 
-# ${title} Types
-
-This page contains all TypeScript type definitions used by the ${title} API methods.
+# Types
 
 `;
 
-	// Extract types from methods
-	const typeSet = new Set<string>();
-	for (const method of endpoint.methods) {
-		typeSet.add(method.returnType);
-		for (const param of method.params) {
-			typeSet.add(param.type);
-		}
+	if (importedTypes.size === 0) {
+		mdx += "No types currently documented for this endpoint.";
+		return mdx;
 	}
 
-	mdx += `## Type Definitions\n\n`;
-	for (const type of Array.from(typeSet).sort()) {
-		if (type !== "any" && type !== "unknown") {
-			mdx += `### \`${type}\`\n\n`;
-			mdx += `\`\`\`typescript\nexport type ${type} = {\n  // See source for full definition\n};\n\`\`\`\n\n`;
+	// Group types by category
+	const typesByCategory = new Map<string, string[]>();
+	importedTypes.forEach((modulePath, typeName) => {
+		if (typeName === "string" || typeName === "String") return; // Skip primitives
+		const category = modulePath.split("/").slice(-1)[0].replace(".ts", "");
+		if (!typesByCategory.has(category)) {
+			typesByCategory.set(category, []);
 		}
-	}
+		const catTypes = typesByCategory.get(category);
+		if (catTypes) {
+			catTypes.push(typeName);
+		}
+	});
+
+	// Generate sections
+	typesByCategory.forEach((types, category) => {
+		mdx += `## ${category}\n\n`;
+		for (const typeName of types.sort()) {
+			mdx += `### \`${typeName}\`\n\n\`\`\`typescript\n`;
+			const modulePath = importedTypes.get(typeName);
+			const fullDef = modulePath ? getFullTypeDefinition(typeName, modulePath) : "";
+			if (fullDef) {
+				mdx += fullDef + "\n";
+			} else {
+				mdx += `export type ${typeName} = any;\n`;
+			}
+			mdx += `\`\`\`\n\n`;
+		}
+	});
 
 	return mdx;
 }
