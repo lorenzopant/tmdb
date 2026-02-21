@@ -1,8 +1,7 @@
-import { ApiClient } from "../client";
-import { TMDBOptions } from "../types";
 import { TVAggregateCreditsParams, TVBaseParam, TVDetailsParams } from "../types/tv";
 import { TVAggregateCredits } from "../types/tv/aggregate_credits";
 import { TVAppendToResponseNamespace, TVDetails, TVDetailsWithAppends } from "../types/tv/tv_series";
+import { TMDBAPIBase } from "./base";
 
 export const TV_SERIES_ENDPOINTS = {
 	TV: "/tv",
@@ -12,15 +11,7 @@ export const TV_SERIES_ENDPOINTS = {
 	TV_CONTENT_RATINGS: "/content_ratings",
 };
 
-export class TVSeriesAPI {
-	private client: ApiClient;
-	private defaultOptions: TMDBOptions;
-
-	constructor(client: ApiClient, options: TMDBOptions = {}) {
-		this.client = client;
-		this.defaultOptions = options;
-	}
-
+export class TVSeriesAPI extends TMDBAPIBase {
 	/**
 	 * Details
 	 * GET - https://api.themoviedb.org/3/tv/{tv_id}
