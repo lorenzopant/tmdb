@@ -51,4 +51,11 @@ describe("TV Series (integration)", () => {
 		expect(show.cast[0].name).toBe("Bryan Cranston");
 		expect(show.crew[0].name).toBe("Thomas Schnauz");
 	});
+
+	it("(EPISODE GROUPS) should get episode groups for a tv show", async () => {
+		const show = await tmdb.tv_series.episode_groups({ series_id: 1399 });
+		expect(Array.isArray(show.results)).toBe(true);
+		expect(show.results[0].episode_count).toBe(102);
+		expect(show.results[0].network.name).toBe("HBO");
+	});
 });

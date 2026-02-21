@@ -10,6 +10,7 @@ import {
 } from "../types/tv";
 import { TVAggregateCredits } from "../types/tv/aggregate_credits";
 import { TVContentRatings } from "../types/tv/content_ratings";
+import { TVEpisodeGroups } from "../types/tv/episode_groups";
 import { TVAppendToResponseNamespace, TVDetails, TVDetailsWithAppends } from "../types/tv/tv_series";
 import { TMDBAPIBase } from "./base";
 
@@ -20,6 +21,7 @@ export const TV_SERIES_ENDPOINTS = {
 	TV_CHANGES: "/changes",
 	TV_CONTENT_RATINGS: "/content_ratings",
 	TV_CREDITS: "/credits",
+	TV_EPISODE_GROUPS: "/episode_groups",
 };
 
 export class TVSeriesAPI extends TMDBAPIBase {
@@ -129,5 +131,20 @@ export class TVSeriesAPI extends TMDBAPIBase {
 		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_CREDITS}`;
 		const { language = this.defaultOptions.language, ...rest } = params;
 		return this.client.request(endpoint, { language, ...rest });
+	}
+
+	/**
+	 * Episode Groups
+	 * GET - https://api.themoviedb.org/3/tv/{series_id}/episode_groups
+	 *
+	 * Get the episode groups that have been added to a TV show.
+	 * With a group ID you can call the get TV episode group details method.
+	 * @param series_id The ID of the TV series.
+	 * @returns A promise that resolves to the TV series content ratings.
+	 * @reference https://developer.themoviedb.org/reference/tv-series-episode-groups
+	 */
+	async episode_groups(params: TVBaseParam): Promise<TVEpisodeGroups> {
+		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_EPISODE_GROUPS}`;
+		return this.client.request(endpoint);
 	}
 }
