@@ -1,4 +1,4 @@
-import { TVAggregateCreditsParams, TVBaseParam, TVDetailsParams } from "../types/tv";
+import { TVAggregateCreditsParams, TVAlternativeTitles, TVBaseParam, TVDetailsParams } from "../types/tv";
 import { TVAggregateCredits } from "../types/tv/aggregate_credits";
 import { TVAppendToResponseNamespace, TVDetails, TVDetailsWithAppends } from "../types/tv/tv_series";
 import { TMDBAPIBase } from "./base";
@@ -59,7 +59,7 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	 * @returns A promise that resolves to the TV series alternative tiles.
 	 * @reference https://developer.themoviedb.org/reference/tv-series-alternative-titles
 	 */
-	async alternative_titles(params: TVBaseParam): Promise<TVAggregateCredits> {
+	async alternative_titles(params: TVBaseParam): Promise<TVAlternativeTitles> {
 		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_ALTERNATIVE_TITLES}`;
 		return this.client.request(endpoint);
 	}

@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import { describe, expect, it } from "vitest";
 
 import { TMDB } from "../../tmdb";
@@ -23,5 +24,12 @@ describe("TV Series (integration)", () => {
 		expect(Array.isArray(show.cast)).toBe(true);
 		expect(Array.isArray(show.crew)).toBe(true);
 		expect(show.cast[0].name).toBe("Bryan Cranston");
+	});
+
+	it("(ALTERNATIVE TITLES) should get alternative titles for a tv show", async () => {
+		const show = await tmdb.tv_series.alternative_titles({ series_id: 1396 });
+		expect(show.id).toBe(1396);
+		expect(Array.isArray(show.results)).toBe(true);
+		expect(show.results[1].title).toBe("Breaking Bad: A Química do Mal");
 	});
 });
