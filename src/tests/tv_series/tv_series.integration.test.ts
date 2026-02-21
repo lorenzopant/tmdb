@@ -65,4 +65,18 @@ describe("TV Series (integration)", () => {
 		expect(show.tvdb_id).toBe(121361);
 		expect(show.instagram_id).toBe("gameofthrones");
 	});
+
+	it("(IMAGES) should get images for a tv show", async () => {
+		const show = await tmdb.tv_series.images({ series_id: 1399 });
+		expect(Array.isArray(show.backdrops)).toBe(true);
+		expect(Array.isArray(show.posters)).toBe(true);
+		expect(show.backdrops[0].iso_639_1).toBe("it");
+	});
+
+	it("(IMAGES LANGUAGE) should get images for a tv show including specified language", async () => {
+		const show = await tmdb.tv_series.images({ series_id: 1399, include_image_language: "es-ES" });
+		expect(Array.isArray(show.backdrops)).toBe(true);
+		expect(Array.isArray(show.posters)).toBe(true);
+		expect(show.backdrops[0].iso_639_1).toBe("es");
+	});
 });

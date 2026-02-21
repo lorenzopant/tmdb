@@ -7,6 +7,8 @@ import {
 	TVCreditsParams,
 	TVDetailsParams,
 	TVExternalIDs,
+	TVImages,
+	TVImagesParams,
 	TVSeriesChanges,
 } from "../types/tv";
 import { TVAggregateCredits } from "../types/tv/aggregate_credits";
@@ -167,5 +169,26 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	async external_ids(params: TVBaseParam): Promise<TVExternalIDs> {
 		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_EXTERNAL_IDS}`;
 		return this.client.request(endpoint);
+	}
+
+	/**
+	 * Images
+	 * GET - https://api.themoviedb.org/3/movie/{movie_id}/images
+	 *
+	 * Fetches images related to a specific movie, such as posters and backdrops.
+	 * The images are returned in various sizes and formats.
+	 *
+	 * If you have a language specified, it will act as a filter on the returned items. You can use the include_image_language param to query additional languages.
+	 *
+	 * @param movie_id - The unique identifier of the movie.
+	 * @param language - (Optional) The language code to filter the images by language.
+	 * @param include_image_language - (Optional) A comma-separated list of language codes to include images for.
+	 * @returns A promise that resolves to a `MovieImages` object containing the movie's images.
+	 * @reference https://developer.themoviedb.org/reference/movie-images
+	 */
+	async images(params: TVImagesParams): Promise<TVImages> {
+		const { language = this.defaultOptions.language, ...rest } = params;
+		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_IMAGES}`;
+		return this.client.request(endpoint, { language, ...rest });
 	}
 }

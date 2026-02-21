@@ -2,6 +2,7 @@ import { Timezone } from "../config/timezones";
 import { TVAppendToResponseNamespace } from "../tv/tv_series";
 import { Prettify } from "../utility";
 import { DateRange, WithLanguagePage, WithParams } from "../common/params";
+import { Language, LanguageISO6391 } from "../config";
 
 /**
  * Almost every query within the TV Series domain
@@ -34,3 +35,26 @@ export type TVChangeParams = Prettify<TVBaseParam & WithParams<"page"> & DateRan
  * Parameters for fetching tv show credits (cast and crew last season).
  */
 export type TVCreditsParams = Prettify<TVBaseParam & WithParams<"language">>;
+
+/**
+ * Parameters for fetching tv shows images (backdrops, logos, posters).
+ *
+ * Note: language and include_image_language params still only support
+ * ISO-639-1 language definition according to TMDB docs:
+ *
+ * "These are all specified as IETF tags to identify the languages we use on TMDB.
+ * There is one exception which is image languages.
+ * They are currently only designated by a ISO-639-1 tag. This is a planned upgrade for the future."
+ * https://developer.themoviedb.org/reference/configuration-primary-translations
+ *
+ * However, in practice, language in format "en-US" is still accepted.
+ * So we allow for both formats.
+ */
+export type TVImagesParams = Prettify<
+	TVBaseParam & {
+		/** Language for image metadata (supports both ISO-639-1 and full Language format) */
+		language?: Language | LanguageISO6391;
+		/** Include images with specific language tags (comma-separated, e.g., "en,null") */
+		include_image_language?: Language | LanguageISO6391;
+	}
+>;
