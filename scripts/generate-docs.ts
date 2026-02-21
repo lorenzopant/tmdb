@@ -163,7 +163,7 @@ function getFullTypeDefinition(typeName: string, importPath: string): string {
 		if (resolvedPath.startsWith("../")) {
 			resolvedPath = resolvedPath.replace(/\.\.\//g, "");
 		}
-		
+
 		// Add .ts extension if missing
 		if (!resolvedPath.endsWith(".ts")) {
 			resolvedPath += ".ts";
@@ -348,6 +348,117 @@ ${relevantTypes.length > 0 ? `\n**Types used in this method:**\n${relevantTypes.
 	return mdx;
 }
 
+interface TypeProperty {
+	name: string;
+	type: string;
+	description: string;
+	optional: boolean;
+}
+
+// Extract properties from an object type definition
+function extractTypeProperties(typeDefinition: string): TypeProperty[] | null {
+	// Check if it's an object type (try to find opening and closing braces)
+	const objectMatch = typeDefinition.match(/=\s*\{([\s\S]*)\}(?:\s*;)?$/);
+	if (!objectMatch) return null;
+
+	const objectBody = objectMatch[1];
+	const properties: TypeProperty[] = [];
+
+	// Split by lines and process each property
+	const lines = objectBody.split("\n");
+
+	for (const line of lines) {
+		const trimmed = line.trim();
+
+		// Skip empty lines and closing braces
+		if (!trimmed || trimmed === "}" || trimmed === "};" || trimmed === "};") continue;
+
+		// Skip comments that don't have property definitions
+		if (trimmed.startsWith("//") || trimmed.startsWith("*") || trimmed.startsWith("/*")) continue;
+
+		// Extract inline comment (// comment at end of line)
+		let description = "";
+		let propLine = trimmed;
+		const commentMatch = propLine.match(/(.+?)\s+\/\/\s*(.+)$/);
+		if (commentMatch) {
+			propLine = commentMatch[1];
+			description = commentMatch[2];
+		}
+
+		// Check for property definition: name?: type,
+		const propMatch = propLine.match(/^([a-zA-Z_$][a-zA-Z0-9_$]*)\??:\s*(.+?)(?:[,;])?$/);
+		if (propMatch) {
+			const [, name, type] = propMatch;
+			const optional = trimmed.includes("?:");
+
+			properties.push({
+				name,
+				type: type.replace(/[,;]\s*$/, "").trim(),
+				description: description.trim(),
+				optional,
+			});
+		}
+	}
+
+	return properties.length > 0 ? properties : null;
+}
+
+function generateTypePropertyTable(properties: TypeProperty[], allTypeNames: Set<string>): string {
+	let table = `| Property | Type | Description |\n`;
+	table += `|----------|------|-------------|\n`;
+
+	for (const prop of properties) {
+		// Extract base type name(s) from complex types
+		// Handle Union types (Type1 | Type2), generic types (Type[]), etc.
+		const baseTypes = new Set<string>();
+
+		// Split on | for union types
+		const unionParts = prop.type.split("|").map((p) => p.trim());
+		for (const part of unionParts) {
+			// Remove array notation
+			let cleanType = part.replace(/\[\]$/, "").trim();
+			// Extract from generics Type<...>
+			const genericMatch = cleanType.match(/^([a-zA-Z_$][a-zA-Z0-9_$]*)/);
+			if (genericMatch) {
+				cleanType = genericMatch[1];
+			}
+			// Handle Pick<Type, ...>
+			if (cleanType.startsWith("Pick<")) {
+				const typeMatch = cleanType.match(/Pick<([a-zA-Z_$][a-zA-Z0-9_$]*)/);
+				if (typeMatch) {
+					cleanType = typeMatch[1];
+				}
+			}
+			if (cleanType && !["string", "number", "boolean", "null", "any", "unknown"].includes(cleanType)) {
+				baseTypes.add(cleanType);
+			}
+		}
+
+		// Convert type to string with potential links
+		let typeDisplay = prop.type;
+		let hasLink = false;
+		for (const baseType of baseTypes) {
+			if (allTypeNames.has(baseType)) {
+				// Replace the base type with a link (case-insensitive anchor)
+				typeDisplay = typeDisplay.replace(new RegExp(`\\b${baseType}\\b`, "g"), `[${baseType}](#${baseType.toLowerCase()})`);
+				hasLink = true;
+			}
+		}
+
+		// If we created links, use the display as markdown. Otherwise use code formatting
+		if (hasLink) {
+			typeDisplay = typeDisplay.replace(/`/g, ""); // Remove backticks if present
+		} else {
+			typeDisplay = `\`${prop.type}\``;
+		}
+
+		const description = prop.description || (prop.optional ? "(optional)" : "");
+		table += `| ${prop.name}${prop.optional ? "?" : ""} | ${typeDisplay} | ${description} |\n`;
+	}
+
+	return table + "\n";
+}
+
 function generateEndpointTypesMdx(endpoint: EndpointInfo): string {
 	const title = endpointNameToTitle(endpoint.endpointName);
 	const importedTypes = extractImportedTypes(endpoint.sourceFile);
@@ -366,35 +477,33 @@ description: TypeScript type definitions for ${title} API
 		return mdx;
 	}
 
-	// Group types by category
-	const typesByCategory = new Map<string, string[]>();
-	importedTypes.forEach((modulePath, typeName) => {
-		if (typeName === "string" || typeName === "String") return; // Skip primitives
-		const category = modulePath.split("/").slice(-1)[0].replace(".ts", "");
-		if (!typesByCategory.has(category)) {
-			typesByCategory.set(category, []);
-		}
-		const catTypes = typesByCategory.get(category);
-		if (catTypes) {
-			catTypes.push(typeName);
-		}
-	});
+	const allTypeNames = new Set(importedTypes.keys());
 
-	// Generate sections
-	typesByCategory.forEach((types, category) => {
-		mdx += `## ${category}\n\n`;
-		for (const typeName of types.sort()) {
-			mdx += `### \`${typeName}\`\n\n\`\`\`typescript\n`;
-			const modulePath = importedTypes.get(typeName);
-			const fullDef = modulePath ? getFullTypeDefinition(typeName, modulePath) : "";
-			if (fullDef) {
-				mdx += fullDef + "\n";
-			} else {
-				mdx += `export type ${typeName} = any;\n`;
-			}
-			mdx += `\`\`\`\n\n`;
+	// Generate sections for each type (no category headers)
+	const sortedTypes = Array.from(importedTypes.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+
+	for (const [typeName, modulePath] of sortedTypes) {
+		if (typeName === "string" || typeName === "String") continue; // Skip primitives
+
+		mdx += `## ${typeName}\n\n`;
+
+		const fullDef = getFullTypeDefinition(typeName, modulePath);
+		if (!fullDef) {
+			mdx += `\`\`\`typescript\nexport type ${typeName} = any;\n\`\`\`\n\n`;
+			continue;
 		}
-	});
+
+		// Try to extract properties for object types
+		const properties = extractTypeProperties(fullDef);
+
+		if (properties && properties.length > 0) {
+			// Format as table with property descriptions
+			mdx += generateTypePropertyTable(properties, allTypeNames);
+		} else {
+			// Show full type definition for non-object types
+			mdx += `\`\`\`typescript\n${fullDef}\n\`\`\`\n\n`;
+		}
+	}
 
 	return mdx;
 }
