@@ -58,4 +58,11 @@ describe("TV Series (integration)", () => {
 		expect(show.results[0].episode_count).toBe(102);
 		expect(show.results[0].network.name).toBe("HBO");
 	});
+
+	it("(EXTERNAL IDS) should get external ids for a tv show", async () => {
+		const show = await tmdb.tv_series.external_ids({ series_id: 1399 });
+		expect(show.imdb_id).toBe("tt0944947");
+		expect(show.tvdb_id).toBe(121361);
+		expect(show.instagram_id).toBe("gameofthrones");
+	});
 });

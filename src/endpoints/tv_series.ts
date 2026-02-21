@@ -6,6 +6,7 @@ import {
 	TVCredits,
 	TVCreditsParams,
 	TVDetailsParams,
+	TVExternalIDs,
 	TVSeriesChanges,
 } from "../types/tv";
 import { TVAggregateCredits } from "../types/tv/aggregate_credits";
@@ -22,6 +23,12 @@ export const TV_SERIES_ENDPOINTS = {
 	TV_CONTENT_RATINGS: "/content_ratings",
 	TV_CREDITS: "/credits",
 	TV_EPISODE_GROUPS: "/episode_groups",
+	TV_EXTERNAL_IDS: "/external_ids",
+	TV_IMAGES: "/images",
+	TV_KEYWORDS: "/keywords",
+	TV_LATEST: "/latest",
+	TV_LISTS: "/lists",
+	TV_RECCOMENDATIONS: "/reccomendations",
 };
 
 export class TVSeriesAPI extends TMDBAPIBase {
@@ -140,11 +147,25 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	 * Get the episode groups that have been added to a TV show.
 	 * With a group ID you can call the get TV episode group details method.
 	 * @param series_id The ID of the TV series.
-	 * @returns A promise that resolves to the TV series content ratings.
+	 * @returns A promise that resolves to the TV series episode groups.
 	 * @reference https://developer.themoviedb.org/reference/tv-series-episode-groups
 	 */
 	async episode_groups(params: TVBaseParam): Promise<TVEpisodeGroups> {
 		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_EPISODE_GROUPS}`;
+		return this.client.request(endpoint);
+	}
+
+	/**
+	 * External IDs
+	 * GET - https://api.themoviedb.org/3/tv/{series_id}/external_ids
+	 *
+	 * Get a list of external IDs that have been added to a TV show.
+	 * @param series_id The ID of the TV series.
+	 * @returns A promise that resolves to the TV series external ids.
+	 * @reference https://developer.themoviedb.org/reference/tv-series-external-ids
+	 */
+	async external_ids(params: TVBaseParam): Promise<TVExternalIDs> {
+		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_EXTERNAL_IDS}`;
 		return this.client.request(endpoint);
 	}
 }
