@@ -238,3 +238,15 @@ export type KnownForTV = BaseKnownForItem & {
 export type KnownForItem = KnownForMovie | KnownForTV;
 
 export type MediaType = "movie" | "tv";
+
+/**
+ * Content rating information for a TV show or movie
+ */
+export type ContentRating = {
+	/** Additional content descriptors or advisory warnings (e.g., "violence", "language", "nudity") */
+	descriptors: string[];
+	/** ISO 3166-1 country code where this rating applies */
+	iso_3166_1: string;
+	/** Age or content rating (e.g., "TV-MA", "PG-13", "TV-14", "R") */
+	rating: string;
+};

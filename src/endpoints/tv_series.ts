@@ -1,5 +1,6 @@
 import { TVAggregateCreditsParams, TVAlternativeTitles, TVBaseParam, TVChangeParams, TVDetailsParams, TVSeriesChanges } from "../types/tv";
 import { TVAggregateCredits } from "../types/tv/aggregate_credits";
+import { TVContentRatings } from "../types/tv/content_ratings";
 import { TVAppendToResponseNamespace, TVDetails, TVDetailsWithAppends } from "../types/tv/tv_series";
 import { TMDBAPIBase } from "./base";
 
@@ -84,5 +85,19 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	async changes(params: TVChangeParams): Promise<TVSeriesChanges> {
 		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_CHANGES}`;
 		return this.client.request(endpoint, { ...params });
+	}
+
+	/**
+	 * Content Ratings
+	 * GET - https://api.themoviedb.org/3/tv/{tv_id}/content_ratings
+	 *
+	 * Get the content ratings that have been added to a TV show.
+	 * @param series_id The ID of the TV series.
+	 * @returns A promise that resolves to the TV series content ratings.
+	 * @reference https://developer.themoviedb.org/reference/tv-series-content-ratings
+	 */
+	async content_ratings(params: TVBaseParam): Promise<TVContentRatings> {
+		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_CONTENT_RATINGS}`;
+		return this.client.request(endpoint);
 	}
 }

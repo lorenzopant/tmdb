@@ -37,4 +37,11 @@ describe("TV Series (integration)", () => {
 		const show = await tmdb.tv_series.changes({ series_id: 1396 });
 		expect(Array.isArray(show.changes)).toBe(true);
 	});
+
+	it("(CONTENT RATINGS) should get content ratings for a tv show", async () => {
+		const show = await tmdb.tv_series.content_ratings({ series_id: 1396 });
+		expect(Array.isArray(show.results)).toBe(true);
+		expect(show.results[0].iso_3166_1).toBe("DE");
+		expect(show.results[0].rating).toBe("16");
+	});
 });
