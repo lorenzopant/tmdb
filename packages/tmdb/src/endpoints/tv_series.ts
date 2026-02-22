@@ -11,10 +11,12 @@ import {
 	TVImagesParams,
 	TVKeywords,
 	TVSeriesChanges,
+	TVSeriesListsParams,
 } from "../types/tv";
 import { TVAggregateCredits } from "../types/tv/aggregate_credits";
 import { TVContentRatings } from "../types/tv/content_ratings";
 import { TVEpisodeGroups } from "../types/tv/episode_groups";
+import { TVSeriesLists } from "../types/tv/lists";
 import { TVAppendToResponseNamespace, TVSeriesDetails, TVDetailsWithAppends } from "../types/tv/tv_series";
 import { TMDBAPIBase } from "./base";
 
@@ -219,5 +221,22 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	async latest(): Promise<TVSeriesDetails> {
 		const endpoint = `${TV_SERIES_ENDPOINTS.TV}${TV_SERIES_ENDPOINTS.TV_LATEST}`;
 		return this.client.request(endpoint);
+	}
+
+	/**
+	 * Lists
+	 * GET - https://api.themoviedb.org/3/tv/{series_id}/lists
+	 *
+	 * Get the lists that a TV series has been added to.
+	 * @param series_id The ID of the TV series.
+	 * @param language The Language for the lists
+	 * @param page Page number (paginated response)
+	 * @returns A promise that resolves to the TV series lists.
+	 * @reference https://developer.themoviedb.org/reference/lists-copy (TODO: Check this url for updates, it's like this on TMDB docs (??))
+	 */
+	async lists(params: TVSeriesListsParams): Promise<TVSeriesLists> {
+		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_LISTS}`;
+		const { language = this.defaultOptions.language, ...rest } = params;
+		return this.client.request(endpoint, { language, ...rest });
 	}
 }

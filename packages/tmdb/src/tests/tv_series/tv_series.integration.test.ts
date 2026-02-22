@@ -90,4 +90,11 @@ describe("TV Series (integration)", () => {
 		const show = await tmdb.tv_series.latest();
 		expect(show.id).toBeDefined();
 	});
+
+	it("(LISTS) should get tv show lists", async () => {
+		const show = await tmdb.tv_series.lists({ series_id: 1399 });
+		expect(Array.isArray(show.results)).toBe(true);
+		expect(show.results[0].item_count).toBeGreaterThan(0);
+		expect(show.results[0].iso_3166_1).toBe("IT");
+	});
 });

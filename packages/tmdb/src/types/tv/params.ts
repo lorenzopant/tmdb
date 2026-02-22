@@ -1,5 +1,5 @@
 import { Timezone } from "../config/timezones";
-import { TVAppendToResponseNamespace } from "../tv/tv_series";
+import { TVAppendToResponseNamespace } from "./tv_series";
 import { Prettify } from "../utility";
 import { DateRange, WithLanguagePage, WithParams } from "../common/params";
 import { Language, LanguageISO6391 } from "../config";
@@ -58,3 +58,8 @@ export type TVImagesParams = Prettify<
 		include_image_language?: Language | LanguageISO6391;
 	}
 >;
+
+/**
+ * Parameters for fetching TV series lists (lists endpoint, different from airing_today ecc...).
+ */
+export type TVSeriesListsParams = TVBaseParam & WithLanguagePage;
