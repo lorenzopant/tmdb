@@ -79,4 +79,10 @@ describe("TV Series (integration)", () => {
 		expect(Array.isArray(show.posters)).toBe(true);
 		expect(show.backdrops[0].iso_639_1).toBe("es");
 	});
+
+	it("(KEYWORDS) should get keywords for a tv show", async () => {
+		const show = await tmdb.tv_series.keywords({ series_id: 1399 });
+		expect(Array.isArray(show.results)).toBe(true);
+		expect(show.results.map((k) => k.name).includes("kingdom")).toBe(true);
+	});
 });

@@ -9,6 +9,7 @@ import {
 	TVExternalIDs,
 	TVImages,
 	TVImagesParams,
+	TVKeywords,
 	TVSeriesChanges,
 } from "../types/tv";
 import { TVAggregateCredits } from "../types/tv/aggregate_credits";
@@ -190,5 +191,19 @@ export class TVSeriesAPI extends TMDBAPIBase {
 		const { language = this.defaultOptions.language, ...rest } = params;
 		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_IMAGES}`;
 		return this.client.request(endpoint, { language, ...rest });
+	}
+
+	/**
+	 * Keywords
+	 * GET - https://api.themoviedb.org/3/tv/{series_id}/keywords
+	 *
+	 * Get a list of keywords that have been added to a TV show.
+	 * @param series_id The ID of the TV series.
+	 * @returns A promise that resolves to the TV series keywords.
+	 * @reference https://developer.themoviedb.org/reference/tv-series-keywords
+	 */
+	async keywords(params: TVBaseParam): Promise<TVKeywords> {
+		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_KEYWORDS}`;
+		return this.client.request(endpoint);
 	}
 }
