@@ -62,4 +62,14 @@ export type TVImagesParams = Prettify<
 /**
  * Parameters for fetching TV series lists (lists endpoint, different from airing_today ecc...).
  */
-export type TVSeriesListsParams = TVBaseParam & WithLanguagePage;
+export type TVSeriesListsParams = Prettify<TVBaseParam & WithLanguagePage>;
+
+/**
+ * Parameters for fetching tv shows recommendations.
+ */
+export type TVRecommendationsParams = Prettify<TVBaseParam & WithLanguagePage>;
+
+/**
+ * Parameters for fetching similar tv shows.
+ */
+export type TVSimilarParams = Prettify<TVBaseParam & WithLanguagePage>;

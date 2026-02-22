@@ -6,7 +6,7 @@ export * from "./external_ids";
 export * from "./images";
 export * from "./keywords";
 export * from "./params";
-export * from "./reccomendations";
+export * from "./recommendations";
 export * from "./seasons";
 export * from "./similar";
 export * from "./tv_series";

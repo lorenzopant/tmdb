@@ -6,7 +6,7 @@ import { TVEpisodeItem } from "./episodes";
 import { TVExternalIDs } from "./external_ids";
 import { TVImages } from "./images";
 import { TVKeywords } from "./keywords";
-import { TVRecommendations } from "./reccomendations";
+import { TVRecommendations } from "./recommendations";
 import { TVSeasonItem } from "./seasons";
 import { TVSimilar } from "./similar";
 import { TVVideos } from "./videos";

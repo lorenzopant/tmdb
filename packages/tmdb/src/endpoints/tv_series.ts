@@ -10,6 +10,8 @@ import {
 	TVImages,
 	TVImagesParams,
 	TVKeywords,
+	TVRecommendations,
+	TVRecommendationsParams,
 	TVSeriesChanges,
 	TVSeriesListsParams,
 } from "../types/tv";
@@ -33,7 +35,7 @@ export const TV_SERIES_ENDPOINTS = {
 	TV_KEYWORDS: "/keywords",
 	TV_LATEST: "/latest",
 	TV_LISTS: "/lists",
-	TV_RECCOMENDATIONS: "/reccomendations",
+	TV_RECOMMENDATIONS: "/recommendations",
 };
 
 export class TVSeriesAPI extends TMDBAPIBase {
@@ -236,6 +238,23 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	 */
 	async lists(params: TVSeriesListsParams): Promise<TVSeriesLists> {
 		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_LISTS}`;
+		const { language = this.defaultOptions.language, ...rest } = params;
+		return this.client.request(endpoint, { language, ...rest });
+	}
+
+	/**
+	 * Recomendations
+	 * GET - https://api.themoviedb.org/3/tv/{series_id}/recommendations
+	 *
+	 * Get the recommendations shows for a TV series.
+	 * @param series_id The ID of the TV series.
+	 * @param language The Language for the lists
+	 * @param page Page number (paginated response)
+	 * @returns A promise that resolves to TV series recommended shows.
+	 * @reference https://developer.themoviedb.org/reference/tv-series-recommendations
+	 */
+	async recommendations(params: TVRecommendationsParams): Promise<TVRecommendations> {
+		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_RECOMMENDATIONS}`;
 		const { language = this.defaultOptions.language, ...rest } = params;
 		return this.client.request(endpoint, { language, ...rest });
 	}

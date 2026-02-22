@@ -6,7 +6,7 @@ export * from "./images";
 export * from "./keywords";
 export * from "./movie";
 export * from "./params";
-export * from "./reccomendations";
+export * from "./recommendations";
 export * from "./release_dates";
 export * from "./reviews";
 export * from "./similar";
