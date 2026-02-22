@@ -109,4 +109,12 @@ describe("TV Series (integration)", () => {
 		expect(Array.isArray(show.results)).toBe(true);
 		expect(show.results[0].id).toBe("58aa82f09251416f92006a3a");
 	});
+
+	it("(SCREENED THEATRICALLY) should get tv episodes screened thetrically", async () => {
+		const show = await tmdb.tv_series.screened_theatrically({ series_id: 1399 });
+		expect(Array.isArray(show.results)).toBe(true);
+		expect(show.id).toBe(1399);
+		expect(show.results[0].episode_number).toBe(10);
+		expect(show.results[0].season_number).toBe(4);
+	});
 });

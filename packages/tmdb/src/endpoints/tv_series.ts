@@ -21,6 +21,7 @@ import { TVContentRatings } from "../types/tv/content_ratings";
 import { TVEpisodeGroups } from "../types/tv/episode_groups";
 import { TVSeriesLists } from "../types/tv/lists";
 import { TVReviews } from "../types/tv/reviews";
+import { TVScreenedTheatrically } from "../types/tv/screened_theatrically";
 import { TVAppendToResponseNamespace, TVSeriesDetails, TVDetailsWithAppends } from "../types/tv/tv_series";
 import { TMDBAPIBase } from "./base";
 
@@ -282,5 +283,19 @@ export class TVSeriesAPI extends TMDBAPIBase {
 		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_REVIEWS}`;
 		const { language = this.defaultOptions.language, ...rest } = params;
 		return this.client.request(endpoint, { language, ...rest });
+	}
+
+	/**
+	 * Sreened Theatrically
+	 * GET - https://api.themoviedb.org/3/tv/{series_id}/screened_theatrically
+	 *
+	 * Get the seasons and episodes that have screened theatrically.
+	 * @param series_id The ID of the TV series.
+	 * @returns A promise that resolves to the TV episodes that have been screened thatrically.
+	 * @reference https://developer.themoviedb.org/reference/tv-series-screened-theatrically
+	 */
+	async screened_theatrically(params: TVBaseParam): Promise<TVScreenedTheatrically> {
+		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_SCREENED_THEATRICALLY}`;
+		return this.client.request(endpoint);
 	}
 }
