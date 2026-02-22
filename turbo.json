@@ -1,5 +1,6 @@
 {
 	"$schema": "https://turbo.build/schema.json",
+	"globalEnv": ["TMDB_ACCESS_TOKEN"],
 	"tasks": {
 		"build": {
 			"dependsOn": ["^build"],

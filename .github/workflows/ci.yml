@@ -16,8 +16,8 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v4
 
-            - name: Setup action
-              uses: pnpm/action-setup@v2
+            - name: Setup pnpm
+              uses: pnpm/action-setup@v4 # Aggiornato a v4
               with:
                   version: 9
 
@@ -33,7 +33,8 @@ jobs:
                   echo TMDB_ACCESS_TOKEN=${{ env.TMDB_ACCESS_TOKEN }} >> .env
 
             - name: Install dependencies
-              run: pnpm install
+              run: pnpm install --frozen-lockfile
 
-            - name: Run tests
-              run: pnpm run test
+            # Usa Turbo per lanciare lint, typecheck e test in tutti i workspace!
+            - name: Run checks and tests
+              run: pnpm exec turbo run build lint typecheck test
