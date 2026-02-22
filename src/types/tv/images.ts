@@ -8,11 +8,16 @@ export type TVImages = {
 	/** TMDB unique identifier for the TV show. */
 	id: number;
 	/** List of backdrop images for the TV show. */
-	backdrops: ImageItem[];
+	backdrops: TVImageItem[];
 	/** List of logo images for the TV show. */
-	logos: ImageItem[];
+	logos: TVImageItem[];
 	/** List of poster images for the TV show. */
-	posters: ImageItem[];
-	/** List of still images for the TV show. */
-	stills?: ImageItem[];
+	posters: TVImageItem[];
 };
+
+/**
+ * Image items for TVShows have an undocumented "iso_3166_1" property
+ * I decided to put it anyway as an optional property,
+ * but only for tv shows images.
+ */
+export type TVImageItem = ImageItem & { iso_3166_1?: string };

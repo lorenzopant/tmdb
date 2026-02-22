@@ -1,15 +1,25 @@
 /**
- * External identifiers for a TV show.
+ * External platform identifiers for a TV series
  */
 export type TVExternalIDs = {
-	/** TMDB unique identifier for the TV show. */
+	/** TV series identifier in TMDB */
 	id: number;
-	/** IMDb identifier string, or undefined if unavailable. */
+	/** IMDb identifier (e.g., "tt0944947"), null if not available */
 	imdb_id?: string;
-	/** Facebook identifier string, or undefined if unavailable. */
+	/** Freebase MID identifier (deprecated), null if not available */
+	freebase_mid?: string;
+	/** Freebase ID (deprecated), null if not available */
+	freebase_id?: string;
+	/** TheTVDB identifier, null if not available */
+	tvdb_id?: number;
+	/** TVRage identifier (service discontinued), null if not available */
+	tvrage_id?: number;
+	/** Wikidata identifier (e.g., "Q23572"), null if not available */
+	wikidata_id?: string;
+	/** Facebook page identifier, null if not available */
 	facebook_id?: string;
-	/** Twitter identifier string, or undefined if unavailable. */
-	twitter_id?: string;
-	/** Instagram identifier string, or undefined if unavailable. */
+	/** Instagram handle, null if not available */
 	instagram_id?: string;
+	/** Twitter/X handle, null if not available */
+	twitter_id?: string;
 };

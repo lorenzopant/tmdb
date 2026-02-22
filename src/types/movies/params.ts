@@ -1,4 +1,4 @@
-import { TMDBQueryParams, WithLanguagePage, WithParams } from "../common";
+import { DateRange, TMDBQueryParams, WithLanguagePage, WithParams } from "../common";
 import { CountryISO3166_1 } from "../config/countries";
 import { Language, LanguageISO6391 } from "../config/languages";
 import { Prettify } from "../utility";
@@ -59,15 +59,7 @@ export type MovieWatchProvidersParams = MovieBaseParam;
 /**
  * Parameters for fetching movie change history.
  */
-export type MovieChangesParams = Prettify<
-	MovieBaseParam &
-		WithParams<"page"> & {
-			/** Start date for changes in ISO 8601 format (YYYY-MM-DD) */
-			start_date?: string;
-			/** End date for changes in ISO 8601 format (YYYY-MM-DD) */
-			end_date?: string;
-		}
->;
+export type MovieChangesParams = Prettify<MovieBaseParam & WithParams<"page"> & DateRange>;
 
 /**
  * Parameters for fetching movie images (backdrops, logos, posters).

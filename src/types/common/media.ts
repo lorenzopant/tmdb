@@ -8,7 +8,6 @@ import { CountryISO3166_1 } from "../config/countries";
 export type Genre = {
 	// ** The unique identifier for the genre
 	id: number;
-
 	// ** The name of the genre
 	name: string;
 };
@@ -27,13 +26,10 @@ export type GenresResponse = {
 export type ProductionCompany = {
 	// ** The unique identifier for the production company
 	id: number;
-
 	// ** The path to the logo of the production company, or null if not available
 	logo_path: string | null;
-
 	// ** The name of the production company
 	name: string;
-
 	// ** The country where the production company is based, represented by its ISO 3166-1 code
 	origin_country: string;
 };
@@ -44,7 +40,6 @@ export type ProductionCompany = {
 export type ProductionCountry = {
 	// ** The ISO 3166-1 code of the country
 	iso_3166_1: string;
-
 	// ** The name of the country
 	name: string;
 };
@@ -55,10 +50,8 @@ export type ProductionCountry = {
 export type SpokenLanguage = {
 	// ** The English name of the language
 	english_name: string;
-
 	// ** The ISO 639-1 code of the language
 	iso_639_1: string;
-
 	// ** The name of the language in its native form
 	name: string;
 };
@@ -69,13 +62,10 @@ export type SpokenLanguage = {
 export type Collection = {
 	// ** The unique identifier for the collection
 	id: number;
-
 	// ** The name of the collection
 	name: string;
-
 	// ** The path to the poster image of the collection, or null if not available
 	poster_path: string | null;
-
 	// ** The path to the backdrop image of the collection, or null if not available
 	backdrop_path: string | null;
 };
@@ -86,28 +76,20 @@ export type Collection = {
 export type Credit = {
 	// ** Indicates whether the cast member is an adult
 	adult: boolean;
-
 	// ** The gender of the cast member, or null if not specified (1 = female, 2 = male)
 	gender: number | null;
-
 	// ** The unique identifier for the crew/cast member
 	id: number;
-
 	// ** The department the cast member is known for
 	known_for_department: string;
-
 	// ** The name of the cast member
 	name: string;
-
 	// ** The original name of the cast member
 	original_name: string;
-
 	// ** The popularity score of the cast member
 	popularity: number;
-
 	// ** The path to the profile image of the cast member, or null if not available
 	profile_path?: string | null;
-
 	// ** The unique identifier for the credit
 	credit_id: string;
 };
@@ -118,10 +100,8 @@ export type Credit = {
 export type Cast = Credit & {
 	// ** The unique identifier for the cast credit
 	cast_id: number;
-
 	// ** The character played by the cast member
 	character: string;
-
 	// ** The order of the cast member in the credits
 	order: number;
 };
@@ -132,17 +112,30 @@ export type Cast = Credit & {
 export type Crew = Credit & {
 	// ** The department the crew member worked in
 	department: string;
-
 	// ** The specific job performed by the crew member
 	job: string;
 };
 
+/**
+ * Represents a keyword entry
+ */
 export type Keyword = {
 	// ** The unique identifier for the keyword
 	id: number;
-
 	// ** The name of the keyword
 	name: string;
+};
+
+/**
+ *  Alternative title entry
+ */
+export type AlternativeTitle = {
+	/** Alternative title text */
+	title: string;
+	/** ISO 3166-1 country code where this title is used */
+	iso_3166_1: string;
+	/** Type of title (e.g., "original title", "working title") */
+	type: string;
 };
 
 /**
@@ -245,3 +238,15 @@ export type KnownForTV = BaseKnownForItem & {
 export type KnownForItem = KnownForMovie | KnownForTV;
 
 export type MediaType = "movie" | "tv";
+
+/**
+ * Content rating information for a TV show or movie
+ */
+export type ContentRating = {
+	/** Additional content descriptors or advisory warnings (e.g., "violence", "language", "nudity") */
+	descriptors: string[];
+	/** ISO 3166-1 country code where this rating applies */
+	iso_3166_1: string;
+	/** Age or content rating (e.g., "TV-MA", "PG-13", "TV-14", "R") */
+	rating: string;
+};
