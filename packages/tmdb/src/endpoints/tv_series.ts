@@ -15,6 +15,8 @@ import {
 	TVReviewsParams,
 	TVSeriesChanges,
 	TVSeriesListsParams,
+	TVSimilar,
+	TVSimilarParams,
 } from "../types/tv";
 import { TVAggregateCredits } from "../types/tv/aggregate_credits";
 import { TVContentRatings } from "../types/tv/content_ratings";
@@ -297,5 +299,22 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	async screened_theatrically(params: TVBaseParam): Promise<TVScreenedTheatrically> {
 		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_SCREENED_THEATRICALLY}`;
 		return this.client.request(endpoint);
+	}
+
+	/**
+	 * Similar
+	 * GET - https://api.themoviedb.org/3/tv/{series_id}/similar
+	 *
+	 * Get the similar shows for a TV series.
+	 * @param series_id The ID of the TV series.
+	 * @param language The Language for the lists
+	 * @param page Page number - Defaults to 1
+	 * @returns A promise that resolves to TV series similar shows.
+	 * @reference https://developer.themoviedb.org/reference/tv-series-similar
+	 */
+	async similar(params: TVSimilarParams): Promise<TVSimilar> {
+		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_SIMILAR}`;
+		const { language = this.defaultOptions.language, ...rest } = params;
+		return this.client.request(endpoint, { language, ...rest });
 	}
 }

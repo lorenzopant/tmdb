@@ -117,4 +117,10 @@ describe("TV Series (integration)", () => {
 		expect(show.results[0].episode_number).toBe(10);
 		expect(show.results[0].season_number).toBe(4);
 	});
+
+	it("(SIMILAR) should get similar tv shows", async () => {
+		const show = await tmdb.tv_series.similar({ series_id: 1399 });
+		expect(Array.isArray(show.results)).toBe(true);
+		expect(show.results[0].id).toBe(61223);
+	});
 });
