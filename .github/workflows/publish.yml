@@ -52,16 +52,21 @@ jobs:
             - name: Build
               run: pnpm --filter=@lorenzopant/tmdb run build
 
+            - name: Debug structure
+              run: |
+                  echo "Current directory: $(pwd)"
+                  ls -la
+                  ls -la packages/ || echo "No packages/ folder!"
+
             # Run release
             - name: Run release
-              working-directory: ./packages/tmdb
               run: |
                   if [ "${{ github.event.inputs.is_beta }}" == "true" ]; then
-                    echo "Starting BETA release..."
-                    pnpm exec release-it --ci --preRelease=beta --npm.tag=beta
+                  echo "Starting BETA release..."
+                  pnpm --filter=@lorenzopant/tmdb exec release-it --ci --preRelease=beta --npm.tag=beta
                   else
-                    echo "Starting PRODUCTION release..."
-                    pnpm exec release-it --ci
+                  echo "Starting PRODUCTION release..."
+                  pnpm --filter=@lorenzopant/tmdb exec release-it --ci
                   fi
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
