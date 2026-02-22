@@ -18,6 +18,7 @@ import {
 	TVSimilar,
 	TVSimilarParams,
 	TVTranslations,
+	TVVideos,
 } from "../types/tv";
 import { TVAggregateCredits } from "../types/tv/aggregate_credits";
 import { TVContentRatings } from "../types/tv/content_ratings";
@@ -333,5 +334,19 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	async translations(params: TVBaseParam): Promise<TVTranslations> {
 		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_TRANSLATIONS}`;
 		return this.client.request<TVTranslations>(endpoint);
+	}
+
+	/**
+	 * Videos
+	 * GET - https://api.themoviedb.org/3/movie/{series_id}/videos
+	 *
+	 * Get the videos that belong to a TV show.
+	 * @param series_id The ID of the TV Series
+	 * @returns A promise that resolves to the videos for the tv show.
+	 * @reference https://developer.themoviedb.org/reference/tv-series-videos
+	 */
+	async videos(params: TVBaseParam): Promise<TVVideos> {
+		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_VIDEOS}`;
+		return this.client.request<TVVideos>(endpoint);
 	}
 }

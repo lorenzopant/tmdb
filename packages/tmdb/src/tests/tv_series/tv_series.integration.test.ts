@@ -130,4 +130,11 @@ describe("TV Series (integration)", () => {
 		expect(show.translations[0].iso_3166_1).toBe("US");
 		expect(show.translations[1].data.tagline).toBe("Das Lied von Eis und Feuer");
 	});
+
+	it("(VIDEOS) should get tv shows videos", async () => {
+		const show = await tmdb.tv_series.videos({ series_id: 1399 });
+		expect(Array.isArray(show.results)).toBe(true);
+		expect(show.results[0].site).toBe("YouTube");
+		expect(show.results[0].official).toBe(true);
+	});
 });
