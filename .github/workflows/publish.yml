@@ -50,7 +50,7 @@ jobs:
 
             # Build
             - name: Build
-              run: pnpm exec turbo run build --filter=@lorenzopant/tmdb
+              run: pnpm --filter=@lorenzopant/tmdb run build
 
             # Run release
             - name: Run release
