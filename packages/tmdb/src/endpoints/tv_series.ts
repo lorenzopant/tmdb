@@ -1,3 +1,4 @@
+import { MediaWatchProviders } from "../types";
 import {
 	TVAggregateCreditsParams,
 	TVAlternativeTitles,
@@ -48,7 +49,7 @@ export const TV_SERIES_ENDPOINTS = {
 	TV_SIMILAR: "/similar",
 	TV_TRANSLATIONS: "/translations",
 	TV_VIDEOS: "/videos",
-	TV_WATCH_PROVIDERS: "/watch_providers",
+	TV_WATCH_PROVIDERS: "/watch/providers",
 };
 
 export class TVSeriesAPI extends TMDBAPIBase {
@@ -348,5 +349,28 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	async videos(params: TVBaseParam): Promise<TVVideos> {
 		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_VIDEOS}`;
 		return this.client.request<TVVideos>(endpoint);
+	}
+
+	/**
+	 * Watch Providers
+	 * GET - https://api.themoviedb.org/3/movie/{series_id}/watch/providers
+	 *
+	 * Get the list of streaming providers we have for a TV show.
+	 *
+	 * Powered by our partnership with JustWatch, you can query this method to get a list of the streaming/rental/purchase availabilities per country by provider.
+	 * This is not going to return full deep links, but rather, it's just enough information to display what's available where.
+	 * You can link to the provided TMDB URL to help support TMDB and provide the actual deep links to the content.
+	 *
+	 * WARNING: JustWatch Attribution Required
+	 * In order to use this data you must attribute the source of the data as JustWatch.
+	 * If we find any usage not complying with these terms we will revoke access to the API.
+	 *
+	 * @param series_id The ID of the TV Series
+	 * @returns A promise that resolves to the watch providers for the tv show.
+	 * @reference https://developer.themoviedb.org/reference/tv-series-watch-providers
+	 */
+	async watch_providers(params: TVBaseParam): Promise<MediaWatchProviders> {
+		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_WATCH_PROVIDERS}`;
+		return this.client.request<MediaWatchProviders>(endpoint);
 	}
 }

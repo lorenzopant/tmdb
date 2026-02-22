@@ -137,4 +137,11 @@ describe("TV Series (integration)", () => {
 		expect(show.results[0].site).toBe("YouTube");
 		expect(show.results[0].official).toBe(true);
 	});
+
+	it("(WATCH PROVIDERS) should get tv shows watch providers", async () => {
+		const show = await tmdb.tv_series.watch_providers({ series_id: 1399 });
+		expect(show.results).toBeDefined();
+		expect(show.results["AE"].flatrate).toBeDefined();
+		expect(show.results["AE"].link).toBeDefined();
+	});
 });

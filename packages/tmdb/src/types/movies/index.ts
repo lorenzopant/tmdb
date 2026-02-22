@@ -12,4 +12,3 @@ export * from "./reviews";
 export * from "./similar";
 export * from "./translations";
 export * from "./videos";
-export * from "./watch_providers";
