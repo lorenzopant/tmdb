@@ -14,7 +14,7 @@ import { TVVideos } from "./videos";
 /**
  * Represent the detailed information about a TV show.
  */
-export type TVDetails = {
+export type TVSeriesDetails = {
 	/** The path to the backdrop image, or null if not available */
 	backdrop_path: string | null;
 	/** Array of creators who developed the TV show */
@@ -109,6 +109,6 @@ export type TVAppendableMap = {
  * TV show details with additional appended data based on the requested namespaces.
  * @template T - Array of append-to-response namespace keys to include
  */
-export type TVDetailsWithAppends<T extends readonly TVAppendToResponseNamespace[]> = TVDetails & {
+export type TVDetailsWithAppends<T extends readonly TVAppendToResponseNamespace[]> = TVSeriesDetails & {
 	[K in T[number]]: TVAppendableMap[K];
 };

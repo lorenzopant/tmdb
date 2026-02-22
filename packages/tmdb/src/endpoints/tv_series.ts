@@ -15,7 +15,7 @@ import {
 import { TVAggregateCredits } from "../types/tv/aggregate_credits";
 import { TVContentRatings } from "../types/tv/content_ratings";
 import { TVEpisodeGroups } from "../types/tv/episode_groups";
-import { TVAppendToResponseNamespace, TVDetails, TVDetailsWithAppends } from "../types/tv/tv_series";
+import { TVAppendToResponseNamespace, TVSeriesDetails, TVDetailsWithAppends } from "../types/tv/tv_series";
 import { TMDBAPIBase } from "./base";
 
 export const TV_SERIES_ENDPOINTS = {
@@ -48,7 +48,7 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	 */
 	async details<T extends readonly TVAppendToResponseNamespace[] = []>(
 		params: TVDetailsParams & { append_to_response?: T[number] | T },
-	): Promise<T extends [] ? TVDetails : TVDetailsWithAppends<T>> {
+	): Promise<T extends [] ? TVSeriesDetails : TVDetailsWithAppends<T>> {
 		const { language = this.defaultOptions.language, ...rest } = params;
 		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}`;
 		return this.client.request(endpoint, { language, ...rest });
@@ -204,6 +204,20 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	 */
 	async keywords(params: TVBaseParam): Promise<TVKeywords> {
 		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_KEYWORDS}`;
+		return this.client.request(endpoint);
+	}
+
+	/**
+	 * Latest
+	 * GET - https://api.themoviedb.org/3/tv/latest
+	 *
+	 * Get the newest tv show.
+	 * This is a live response and will continuosly change.
+	 * @returns A promise that resolves to the lastest TV series.
+	 * @reference https://developer.themoviedb.org/reference/tv-series-latest-id
+	 */
+	async latest(): Promise<TVSeriesDetails> {
+		const endpoint = `${TV_SERIES_ENDPOINTS.TV}${TV_SERIES_ENDPOINTS.TV_LATEST}`;
 		return this.client.request(endpoint);
 	}
 }

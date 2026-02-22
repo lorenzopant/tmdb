@@ -85,4 +85,9 @@ describe("TV Series (integration)", () => {
 		expect(Array.isArray(show.results)).toBe(true);
 		expect(show.results.map((k) => k.name).includes("kingdom")).toBe(true);
 	});
+
+	it("(LATEST) should get latest tv show", async () => {
+		const show = await tmdb.tv_series.latest();
+		expect(show.id).toBeDefined();
+	});
 });
