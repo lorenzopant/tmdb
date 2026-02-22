@@ -12,6 +12,7 @@ import {
 	TVKeywords,
 	TVRecommendations,
 	TVRecommendationsParams,
+	TVReviewsParams,
 	TVSeriesChanges,
 	TVSeriesListsParams,
 } from "../types/tv";
@@ -19,6 +20,7 @@ import { TVAggregateCredits } from "../types/tv/aggregate_credits";
 import { TVContentRatings } from "../types/tv/content_ratings";
 import { TVEpisodeGroups } from "../types/tv/episode_groups";
 import { TVSeriesLists } from "../types/tv/lists";
+import { TVReviews } from "../types/tv/reviews";
 import { TVAppendToResponseNamespace, TVSeriesDetails, TVDetailsWithAppends } from "../types/tv/tv_series";
 import { TMDBAPIBase } from "./base";
 
@@ -36,6 +38,12 @@ export const TV_SERIES_ENDPOINTS = {
 	TV_LATEST: "/latest",
 	TV_LISTS: "/lists",
 	TV_RECOMMENDATIONS: "/recommendations",
+	TV_REVIEWS: "/reviews",
+	TV_SCREENED_THEATRICALLY: "/screened_theatrically",
+	TV_SIMILAR: "/similar",
+	TV_TRANSLATIONS: "/translations",
+	TV_VIDEOS: "/videos",
+	TV_WATCH_PROVIDERS: "/watch_providers",
 };
 
 export class TVSeriesAPI extends TMDBAPIBase {
@@ -232,7 +240,7 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	 * Get the lists that a TV series has been added to.
 	 * @param series_id The ID of the TV series.
 	 * @param language The Language for the lists
-	 * @param page Page number (paginated response)
+	 * @param page Page number - Defaults to 1
 	 * @returns A promise that resolves to the TV series lists.
 	 * @reference https://developer.themoviedb.org/reference/lists-copy (TODO: Check this url for updates, it's like this on TMDB docs (??))
 	 */
@@ -249,12 +257,29 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	 * Get the recommendations shows for a TV series.
 	 * @param series_id The ID of the TV series.
 	 * @param language The Language for the lists
-	 * @param page Page number (paginated response)
+	 * @param page Page number - Defaults to 1
 	 * @returns A promise that resolves to TV series recommended shows.
 	 * @reference https://developer.themoviedb.org/reference/tv-series-recommendations
 	 */
 	async recommendations(params: TVRecommendationsParams): Promise<TVRecommendations> {
 		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_RECOMMENDATIONS}`;
+		const { language = this.defaultOptions.language, ...rest } = params;
+		return this.client.request(endpoint, { language, ...rest });
+	}
+
+	/**
+	 * Reviews
+	 * GET - https://api.themoviedb.org/3/tv/{series_id}/reviews
+	 *
+	 * Get the reviews that have been added to a TV show.
+	 * @param series_id The ID of the TV series.
+	 * @param language The Language for the lists
+	 * @param page Page number - Defaults to 1
+	 * @returns A promise that resolves to TV series recommended shows.
+	 * @reference https://developer.themoviedb.org/reference/tv-series-recommendations
+	 */
+	async reviews(params: TVReviewsParams): Promise<TVReviews> {
+		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_REVIEWS}`;
 		const { language = this.defaultOptions.language, ...rest } = params;
 		return this.client.request(endpoint, { language, ...rest });
 	}

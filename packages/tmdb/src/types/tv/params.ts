@@ -73,3 +73,8 @@ export type TVRecommendationsParams = Prettify<TVBaseParam & WithLanguagePage>;
  * Parameters for fetching similar tv shows.
  */
 export type TVSimilarParams = Prettify<TVBaseParam & WithLanguagePage>;
+
+/**
+ * Parameters for fetching tv show reviews.
+ */
+export type TVReviewsParams = Prettify<TVBaseParam & WithLanguagePage>;

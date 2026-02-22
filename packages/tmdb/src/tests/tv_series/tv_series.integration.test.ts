@@ -103,4 +103,10 @@ describe("TV Series (integration)", () => {
 		expect(Array.isArray(show.results)).toBe(true);
 		expect(show.results[0].id).toBe(1396); // Breaking Bad recommended first for Game of Thrones;
 	});
+
+	it("(REVIEWS) should get tv show reviews", async () => {
+		const show = await tmdb.tv_series.reviews({ series_id: 1399, language: "en-US" });
+		expect(Array.isArray(show.results)).toBe(true);
+		expect(show.results[0].id).toBe("58aa82f09251416f92006a3a");
+	});
 });
