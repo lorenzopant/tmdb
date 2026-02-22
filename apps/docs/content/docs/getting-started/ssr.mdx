@@ -1,0 +1,140 @@
+---
+title: SSR
+description: This section provides an overview on how to use the wrapper with server-side rendering frameworks like NextJS
+---
+
+import { Step, Steps } from "fumadocs-ui/components/steps";
+
+## Usage with NextJS
+
+With popular frameworks like NextJS, you may want to use the `@lorenzopant/tmdb` both with Server and Client components.
+
+### Server Components
+
+To use `@lorenzopant/tmdb` on the server you do not need any additional configuration. Just import the package, and you're ready to go.
+Make sure that the environment variable you use to pass the api key to TMDB is defined on the server.
+
+```ts title=tmdb.ts
+import { TMDB } from "@lorenzopant/tmdb";
+export const tmdb = new TMDB(process.env.TMDB_API_KEY!);
+```
+
+Now to use in Server Components just call the `tmdb`class methods.
+
+```ts title=page.tsx
+export default async function Page() {
+    const movies = await tmdb.movie_lists.now_playing();
+
+    return <div>
+		{movies.results.map((m) => {
+			return (
+				<div key={m.id}>
+					<p className="font-bold text-xl">{m.title}</p>
+					<p>{m.overview}</p>
+				</div>
+			);
+		})}
+	</div>
+}
+```
+
+### Client Components
+
+If you want to use the `@lorenzopant/tmdb` wrapper on the client you need to perform a few extra steps.
+
+<Steps>
+  <Step>
+  ### Create TMDB Provider
+    Create a `tmdb-provider.tsx` file and copy the following code. This is just a React context which we'll use to make the `tmdb` class object available to all client components.
+    **Make sure you add the `use client` directive at the top of the file.**
+
+```ts title=tmdb-provider.tsx
+"use client";
+
+import React, { createContext, useContext, useMemo } from "react";
+import { TMDB, TMDBOptions } from "@lorenzopant/tmdb";
+
+type TmdbContextType = { tmdb: TMDB };
+const TmdbContext = createContext<TmdbContextType | undefined>(undefined);
+
+interface TMDBProviderProps { apiKey: string; options?: TMDBOptions; children: React.ReactNode }
+
+// Provider for client components, receives apiKey as prop
+export function TMDBProvider({ apiKey, options, children }: TMDBProviderProps) {
+	const tmdb = useMemo(() => new TMDB(apiKey, { ...options }), [apiKey, options]);
+	return <TmdbContext.Provider value={{ tmdb }}>{children}</TmdbContext.Provider>;
+}
+
+export function useTmdb() {
+	const context = useContext(TmdbContext);
+	if (!context) {
+		throw new Error("useTmdb must be used within a TmdbProvider");
+	}
+	return context.tmdb;
+}
+```
+
+  </Step>
+  <Step>
+  ### Wrap your layout.tsx
+    To make the tmdb accessible to client components, we need to wrap your root layout with the TMDBProvider component like so
+```ts title=layout.tsx
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+	// Get the API key from env (server-side only)
+	const apiKey = process.env.TMDB_API_KEY!;
+	return (
+		<html lang="en">
+			<body>
+				<TMDBProvider apiKey={apiKey}>{children}</TMDBProvider>
+			</body>
+		</html>
+	);
+}
+```
+The environment variable for the api key here is passed from the server so that we don't need to duplicate it for the client, prefixing it with NEXT_PUBLIC.
+  </Step>
+  <Step>
+  ### Use it in client component
+
+    The `useTmdb()` hook defined in the provider makes it easy to access the `tmdb` instance in client components:
+
+```ts title=client-component.tsx
+"use client";
+
+import { useTmdb } from "@/app/_components/tmdb-provider";
+import { MovieResultItem } from "@lorenzopant/tmdb";
+import { useCallback, useEffect, useState } from "react";
+
+export default function ClientComponent() {
+	const tmdb = useTmdb();
+	const [movies, setMovies] = useState<MovieResultItem[]>([]);
+	const [loading, setLoading] = useState<boolean>(false);
+
+    const fetchMovies = useCallback(async () => {
+    	setLoading(true);
+    	const movies = await tmdb.movie_lists.now_playing();
+    	if (movies.results.length > 0) setMovies(movies.results);
+    	setLoading(false);
+    }, [tmdb]);
+
+    useEffect(() => {
+    	fetchMovies();
+    }, [fetchMovies]);
+
+    if (loading) return <p>Loading...</p>;
+
+    return (
+    	<div>
+    		{movies.map((m) => {
+    			return <p key={m.id}>{m.title}</p>;
+    		})}
+    	</div>
+    );
+
+}
+
+```
+
+  </Step>
+</Steps>
+```

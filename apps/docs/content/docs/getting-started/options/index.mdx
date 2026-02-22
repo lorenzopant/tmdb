@@ -1,0 +1,117 @@
+---
+title: Options
+description: Configure your TMDB client instance by passing options to the constructor.
+---
+
+When creating a new TMDB client instance, you can pass a `TMDBOptions` object to customize its default behavior.
+All options are optional — omitting them falls back to TMDB's global defaults.
+
+```ts
+import { TMDB } from "tmdb-ts";
+
+const tmdb = new TMDB("your-api-key", {
+	language: "it-IT",
+	region: "IT",
+	timezone: "Europe/Rome",
+	images: {
+		secure_images_url: true,
+		default_image_sizes: {
+			posters: "w500",
+			backdrops: "w1280",
+		},
+	},
+});
+```
+
+## Available Options
+
+| Option     | Type               | Description                                                                  |
+| ---------- | ------------------ | ---------------------------------------------------------------------------- |
+| `language` | `Language`         | Default language for all responses (ISO 639-1 or primary translation code).  |
+| `region`   | `CountryISO3166_1` | Default region for localized content like release dates and watch providers. |
+| `images`   | `ImagesConfig`     | Configuration for image base URLs and default image sizes.                   |
+| `timezone` | `Timezone`         | Default timezone for TV series airing time calculations.                     |
+
+---
+
+### `language`
+
+**Type:** [`Language`](/docs/types/options/language#language) · **Optional**
+
+Controls the language of text data returned by TMDB — titles, overviews, taglines, and more.
+Accepts either a [primary translation code](/docs/getting-started/options/language) (e.g., `"it-IT"`, `"en-US"`) or a bare
+[ISO 639-1 code](/docs/getting-started/options/language) (e.g., `"it"`, `"en"`).
+
+```ts
+const tmdb = new TMDB(apiKey, { language: "it-IT" });
+```
+
+When unset, TMDB defaults to English. See the [Language reference](/docs/getting-started/options/language) for the full list of supported values.
+
+---
+
+### `region`
+
+**Type:** [`CountryISO3166_1`](/docs/types/options/region#countryISO3166_1) · **Optional**
+
+Sets the default region for requests. Region codes follow [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)
+(e.g., `"IT"`, `"US"`, `"JP"`).
+
+The region influences:
+
+- Release dates and theatrical availability
+- Age certifications
+- Watch provider listings
+- Filtered movie lists (e.g., now playing, upcoming)
+
+```ts
+const tmdb = new TMDB(apiKey, { region: "IT" });
+```
+
+If not set, TMDB may fall back to global (non-regionalized) data.
+See the [Region reference](/docs/getting-started/options/region) for all supported country codes.
+
+---
+
+### `images`
+
+**Type:** [`ImagesConfig`](/docs/types/options/images#imagesconfig) · **Optional**
+
+Configures how image URLs are generated. Includes options to toggle HTTPS and set default sizes
+for each image category so you don't need to pass sizes on every individual request.
+
+```ts
+const tmdb = new TMDB(apiKey, {
+	images: {
+		secure_images_url: true,
+		default_image_sizes: {
+			posters: "w500",
+			backdrops: "w1280",
+			logos: "w300",
+		},
+	},
+});
+```
+
+See the [Images configuration reference](/docs/getting-started/options/images) for all available size options per category.
+
+---
+
+### `timezone`
+
+**Type:** [`Timezone`](/docs/types/options/timezone#timezone) · **Optional**
+
+Sets the default timezone used for TV series queries that accept a `timezone` parameter.
+TMDB uses this to determine what counts as "today" when fetching currently airing shows.
+
+Timezones are mapped per country — each country code corresponds to one or more
+[IANA timezone identifiers](https://www.iana.org/time-zones) (e.g., `"Europe/Rome"`, `"America/New_York"`).
+
+```ts
+const tmdb = new TMDB(apiKey, { timezone: "Europe/Rome" });
+```
+
+> **Note:** This only affects TV series endpoints that support the `timezone` parameter, such as
+> "airing today" and "on the air" queries. Movie endpoints are not affected.
+
+See the [Timezone reference](/docs/getting-started/options/timezone) for the full list of supported values grouped by country.

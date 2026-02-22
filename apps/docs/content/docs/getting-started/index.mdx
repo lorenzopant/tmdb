@@ -1,0 +1,51 @@
+---
+title: Quick Start Guide
+description: This section provides an overview of how to quickly get started using the TMDB wrapper.
+icon: Rocket
+---
+
+<Card title="API KEY">
+	We assume you already have a valid api key for using the TMDB api. If not, Go to the TMDB portal and get your own api key. For more
+	information follow the steps in the TMDB website
+</Card>
+
+References:
+
+- https://www.themoviedb.org/settings/api - Request API Key from your profile
+- https://developer.themoviedb.org/docs/getting-started - Getting Started Guide
+
+### Install
+
+```npm
+npm install @lorenzopant/tmdb
+```
+
+### Create TMDB object
+
+```ts title=tmdb.ts
+export const tmdb = new TMDB("<your-tmdb-apikey>");
+```
+
+### Use TMDB methods
+
+Once you've initialized the `TMDB` client, you can start using the API methods. Here's how to search for a movie:
+
+```ts
+const results = await tmdb.search.movies({ query: "Inception" });
+console.log(results.results);
+```
+
+You’ll get a paginated response with a list of matching movies, including their titles, poster paths, IDs, and other metadata.
+
+### What's Next?
+
+<Cards>
+	<Card title="SSR" href="/docs/getting-started/ssr">
+		Learn how to setup @lorenzopant/tmdb with SSR frameworks
+	</Card>
+	<Card title="API Reference" href="/docs/api-reference">
+		Discover all available methods
+	</Card>
+</Cards>
+
+For the full reference, visit the [TMDB Developer Documentation](https://developer.themoviedb.org/docs) and check out each endpoint.

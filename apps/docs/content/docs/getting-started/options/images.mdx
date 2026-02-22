@@ -1,0 +1,81 @@
+---
+title: Images Configuration
+description: Configure image URL generation, HTTPS, and default sizes for all image types.
+---
+
+The `images` option controls how the client builds image URLs.
+You can toggle HTTPS and set default sizes for each image category so they are applied
+automatically across all responses without needing to specify a size on every call.
+
+```ts
+const tmdb = new TMDB(apiKey, {
+	images: {
+		secure_images_url: true,
+		default_image_sizes: {
+			posters: "w500",
+			backdrops: "w1280",
+			logos: "w185",
+			profiles: "w185",
+			still: "w300",
+		},
+	},
+});
+```
+
+## `ImagesConfig`
+
+### `secure_images_url`
+
+**Type:** `boolean` · **Default:** `true`
+
+When `true`, image URLs use the HTTPS base URL (`https://image.tmdb.org/t/p/`).
+When `false`, the HTTP base URL is used (`http://image.tmdb.org/t/p/`).
+
+Set this to `false` only in environments where HTTPS is not available.
+For all standard use cases, leave it as `true`.
+
+---
+
+### `default_image_sizes`
+
+**Type:** `Partial<DefaultImageSizesConfig>` · **Optional**
+
+Defines fallback sizes for each image type. These are applied whenever a size
+is not explicitly specified at call time. All keys are optional.
+
+| Key         | Type                                                       | Available Sizes                                           |
+| ----------- | ---------------------------------------------------------- | --------------------------------------------------------- |
+| `posters`   | [`PosterSize`](/docs/types/options/images/#postersize)     | `w92`, `w154`, `w185`, `w342`, `w500`, `w780`, `original` |
+| `backdrops` | [`BackdropSize`](/docs/types/options/images/#backdropsize) | `w300`, `w780`, `w1280`, `original`                       |
+| `logos`     | [`LogoSize`](/docs/types/options/images/#logosize)         | `w45`, `w92`, `w154`, `w185`, `w300`, `w500`, `original`  |
+| `profiles`  | [`ProfileSize`](/docs/types/options/images/#profilesize)   | `w45`, `w185`, `h632`, `original`                         |
+| `still`     | [`StillSize`](/docs/types/options/images/#stillsize)       | `w92`, `w185`, `w300`, `original`                         |
+
+## Image URL Structure
+
+A final image URL is assembled as:
+
+```
+{base_url}{size}{file_path}
+```
+
+For example, using `w500` for a poster:
+
+```
+https://image.tmdb.org/t/p/w500/abc123.jpg
+```
+
+| Mode  | Base URL                      |
+| ----- | ----------------------------- |
+| HTTPS | `https://image.tmdb.org/t/p/` |
+| HTTP  | `http://image.tmdb.org/t/p/`  |
+
+> Prefer `original` only when you need the full-resolution asset and are willing to accept
+> larger file sizes. For UI thumbnails, sized variants like `w500` or `w780` are recommended.
+
+### Useful Links
+
+<Cards>
+	<Card title="TMDB Image Basics" href="https://developer.themoviedb.org/docs/image-basics" />
+	<Card title="TMDB Image Languages" href="https://developer.themoviedb.org/docs/image-languages" />
+</Cards>

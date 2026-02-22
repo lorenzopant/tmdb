@@ -1,0 +1,50 @@
+---
+title: Timezone
+description: Supported timezones for TV series airing time calculations.
+---
+
+The `timezone` option sets the default timezone for TV series queries that support
+the `timezone` parameter — such as "airing today" and "on the air" endpoints.
+TMDB uses this value to determine what counts as "today" when filtering currently airing shows.
+
+```ts
+const tmdb = new TMDB(apiKey, { timezone: "Europe/Rome" });
+```
+
+> **Note:** This setting only affects TV series endpoints. Movie endpoints are not influenced by timezone.
+
+## Format
+
+Timezones are [IANA timezone identifiers](https://www.iana.org/time-zones) and are keyed
+per country using ISO 3166-1 codes internally. Each country maps to one or more valid timezone strings.
+
+## Timezones by Country
+
+| Country Code | Country        | Timezone(s)                                                                         |
+| ------------ | -------------- | ----------------------------------------------------------------------------------- |
+| `IT`         | Italy          | `Europe/Rome`                                                                       |
+| `GB`         | United Kingdom | `Europe/London`                                                                     |
+| `DE`         | Germany        | `Europe/Berlin`                                                                     |
+| `FR`         | France         | `Europe/Paris`                                                                      |
+| `ES`         | Spain          | `Europe/Madrid`                                                                     |
+| `PT`         | Portugal       | `Europe/Lisbon`, `Atlantic/Madeira`, `Atlantic/Azores`                              |
+| `NL`         | Netherlands    | `Europe/Amsterdam`                                                                  |
+| `US`         | United States  | `America/New_York`, `America/Chicago`, `America/Denver`, `America/Los_Angeles`, ... |
+| `CA`         | Canada         | `America/Toronto`, `America/Vancouver`, `America/Edmonton`, ...                     |
+| `BR`         | Brazil         | `America/Sao_Paulo`, `America/Manaus`, `America/Fortaleza`, ...                     |
+| `MX`         | Mexico         | `America/Mexico_City`, `America/Cancun`, `America/Tijuana`, ...                     |
+| `AR`         | Argentina      | `America/Argentina/Buenos_Aires`, ...                                               |
+| `RU`         | Russia         | `Europe/Moscow`, `Asia/Yekaterinburg`, `Asia/Vladivostok`, ...                      |
+| `JP`         | Japan          | `Asia/Tokyo`                                                                        |
+| `KR`         | South Korea    | `Asia/Seoul`                                                                        |
+| `CN`         | China          | `Asia/Shanghai`                                                                     |
+| `IN`         | India          | `Asia/Kolkata`                                                                      |
+| `AU`         | Australia      | `Australia/Sydney`, `Australia/Melbourne`, `Australia/Perth`, ...                   |
+| `NZ`         | New Zealand    | `Pacific/Auckland`, `Pacific/Chatham`                                               |
+| ...          |                | and more                                                                            |
+
+Countries with large geographic spans (US, Australia, Brazil, Canada, Russia) map to multiple timezones.
+When setting a default, choose the timezone that best represents your primary user base.
+
+The full `Timezone` type is generated from the `TIMEZONEDATA` constant, which maps every
+ISO 3166-1 country code to its associated IANA zone(s).

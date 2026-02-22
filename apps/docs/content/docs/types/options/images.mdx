@@ -1,0 +1,169 @@
+---
+title: Image Types
+description: Type definitions for image sizes and configuration used across the TMDB client.
+---
+
+These types are used to configure and work with images returned by the TMDB API.
+All image URLs are composed of a base URL, a size, and a file path.
+
+---
+
+## `ImagesConfig`
+
+Top-level image configuration passed to the constructor via the [`images`](/options#images) option.
+
+| Property              | Type                                                           | Default | Description                                                                                            |
+| --------------------- | -------------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------ |
+| `secure_images_url`   | `boolean`                                                      | `true`  | When `true`, uses the HTTPS base URL. Set to `false` only if HTTPS is unavailable in your environment. |
+| `default_image_sizes` | [`Partial<DefaultImageSizesConfig>`](#defaultimagesizesconfig) | —       | Default sizes for each image category. Applied automatically when no size is specified at call time.   |
+
+---
+
+## `DefaultImageSizesConfig`
+
+Defines per-category default sizes. All properties are optional.
+
+| Property    | Type                            | Description                                       |
+| ----------- | ------------------------------- | ------------------------------------------------- |
+| `posters`   | [`PosterSize`](#postersize)     | Default size for movie and TV show poster images. |
+| `backdrops` | [`BackdropSize`](#backdropsize) | Default size for backdrop/banner images.          |
+| `logos`     | [`LogoSize`](#logosize)         | Default size for network, studio, and show logos. |
+| `profiles`  | [`ProfileSize`](#profilesize)   | Default size for cast and crew profile photos.    |
+| `still`     | [`StillSize`](#stillsize)       | Default size for TV episode still images.         |
+
+---
+
+## `ImageSizeTypes`
+
+A convenience type that groups all image size types under a single object.
+Useful when you need to reference size types generically.
+
+| Property       | Type                            | Description                         |
+| -------------- | ------------------------------- | ----------------------------------- |
+| `BackdropSize` | [`BackdropSize`](#backdropsize) | Size options for backdrop images.   |
+| `LogoSize`     | [`LogoSize`](#logosize)         | Size options for logo images.       |
+| `PosterSize`   | [`PosterSize`](#postersize)     | Size options for poster images.     |
+| `ProfileSize`  | [`ProfileSize`](#profilesize)   | Size options for profile images.    |
+| `StillSize`    | [`StillSize`](#stillsize)       | Size options for still images.      |
+| `ImageSize`    | [`ImageSize`](#imagesize)       | Union of all available image sizes. |
+
+---
+
+## Size Types
+
+### `BackdropSize`
+
+Used for movie and TV show backdrop (banner/hero) images.
+
+```ts
+type BackdropSize = "w300" | "w780" | "w1280" | "original";
+```
+
+| Value      | Width     |
+| ---------- | --------- |
+| `w300`     | 300px     |
+| `w780`     | 780px     |
+| `w1280`    | 1280px    |
+| `original` | Full size |
+
+---
+
+### `LogoSize`
+
+Used for production company, network, and streaming service logos.
+
+```ts
+type LogoSize = "w45" | "w92" | "w154" | "w185" | "w300" | "w500" | "original";
+```
+
+| Value      | Width     |
+| ---------- | --------- |
+| `w45`      | 45px      |
+| `w92`      | 92px      |
+| `w154`     | 154px     |
+| `w185`     | 185px     |
+| `w300`     | 300px     |
+| `w500`     | 500px     |
+| `original` | Full size |
+
+---
+
+### `PosterSize`
+
+Used for movie and TV show poster images.
+
+```ts
+type PosterSize = "w92" | "w154" | "w185" | "w342" | "w500" | "w780" | "original";
+```
+
+| Value      | Width     |
+| ---------- | --------- |
+| `w92`      | 92px      |
+| `w154`     | 154px     |
+| `w185`     | 185px     |
+| `w342`     | 342px     |
+| `w500`     | 500px     |
+| `w780`     | 780px     |
+| `original` | Full size |
+
+---
+
+### `ProfileSize`
+
+Used for cast and crew profile/headshot images.
+
+```ts
+type ProfileSize = "w45" | "w185" | "h632" | "original";
+```
+
+| Value      | Dimension  |
+| ---------- | ---------- |
+| `w45`      | 45px wide  |
+| `w185`     | 185px wide |
+| `h632`     | 632px tall |
+| `original` | Full size  |
+
+> Note: `h632` is height-constrained rather than width-constrained, unlike the other sizes.
+
+---
+
+### `StillSize`
+
+Used for TV episode still/screenshot images.
+
+```ts
+type StillSize = "w92" | "w185" | "w300" | "original";
+```
+
+| Value      | Width     |
+| ---------- | --------- |
+| `w92`      | 92px      |
+| `w185`     | 185px     |
+| `w300`     | 300px     |
+| `original` | Full size |
+
+---
+
+## `ImageSize`
+
+A union of all available size values across every image type.
+Use this when you need to accept any valid size regardless of category.
+
+```ts
+type ImageSize = BackdropSize | LogoSize | PosterSize | ProfileSize | StillSize;
+```
+
+---
+
+## Base URLs
+
+| Constant                | Value                         |
+| ----------------------- | ----------------------------- |
+| `IMAGE_BASE_URL`        | `http://image.tmdb.org/t/p/`  |
+| `IMAGE_SECURE_BASE_URL` | `https://image.tmdb.org/t/p/` |
+
+Image URLs are assembled as `{base_url}{size}{file_path}`, for example:
+
+```
+https://image.tmdb.org/t/p/w500/abc123.jpg
+```

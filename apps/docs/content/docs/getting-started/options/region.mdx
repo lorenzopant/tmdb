@@ -1,0 +1,49 @@
+---
+title: Region
+description: Supported country codes for localizing TMDB results by region.
+---
+
+The `region` option accepts an **ISO 3166-1 alpha-2** country code. It localizes content
+including release dates, age certifications, watch providers, and filtered lists like
+"now playing" or "upcoming".
+
+```ts
+const tmdb = new TMDB(apiKey, { region: "IT" });
+```
+
+If not set, TMDB may return global or non-regionalized data.
+
+## Supported Region Codes
+
+| Code | Country        |
+| ---- | -------------- |
+| `US` | United States  |
+| `GB` | United Kingdom |
+| `IT` | Italy          |
+| `FR` | France         |
+| `DE` | Germany        |
+| `ES` | Spain          |
+| `PT` | Portugal       |
+| `BR` | Brazil         |
+| `CA` | Canada         |
+| `AU` | Australia      |
+| `JP` | Japan          |
+| `KR` | South Korea    |
+| `CN` | China          |
+| `IN` | India          |
+| `MX` | Mexico         |
+| `RU` | Russia         |
+| `NL` | Netherlands    |
+| `SE` | Sweden         |
+| `PL` | Poland         |
+| `TR` | Turkey         |
+| `AR` | Argentina      |
+| `ZA` | South Africa   |
+| ...  | and more       |
+
+> The full `CountryISO3166_1` union type covers 200+ country codes.
+> See the `TMDBCountries` constant exported from the package for the exhaustive list.
+
+### Useful Links
+
+<Card title="TMDB Region Support" href="https://developer.themoviedb.org/docs/region-support" />

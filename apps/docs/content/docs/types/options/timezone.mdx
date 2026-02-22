@@ -1,0 +1,85 @@
+---
+title: Timezone
+description: Type definitions for timezones used in TV series queries.
+---
+
+These types represent the timezone system used by TMDB for TV series airing time calculations.
+Timezones follow the [IANA Time Zone Database](https://www.iana.org/time-zones) format and are
+mapped per country using ISO 3166-1 codes.
+
+> **TMDB Reference:** [Configuration: Timezones endpoint](https://developer.themoviedb.org/reference/configuration-timezones) ·
+> [TMDB community: timezone discussion](https://www.themoviedb.org/talk/54c554679251416eae010d6d)
+
+---
+
+## `Timezone`
+
+A union of all [IANA timezone](https://www.iana.org/time-zones) strings supported by TMDB,
+derived from the `TIMEZONEDATA` constant. Each value is a valid IANA identifier
+in `Region/City` format.
+
+```ts
+type Timezone = TimezoneTuple[(typeof TIMEZONEDATA)[number]["zones"]];
+```
+
+### Example values
+
+```ts
+"Europe/Rome";
+"Europe/London";
+"Europe/Berlin";
+"America/New_York";
+"America/Los_Angeles";
+"America/Sao_Paulo";
+"Asia/Tokyo";
+"Asia/Seoul";
+"Asia/Shanghai";
+"Australia/Sydney";
+"Pacific/Auckland";
+// ... and more
+```
+
+> The full union is generated from `TIMEZONEDATA`, which maps every ISO 3166-1 country code
+> to one or more IANA timezone identifiers. Countries with large geographic spans have multiple entries.
+> See the [TMDB Timezones endpoint](https://developer.themoviedb.org/reference/configuration-timezones)
+> for the authoritative list.
+
+---
+
+## `TimezoneTuple`
+
+An internal utility type used to generate the `Timezone` union from the `TIMEZONEDATA` constant.
+You do not need to use this type directly.
+
+```ts
+type TimezoneTuple = (typeof TIMEZONEDATA)[number]["zones"];
+```
+
+---
+
+## How timezone affects TV series queries
+
+TMDB uses the timezone to calculate what "today" means for a given region when
+querying currently airing TV shows. For example, a show airing at 21:00 `Europe/Rome`
+is considered "airing today" for Italian users but may already be "tomorrow" for
+users in `Asia/Tokyo`.
+
+This is only relevant for TV series endpoints that accept a `timezone` parameter.
+Movie endpoints are not affected.
+
+> Read more about how TMDB uses timezones in the
+> [community discussion](https://www.themoviedb.org/talk/54c554679251416eae010d6d).
+
+### Multi-timezone countries
+
+Countries that span multiple timezones (such as the US, Russia, Australia, Brazil, and Canada)
+map to several IANA zone identifiers. When setting a default timezone, choose the one that
+best represents your primary user base:
+
+| Country | Recommended default | Other available zones                                             |
+| ------- | ------------------- | ----------------------------------------------------------------- |
+| `US`    | `America/New_York`  | `America/Chicago`, `America/Denver`, `America/Los_Angeles`, ...   |
+| `AU`    | `Australia/Sydney`  | `Australia/Melbourne`, `Australia/Perth`, `Australia/Darwin`, ... |
+| `BR`    | `America/Sao_Paulo` | `America/Manaus`, `America/Fortaleza`, `America/Belem`, ...       |
+| `CA`    | `America/Toronto`   | `America/Vancouver`, `America/Edmonton`, `America/Winnipeg`, ...  |
+| `RU`    | `Europe/Moscow`     | `Asia/Yekaterinburg`, `Asia/Novosibirsk`, `Asia/Vladivostok`, ... |

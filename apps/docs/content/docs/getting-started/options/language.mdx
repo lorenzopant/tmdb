@@ -1,0 +1,70 @@
+---
+title: Language
+description: Supported language codes for localizing TMDB responses.
+---
+
+The `language` option sets the default language for all API responses — including titles, overviews,
+taglines, and biographical data. TMDB accepts two formats:
+
+- **Primary translation codes** — locale-specific tags in `language-REGION` format (e.g., `"it-IT"`, `"en-US"`, `"pt-BR"`)
+- **ISO 639-1 codes** — bare two-letter language codes (e.g., `"it"`, `"en"`, `"fr"`)
+
+```ts
+const tmdb = new TMDB(apiKey, { language: "it-IT" });
+```
+
+When no language is set, TMDB defaults to English.
+
+## Primary Translation Codes
+
+These are the fully-supported locales that TMDB has dedicated translation support for.
+Prefer these over bare ISO 639-1 codes when you need consistent, high-quality translations.
+
+| Code    | Language / Region               |
+| ------- | ------------------------------- |
+| `en-US` | English (United States)         |
+| `en-GB` | English (United Kingdom)        |
+| `en-AU` | English (Australia)             |
+| `en-CA` | English (Canada)                |
+| `it-IT` | Italian (Italy)                 |
+| `fr-FR` | French (France)                 |
+| `fr-CA` | French (Canada)                 |
+| `de-DE` | German (Germany)                |
+| `de-AT` | German (Austria)                |
+| `de-CH` | German (Switzerland)            |
+| `es-ES` | Spanish (Spain)                 |
+| `es-MX` | Spanish (Mexico)                |
+| `pt-PT` | Portuguese (Portugal)           |
+| `pt-BR` | Portuguese (Brazil)             |
+| `ja-JP` | Japanese (Japan)                |
+| `ko-KR` | Korean (South Korea)            |
+| `zh-CN` | Chinese Simplified (China)      |
+| `zh-TW` | Chinese Traditional (Taiwan)    |
+| `zh-HK` | Chinese Traditional (Hong Kong) |
+| `ru-RU` | Russian (Russia)                |
+| `ar-SA` | Arabic (Saudi Arabia)           |
+| `ar-AE` | Arabic (UAE)                    |
+| `hi-IN` | Hindi (India)                   |
+| `tr-TR` | Turkish (Turkey)                |
+| `nl-NL` | Dutch (Netherlands)             |
+| `pl-PL` | Polish (Poland)                 |
+| `sv-SE` | Swedish (Sweden)                |
+| ...     | and more                        |
+
+> The full `PrimaryTranslations` type contains ~80 supported locale codes.
+> See the `PrimaryTranslations` type in the package for the exhaustive list.
+
+## ISO 639-1 Codes
+
+Bare ISO 639-1 codes (e.g., `"en"`, `"it"`, `"fr"`) are also accepted via the `LanguageISO6391` type.
+These may return less complete translations compared to primary locale codes.
+Use them only when a primary translation code is not available for your target language.
+
+## Types
+
+- [Language](/docs/types/options/language#language)
+- [PrimaryTranslations](/docs/types/options/language#primarytranslations)
+
+### Useful Links
+
+<Card title="TMDB Language Guide" href="https://developer.themoviedb.org/docs/languages" />
