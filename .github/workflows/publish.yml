@@ -1,11 +1,13 @@
 name: Publish to NPM
 
-# Runs when a tag like v1.2.3 is pushed
 on:
-    push:
-        tags:
-            - "v*.*.*"
     workflow_dispatch:
+        inputs:
+            is_beta:
+                description: "Publish as Beta release?"
+                required: true
+                type: boolean
+                default: true # Impostato a true per sicurezza nei test
 
 # GitHub Actions example
 jobs:
@@ -48,9 +50,23 @@ jobs:
 
             # Build
             - name: Build
-              run: pnpm build
+              run: pnpm --filter=@lorenzopant/tmdb run build
+
+            - name: Debug structure
+              run: |
+                  echo "Current directory: $(pwd)"
+                  ls -la
+                  ls -la packages/ || echo "No packages/ folder!"
 
             # Run release
-            - run: pnpm exec release-it --ci
+            - name: Run release
+              run: |
+                  if [ "${{ github.event.inputs.is_beta }}" == "true" ]; then
+                  echo "Starting BETA release..."
+                  pnpm --filter=@lorenzopant/tmdb exec release-it --ci --preRelease=beta --npm.tag=beta
+                  else
+                  echo "Starting PRODUCTION release..."
+                  pnpm --filter=@lorenzopant/tmdb exec release-it --ci
+                  fi
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

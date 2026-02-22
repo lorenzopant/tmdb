@@ -1,74 +1,15 @@
 {
-	"name": "@lorenzopant/tmdb",
-	"version": "1.2.0-beta.0",
-	"description": "A completely type-safe The Movie Database (TMDB) API wrapper for typescript applications.",
-	"main": "dist/index.js",
-	"types": "dist/index.d.ts",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/lorenzopant/tmdb"
-	},
-	"homepage": "https://lorenzopant-docs.vercel.app/",
-	"bugs": {
-		"url": "https://github.com/lorenzopant/tmdb/issues"
-	},
+	"name": "tmdb-monorepo",
+	"private": true,
+	"packageManager": "pnpm@9.15.9",
 	"scripts": {
-		"build": "tsc",
-		"build:watch": "tsc --watch",
-		"test": "vitest",
-		"test:ui": "vitest --ui",
-		"test:coverage": "vitest --coverage",
-		"prepare": "husky",
-		"lint": "eslint .",
-		"release": "pnpm release:patch",
-		"release:patch": "pnpm version patch --git-tag-version && git push --follow-tags",
-		"release:minor": "pnpm version minor --git-tag-version && git push --follow-tags",
-		"release:major": "pnpm version major --git-tag-version && git push --follow-tags",
-		"generate-indexes": "tsx src/scripts/generate-index-files.ts",
-		"generate-exports": "tsx src/scripts/generate-explicit-exports.ts",
-		"prebuild": "npm run generate-indexes",
-		"check-exports": "tsx src/scripts/check-exports.ts"
+		"build": "turbo run build",
+		"dev": "turbo run dev",
+		"lint": "turbo run lint",
+		"typecheck": "turbo run typecheck",
+		"test": "turbo run test"
 	},
-	"author": "Lorenzo Pantano",
-	"license": "MIT",
-	"keywords": [
-		"tmdb",
-		"typescript",
-		"api",
-		"movies"
-	],
-	"packageManager": "pnpm@8.8.0",
 	"devDependencies": {
-		"@eslint/compat": "^2.0.0",
-		"@eslint/eslintrc": "^3.3.1",
-		"@eslint/js": "^9.30.0",
-		"@types/node": "^22.15.2",
-		"@typescript-eslint/eslint-plugin": "^8.35.0",
-		"@typescript-eslint/parser": "^8.35.0",
-		"@vitest/coverage-v8": "^4.0.9",
-		"@vitest/ui": "^4.0.10",
-		"dotenv": "^16.5.0",
-		"eslint": "^9.30.0",
-		"eslint-config-prettier": "^10.1.5",
-		"eslint-plugin-import": "^2.32.0",
-		"husky": "^9.1.7",
-		"release-it": "^19.0.3",
-		"release-it-pnpm": "^4.6.6",
-		"ts-morph": "^27.0.2",
-		"tsx": "^4.21.0",
-		"typescript": "^5.8.3",
-		"typescript-eslint": "^8.35.0",
-		"vite": "^7.0.0",
-		"vitest": "^4.0.9"
-	},
-	"exports": {
-		".": {
-			"import": "./dist/index.js",
-			"types": "./dist/index.d.ts"
-		},
-		"./types": {
-			"types": "./dist/types/index.d.ts",
-			"default": "./dist/types/index.js"
-		}
+		"turbo": "latest"
 	}
 }
