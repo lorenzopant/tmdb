@@ -284,3 +284,19 @@ export type ReviewAuthorDetails = {
 	/** Rating given by the author (0-10 scale, optional) */
 	rating?: number;
 };
+
+/**
+ * Translation data for a specific language
+ */
+export type Translation = {
+	/** ISO 3166-1 alpha-2 country code */
+	iso_3166_1: string;
+	/** ISO 639-1 language code */
+	iso_639_1: string;
+	/** Native name of the language */
+	name: string;
+	/** English name of the language */
+	english_name: string;
+	/** Translated media (tv/movie) information */
+	data: object;
+};

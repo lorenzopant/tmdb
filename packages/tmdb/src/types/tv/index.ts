@@ -12,3 +12,5 @@ export * from "./similar";
 export * from "./tv_series";
 export * from "./videos";
 export * from "./changes";
+export * from "./screened_theatrically";
+export * from "./translations";

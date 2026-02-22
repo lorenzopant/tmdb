@@ -17,6 +17,7 @@ import {
 	TVSeriesListsParams,
 	TVSimilar,
 	TVSimilarParams,
+	TVTranslations,
 } from "../types/tv";
 import { TVAggregateCredits } from "../types/tv/aggregate_credits";
 import { TVContentRatings } from "../types/tv/content_ratings";
@@ -316,5 +317,21 @@ export class TVSeriesAPI extends TMDBAPIBase {
 		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_SIMILAR}`;
 		const { language = this.defaultOptions.language, ...rest } = params;
 		return this.client.request(endpoint, { language, ...rest });
+	}
+
+	/**
+	 * Translations
+	 * GET - https://api.themoviedb.org/3/movie/{series_id}/translations
+	 *
+	 * Get the translations that have been added to a tv show.
+	 * Take a read through our language documentation for more information about languages on TMDB.
+	 * https://developer.themoviedb.org/docs/languages
+	 * @param series_id The ID of the TV Series
+	 * @returns A promise that resolves to the translations of the tv show.
+	 * @reference https://developer.themoviedb.org/reference/tv-series-translations
+	 */
+	async translations(params: TVBaseParam): Promise<TVTranslations> {
+		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_TRANSLATIONS}`;
+		return this.client.request<TVTranslations>(endpoint);
 	}
 }

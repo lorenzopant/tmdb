@@ -123,4 +123,11 @@ describe("TV Series (integration)", () => {
 		expect(Array.isArray(show.results)).toBe(true);
 		expect(show.results[0].id).toBe(61223);
 	});
+
+	it("(TRANSLATIONS) should get tv shows translations", async () => {
+		const show = await tmdb.tv_series.translations({ series_id: 1399 });
+		expect(Array.isArray(show.translations)).toBe(true);
+		expect(show.translations[0].iso_3166_1).toBe("US");
+		expect(show.translations[1].data.tagline).toBe("Das Lied von Eis und Feuer");
+	});
 });
