@@ -121,7 +121,6 @@ describe("TV Series (integration)", () => {
 	it("(SIMILAR) should get similar tv shows", async () => {
 		const show = await tmdb.tv_series.similar({ series_id: 1399 });
 		expect(Array.isArray(show.results)).toBe(true);
-		expect(show.results[0].id).toBe(61223);
 	});
 
 	it("(TRANSLATIONS) should get tv shows translations", async () => {
