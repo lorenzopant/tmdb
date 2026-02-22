@@ -5,7 +5,7 @@ import { MovieCredits } from "./credits";
 import { MovieExternalIDs } from "./external_ids";
 import { MovieImages } from "./images";
 import { MovieKeywords } from "./keywords";
-import { MovieRecommendations } from "./reccomendations";
+import { MovieRecommendations } from "./recommendations";
 import { MovieReleaseDates } from "./release_dates";
 import { MovieReviews } from "./reviews";
 import { MovieSimilar } from "./similar";

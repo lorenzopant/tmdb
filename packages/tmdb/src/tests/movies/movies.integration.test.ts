@@ -179,5 +179,6 @@ describe("Movies (integration)", () => {
 		expect(watch_providers.id).toBe(movie_id);
 		expect(watch_providers.results).toBeDefined();
 		expect(watch_providers.results["US"]).toBeDefined();
+		expect(watch_providers.results["US"].link).toBeDefined();
 	});
 });

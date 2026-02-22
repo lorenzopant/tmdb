@@ -1,4 +1,5 @@
 import { ApiClient } from "../client";
+import { MediaWatchProviders } from "../types";
 import { TMDBOptions } from "../types/config";
 import {
 	MovieAlternativeTitles,
@@ -15,7 +16,6 @@ import {
 	MovieSimilar,
 	MovieTranslations,
 	MovieVideos,
-	MovieWatchProvider,
 } from "../types/movies";
 import { MovieChanges } from "../types/movies/changes";
 import {
@@ -324,8 +324,8 @@ export class MoviesAPI {
 	 * @returns A promise that resolves to a list of videos for the movie.
 	 * @reference https://developer.themoviedb.org/reference/movie-videos
 	 */
-	async watch_providers(params: MovieWatchProvidersParams): Promise<MovieWatchProvider> {
+	async watch_providers(params: MovieWatchProvidersParams): Promise<MediaWatchProviders> {
 		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}${MOVIE_ENDPOINTS.WATCH_PROVIDERS}`;
-		return this.client.request<MovieWatchProvider>(endpoint);
+		return this.client.request<MediaWatchProviders>(endpoint);
 	}
 }

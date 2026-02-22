@@ -250,3 +250,91 @@ export type ContentRating = {
 	/** Age or content rating (e.g., "TV-MA", "PG-13", "TV-14", "R") */
 	rating: string;
 };
+
+/**
+ * Individual movie review with author information
+ */
+export type Review = {
+	/** Review author's display name */
+	author: string;
+	/** Detailed information about the review author */
+	author_details: ReviewAuthorDetails;
+	/** Full review text content */
+	content: string;
+	/** Timestamp when the review was created (ISO 8601) */
+	created_at: string;
+	/** Unique review identifier */
+	id: string;
+	/** Timestamp of last update (ISO 8601) */
+	updated_at: string;
+	/** URL to the review on TMDB website */
+	url: string;
+};
+
+/**
+ * Author information for a movie review
+ */
+export type ReviewAuthorDetails = {
+	/** Author's full name */
+	name: string;
+	/** Author's username on TMDB */
+	username: string;
+	/** Path to author's avatar image (optional) */
+	avatar_path?: string;
+	/** Rating given by the author (0-10 scale, optional) */
+	rating?: number;
+};
+
+/**
+ * Translation data for a specific language
+ */
+export type Translation = {
+	/** ISO 3166-1 alpha-2 country code */
+	iso_3166_1: string;
+	/** ISO 639-1 language code */
+	iso_639_1: string;
+	/** Native name of the language */
+	name: string;
+	/** English name of the language */
+	english_name: string;
+	/** Translated media (tv/movie) information */
+	data: object;
+};
+
+/**
+ * Watch provider availability by country
+ */
+export type MediaWatchProviders = {
+	/** Movie/TV show identifier */
+	id: number;
+	/** Watch providers grouped by country code */
+	results: Record<CountryISO3166_1, WatchProvider>;
+};
+
+/**
+ * Watch provider options for a specific country
+ */
+export type WatchProvider = {
+	/** URL to watch/purchase the movie */
+	link: string;
+	/** Streaming providers (subscription required) */
+	flatrate?: WatchProviderItem[];
+	/** Rental providers */
+	rent?: WatchProviderItem[];
+	/** Purchase providers */
+	buy?: WatchProviderItem[];
+};
+
+/**
+ * Individual watch provider details
+ */
+export type WatchProviderItem = {
+	/** Path to provider logo image */
+	logo_path: string;
+	/** Unique provider identifier */
+	provider_id: number;
+	/** Provider name (e.g., "Netflix", "Amazon Prime Video") */
+	provider_name: string;
+	/** Display priority order (lower numbers = higher priority) */
+	display_priority: number;
+};

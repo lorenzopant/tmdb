@@ -79,4 +79,69 @@ describe("TV Series (integration)", () => {
 		expect(Array.isArray(show.posters)).toBe(true);
 		expect(show.backdrops[0].iso_639_1).toBe("es");
 	});
+
+	it("(KEYWORDS) should get keywords for a tv show", async () => {
+		const show = await tmdb.tv_series.keywords({ series_id: 1399 });
+		expect(Array.isArray(show.results)).toBe(true);
+		expect(show.results.map((k) => k.name).includes("kingdom")).toBe(true);
+	});
+
+	it("(LATEST) should get latest tv show", async () => {
+		const show = await tmdb.tv_series.latest();
+		expect(show.id).toBeDefined();
+	});
+
+	it("(LISTS) should get tv show lists", async () => {
+		const show = await tmdb.tv_series.lists({ series_id: 1399 });
+		expect(Array.isArray(show.results)).toBe(true);
+		expect(show.results[0].item_count).toBeGreaterThan(0);
+		expect(show.results[0].iso_3166_1).toBe("IT");
+	});
+
+	it("(RECOMMENDATIONS) should get tv show recommendations", async () => {
+		const show = await tmdb.tv_series.recommendations({ series_id: 1399 });
+		expect(Array.isArray(show.results)).toBe(true);
+		expect(show.results[0].id).toBe(1396); // Breaking Bad recommended first for Game of Thrones;
+	});
+
+	it("(REVIEWS) should get tv show reviews", async () => {
+		const show = await tmdb.tv_series.reviews({ series_id: 1399, language: "en-US" });
+		expect(Array.isArray(show.results)).toBe(true);
+		expect(show.results[0].id).toBe("58aa82f09251416f92006a3a");
+	});
+
+	it("(SCREENED THEATRICALLY) should get tv episodes screened thetrically", async () => {
+		const show = await tmdb.tv_series.screened_theatrically({ series_id: 1399 });
+		expect(Array.isArray(show.results)).toBe(true);
+		expect(show.id).toBe(1399);
+		expect(show.results[0].episode_number).toBe(10);
+		expect(show.results[0].season_number).toBe(4);
+	});
+
+	it("(SIMILAR) should get similar tv shows", async () => {
+		const show = await tmdb.tv_series.similar({ series_id: 1399 });
+		expect(Array.isArray(show.results)).toBe(true);
+		expect(show.results[0].id).toBe(61223);
+	});
+
+	it("(TRANSLATIONS) should get tv shows translations", async () => {
+		const show = await tmdb.tv_series.translations({ series_id: 1399 });
+		expect(Array.isArray(show.translations)).toBe(true);
+		expect(show.translations[0].iso_3166_1).toBe("US");
+		expect(show.translations[1].data.tagline).toBe("Das Lied von Eis und Feuer");
+	});
+
+	it("(VIDEOS) should get tv shows videos", async () => {
+		const show = await tmdb.tv_series.videos({ series_id: 1399 });
+		expect(Array.isArray(show.results)).toBe(true);
+		expect(show.results[0].site).toBe("YouTube");
+		expect(show.results[0].official).toBe(true);
+	});
+
+	it("(WATCH PROVIDERS) should get tv shows watch providers", async () => {
+		const show = await tmdb.tv_series.watch_providers({ series_id: 1399 });
+		expect(show.results).toBeDefined();
+		expect(show.results["AE"].flatrate).toBeDefined();
+		expect(show.results["AE"].link).toBeDefined();
+	});
 });

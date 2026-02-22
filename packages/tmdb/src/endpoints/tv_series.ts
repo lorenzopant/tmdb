@@ -1,3 +1,4 @@
+import { MediaWatchProviders } from "../types";
 import {
 	TVAggregateCreditsParams,
 	TVAlternativeTitles,
@@ -9,12 +10,24 @@ import {
 	TVExternalIDs,
 	TVImages,
 	TVImagesParams,
+	TVKeywords,
+	TVRecommendations,
+	TVRecommendationsParams,
+	TVReviewsParams,
 	TVSeriesChanges,
+	TVSeriesListsParams,
+	TVSimilar,
+	TVSimilarParams,
+	TVTranslations,
+	TVVideos,
 } from "../types/tv";
 import { TVAggregateCredits } from "../types/tv/aggregate_credits";
 import { TVContentRatings } from "../types/tv/content_ratings";
 import { TVEpisodeGroups } from "../types/tv/episode_groups";
-import { TVAppendToResponseNamespace, TVDetails, TVDetailsWithAppends } from "../types/tv/tv_series";
+import { TVSeriesLists } from "../types/tv/lists";
+import { TVReviews } from "../types/tv/reviews";
+import { TVScreenedTheatrically } from "../types/tv/screened_theatrically";
+import { TVAppendToResponseNamespace, TVSeriesDetails, TVDetailsWithAppends } from "../types/tv/tv_series";
 import { TMDBAPIBase } from "./base";
 
 export const TV_SERIES_ENDPOINTS = {
@@ -30,7 +43,13 @@ export const TV_SERIES_ENDPOINTS = {
 	TV_KEYWORDS: "/keywords",
 	TV_LATEST: "/latest",
 	TV_LISTS: "/lists",
-	TV_RECCOMENDATIONS: "/reccomendations",
+	TV_RECOMMENDATIONS: "/recommendations",
+	TV_REVIEWS: "/reviews",
+	TV_SCREENED_THEATRICALLY: "/screened_theatrically",
+	TV_SIMILAR: "/similar",
+	TV_TRANSLATIONS: "/translations",
+	TV_VIDEOS: "/videos",
+	TV_WATCH_PROVIDERS: "/watch/providers",
 };
 
 export class TVSeriesAPI extends TMDBAPIBase {
@@ -47,7 +66,7 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	 */
 	async details<T extends readonly TVAppendToResponseNamespace[] = []>(
 		params: TVDetailsParams & { append_to_response?: T[number] | T },
-	): Promise<T extends [] ? TVDetails : TVDetailsWithAppends<T>> {
+	): Promise<T extends [] ? TVSeriesDetails : TVDetailsWithAppends<T>> {
 		const { language = this.defaultOptions.language, ...rest } = params;
 		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}`;
 		return this.client.request(endpoint, { language, ...rest });
@@ -190,5 +209,168 @@ export class TVSeriesAPI extends TMDBAPIBase {
 		const { language = this.defaultOptions.language, ...rest } = params;
 		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_IMAGES}`;
 		return this.client.request(endpoint, { language, ...rest });
+	}
+
+	/**
+	 * Keywords
+	 * GET - https://api.themoviedb.org/3/tv/{series_id}/keywords
+	 *
+	 * Get a list of keywords that have been added to a TV show.
+	 * @param series_id The ID of the TV series.
+	 * @returns A promise that resolves to the TV series keywords.
+	 * @reference https://developer.themoviedb.org/reference/tv-series-keywords
+	 */
+	async keywords(params: TVBaseParam): Promise<TVKeywords> {
+		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_KEYWORDS}`;
+		return this.client.request(endpoint);
+	}
+
+	/**
+	 * Latest
+	 * GET - https://api.themoviedb.org/3/tv/latest
+	 *
+	 * Get the newest tv show.
+	 * This is a live response and will continuosly change.
+	 * @returns A promise that resolves to the lastest TV series.
+	 * @reference https://developer.themoviedb.org/reference/tv-series-latest-id
+	 */
+	async latest(): Promise<TVSeriesDetails> {
+		const endpoint = `${TV_SERIES_ENDPOINTS.TV}${TV_SERIES_ENDPOINTS.TV_LATEST}`;
+		return this.client.request(endpoint);
+	}
+
+	/**
+	 * Lists
+	 * GET - https://api.themoviedb.org/3/tv/{series_id}/lists
+	 *
+	 * Get the lists that a TV series has been added to.
+	 * @param series_id The ID of the TV series.
+	 * @param language The Language for the lists
+	 * @param page Page number - Defaults to 1
+	 * @returns A promise that resolves to the TV series lists.
+	 * @reference https://developer.themoviedb.org/reference/lists-copy (TODO: Check this url for updates, it's like this on TMDB docs (??))
+	 */
+	async lists(params: TVSeriesListsParams): Promise<TVSeriesLists> {
+		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_LISTS}`;
+		const { language = this.defaultOptions.language, ...rest } = params;
+		return this.client.request(endpoint, { language, ...rest });
+	}
+
+	/**
+	 * Recomendations
+	 * GET - https://api.themoviedb.org/3/tv/{series_id}/recommendations
+	 *
+	 * Get the recommendations shows for a TV series.
+	 * @param series_id The ID of the TV series.
+	 * @param language The Language for the lists
+	 * @param page Page number - Defaults to 1
+	 * @returns A promise that resolves to TV series recommended shows.
+	 * @reference https://developer.themoviedb.org/reference/tv-series-recommendations
+	 */
+	async recommendations(params: TVRecommendationsParams): Promise<TVRecommendations> {
+		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_RECOMMENDATIONS}`;
+		const { language = this.defaultOptions.language, ...rest } = params;
+		return this.client.request(endpoint, { language, ...rest });
+	}
+
+	/**
+	 * Reviews
+	 * GET - https://api.themoviedb.org/3/tv/{series_id}/reviews
+	 *
+	 * Get the reviews that have been added to a TV show.
+	 * @param series_id The ID of the TV series.
+	 * @param language The Language for the lists
+	 * @param page Page number - Defaults to 1
+	 * @returns A promise that resolves to TV series recommended shows.
+	 * @reference https://developer.themoviedb.org/reference/tv-series-recommendations
+	 */
+	async reviews(params: TVReviewsParams): Promise<TVReviews> {
+		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_REVIEWS}`;
+		const { language = this.defaultOptions.language, ...rest } = params;
+		return this.client.request(endpoint, { language, ...rest });
+	}
+
+	/**
+	 * Sreened Theatrically
+	 * GET - https://api.themoviedb.org/3/tv/{series_id}/screened_theatrically
+	 *
+	 * Get the seasons and episodes that have screened theatrically.
+	 * @param series_id The ID of the TV series.
+	 * @returns A promise that resolves to the TV episodes that have been screened thatrically.
+	 * @reference https://developer.themoviedb.org/reference/tv-series-screened-theatrically
+	 */
+	async screened_theatrically(params: TVBaseParam): Promise<TVScreenedTheatrically> {
+		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_SCREENED_THEATRICALLY}`;
+		return this.client.request(endpoint);
+	}
+
+	/**
+	 * Similar
+	 * GET - https://api.themoviedb.org/3/tv/{series_id}/similar
+	 *
+	 * Get the similar shows for a TV series.
+	 * @param series_id The ID of the TV series.
+	 * @param language The Language for the lists
+	 * @param page Page number - Defaults to 1
+	 * @returns A promise that resolves to TV series similar shows.
+	 * @reference https://developer.themoviedb.org/reference/tv-series-similar
+	 */
+	async similar(params: TVSimilarParams): Promise<TVSimilar> {
+		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_SIMILAR}`;
+		const { language = this.defaultOptions.language, ...rest } = params;
+		return this.client.request(endpoint, { language, ...rest });
+	}
+
+	/**
+	 * Translations
+	 * GET - https://api.themoviedb.org/3/movie/{series_id}/translations
+	 *
+	 * Get the translations that have been added to a tv show.
+	 * Take a read through our language documentation for more information about languages on TMDB.
+	 * https://developer.themoviedb.org/docs/languages
+	 * @param series_id The ID of the TV Series
+	 * @returns A promise that resolves to the translations of the tv show.
+	 * @reference https://developer.themoviedb.org/reference/tv-series-translations
+	 */
+	async translations(params: TVBaseParam): Promise<TVTranslations> {
+		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_TRANSLATIONS}`;
+		return this.client.request<TVTranslations>(endpoint);
+	}
+
+	/**
+	 * Videos
+	 * GET - https://api.themoviedb.org/3/movie/{series_id}/videos
+	 *
+	 * Get the videos that belong to a TV show.
+	 * @param series_id The ID of the TV Series
+	 * @returns A promise that resolves to the videos for the tv show.
+	 * @reference https://developer.themoviedb.org/reference/tv-series-videos
+	 */
+	async videos(params: TVBaseParam): Promise<TVVideos> {
+		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_VIDEOS}`;
+		return this.client.request<TVVideos>(endpoint);
+	}
+
+	/**
+	 * Watch Providers
+	 * GET - https://api.themoviedb.org/3/movie/{series_id}/watch/providers
+	 *
+	 * Get the list of streaming providers we have for a TV show.
+	 *
+	 * Powered by our partnership with JustWatch, you can query this method to get a list of the streaming/rental/purchase availabilities per country by provider.
+	 * This is not going to return full deep links, but rather, it's just enough information to display what's available where.
+	 * You can link to the provided TMDB URL to help support TMDB and provide the actual deep links to the content.
+	 *
+	 * WARNING: JustWatch Attribution Required
+	 * In order to use this data you must attribute the source of the data as JustWatch.
+	 * If we find any usage not complying with these terms we will revoke access to the API.
+	 *
+	 * @param series_id The ID of the TV Series
+	 * @returns A promise that resolves to the watch providers for the tv show.
+	 * @reference https://developer.themoviedb.org/reference/tv-series-watch-providers
+	 */
+	async watch_providers(params: TVBaseParam): Promise<MediaWatchProviders> {
+		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_WATCH_PROVIDERS}`;
+		return this.client.request<MediaWatchProviders>(endpoint);
 	}
 }
