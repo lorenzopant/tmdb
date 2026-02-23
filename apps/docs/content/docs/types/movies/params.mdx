@@ -1,0 +1,33 @@
+---
+title: Params
+description: Parameter types for movie-related API methods.
+---
+
+import { TypeTable } from "fumadocs-ui/components/type-table";
+
+## `MovieListParams`
+
+Parameters accepted by all movie list endpoints: [`now_playing()`](/docs/api-reference/movie-lists/now-playing),
+[`popular()`](/docs/api-reference/movie-lists/popular), [`top_rated()`](/docs/api-reference/movie-lists/top-rated),
+and [`upcoming()`](/docs/api-reference/movie-lists/upcoming).
+
+This is an alias of [`TMDBQueryParams`](/docs/types/common/params#tmdbqueryparams).
+
+<TypeTable
+	type={{
+		language: {
+			description: "Language for localized titles and overviews.",
+			type: "Language",
+			default: "en-US",
+		},
+		page: {
+			description: "Page number for paginated results.",
+			type: "number",
+			default: "1",
+		},
+		region: {
+			description: "ISO 3166-1 country code to filter results by country.",
+			type: "CountryISO3166_1",
+		},
+	}}
+/>

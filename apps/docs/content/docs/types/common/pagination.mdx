@@ -1,0 +1,40 @@
+---
+title: Pagination
+description: Generic pagination wrapper used across all paginated API responses.
+---
+
+import { TypeTable } from "fumadocs-ui/components/type-table";
+
+The `PaginatedResponse` type wraps all list-based API responses that support pagination.
+
+---
+
+## `PaginatedResponse<T>`
+
+A generic wrapper returned by any endpoint that paginates its results.
+The `results` array type varies per endpoint — refer to each method's return type for the specific item type.
+
+<TypeTable
+	type={{
+		page: {
+			description: "The current page number.",
+			type: "number",
+		},
+		total_pages: {
+			description: "Total number of pages available.",
+			type: "number",
+		},
+		total_results: {
+			description: "Total number of results across all pages.",
+			type: "number",
+		},
+		results: {
+			description: "Array of items for the current page.",
+			type: "T[]",
+		},
+	}}
+/>
+
+<Callout type="info">
+	TMDB caps pagination at **500 pages** regardless of `total_pages`. Requests beyond page 500 will return an error.
+</Callout>

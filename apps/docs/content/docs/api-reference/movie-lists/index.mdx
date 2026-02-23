@@ -1,0 +1,24 @@
+---
+title: Movie Lists
+description: Access curated movie lists including popular, top rated, now playing, and upcoming.
+---
+
+The `MovieListsAPI` provides access to TMDB's curated movie lists. All methods return paginated
+results and support language and region filtering.
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+
+// or standalone
+import { MovieListsAPI } from "@lorenzopant/tmdb";
+const movieLists = new MovieListsAPI("your-api-key");
+```
+
+## Methods
+
+- [`now_playing()`](/docs/api-reference/movie-lists/now-playing) — Get a list of movies currently in theatres.
+- [`popular()`](/docs/api-reference/movie-lists/popular) — Get a list of movies ordered by popularity.
+- [`top_rated()`](/docs/api-reference/movie-lists/top-rated) — Get a list of movies ordered by rating.
+- [`upcoming()`](/docs/api-reference/movie-lists/upcoming) — Get a list of movies being released soon.
