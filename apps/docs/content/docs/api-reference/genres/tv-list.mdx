@@ -1,0 +1,49 @@
+---
+title: TV
+description: Get the list of official genres for TV series.
+---
+
+Returns the list of official genres used to categorize TV series on TMDB.
+
+```ts
+async tv_list(params?: WithLanguage): Promise<GenresResponse>
+```
+
+> **TMDB Reference:** [Genre TV List](https://developer.themoviedb.org/reference/genre-tv-list)
+
+## Parameters
+
+| Name       | Type                                                | Required | Description                                              |
+| ---------- | --------------------------------------------------- | -------- | -------------------------------------------------------- |
+| `language` | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized genre names. Defaults to `en-US`. |
+
+## Returns
+
+A [`GenresResponse`](/docs/types/common/media#genresresponse) object containing an array of
+[`Genre`](/docs/types/common/media#genre) objects.
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const { genres } = await tmdb.genres.tv_list();
+
+console.log(genres);
+// [
+//   { id: 10759, name: "Action & Adventure" },
+//   { id: 16, name: "Animation" },
+//   { id: 35, name: "Comedy" },
+//   ...
+// ]
+
+// With a language override
+const { genres: italianGenres } = await tmdb.genres.tv_list({ language: "it-IT" });
+```
+
+## Types
+
+- [GenresResponse](/docs/types/common/media#genresresponse)
+- [Genre](/docs/types/common/media#genre)
+- [WithLanguage](/docs/types/common/params#withlanguage)

@@ -1,0 +1,22 @@
+---
+title: Genres
+description: Fetch the list of official genres for movies and TV series.
+---
+
+The `GenresAPI` provides the official genre lists used by TMDB to categorize movies and TV series.
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+tmdb.genres; // access methods
+
+// or standalone
+import { GenresAPI } from "@lorenzopant/tmdb";
+const genres = new GenresAPI("your-api-key");
+```
+
+## Methods
+
+- [`movie_list()`](/docs/api-reference/genres/movie-list) — Get the list of official genres for movies.
+- [`tv_list()`](/docs/api-reference/genres/tv-list) — Get the list of official genres for TV series.

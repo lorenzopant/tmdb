@@ -1,0 +1,197 @@
+---
+title: Media
+description: Shared types for core media entities used across movies and TV series.
+---
+
+These types represent core media entities returned across multiple API methods.
+They are shared between movie and TV series responses.
+
+---
+
+## `Genre`
+
+A single genre entry with an ID and localized name.
+
+<AutoTypeTable path="common/media.ts" name="Genre" />
+
+---
+
+## `GenresResponse`
+
+The response shape returned by [`genres.movie_list()`](/docs/api-reference/genres/movie-list)
+and [`genres.tv_list()`](/docs/api-reference/genres/tv-list).
+
+<AutoTypeTable path="common/media.ts" name="GenresResponse" />
+
+---
+
+## `ProductionCompany`
+
+A production company involved in creating a movie or TV show.
+
+<AutoTypeTable path="common/media.ts" name="ProductionCompany" />
+
+---
+
+## `ProductionCountry`
+
+A country where a movie or TV show was produced.
+
+<AutoTypeTable path="common/media.ts" name="ProductionCountry" />
+
+---
+
+## `SpokenLanguage`
+
+A spoken language featured in a movie or TV show.
+
+<AutoTypeTable path="common/media.ts" name="SpokenLanguage" />
+
+---
+
+## `Collection`
+
+A named collection of related movies (e.g., a franchise or saga).
+
+<AutoTypeTable path="common/media.ts" name="Collection" />
+
+---
+
+## `Credit`
+
+Base type shared by [`Cast`](#cast) and [`Crew`](#crew), containing common person fields.
+
+<AutoTypeTable path="common/media.ts" name="Credit" />
+
+---
+
+## `Cast`
+
+A cast member in a movie or TV show. Extends [`Credit`](#credit).
+
+<AutoTypeTable path="common/media.ts" name="Cast" />
+
+---
+
+## `Crew`
+
+A crew member in a movie or TV show. Extends [`Credit`](#credit).
+
+<AutoTypeTable path="common/media.ts" name="Crew" />
+
+---
+
+## `Keyword`
+
+A keyword tag associated with a movie or TV show.
+
+<AutoTypeTable path="common/media.ts" name="Keyword" />
+
+---
+
+## `AlternativeTitle`
+
+An alternative or regional title for a movie or TV show.
+
+<AutoTypeTable path="common/media.ts" name="AlternativeTitle" />
+
+---
+
+## `VideoItem`
+
+Metadata for a video asset (trailer, teaser, clip, etc.) associated with a movie or TV show.
+
+<AutoTypeTable path="common/media.ts" name="VideoItem" />
+
+---
+
+## `ImageItem`
+
+Metadata for an image asset associated with a movie or TV show.
+
+<AutoTypeTable path="common/media.ts" name="ImageItem" />
+
+---
+
+## `ContentRating`
+
+A content or age rating for a specific country.
+
+<AutoTypeTable path="common/media.ts" name="ContentRating" />
+
+---
+
+## `Review`
+
+A user-submitted review for a movie or TV show.
+
+<AutoTypeTable path="common/media.ts" name="Review" />
+
+---
+
+## `ReviewAuthorDetails`
+
+Author metadata for a [`Review`](#review).
+
+<AutoTypeTable path="common/media.ts" name="ReviewAuthorDetails" />
+
+---
+
+## `Translation`
+
+A translation entry for a specific language and region.
+
+<AutoTypeTable path="common/media.ts" name="Translation" />
+
+---
+
+## `MediaWatchProviders`
+
+Watch provider availability grouped by country for a movie or TV show.
+
+<AutoTypeTable path="common/media.ts" name="MediaWatchProviders" />
+
+---
+
+## `WatchProvider`
+
+Streaming, rental, and purchase options for a specific country.
+
+<AutoTypeTable path="common/media.ts" name="WatchProvider" />
+
+---
+
+## `WatchProviderItem`
+
+An individual streaming or purchase provider with logo and display metadata.
+
+<AutoTypeTable path="common/media.ts" name="WatchProviderItem" />
+
+---
+
+## `KnownForItem`
+
+A union type representing either a movie or TV show in a person's `known_for` list.
+Use the `media_type` discriminator to narrow the type.
+
+```ts
+type KnownForItem = KnownForMovie | KnownForTV;
+```
+
+### `KnownForMovie`
+
+<AutoTypeTable path="common/media.ts" name="KnownForMovie" />
+
+### `KnownForTV`
+
+<AutoTypeTable path="common/media.ts" name="KnownForTV" />
+
+---
+
+## `MediaType`
+
+A discriminator union for media entries that can be either a movie or a TV show.
+
+```ts
+type MediaType = "movie" | "tv";
+```
