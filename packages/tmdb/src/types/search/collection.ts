@@ -1,7 +1,7 @@
 /**
  * Collection information in search results
  */
-export type SearchCollectionItem = {
+export type CollectionResultItem = {
 	/** Whether the collection contains adult content */
 	adult: boolean;
 	/** Path to backdrop image */

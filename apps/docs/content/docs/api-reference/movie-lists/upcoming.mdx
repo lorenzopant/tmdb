@@ -22,8 +22,8 @@ async upcoming(params?: MovieListParams): Promise<PaginatedResponse<MovieResultI
 
 ## Returns
 
-A [`PaginatedResponse<MovieResultItem>`](/docs/types/common/pagination#paginatedresponse) containing
-an array of [`MovieResultItem`](/docs/types/movies#movieresultitem) objects.
+A [`PaginatedResponse<MovieResultItem>`](/docs/types/common#paginatedresponset) containing
+an array of [`MovieResultItem`](/docs/types/search#movieresultitem) objects.
 
 ## Example
 
@@ -39,6 +39,6 @@ const italian = await tmdb.movieLists.upcoming({ language: "it-IT", region: "IT"
 
 ## Types
 
-- [MovieListParams](/docs/types/movies/params#movielistparams)
-- [PaginatedResponse](/docs/types/common/pagination#paginatedresponse)
-- [MovieResultItem](/docs/types/movies#movieresultitem)
+- [MovieListParams](/docs/types/movies#movielistparams)
+- [PaginatedResponse](/docs/types/common#paginatedresponset)
+- [MovieResultItem](/docs/types/search#movieresultitem)

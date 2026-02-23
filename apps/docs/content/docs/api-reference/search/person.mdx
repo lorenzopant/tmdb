@@ -1,0 +1,47 @@
+---
+title: Person
+description: Search for people by their name and also known as names.
+---
+
+Search for people by their name and also known as names.
+
+```ts
+async person(params: SearchPersonParams): Promise<PaginatedResponse<PersonResultItem>>
+```
+
+> **TMDB Reference:** [Search Person](https://developer.themoviedb.org/reference/search-person)
+
+## Parameters
+
+| Name            | Type                                                | Required | Description                                                  |
+| --------------- | --------------------------------------------------- | -------- | ------------------------------------------------------------ |
+| `query`         | `string`                                            | ✅       | Search query text.                                           |
+| `include_adult` | `boolean`                                           | ❌       | Include adult (18+) content in results. Defaults to `false`. |
+| `language`      | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized results. Defaults to `en-US`.         |
+| `page`          | `number`                                            | ❌       | Page number for paginated results. Defaults to `1`.          |
+
+## Returns
+
+A [`PaginatedResponse<PersonResultItem>`](/docs/types/common#paginatedresponset) containing
+an array of [`PersonResultItem`](/docs/types/search#personresultitem) objects.
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const { results } = await tmdb.search.person({ query: "Christopher Nolan" });
+
+console.log(results);
+// [
+//   { id: 525, name: "Christopher Nolan", known_for_department: "Directing", ... },
+//   ...
+// ]
+```
+
+## Types
+
+- [SearchPersonParams](/docs/types/search#searchpersonparams)
+- [PaginatedResponse](/docs/types/common#paginatedresponset)
+- [PersonResultItem](/docs/types/person#personresultitem)

@@ -1,0 +1,46 @@
+---
+title: Keywords
+description: Search for keywords by name.
+---
+
+Search for keywords by their name.
+
+```ts
+async keyword(params: SearchKeywordsParams): Promise<PaginatedResponse<KeywordResultItem>>
+```
+
+> **TMDB Reference:** [Search Keyword](https://developer.themoviedb.org/reference/search-keyword)
+
+## Parameters
+
+| Name    | Type     | Required | Description                                         |
+| ------- | -------- | -------- | --------------------------------------------------- |
+| `query` | `string` | ✅       | Search query text.                                  |
+| `page`  | `number` | ❌       | Page number for paginated results. Defaults to `1`. |
+
+## Returns
+
+A [`PaginatedResponse<KeywordResultItem>`](/docs/types/common#paginatedresponset) containing
+an array of [`KeywordResultItem`](/docs/types/search#keywordresultitem) objects.
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const { results } = await tmdb.search.keyword({ query: "time travel" });
+
+console.log(results);
+// [
+//   { id: 4379, name: "time travel" },
+//   { id: 10121, name: "time machine" },
+//   ...
+// ]
+```
+
+## Types
+
+- [SearchKeywordsParams](/docs/types/search#searchkeywordsparams)
+- [PaginatedResponse](/docs/types/common#paginatedresponset)
+- [KeywordResultItem](/docs/types/search#keywordresultitem)

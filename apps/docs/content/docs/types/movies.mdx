@@ -1,17 +1,21 @@
 ---
-title: Params
-description: Parameter types for movie-related API methods.
+title: Movies
+description: Type definitions for movie-related API responses.
 ---
 
 import { TypeTable } from "fumadocs-ui/components/type-table";
 
-## `MovieListParams`
+## Params
+
+This section lists query parameter types used in the MoviesAPI methods.
+
+### `MovieListParams`
 
 Parameters accepted by all movie list endpoints: [`now_playing()`](/docs/api-reference/movie-lists/now-playing),
 [`popular()`](/docs/api-reference/movie-lists/popular), [`top_rated()`](/docs/api-reference/movie-lists/top-rated),
 and [`upcoming()`](/docs/api-reference/movie-lists/upcoming).
 
-This is an alias of [`TMDBQueryParams`](/docs/types/common/params#tmdbqueryparams).
+This is an alias of [`TMDBQueryParams`](/docs/types/common#tmdbqueryparams).
 
 <TypeTable
 	type={{

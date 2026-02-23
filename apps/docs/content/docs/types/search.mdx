@@ -1,0 +1,174 @@
+---
+title: Search
+description: Type definitions for search parameters and result items used by the SearchAPI.
+---
+
+import { TypeTable } from "fumadocs-ui/components/type-table";
+
+These types cover the parameter shapes and result items returned by the [`SearchAPI`](/docs/api-reference/search).
+
+## Parameters
+
+### `SearchMoviesParams`
+
+Parameters for [`search.movie()`](/docs/api-reference/search/movie).
+
+<TypeTable
+	type={{
+		query: {
+			description: "Search query text.",
+			type: "string",
+			required: true,
+		},
+		include_adult: {
+			description: "Include adult (18+) content in results.",
+			type: "boolean",
+			default: "false",
+		},
+		language: {
+			description: "Language for localized results.",
+			type: "Language",
+		},
+		page: {
+			description: "Page number for paginated results.",
+			type: "number",
+			default: "1",
+		},
+		primary_release_year: {
+			description: "Filter results by primary release year (YYYY).",
+			type: "string",
+		},
+		region: {
+			description: "ISO 3166-1 country code to filter results by region.",
+			type: "CountryISO3166_1",
+		},
+		year: {
+			description: "Filter results by any release year (YYYY).",
+			type: "string",
+		},
+	}}
+/>
+---
+
+### `SearchCollectionsParams`
+
+Parameters for [`search.collection()`](/docs/api-reference/search/collection).
+Same as [`SearchMoviesParams`](#searchmoviesparams) but omits `primary_release_year` and `year`.
+
+<TypeTable
+	type={{
+		query: {
+			description: "Search query text.",
+			type: "string",
+			required: true,
+		},
+		include_adult: {
+			description: "Include adult (18+) content in results.",
+			type: "boolean",
+			default: "false",
+		},
+		language: {
+			description: "Language for localized results.",
+			type: "Language",
+		},
+		page: {
+			description: "Page number for paginated results.",
+			type: "number",
+			default: "1",
+		},
+		region: {
+			description: "ISO 3166-1 country code to filter results by region.",
+			type: "CountryISO3166_1",
+		},
+	}}
+/>
+---
+
+### `SearchPersonParams`
+
+Parameters for [`search.person()`](/docs/api-reference/search/person).
+
+<TypeTable
+	type={{
+		query: {
+			description: "Search query text.",
+			type: "string",
+			required: true,
+		},
+		include_adult: {
+			description: "Include adult (18+) content in results.",
+			type: "boolean",
+			default: "false",
+		},
+		language: {
+			description: "Language for localized results.",
+			type: "Language",
+		},
+		page: {
+			description: "Page number for paginated results.",
+			type: "number",
+			default: "1",
+		},
+	}}
+/>
+---
+
+### `SearchKeywordsParams`
+
+Parameters for [`search.keyword()`](/docs/api-reference/search/keyword).
+Accepts only `query` and `page`.
+
+<AutoTypeTable path="search/params.ts" name="SearchKeywordsParams" />
+
+---
+
+### `SearchCompanyParams`
+
+Parameters for [`search.company()`](/docs/api-reference/search/company).
+Accepts only `query` and `page`.
+
+<AutoTypeTable path="search/params.ts" name="SearchCompanyParams" />
+
+---
+
+## Result Items
+
+### `MovieResultItem`
+
+A simplified movie object returned in search and list results.
+For full movie details, see [`movies.details()`](/docs/api-reference/movies/details).
+
+<AutoTypeTable path="search/movie.ts" name="MovieResultItem" />
+
+---
+
+### `TVSeriesResultItem`
+
+A simplified TV series object returned in search and list results.
+For full series details, see [`tvSeries.details()`](/docs/api-reference/tv-series/details).
+
+<AutoTypeTable path="search/tv.ts" name="TVSeriesResultItem" />
+
+---
+
+### `CollectionResultItem`
+
+A collection result item returned by [`search.collection()`](/docs/api-reference/search/collection).
+
+<AutoTypeTable path="search/collection.ts" name="CollectionResultItem" />
+
+---
+
+### `CompanyResultItem`
+
+A company result item returned by [`search.company()`](/docs/api-reference/search/company).
+
+<AutoTypeTable path="search/company.ts" name="CompanyResultItem" />
+
+---
+
+### `KeywordResultItem`
+
+A keyword result item returned by [`search.keyword()`](/docs/api-reference/search/keyword).
+
+<AutoTypeTable path="search/keyword.ts" name="KeywordResultItem" />

@@ -3,7 +3,7 @@ import { CountryISO3166_1 } from "../config/countries";
 /**
  * Company information in search results
  */
-export type SearchCompanyItem = {
+export type CompanyResultItem = {
 	/** Unique company identifier */
 	id: number;
 	/** Path to company logo image */

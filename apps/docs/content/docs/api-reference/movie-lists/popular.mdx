@@ -21,8 +21,8 @@ async popular(params?: MovieListParams): Promise<PaginatedResponse<MovieResultIt
 
 ## Returns
 
-A [`PaginatedResponse<MovieResultItem>`](/docs/types/common/pagination#paginatedresponse) containing
-an array of [`MovieResultItem`](/docs/types/movies#movieresultitem) objects.
+A [`PaginatedResponse<MovieResultItem>`](/docs/types/common#paginatedresponset) containing
+an array of [`MovieResultItem`](/docs/types/search#movieresultitem) objects.
 
 ## Example
 
@@ -38,6 +38,6 @@ const page2 = await tmdb.movieLists.popular({ page: 2, language: "fr-FR", region
 
 ## Types
 
-- [MovieListParams](/docs/types/movies/params#movielistparams)
-- [PaginatedResponse](/docs/types/common/pagination#paginatedresponse)
-- [MovieResultItem](/docs/types/movies#movieresultitem)
+- [MovieListParams](/docs/types/movies#movielistparams)
+- [PaginatedResponse](/docs/types/common#paginatedresponset)
+- [MovieResultItem](/docs/types/search#movieresultitem)

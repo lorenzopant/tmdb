@@ -19,8 +19,8 @@ async movie_list(params?: WithLanguage): Promise<GenresResponse>
 
 ## Returns
 
-A [`GenresResponse`](/docs/types/common/media#genresresponse) object containing an array of
-[`Genre`](/docs/types/common/media#genre) objects.
+A [`GenresResponse`](/docs/types/common#genresresponse) object containing an array of
+[`Genre`](/docs/types/common#genre) objects.
 
 ## Example
 
@@ -49,6 +49,6 @@ const { genres: italianGenres } = await tmdb.genres.movie_list({ language: "it-I
 
 ## Types
 
-- [GenresResponse](/docs/types/common/media#genresresponse)
-- [Genre](/docs/types/common/media#genre)
-- [WithLanguage](/docs/types/common/params#withlanguage)
+- [GenresResponse](/docs/types/common#genresresponse)
+- [Genre](/docs/types/common#genre)
+- [WithLanguage](/docs/types/common#withlanguage)

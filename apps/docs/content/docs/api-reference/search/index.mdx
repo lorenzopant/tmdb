@@ -1,0 +1,25 @@
+---
+title: Search
+description: Search for movies, TV series, people, collections, companies, and keywords across the TMDB catalog.
+---
+
+The `SearchAPI` provides full-text search across all major TMDB entity types.
+All search methods require a `query` parameter and return paginated results.
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+
+// or standalone
+import { SearchAPI } from "@lorenzopant/tmdb";
+const search = new SearchAPI("your-api-key");
+```
+
+## Methods
+
+- [`movies()`](/docs/api-reference/search/movies) — Search for movies by their original, translated, and alternative titles.
+- [`collections()`](/docs/api-reference/search/collections) — Search for collections by their original, translated, and alternative names.
+- [`company()`](/docs/api-reference/search/company) — Search for production companies by their original and alternative names.
+- [`keyword()`](/docs/api-reference/search/keyword) — Search for keywords by name.
+- [`person()`](/docs/api-reference/search/person) — Search for people by their name and also known as names.

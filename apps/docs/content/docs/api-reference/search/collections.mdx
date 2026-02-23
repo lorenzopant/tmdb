@@ -1,0 +1,48 @@
+---
+title: Collections
+description: Search for collections by their original, translated and alternative names.
+---
+
+Search for collections by their original, translated, and alternative names.
+
+```ts
+async collections(params: SearchCollectionsParams): Promise<PaginatedResponse<CollectionResultItem>>
+```
+
+> **TMDB Reference:** [Search Collection](https://developer.themoviedb.org/reference/search-collection)
+
+## Parameters
+
+| Name            | Type                                                             | Required | Description                                                  |
+| --------------- | ---------------------------------------------------------------- | -------- | ------------------------------------------------------------ |
+| `query`         | `string`                                                         | ✅       | Search query text.                                           |
+| `include_adult` | `boolean`                                                        | ❌       | Include adult (18+) content in results. Defaults to `false`. |
+| `language`      | [`Language`](/docs/types/options/language#language)              | ❌       | Language for localized results. Defaults to `en-US`.         |
+| `page`          | `number`                                                         | ❌       | Page number for paginated results. Defaults to `1`.          |
+| `region`        | [`CountryISO3166_1`](/docs/types/options/region#countryiso31661) | ❌       | ISO 3166-1 country code to filter results by region.         |
+
+## Returns
+
+A [`PaginatedResponse<CollectionResultItem>`](/docs/types/common#paginatedresponset) containing
+an array of [`CollectionResultItem`](/docs/types/search#collectionresultitem) objects.
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const { results } = await tmdb.search.collections({ query: "The Dark Knight" });
+
+console.log(results);
+// [
+//   { id: 263, name: "The Dark Knight Collection", ... },
+//   ...
+// ]
+```
+
+## Types
+
+- [SearchCollectionsParams](/docs/types/search#searchcollectionsparams)
+- [PaginatedResponse](/docs/types/common#paginatedresponset)
+- [CollectionResultItem](/docs/types/search#collectionresultitem)
