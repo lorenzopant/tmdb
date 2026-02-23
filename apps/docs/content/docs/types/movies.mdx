@@ -1,37 +1,357 @@
 ---
 title: Movies
-description: Type definitions for movie-related API responses.
+description: Type definitions for movie details, appended data, and query parameters.
 ---
 
 import { TypeTable } from "fumadocs-ui/components/type-table";
 
-## Params
+These types represent the full movie domain — details, appended sub-resources, and query parameters.
 
-This section lists query parameter types used in the MoviesAPI methods.
+## `MovieDetails`
 
-### `MovieListParams`
-
-Parameters accepted by all movie list endpoints: [`now_playing()`](/docs/api-reference/movie-lists/now-playing),
-[`popular()`](/docs/api-reference/movie-lists/popular), [`top_rated()`](/docs/api-reference/movie-lists/top-rated),
-and [`upcoming()`](/docs/api-reference/movie-lists/upcoming).
-
-This is an alias of [`TMDBQueryParams`](/docs/types/common#tmdbqueryparams).
+The complete representation of a movie as returned by [`movies.details()`](/docs/api-reference/movies/details).
 
 <TypeTable
 	type={{
-		language: {
-			description: "Language for localized titles and overviews.",
-			type: "Language",
-			default: "en-US",
+		adult: { type: "boolean", description: "Whether the movie is marked as adult content." },
+		backdrop_path: { type: "string | null", description: "Path to the backdrop image." },
+		belongs_to_collection: { type: "Collection | null", description: "Collection the movie belongs to, null if standalone." },
+		budget: { type: "number", description: "Production budget in US dollars." },
+		genres: { type: "Genre[]", description: "Array of genres associated with the movie." },
+		homepage: { type: "string | null", description: "Official homepage URL." },
+		id: { type: "number", description: "Unique TMDB movie identifier." },
+		imdb_id: { type: "string | null", description: 'IMDb identifier (e.g., "tt0133093").' },
+		origin_country: { type: "string[]", description: "Array of origin country codes (ISO 3166-1)." },
+		original_language: { type: "string", description: "Original language of the movie (ISO 639-1)." },
+		original_title: { type: "string", description: "Original title in the original language." },
+		overview: { type: "string | null", description: "Plot synopsis/overview." },
+		popularity: { type: "number", description: "Popularity score calculated by TMDB." },
+		poster_path: { type: "string | null", description: "Path to the poster image." },
+		production_companies: { type: "ProductionCompany[]", description: "Companies that produced the movie." },
+		production_countries: { type: "ProductionCountry[]", description: "Countries where the movie was produced." },
+		release_date: { type: "string", description: "Release date in ISO 8601 format (YYYY-MM-DD)." },
+		revenue: { type: "number", description: "Box office revenue in US dollars." },
+		runtime: { type: "number | null", description: "Runtime in minutes." },
+		spoken_languages: { type: "SpokenLanguage[]", description: "Languages spoken in the movie." },
+		status: { type: "string", description: 'Release status (e.g., "Released", "Post Production").' },
+		tagline: { type: "string | null", description: "Movie tagline/slogan." },
+		title: { type: "string", description: "Localized movie title." },
+		video: { type: "boolean", description: "Whether a video is available on TMDB." },
+		vote_average: { type: "number", description: "Average user rating (0–10 scale)." },
+		vote_count: { type: "number", description: "Total number of votes received." },
+	}}
+/>
+
+---
+
+## `MovieDetailsWithAppends<T>`
+
+Extends [`MovieDetails`](#moviedetails) with one or more appended sub-resources.
+`T` is a readonly array of [`MovieAppendToResponseNamespace`](#movieappendtoresponsenamespace) keys.
+
+```ts
+// Example: fetch movie with credits and videos appended
+const movie: MovieDetailsWithAppends<["credits", "videos"]> = await tmdb.movies.details({
+	movie_id: 550,
+	append_to_response: ["credits", "videos"],
+});
+```
+
+---
+
+## `MovieAppendToResponseNamespace`
+
+Union of all valid keys that can be passed to `append_to_response`.
+
+```ts
+type MovieAppendToResponseNamespace =
+	| "alternative_titles"
+	| "changes"
+	| "credits"
+	| "external_ids"
+	| "images"
+	| "keywords"
+	| "recommendations"
+	| "release_dates"
+	| "reviews"
+	| "similar"
+	| "translations"
+	| "videos";
+```
+
+---
+
+### `MovieAlternativeTitles`
+
+<TypeTable
+	type={{
+		id: { type: "number", description: "Movie identifier." },
+		titles: { type: "AlternativeTitle[]", description: "Array of alternative titles across countries/languages." },
+	}}
+/>
+
+---
+
+### `MovieChanges`
+
+Alias for [`Changes`](/docs/types/common#changes). Returns the change history for a movie.
+
+---
+
+### `MovieCredits`
+
+<TypeTable
+	type={{
+		id: { type: "number", description: "Movie identifier." },
+		cast: { type: "Cast[]", description: "Array of cast members (actors)." },
+		crew: { type: "Crew[]", description: "Array of crew members (directors, writers, etc.)." },
+	}}
+/>
+
+---
+
+### `MovieExternalIDs`
+
+<TypeTable
+	type={{
+		id: { type: "number", description: "TMDB movie identifier." },
+		imdb_id: { type: "string | null", description: 'IMDb identifier (e.g., "tt0133093").' },
+		facebook_id: { type: "string | null", description: "Facebook page identifier." },
+		twitter_id: { type: "string | null", description: "Twitter/X handle." },
+		instagram_id: { type: "string | null", description: "Instagram handle." },
+	}}
+/>
+
+---
+
+### `MovieImages`
+
+<TypeTable
+	type={{
+		id: { type: "number", description: "Movie identifier." },
+		backdrops: { type: "ImageItem[]", description: "Array of backdrop images." },
+		logos: { type: "ImageItem[]", description: "Array of logo images." },
+		posters: { type: "ImageItem[]", description: "Array of poster images." },
+	}}
+/>
+
+---
+
+### `MovieKeywords`
+
+<TypeTable
+	type={{
+		id: { type: "number", description: "Movie identifier." },
+		keywords: { type: "Keyword[]", description: "Array of keyword objects." },
+	}}
+/>
+
+---
+
+### `MovieRecommendations`
+
+A [`PaginatedResponse<MovieResultItem>`](/docs/types/common#paginatedresponset) of recommended movies.
+
+See [`MovieResultItem`](/docs/types/search#movieresultitem).
+
+---
+
+### `MovieReleaseDates`
+
+<TypeTable
+	type={{
+		id: { type: "number", description: "Movie identifier." },
+		results: { type: "MovieReleaseDateResult[]", description: "Release date results grouped by country." },
+	}}
+/>
+
+#### `MovieReleaseDateResult`
+
+<TypeTable
+	type={{
+		iso_3166_1: { type: "string", description: "ISO 3166-1 country code." },
+		release_dates: { type: "MovieReleaseDate[]", description: "Array of release dates for this country." },
+	}}
+/>
+
+#### `MovieReleaseDate`
+
+<TypeTable
+	type={{
+		certification: { type: "string", description: 'Age certification/rating (e.g., "PG-13", "R").' },
+		iso_639_1: { type: "string", description: "ISO 639-1 language code." },
+		release_date: { type: "string", description: "Release date and time in ISO 8601 format." },
+		type: { type: "ReleaseType | number", description: "Type of release. See ReleaseType enum." },
+		note: { type: "string", description: "Additional notes about this release." },
+		descriptors: { type: "unknown[]", description: "Content descriptors (currently unused by TMDB)." },
+	}}
+/>
+
+See [`ReleaseType`](/docs/types/enums#releasetype).
+
+---
+
+### `MovieReviews`
+
+A [`PaginatedResponse<Review>`](/docs/types/common#paginatedresponset) of user reviews.
+
+---
+
+### `MovieSimilar`
+
+A [`PaginatedResponse<MovieResultItem>`](/docs/types/common#paginatedresponset) of similar movies.
+
+See [`MovieResultItem`](/docs/types/search#movieresultitem).
+
+---
+
+### `MovieTranslations`
+
+<TypeTable
+	type={{
+		id: { type: "number", description: "Movie identifier." },
+		translations: { type: "MovieTranslationItem[]", description: "Array of translations in different languages." },
+	}}
+/>
+
+#### `MovieTranslationItem`
+
+Extends [`Translation`](/docs/types/common#translation) with a `data` field.
+
+<TypeTable
+	type={{
+		data: { type: "MovieTranslationData", description: "Translated content fields for this language." },
+	}}
+/>
+
+#### `MovieTranslationData`
+
+<TypeTable
+	type={{
+		homepage: { type: "string", description: "Translated homepage URL." },
+		overview: { type: "string", description: "Translated synopsis/overview." },
+		runtime: { type: "number", description: "Movie runtime in minutes." },
+		tagline: { type: "string", description: "Translated tagline." },
+		title: { type: "string", description: "Translated movie title." },
+	}}
+/>
+
+---
+
+### `MovieVideos`
+
+<TypeTable
+	type={{
+		id: { type: "number", description: "Movie identifier." },
+		results: { type: "VideoItem[]", description: "Array of video items (trailers, teasers, clips)." },
+	}}
+/>
+
+---
+
+## Parameters
+
+### `MovieDetailsParams`
+
+<TypeTable
+	type={{
+		movie_id: { type: "number", required: true, description: "TMDB movie identifier." },
+		append_to_response: { type: "MovieAppendToResponseNamespace[]", description: "Sub-resources to append to the response." },
+		language: { type: "Language", description: "Language for localized results.", default: "en-US" },
+	}}
+/>
+
+---
+
+### `MovieListParams`
+
+Alias for [`TMDBQueryParams`](/docs/types/common#tmdbqueryparams). Used by popular, top rated, now playing, and upcoming list endpoints.
+
+---
+
+### `MovieAlternativeTitlesParams`
+
+<TypeTable
+	type={{
+		movie_id: { type: "number", required: true, description: "TMDB movie identifier." },
+		country: { type: "CountryISO3166_1", description: "Filter results by country code." },
+	}}
+/>
+
+---
+
+### `MovieCreditsParams`
+
+<TypeTable
+	type={{
+		movie_id: { type: "number", required: true, description: "TMDB movie identifier." },
+		language: { type: "Language", description: "Language for localized results.", default: "en-US" },
+	}}
+/>
+
+---
+
+### `MovieChangesParams`
+
+<TypeTable
+	type={{
+		movie_id: { type: "number", required: true, description: "TMDB movie identifier." },
+		page: { type: "number", description: "Page number for paginated results.", default: "1" },
+		start_date: { type: "string", description: "Start of date range (YYYY-MM-DD)." },
+		end_date: { type: "string", description: "End of date range (YYYY-MM-DD)." },
+	}}
+/>
+
+---
+
+### `MovieImagesParams`
+
+<TypeTable
+	type={{
+		movie_id: { type: "number", required: true, description: "TMDB movie identifier." },
+		language: { type: "Language | LanguageISO6391", description: "Language for image metadata." },
+		include_image_language: {
+			type: "Language | LanguageISO6391",
+			description: 'Include images with specific language tags (e.g., "en,null").',
 		},
-		page: {
-			description: "Page number for paginated results.",
-			type: "number",
-			default: "1",
-		},
-		region: {
-			description: "ISO 3166-1 country code to filter results by country.",
-			type: "CountryISO3166_1",
-		},
+	}}
+/>
+
+---
+
+### `MovieRecommendationsParams` / `MovieSimilarParams`
+
+<TypeTable
+	type={{
+		movie_id: { type: "number", required: true, description: "TMDB movie identifier." },
+		language: { type: "Language", description: "Language for localized results.", default: "en-US" },
+		page: { type: "number", description: "Page number for paginated results.", default: "1" },
+	}}
+/>
+
+---
+
+### `MovieReviewsParams`
+
+Same shape as [`MovieRecommendationsParams`](#movierecommendationsparams--moviesimilarparams).
+
+---
+
+### `MovieVideosParams`
+
+<TypeTable
+	type={{
+		movie_id: { type: "number", required: true, description: "TMDB movie identifier." },
+		language: { type: "Language", description: "Language for localized results.", default: "en-US" },
+	}}
+/>
+
+---
+
+### `MovieBaseParam`
+
+<TypeTable
+	type={{
+		movie_id: { type: "number", required: true, description: "TMDB movie identifier." },
 	}}
 />

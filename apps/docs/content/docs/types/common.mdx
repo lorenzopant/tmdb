@@ -96,6 +96,73 @@ A keyword tag associated with a movie or TV show.
 
 ---
 
+### `Changes`
+
+<TypeTable
+	type={{
+		changes: {
+			type: "Change[]",
+			description: "Array of changes grouped by field.",
+		},
+	}}
+/>
+
+---
+
+### `Change`
+
+<TypeTable
+	type={{
+		key: {
+			type: "string",
+			description: 'Name of the field that changed (e.g., "title", "overview", "images").',
+		},
+		items: {
+			type: "ChangeItem[]",
+			description: "Individual change entries for this field.",
+		},
+	}}
+/>
+
+---
+
+### `ChangeItem`
+
+<TypeTable
+	type={{
+		id: {
+			type: "number",
+			description: "Unique identifier for the changed item.",
+		},
+		action: {
+			type: "string",
+			description: 'Type of change performed (e.g., "added", "updated", "deleted").',
+		},
+		time: {
+			type: "string",
+			description: "Timestamp of when the change occurred (ISO 8601 format).",
+		},
+		iso_639_1: {
+			type: "string",
+			description: "ISO 639-1 language code associated with the change.",
+		},
+		iso_3166_1: {
+			type: "string",
+			description: "ISO 3166-1 country code associated with the change.",
+		},
+		value: {
+			type: "object",
+			description: "The changed data object (structure varies by change type).",
+		},
+		original_value: {
+			type: "object",
+			description: "The original data object before the change (structure varies by change type).",
+		},
+	}}
+/>
+
+---
+
 ### `AlternativeTitle`
 
 An alternative or regional title for a movie or TV show.

@@ -1,0 +1,28 @@
+---
+title: Enums
+description: Enumerated values used across TMDB API responses.
+---
+
+Enumerated constants used in TMDB API responses to represent typed numeric values.
+
+## `ReleaseType`
+
+Represents the type of a movie release as defined by TMDB.
+Used in [`MovieReleaseDate.type`](/docs/types/movies#moviereleasedate).
+
+| Value | Name                | Description                                                                  |
+| ----- | ------------------- | ---------------------------------------------------------------------------- |
+| `1`   | `Premiere`          | A high-profile premiere event, typically a red carpet or festival screening. |
+| `2`   | `TheatricalLimited` | A limited theatrical release, usually in select cities or venues.            |
+| `3`   | `Theatrical`        | A wide theatrical release to the general public.                             |
+| `4`   | `Digital`           | Digital release via streaming or download platforms.                         |
+| `5`   | `Physical`          | Physical media release (Blu-ray, DVD, etc.).                                 |
+| `6`   | `TV`                | Television broadcast premiere.                                               |
+
+```ts
+import { ReleaseType } from "@lorenzopant/tmdb";
+
+if (releaseDate.type === ReleaseType.Theatrical) {
+	console.log("Wide theatrical release");
+}
+```
