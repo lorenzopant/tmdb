@@ -1,13 +1,6 @@
-export type Country = {
-	/** ISO 3166-1 alpha-2 country code */
-	iso_3166_1: CountryISO3166_1;
-	/** English name of the country */
-	english_name: string;
-	/** Native name of the country in its local language */
-	native_name: string;
-};
+import { ConfigurationCountry } from "./configuration";
 
-export const TMDBCountries: Country[] = [
+export const TMDBCountries: ConfigurationCountry[] = [
 	{
 		iso_3166_1: "AD",
 		english_name: "Andorra",

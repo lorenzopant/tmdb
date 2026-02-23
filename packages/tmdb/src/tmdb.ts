@@ -19,7 +19,7 @@ export class TMDB {
 	public movie_lists: MovieListsAPI;
 	public search: SearchAPI;
 	public images: ImageAPI;
-	public config: ConfigurationAPI;
+	public configuration: ConfigurationAPI;
 	public genres: GenresAPI;
 	public tv_lists: TVSeriesListsAPI;
 	public tv_series: TVSeriesAPI;
@@ -38,7 +38,7 @@ export class TMDB {
 		this.movie_lists = new MovieListsAPI(this.client, this.options);
 		this.search = new SearchAPI(this.client, this.options);
 		this.images = new ImageAPI(this.options.images);
-		this.config = new ConfigurationAPI(this.client, this.options);
+		this.configuration = new ConfigurationAPI(this.client, this.options);
 		this.genres = new GenresAPI(this.client, this.options);
 		this.tv_lists = new TVSeriesListsAPI(this.client, this.options);
 		this.tv_series = new TVSeriesAPI(this.client, this.options);
