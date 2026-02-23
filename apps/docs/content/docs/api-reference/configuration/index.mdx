@@ -1,0 +1,28 @@
+---
+title: Configuration
+description: Query system-level configuration data from TMDB, including image settings, countries, languages, timezones, and more.
+---
+
+The `ConfigurationAPI` provides access to system-level data from TMDB — things like valid image
+sizes and base URLs, supported countries, languages, timezones, and department/job listings. We provide static
+data for some of the configuration values, such as countries and languages, so you can choose to use our typed values
+of fetch these details and cache them. Most of this data is static and changes infrequently, so it's a good candidate for caching.
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+
+// or standalone
+import { ConfigurationAPI } from "@lorenzopant/tmdb";
+const config = new ConfigurationAPI("your-api-key");
+```
+
+## Methods
+
+- [`details()`](/docs/api-reference/configuration/details) — Query the API configuration details, including image base URLs and valid image sizes.
+- [`countries()`](/docs/api-reference/configuration/countries) — Get the list of countries (ISO 3166-1) used throughout TMDB.
+- [`jobs()`](/docs/api-reference/configuration/jobs) — Get the list of departments and jobs used throughout TMDB.
+- [`languages()`](/docs/api-reference/configuration/languages) — Get the list of languages (ISO 639-1) used throughout TMDB.
+- [`primary_translations()`](/docs/api-reference/configuration/primary-translations) — Get the list of officially supported primary translations on TMDB.
+- [`timezones()`](/docs/api-reference/configuration/timezones) — Get the list of timezones used throughout TMDB.

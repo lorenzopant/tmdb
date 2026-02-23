@@ -1,0 +1,53 @@
+---
+title: Primary Translations
+description: Get the list of officially supported primary translations on TMDB.
+---
+
+Returns the list of officially supported translations on TMDB. These are the locales
+that TMDB actively supports for website localization, making them the most complete
+and reliable for translated content.
+
+```ts
+async primary_translations(): Promise<string[]>
+```
+
+> **TMDB Reference:** [Configuration Primary Translations](https://developer.themoviedb.org/reference/configuration-primary-translations)
+
+## Parameters
+
+This method takes no parameters.
+
+## Returns
+
+A `string[]` array of locale codes in `language-REGION` format (e.g., `"en-US"`, `"it-IT"`).
+These correspond directly to the [`PrimaryTranslations`](/docs/types/options/language#primarytranslations) type.
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const translations = await tmdb.configuration.primary_translations();
+
+console.log(translations);
+// [
+//   "af-ZA",
+//   "ar-AE",
+//   "ar-SA",
+//   "en-US",
+//   "it-IT",
+//   "fr-FR",
+//   ...
+// ]
+```
+
+<Callout type="info">
+	While TMDB technically allows content in any language, primary translations are the ones officially supported for the TMDB website.
+	Using these locale codes with the `language` option or parameter will yield the most complete translated data.
+</Callout>
+
+## Types
+
+- [PrimaryTranslations](/docs/types/options/language#primarytranslations)
+- [Language](/docs/types/options/language#language)

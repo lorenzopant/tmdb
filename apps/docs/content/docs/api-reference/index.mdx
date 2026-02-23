@@ -3,3 +3,91 @@ title: API Reference
 description: This section lists all the available methods in @lorenzopant/tmdb
 icon: BookOpenText
 ---
+
+`@lorenzopant/tmdb` exposes the full TMDB API surface through a set of focused, typed client classes.
+You can use them in two ways: through the unified `TMDB` client, or as standalone classes when you
+only need a specific subset of functionality.
+
+## Using the unified client
+
+The `TMDB` class bundles all APIs under a single instance. This is the recommended approach for most use cases.
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key", {
+	language: "en-US",
+	region: "US",
+});
+
+// Access any API namespace directly
+const popular = await tmdb.movies.popular();
+const trending = await tmdb.tvSeries.trending("day");
+const results = await tmdb.search.movie({ query: "Inception" });
+```
+
+## Using standalone API classes
+
+Each API is also available as a standalone class — useful when you want to tree-shake or
+only import what you need.
+
+```ts
+import { MoviesAPI } from "@lorenzopant/tmdb";
+
+const moviesApi = new MoviesAPI("your-api-key", {
+	language: "it-IT",
+	region: "IT",
+});
+
+const popular = await moviesApi.popular();
+const details = await moviesApi.details(550);
+```
+
+```ts
+import { SearchAPI } from "@lorenzopant/tmdb";
+
+const searchApi = new SearchAPI("your-api-key");
+const results = await searchApi.movie({ query: "The Godfather" });
+```
+
+```ts
+import { TVSeriesAPI } from "@lorenzopant/tmdb";
+
+const tvApi = new TVSeriesAPI("your-api-key", {
+	language: "ja-JP",
+	timezone: "Asia/Tokyo",
+});
+
+const airingToday = await tvApi.airingToday();
+```
+
+---
+
+## Available APIs
+
+| API                                                    | Unified client accessor | Standalone class   | Description                                                                       |
+| ------------------------------------------------------ | ----------------------- | ------------------ | --------------------------------------------------------------------------------- |
+| [Configuration](/docs/api-reference/configuration)     | `tmdb.configuration`    | `ConfigurationAPI` | Retrieve system-level configuration such as image base URLs and languages.        |
+| [Genres](/docs/api-reference/genres)                   | `tmdb.genres`           | `GenresAPI`        | Fetch the list of official movie and TV series genres.                            |
+| [Movie Lists](/docs/api-reference/movie_lists)         | `tmdb.movieLists`       | `MovieListsAPI`    | Access curated movie lists: popular, top rated, now playing, and upcoming.        |
+| [Movies](/docs/api-reference/movies)                   | `tmdb.movies`           | `MoviesAPI`        | Get movie details, credits, images, videos, recommendations, and more.            |
+| [Search](/docs/api-reference/search)                   | `tmdb.search`           | `SearchAPI`        | Search for movies, TV series, people, and keywords across the TMDB catalog.       |
+| [TV Series](/docs/api-reference/tv_series)             | `tmdb.tvSeries`         | `TVSeriesAPI`      | Get TV series details, episodes, seasons, credits, and recommendations.           |
+| [TV Series Lists](/docs/api-reference/tv_series_lists) | `tmdb.tvSeriesLists`    | `TVSeriesListsAPI` | Access curated TV series lists: popular, top rated, airing today, and on the air. |
+
+---
+
+## Constructor signature
+
+All standalone API classes share the same constructor signature:
+
+```ts
+new SomeAPI(apiKey: string, options?: TMDBOptions)
+```
+
+| Parameter | Type          | Description                                                        |
+| --------- | ------------- | ------------------------------------------------------------------ |
+| `apiKey`  | `string`      | Your TMDB API key.                                                 |
+| `options` | `TMDBOptions` | Optional default values for language, region, timezone and images. |
+
+See the [Options reference](/docs/getting-started/options) for the full list of available configuration options.
