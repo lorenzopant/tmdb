@@ -9,6 +9,7 @@ import { TVKeywords } from "./keywords";
 import { TVRecommendations } from "./recommendations";
 import { TVSeasonItem } from "./seasons";
 import { TVSimilar } from "./similar";
+import { TVTranslations } from "./translations";
 import { TVVideos } from "./videos";
 
 /**
@@ -101,7 +102,7 @@ export type TVAppendableMap = {
 	keywords: TVKeywords;
 	recommendations: TVRecommendations;
 	similar: TVSimilar;
-	translations: unknown; // TODO: translations structure is variable
+	translations: TVTranslations;
 	videos: TVVideos;
 };
 
