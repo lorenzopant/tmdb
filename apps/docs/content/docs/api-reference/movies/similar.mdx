@@ -1,0 +1,33 @@
+---
+title: Similar
+description: Get movies similar to a given movie based on genres and keywords.
+---
+
+Get movies similar to the given movie based on genres and plot keywords.
+Results are not always an exact match — use with that in mind.
+
+```ts
+async similar(params: MovieSimilarParams): Promise<MovieSimilar>
+```
+
+> **TMDB Reference:** [Movie Similar](https://developer.themoviedb.org/reference/movie-similar)
+
+## Parameters
+
+| Name       | Type                                       | Required | Description                                          |
+| ---------- | ------------------------------------------ | -------- | ---------------------------------------------------- |
+| `movie_id` | `number`                                   | ✅       | TMDB movie identifier.                               |
+| `language` | [`Language`](/docs/types/options#language) | ❌       | Language for localized results. Defaults to `en-US`. |
+| `page`     | `number`                                   | ❌       | Page number for paginated results. Defaults to `1`.  |
+
+## Returns
+
+[`MovieSimilar`](/docs/types/movies#moviesimilar) —
+a [`PaginatedResponse<MovieResultItem>`](/docs/types/common#paginatedresponset).
+
+## Example
+
+```ts
+const { results } = await tmdb.movies.similar({ movie_id: 550 });
+console.log(results.map((m) => m.title));
+```

@@ -1,0 +1,29 @@
+---
+title: External IDs
+description: Get external platform identifiers for a movie.
+---
+
+Get the external IDs for a movie. Supported platforms are IMDb, Facebook, Instagram, Twitter, and Wikidata.
+
+```ts
+async external_ids(params: MovieExternalIDsParams): Promise<MovieExternalIDs>
+```
+
+> **TMDB Reference:** [Movie External IDs](https://developer.themoviedb.org/reference/movie-external-ids)
+
+## Parameters
+
+| Name       | Type     | Required | Description            |
+| ---------- | -------- | -------- | ---------------------- |
+| `movie_id` | `number` | ✅       | TMDB movie identifier. |
+
+## Returns
+
+[`MovieExternalIDs`](/docs/types/movies#movieexternalids)
+
+## Example
+
+```ts
+const ids = await tmdb.movies.external_ids({ movie_id: 550 });
+console.log(ids.imdb_id); // "tt0137523"
+```

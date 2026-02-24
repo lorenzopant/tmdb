@@ -1,0 +1,32 @@
+---
+title: Videos
+description: Get trailers, teasers, and clips for a movie.
+---
+
+Get the available videos for a movie, including trailers, teasers, featurettes, and clips.
+
+```ts
+async videos(params: MovieVideosParams): Promise<MovieVideos>
+```
+
+> **TMDB Reference:** [Movie Videos](https://developer.themoviedb.org/reference/movie-videos)
+
+## Parameters
+
+| Name       | Type                                       | Required | Description                                          |
+| ---------- | ------------------------------------------ | -------- | ---------------------------------------------------- |
+| `movie_id` | `number`                                   | ✅       | TMDB movie identifier.                               |
+| `language` | [`Language`](/docs/types/options#language) | ❌       | Language for localized results. Defaults to `en-US`. |
+
+## Returns
+
+[`MovieVideos`](/docs/types/movies#movievideos)
+
+## Example
+
+```ts
+const { results } = await tmdb.movies.videos({ movie_id: 550 });
+
+const trailer = results.find((v) => v.type === "Trailer");
+console.log(`https://www.youtube.com/watch?v=${trailer?.key}`);
+```

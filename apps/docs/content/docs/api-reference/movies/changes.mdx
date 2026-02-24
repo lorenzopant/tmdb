@@ -1,0 +1,36 @@
+---
+title: Changes
+description: Get the change history for a movie.
+---
+
+Get the change history for a movie. By default, only the last 24 hours are returned.
+You can query up to 14 days in a single request using `start_date` and `end_date`.
+
+```ts
+async changes(params: MovieChangesParams): Promise<MovieChanges>
+```
+
+> **TMDB Reference:** [Movie Changes](https://developer.themoviedb.org/reference/movie-changes)
+
+## Parameters
+
+| Name         | Type     | Required | Description                                         |
+| ------------ | -------- | -------- | --------------------------------------------------- |
+| `movie_id`   | `number` | ✅       | TMDB movie identifier.                              |
+| `page`       | `number` | ❌       | Page number for paginated results. Defaults to `1`. |
+| `start_date` | `string` | ❌       | Start of date range (YYYY-MM-DD).                   |
+| `end_date`   | `string` | ❌       | End of date range (YYYY-MM-DD).                     |
+
+## Returns
+
+[`MovieChanges`](/docs/types/movies#moviechanges) — see also [`Changes`](/docs/types/common#changes).
+
+## Example
+
+```ts
+const changes = await tmdb.movies.changes({
+	movie_id: 550,
+	start_date: "2024-01-01",
+	end_date: "2024-01-14",
+});
+```

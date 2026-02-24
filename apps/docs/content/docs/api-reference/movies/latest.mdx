@@ -1,0 +1,27 @@
+---
+title: Latest
+description: Get the most recently added movie on TMDB.
+---
+
+Get the newest movie added to TMDB. This is a live response that changes continuously as new movies are added.
+
+```ts
+async latest(): Promise<MovieDetails>
+```
+
+> **TMDB Reference:** [Movie Latest](https://developer.themoviedb.org/reference/movie-latest-id)
+
+## Parameters
+
+No parameters.
+
+## Returns
+
+[`MovieDetails`](/docs/types/movies#moviedetails)
+
+## Example
+
+```ts
+const latest = await tmdb.movies.latest();
+console.log(latest.title);
+```

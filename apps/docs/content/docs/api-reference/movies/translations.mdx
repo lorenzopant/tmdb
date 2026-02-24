@@ -1,0 +1,32 @@
+---
+title: Translations
+description: Get all available translations for a movie.
+---
+
+Get all available translations for a movie, including localized titles, overviews, and taglines.
+
+```ts
+async translations(params: MovieTranslationsParams): Promise<MovieTranslations>
+```
+
+> **TMDB Reference:** [Movie Translations](https://developer.themoviedb.org/reference/movie-translations)
+
+## Parameters
+
+| Name       | Type     | Required | Description            |
+| ---------- | -------- | -------- | ---------------------- |
+| `movie_id` | `number` | ✅       | TMDB movie identifier. |
+
+## Returns
+
+[`MovieTranslations`](/docs/types/movies#movietranslations)
+
+## Example
+
+```ts
+const { translations } = await tmdb.movies.translations({ movie_id: 550 });
+
+const italian = translations.find((t) => t.iso_639_1 === "it");
+console.log(italian?.data.title); // "Fight Club"
+console.log(italian?.data.overview); // Italian synopsis
+```

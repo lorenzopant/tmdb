@@ -1,0 +1,32 @@
+---
+title: Credits
+description: Get the cast and crew members for a movie.
+---
+
+Get the cast and crew members details for a movie.
+
+```ts
+async credits(params: MovieCreditsParams): Promise<MovieCredits>
+```
+
+> **TMDB Reference:** [Movie Credits](https://developer.themoviedb.org/reference/movie-credits)
+
+## Parameters
+
+| Name       | Type                                       | Required | Description                                          |
+| ---------- | ------------------------------------------ | -------- | ---------------------------------------------------- |
+| `movie_id` | `number`                                   | ✅       | TMDB movie identifier.                               |
+| `language` | [`Language`](/docs/types/options#language) | ❌       | Language for localized results. Defaults to `en-US`. |
+
+## Returns
+
+[`MovieCredits`](/docs/types/movies#moviecredits)
+
+## Example
+
+```ts
+const { cast, crew } = await tmdb.movies.credits({ movie_id: 550 });
+
+const director = crew.find((m) => m.job === "Director");
+const topCast = cast.slice(0, 5);
+```

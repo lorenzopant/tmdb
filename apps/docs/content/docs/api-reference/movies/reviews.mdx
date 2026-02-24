@@ -1,0 +1,33 @@
+---
+title: Reviews
+description: Get user reviews for a movie.
+---
+
+Get the user reviews for a movie.
+
+```ts
+async reviews(params: MovieReviewsParams): Promise<MovieReviews>
+```
+
+> **TMDB Reference:** [Movie Reviews](https://developer.themoviedb.org/reference/movie-reviews)
+
+## Parameters
+
+| Name       | Type                                       | Required | Description                                          |
+| ---------- | ------------------------------------------ | -------- | ---------------------------------------------------- |
+| `movie_id` | `number`                                   | ✅       | TMDB movie identifier.                               |
+| `language` | [`Language`](/docs/types/options#language) | ❌       | Language for localized results. Defaults to `en-US`. |
+| `page`     | `number`                                   | ❌       | Page number for paginated results. Defaults to `1`.  |
+
+## Returns
+
+[`MovieReviews`](/docs/types/movies#moviereviews) —
+a [`PaginatedResponse<Review>`](/docs/types/common#paginatedresponset).
+
+## Example
+
+```ts
+const { results, total_results } = await tmdb.movies.reviews({ movie_id: 550 });
+console.log(`${total_results} reviews found`);
+console.log(results.content);
+```

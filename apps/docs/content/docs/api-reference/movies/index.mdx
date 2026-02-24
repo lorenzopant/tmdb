@@ -1,0 +1,32 @@
+---
+title: Movies
+description: Fetch movie details, credits, images, videos, release dates, and more from the TMDB catalog.
+---
+
+The `MoviesAPI` provides access to all movie-related data from TMDB —
+from full details and credits to images, videos, and streaming availability.
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const movie = await tmdb.movies.details({ movie_id: 550 });
+```
+
+## Methods
+
+- [`details()`](/docs/api-reference/movies/details) — Get the top level details of a movie by ID. Supports `append_to_response`.
+- [`alternative_titles()`](/docs/api-reference/movies/alternative-titles) — Get alternative titles for a movie across different countries and languages.
+- [`credits()`](/docs/api-reference/movies/credits) — Get the cast and crew members for a movie.
+- [`external_ids()`](/docs/api-reference/movies/external-ids) — Get external platform identifiers (IMDb, Facebook, Instagram, Twitter, Wikidata).
+- [`keywords()`](/docs/api-reference/movies/keywords) — Get the keywords associated with a movie.
+- [`changes()`](/docs/api-reference/movies/changes) — Get the change history for a movie (up to 14 days).
+- [`images()`](/docs/api-reference/movies/images) — Get backdrops, logos, and posters for a movie.
+- [`latest()`](/docs/api-reference/movies/latest) — Get the most recently added movie on TMDB.
+- [`recommendations()`](/docs/api-reference/movies/recommendations) — Get a list of recommended movies based on a movie.
+- [`release_dates()`](/docs/api-reference/movies/release-dates) — Get release dates and certifications per country.
+- [`reviews()`](/docs/api-reference/movies/reviews) — Get user reviews for a movie.
+- [`similar()`](/docs/api-reference/movies/similar) — Get movies similar to a given movie based on genres and keywords.
+- [`translations()`](/docs/api-reference/movies/translations) — Get all available translations for a movie.
+- [`videos()`](/docs/api-reference/movies/videos) — Get trailers, teasers, and clips for a movie.
+- [`watch_providers()`](/docs/api-reference/movies/watch-providers) — Get streaming, rental, and purchase availability per country.
