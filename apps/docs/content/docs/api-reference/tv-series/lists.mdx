@@ -1,0 +1,31 @@
+---
+title: Lists
+description: Get the lists that a TV series has been added to.
+---
+
+Get the lists that a TV series has been added to.
+
+```ts
+async lists(params: TVSeriesListsParams): Promise<TVSeriesLists>
+```
+
+> **TMDB Reference:** [TV Series Lists](https://developer.themoviedb.org/reference/tv-series-lists)
+
+## Parameters
+
+| Name        | Type                                                | Required | Description                                          |
+| ----------- | --------------------------------------------------- | -------- | ---------------------------------------------------- |
+| `series_id` | `number`                                            | ✅       | TMDB TV series identifier.                           |
+| `language`  | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized results. Defaults to `en-US`. |
+| `page`      | `number`                                            | ❌       | Page number for paginated results. Defaults to `1`.  |
+
+## Returns
+
+[`TVSeriesLists`](/docs/types/tv-series#tvserieslists)
+
+## Example
+
+```ts
+const { results } = await tmdb.tvSeries.lists({ series_id: 1396 });
+console.log(results.map((l) => l.name));
+```

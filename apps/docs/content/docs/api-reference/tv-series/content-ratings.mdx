@@ -1,0 +1,31 @@
+---
+title: Content Ratings
+description: Get content ratings per country for a TV show.
+---
+
+Get the content ratings that have been added to a TV show.
+
+```ts
+async content_ratings(params: TVBaseParam): Promise<TVContentRatings>
+```
+
+> **TMDB Reference:** [TV Series Content Ratings](https://developer.themoviedb.org/reference/tv-series-content-ratings)
+
+## Parameters
+
+| Name        | Type     | Required | Description                |
+| ----------- | -------- | -------- | -------------------------- |
+| `series_id` | `number` | ✅       | TMDB TV series identifier. |
+
+## Returns
+
+[`TVContentRatings`](/docs/types/tv-series#tvcontentratings)
+
+## Example
+
+```ts
+const { results } = await tmdb.tvSeries.content_ratings({ series_id: 1396 });
+
+const us = results.find((r) => r.iso_3166_1 === "US");
+console.log(us?.rating); // "TV-MA"
+```

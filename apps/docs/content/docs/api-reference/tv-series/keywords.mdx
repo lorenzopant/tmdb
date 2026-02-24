@@ -1,0 +1,30 @@
+---
+title: Keywords
+description: Get the keywords associated with a TV show.
+---
+
+Get a list of keywords that have been added to a TV show.
+
+```ts
+async keywords(params: TVBaseParam): Promise<TVKeywords>
+```
+
+> **TMDB Reference:** [TV Series Keywords](https://developer.themoviedb.org/reference/tv-series-keywords)
+
+## Parameters
+
+| Name        | Type     | Required | Description                |
+| ----------- | -------- | -------- | -------------------------- |
+| `series_id` | `number` | ✅       | TMDB TV series identifier. |
+
+## Returns
+
+[`TVKeywords`](/docs/types/tv-series#tvkeywords)
+
+## Example
+
+```ts
+const { results } = await tmdb.tvSeries.keywords({ series_id: 1396 });
+console.log(results.map((k) => k.name));
+// ["drug dealer", "chemistry teacher", "new mexico", ...]
+```

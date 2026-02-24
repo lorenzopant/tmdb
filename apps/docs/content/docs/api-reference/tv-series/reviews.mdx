@@ -1,0 +1,33 @@
+---
+title: Reviews
+description: Get user reviews for a TV show.
+---
+
+Get the user reviews that have been added to a TV show.
+
+```ts
+async reviews(params: TVReviewsParams): Promise<TVReviews>
+```
+
+> **TMDB Reference:** [TV Series Reviews](https://developer.themoviedb.org/reference/tv-series-reviews)
+
+## Parameters
+
+| Name        | Type                                                | Required | Description                                          |
+| ----------- | --------------------------------------------------- | -------- | ---------------------------------------------------- |
+| `series_id` | `number`                                            | ✅       | TMDB TV series identifier.                           |
+| `language`  | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized results. Defaults to `en-US`. |
+| `page`      | `number`                                            | ❌       | Page number for paginated results. Defaults to `1`.  |
+
+## Returns
+
+[`TVReviews`](/docs/types/tv-series#tvreviews) —
+a [`PaginatedResponse<Review>`](/docs/types/common#paginatedresponset).
+
+## Example
+
+```ts
+const { results, total_results } = await tmdb.tvSeries.reviews({ series_id: 1396 });
+console.log(`${total_results} reviews found`);
+console.log(results.content);
+```

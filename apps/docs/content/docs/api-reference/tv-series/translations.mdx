@@ -1,0 +1,32 @@
+---
+title: Translations
+description: Get all available translations for a TV show.
+---
+
+Get all available translations for a TV show, including localized names, overviews, and taglines.
+
+```ts
+async translations(params: TVBaseParam): Promise<TVTranslations>
+```
+
+> **TMDB Reference:** [TV Series Translations](https://developer.themoviedb.org/reference/tv-series-translations)
+
+## Parameters
+
+| Name        | Type     | Required | Description                |
+| ----------- | -------- | -------- | -------------------------- |
+| `series_id` | `number` | ✅       | TMDB TV series identifier. |
+
+## Returns
+
+[`TVTranslations`](/docs/types/tv-series#tvtranslations)
+
+## Example
+
+```ts
+const { translations } = await tmdb.tvSeries.translations({ series_id: 1396 });
+
+const italian = translations.find((t) => t.iso_639_1 === "it");
+console.log(italian?.data.name); // Italian title
+console.log(italian?.data.overview); // Italian synopsis
+```

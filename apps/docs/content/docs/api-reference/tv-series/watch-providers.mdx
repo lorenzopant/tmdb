@@ -1,0 +1,39 @@
+---
+title: Watch Providers
+description: Get streaming, rental, and purchase availability per country for a TV show.
+---
+
+Get the list of streaming, rental, and purchase providers for a TV show per country.
+Powered by [JustWatch](https://www.justwatch.com/).
+
+<Callout type="warn">
+	**Attribution required.** You must attribute the source of this data as **JustWatch** in any usage. Failure to comply may result in API
+	access being revoked.
+</Callout>
+
+```ts
+async watch_providers(params: TVBaseParam): Promise<MediaWatchProviders>
+```
+
+> **TMDB Reference:** [TV Series Watch Providers](https://developer.themoviedb.org/reference/tv-series-watch-providers)
+
+## Parameters
+
+| Name        | Type     | Required | Description                |
+| ----------- | -------- | -------- | -------------------------- |
+| `series_id` | `number` | ✅       | TMDB TV series identifier. |
+
+## Returns
+
+[`MediaWatchProviders`](/docs/types/common#mediawatchproviders)
+
+## Example
+
+```ts
+const providers = await tmdb.tvSeries.watch_providers({ series_id: 1396 });
+
+const us = providers.results["US"];
+console.log(us?.flatrate); // streaming providers
+console.log(us?.rent); // rental providers
+console.log(us?.buy); // purchase providers
+```

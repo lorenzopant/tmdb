@@ -1,0 +1,506 @@
+---
+title: TV Series
+description: Type definitions for TV series details, appended data, and query parameters.
+---
+
+import { TypeTable } from "fumadocs-ui/components/type-table";
+
+These types represent the full TV series domain — details, appended sub-resources, and query parameters.
+
+## `TVSeriesDetails`
+
+The complete representation of a TV show as returned by [`tvSeries.details()`](/docs/api-reference/tv-series/details).
+
+<TypeTable
+	type={{
+		backdrop_path: { type: "string | null", description: "Path to the backdrop image." },
+		created_by: {
+			type: "Pick<Credit, 'id' | 'credit_id' | 'gender' | 'name' | 'profile_path'>[]",
+			description: "Array of creators who developed the TV show.",
+		},
+		episode_run_time: { type: "number[]", description: "Array of typical episode runtimes in minutes." },
+		first_air_date: { type: "string", description: "Date the first episode aired (YYYY-MM-DD)." },
+		genres: { type: "Genre[]", description: "Array of genres associated with the TV show." },
+		homepage: { type: "string | null", description: "Official homepage URL." },
+		id: { type: "number", description: "Unique TMDB identifier for the TV show." },
+		in_production: { type: "boolean", description: "Whether the TV show is currently in production." },
+		languages: { type: "string[]", description: "Array of language codes used in the TV show." },
+		last_air_date: { type: "string", description: "Date the most recent episode aired (YYYY-MM-DD)." },
+		last_episode_to_air: { type: "TVEpisodeItem | null", description: "Details of the last episode that aired." },
+		name: { type: "string", description: "Title of the TV show." },
+		next_episode_to_air: { type: "TVEpisodeItem", description: "Details of the next episode to air, if available." },
+		networks: { type: "NetworkItem[]", description: "Networks that broadcast the TV show." },
+		number_of_episodes: { type: "number", description: "Total number of episodes across all seasons." },
+		number_of_seasons: { type: "number", description: "Total number of seasons." },
+		origin_country: { type: "CountryISO3166_1[]", description: "Country codes where the show originated." },
+		original_language: { type: "string", description: "Original language code of the TV show (ISO 639-1)." },
+		original_name: { type: "string", description: "Original title of the TV show." },
+		overview: { type: "string | null", description: "Plot synopsis/overview." },
+		popularity: { type: "number", description: "Popularity score calculated by TMDB." },
+		poster_path: { type: "string | null", description: "Path to the poster image." },
+		production_companies: { type: "ProductionCompany[]", description: "Companies that produced the TV show." },
+		production_countries: { type: "ProductionCountry[]", description: "Countries where the TV show was produced." },
+		seasons: { type: "TVSeasonItem[]", description: "Array of all seasons in the TV show." },
+		spoken_languages: { type: "SpokenLanguage[]", description: "Languages spoken in the TV show." },
+		status: { type: "string", description: 'Current status (e.g., "Returning Series", "Ended").' },
+		type: { type: "string", description: 'Type of TV show (e.g., "Scripted", "Documentary", "Reality").' },
+		vote_average: { type: "number", description: "Average user rating (0–10 scale)." },
+		vote_count: { type: "number", description: "Total number of votes received." },
+	}}
+/>
+
+---
+
+## `TVDetailsWithAppends<T>`
+
+Extends [`TVSeriesDetails`](#tvseriesdetails) with one or more appended sub-resources.
+`T` is a readonly array of [`TVAppendToResponseNamespace`](#tvappendtoresponsenamespace) keys.
+
+```ts
+const show: TVDetailsWithAppends<["credits", "keywords"]> = await tmdb.tvSeries.details({
+	series_id: 1396,
+	append_to_response: ["credits", "keywords"],
+});
+```
+
+---
+
+## `TVAppendToResponseNamespace`
+
+Union of all valid keys that can be passed to `append_to_response`.
+
+```ts
+type TVAppendToResponseNamespace =
+	| "credits"
+	| "external_ids"
+	| "images"
+	| "keywords"
+	| "recommendations"
+	| "similar"
+	| "translations"
+	| "videos";
+```
+
+---
+
+## Additional Resources
+
+Other types returned by tv series endpoints.
+
+### `TVCredits`
+
+The latest season credit data. For aggregate credits across all seasons, see [`TVAggregateCredits`](#tvaggregatedcredits).
+
+<TypeTable
+	type={{
+		id: { type: "number", description: "TMDB unique identifier for the TV show." },
+		cast: { type: "Cast[]", description: "List of cast members." },
+		crew: { type: "Crew[]", description: "List of crew members." },
+	}}
+/>
+
+---
+
+### `TVAggregateCredits`
+
+Aggregate cast and crew data across all seasons and episodes — the same view shown on the TMDB website.
+
+<TypeTable
+	type={{
+		id: { type: "number", description: "TMDB unique identifier for the TV show." },
+		cast: { type: "TVAggregateCreditsCastItem[]", description: "All known cast members with their roles." },
+		crew: { type: "TVAggregateCreditsCrewItem[]", description: "All known crew members with their jobs." },
+	}}
+/>
+
+#### `TVAggregateCreditsCastItem`
+
+Extends `Credit` (omitting `credit_id`) with the following fields:
+
+<TypeTable
+	type={{
+		roles: { type: "TVCreditRole[]", description: "Roles played across different episodes." },
+		total_episode_count: { type: "number", description: "Total number of episodes this cast member appeared in." },
+		order: { type: "number", description: "Position in the cast list." },
+	}}
+/>
+
+#### `TVAggregateCreditsCrewItem`
+
+Extends `Credit` (omitting `credit_id`) with the following fields:
+
+<TypeTable
+	type={{
+		jobs: { type: "TVCreditJob[]", description: "Jobs performed across different episodes." },
+		total_episode_count: { type: "number", description: "Total number of episodes this crew member worked on." },
+		department: { type: "string", description: 'Department the crew member belongs to (e.g., "Directing", "Writing").' },
+	}}
+/>
+
+#### `TVCreditRole`
+
+<TypeTable
+	type={{
+		credit_id: { type: "string", description: "Unique identifier for this specific credit." },
+		character: { type: "string", description: "Character name played in this role." },
+		episode_count: { type: "number", description: "Number of episodes in which this character appeared." },
+	}}
+/>
+
+#### `TVCreditJob`
+
+<TypeTable
+	type={{
+		credit_id: { type: "string", description: "Unique identifier for this specific credit." },
+		job: { type: "string", description: 'Job title (e.g., "Director", "Writer", "Producer").' },
+		episode_count: { type: "number", description: "Number of episodes for which this job was performed." },
+	}}
+/>
+
+---
+
+### `TVExternalIDs`
+
+<TypeTable
+	type={{
+		id: { type: "number", description: "TMDB identifier for the TV show." },
+		imdb_id: { type: "string", description: 'IMDb identifier (e.g., "tt0944947").' },
+		freebase_mid: { type: "string", description: "Freebase MID identifier (deprecated)." },
+		freebase_id: { type: "string", description: "Freebase ID (deprecated)." },
+		tvdb_id: { type: "number", description: "TheTVDB identifier." },
+		tvrage_id: { type: "number", description: "TVRage identifier (service discontinued)." },
+		wikidata_id: { type: "string", description: 'Wikidata identifier (e.g., "Q23572").' },
+		facebook_id: { type: "string", description: "Facebook page identifier." },
+		instagram_id: { type: "string", description: "Instagram handle." },
+		twitter_id: { type: "string", description: "Twitter/X handle." },
+	}}
+/>
+
+---
+
+### `TVImages`
+
+<TypeTable
+	type={{
+		id: { type: "number", description: "TMDB unique identifier for the TV show." },
+		backdrops: { type: "TVImageItem[]", description: "Array of backdrop images." },
+		logos: { type: "TVImageItem[]", description: "Array of logo images." },
+		posters: { type: "TVImageItem[]", description: "Array of poster images." },
+	}}
+/>
+
+#### `TVImageItem`
+
+Extends [`ImageItem`](/docs/types/common#imageitem) with an additional optional field:
+
+<TypeTable
+	type={{
+		iso_3166_1: { type: "string", description: "Country code associated with the image (undocumented TMDB field)." },
+	}}
+/>
+
+---
+
+### `TVKeywords`
+
+<TypeTable
+	type={{
+		id: { type: "number", description: "TMDB unique identifier for the TV show." },
+		results: { type: "Keyword[]", description: "List of keywords related to the TV show." },
+	}}
+/>
+
+---
+
+### `TVRecommendations`
+
+A [`PaginatedResponse<TVSeriesResultItem>`](/docs/types/common#paginatedresponset) of recommended TV shows.
+
+See [`TVSeriesResultItem`](/docs/types/search#tvseriesresultitem).
+
+---
+
+### `TVSimilar`
+
+A [`PaginatedResponse<TVSeriesResultItem>`](/docs/types/common#paginatedresponset) of similar TV shows.
+
+See [`TVSeriesResultItem`](/docs/types/search#tvseriesresultitem).
+
+---
+
+### `TVReviews`
+
+A [`PaginatedResponse<Review>`](/docs/types/common#paginatedresponset) of user reviews.
+
+---
+
+### `TVTranslations`
+
+<TypeTable
+	type={{
+		id: { type: "number", description: "TMDB unique identifier for the TV series." },
+		translations: { type: "TVTranslationItem[]", description: "List of available translations." },
+	}}
+/>
+
+#### `TVTranslationItem`
+
+Extends [`Translation`](/docs/types/common#translation) with a `data` field.
+
+<TypeTable
+	type={{
+		data: { type: "TVTranslationData", description: "Translated content fields for this language." },
+	}}
+/>
+
+#### `TVTranslationData`
+
+<TypeTable
+	type={{
+		name: { type: "string", description: "Translated name of the TV series." },
+		overview: { type: "string", description: "Translated overview or synopsis." },
+		homepage: { type: "string", description: "Translated homepage URL." },
+		tagline: { type: "string", description: "Translated tagline." },
+	}}
+/>
+
+---
+
+### `TVVideos`
+
+<TypeTable
+	type={{
+		id: { type: "number", description: "TMDB unique identifier for the TV show." },
+		results: { type: "VideoItem[]", description: "List of video items (trailers, teasers, clips)." },
+	}}
+/>
+
+---
+
+### `TVSeriesChanges`
+
+Alias for [`Changes`](/docs/types/common#changes). Returns the change history for a TV show.
+
+---
+
+### `TVAlternativeTitles`
+
+<TypeTable
+	type={{
+		id: { type: "number", description: "TV show identifier." },
+		results: { type: "AlternativeTitle[]", description: "Array of alternative titles across countries/languages." },
+	}}
+/>
+
+---
+
+### `TVContentRatings`
+
+<TypeTable
+	type={{
+		results: { type: "ContentRating[]", description: "Array of content ratings per country." },
+	}}
+/>
+
+---
+
+### `TVEpisodeGroups`
+
+<TypeTable
+	type={{
+		id: { type: "number", description: "TV series identifier." },
+		results: { type: "TVEpisodeGroupItem[]", description: "Array of episode group items." },
+	}}
+/>
+
+#### `TVEpisodeGroupItem`
+
+<TypeTable
+	type={{
+		description: { type: "string", description: "Description of the purpose of this episode grouping." },
+		episode_count: { type: "number", description: "Total number of episodes in this group." },
+		group_count: { type: "number", description: "Number of sub-groups within this episode group." },
+		id: { type: "string", description: "Unique episode group identifier." },
+		name: { type: "string", description: "Name of the episode group." },
+		network: { type: "NetworkItem", description: "Network that created or distributed this episode grouping." },
+		type: {
+			type: "number",
+			description: "Grouping type (1=Original air date, 2=Absolute, 3=DVD, 4=Digital, 5=Story arc, 6=Production, 7=TV).",
+		},
+	}}
+/>
+
+---
+
+### `TVScreenedTheatrically`
+
+<TypeTable
+	type={{
+		id: { type: "number", description: "TMDB unique identifier for the TV series." },
+		results: { type: "TVScreeningItem[]", description: "List of episodes that received a theatrical screening." },
+	}}
+/>
+
+#### `TVScreeningItem`
+
+<TypeTable
+	type={{
+		id: { type: "number", description: "Unique identifier of the episode." },
+		episode_number: { type: "number", description: "Episode number within its season." },
+		season_number: { type: "number", description: "Season number the episode belongs to." },
+	}}
+/>
+
+---
+
+### `TVSeasonItem`
+
+<TypeTable
+	type={{
+		air_date: { type: "string", description: "Date the season first aired (YYYY-MM-DD)." },
+		episode_count: { type: "number", description: "Total number of episodes in the season." },
+		id: { type: "number", description: "Unique identifier for the season." },
+		name: { type: "string", description: "Title of the season." },
+		overview: { type: "string", description: "Brief description or summary of the season." },
+		poster_path: { type: "string", description: "Path to the season's poster image." },
+		season_number: { type: "number", description: "Season number within the TV show." },
+	}}
+/>
+
+---
+
+### `TVEpisodeItem`
+
+<TypeTable
+	type={{
+		id: { type: "number", description: "Unique identifier for the episode." },
+		name: { type: "string", description: "Title of the episode." },
+		overview: { type: "string", description: "Brief plot summary of the episode." },
+		vote_average: { type: "number", description: "Average rating score (0–10 scale)." },
+		vote_count: { type: "number", description: "Total number of votes received." },
+		air_date: { type: "Date", description: "Date the episode first aired." },
+		episode_number: { type: "number", description: "Episode number within its season." },
+		production_code: { type: "string", description: "Production code used internally during filming." },
+		runtime: { type: "number", description: "Runtime of the episode in minutes." },
+		season_number: { type: "number", description: "Season number this episode belongs to." },
+		show_id: { type: "number", description: "TMDB identifier of the TV show this episode belongs to." },
+		still_path: { type: "string", description: "Path to the episode's still image (screenshot)." },
+	}}
+/>
+
+---
+
+### `TVSeriesLists`
+
+A [`PaginatedResponse<TVSeriesListItem>`](/docs/types/common#paginatedresponset) extended with an `id` field.
+
+<TypeTable
+	type={{
+		id: { type: "number", description: "TMDB unique identifier for the TV show." },
+	}}
+/>
+
+#### `TVSeriesListItem`
+
+<TypeTable
+	type={{
+		description: { type: "string", description: "Brief description of the list." },
+		favorite_count: { type: "number", description: "Number of times this list has been marked as a favorite." },
+		id: { type: "number", description: "Unique identifier for this list." },
+		item_count: { type: "number", description: "Total number of items in this list." },
+		iso_639_1: { type: "string | LanguageISO6391", description: "Primary language of the list content (ISO 639-1)." },
+		iso_3166_1: { type: "string | CountryISO3166_1", description: "Country associated with the list (ISO 3166-1)." },
+		name: { type: "string", description: "Display name of the list." },
+		poster_path: { type: "string", description: "Path to the list's poster image on the TMDB CDN." },
+	}}
+/>
+
+---
+
+## Parameters
+
+### `TVDetailsParams`
+
+<TypeTable
+	type={{
+		series_id: { type: "number", required: true, description: "TMDB TV series identifier." },
+		append_to_response: { type: "TVAppendToResponseNamespace[]", description: "Sub-resources to append to the response." },
+		language: { type: "Language", description: "Language for localized results.", default: "en-US" },
+	}}
+/>
+
+---
+
+### `TVSeriesListParams`
+
+Used by [`airing_today()`](/docs/api-reference/tv-series/lists/airing-today), [`on_the_air()`](/docs/api-reference/tv-series/lists/on-the-air), [`popular()`](/docs/api-reference/tv-series/lists/popular), and [`top_rated()`](/docs/api-reference/tv-series/lists/top-rated).
+
+<TypeTable
+	type={{
+		language: { type: "Language", description: "Language for localized results.", default: "en-US" },
+		page: { type: "number", description: "Page number for paginated results.", default: "1" },
+		timezone: { type: "Timezone", description: "Timezone to anchor time-sensitive lists (e.g., airing today)." },
+	}}
+/>
+
+---
+
+### `TVAggregateCreditsParams`
+
+<TypeTable
+	type={{
+		series_id: { type: "number", required: true, description: "TMDB TV series identifier." },
+		language: { type: "Language", description: "Language for localized results.", default: "en-US" },
+	}}
+/>
+
+---
+
+### `TVCreditsParams`
+
+<TypeTable
+	type={{
+		series_id: { type: "number", required: true, description: "TMDB TV series identifier." },
+		language: { type: "Language", description: "Language for localized results.", default: "en-US" },
+	}}
+/>
+
+---
+
+### `TVChangeParams`
+
+<TypeTable
+	type={{
+		series_id: { type: "number", required: true, description: "TMDB TV series identifier." },
+		page: { type: "number", description: "Page number for paginated results.", default: "1" },
+		start_date: { type: "string", description: "Start of date range (YYYY-MM-DD)." },
+		end_date: { type: "string", description: "End of date range (YYYY-MM-DD)." },
+	}}
+/>
+
+---
+
+### `TVImagesParams`
+
+<TypeTable
+	type={{
+		series_id: { type: "number", required: true, description: "TMDB TV series identifier." },
+		language: { type: "Language | LanguageISO6391", description: "Language for image metadata." },
+		include_image_language: {
+			type: "Language | LanguageISO6391",
+			description: 'Include images with additional language tags (e.g., "en,null").',
+		},
+	}}
+/>
+
+---
+
+### `TVRecommendationsParams` / `TVSimilarParams` / `TVReviewsParams` / `TVSeriesListsParams`
+
+<TypeTable
+	type={{
+		series_id: { type: "number", required: true, description: "TMDB TV series identifier." },
+		language: { type: "Language", description: "Language for localized results.", default: "en-US" },
+		page: { type: "number", description: "Page number for paginated results.", default: "1" },
+	}}
+/>

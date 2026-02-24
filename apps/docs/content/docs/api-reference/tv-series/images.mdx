@@ -1,0 +1,35 @@
+---
+title: Images
+description: Get backdrops, logos, and posters for a TV show.
+---
+
+Get images associated with a TV show. If a `language` is specified it acts as a filter on the results.
+Use `include_image_language` to include images from additional languages.
+
+```ts
+async images(params: TVImagesParams): Promise<TVImages>
+```
+
+> **TMDB Reference:** [TV Series Images](https://developer.themoviedb.org/reference/tv-series-images)
+
+## Parameters
+
+| Name                     | Type                                                                     | Required | Description                                                       |
+| ------------------------ | ------------------------------------------------------------------------ | -------- | ----------------------------------------------------------------- |
+| `series_id`              | `number`                                                                 | ✅       | TMDB TV series identifier.                                        |
+| `language`               | [`Language`](/docs/types/options/language#language) \| `LanguageISO6391` | ❌       | Language for image metadata. Defaults to `en-US`.                 |
+| `include_image_language` | [`Language`](/docs/types/options/language#language) \| `LanguageISO6391` | ❌       | Include images with additional language tags (e.g., `"en,null"`). |
+
+## Returns
+
+[`TVImages`](/docs/types/tv-series#tvimages)
+
+## Example
+
+```ts
+const { backdrops, posters, logos } = await tmdb.tvSeries.images({
+	series_id: 1396,
+	language: "en-US",
+	include_image_language: "en,null",
+});
+```

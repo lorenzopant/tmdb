@@ -1,0 +1,32 @@
+---
+title: Recommendations
+description: Get recommended TV shows based on a series.
+---
+
+Get a list of recommended TV shows for a specific series.
+
+```ts
+async recommendations(params: TVRecommendationsParams): Promise<TVRecommendations>
+```
+
+> **TMDB Reference:** [TV Series Recommendations](https://developer.themoviedb.org/reference/tv-series-recommendations)
+
+## Parameters
+
+| Name        | Type                                                | Required | Description                                          |
+| ----------- | --------------------------------------------------- | -------- | ---------------------------------------------------- |
+| `series_id` | `number`                                            | ✅       | TMDB TV series identifier.                           |
+| `language`  | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized results. Defaults to `en-US`. |
+| `page`      | `number`                                            | ❌       | Page number for paginated results. Defaults to `1`.  |
+
+## Returns
+
+[`TVRecommendations`](/docs/types/tv-series#tvrecommendations) —
+a [`PaginatedResponse<TVSeriesResultItem>`](/docs/types/search#tvseriesresultitem).
+
+## Example
+
+```ts
+const { results } = await tmdb.tvSeries.recommendations({ series_id: 1396 });
+console.log(results.map((s) => s.name));
+```
