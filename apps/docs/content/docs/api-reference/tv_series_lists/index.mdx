@@ -1,0 +1,23 @@
+---
+title: TV Series Lists
+description: Fetch curated lists of TV series — airing today, on the air, popular, and top rated.
+---
+
+# TV Series Lists
+
+The `TVSeriesListsAPI` provides access to curated TMDB TV series lists.
+All methods return a paginated list of [`TVSeriesResultItem`](/docs/types/search#tvseriesresultitem).
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const { results } = await tmdb.tvSeriesLists.popular();
+```
+
+## Methods
+
+- [`airing_today()`](/docs/api-reference/tv-series/lists/airing-today) — Get TV shows airing today.
+- [`on_the_air()`](/docs/api-reference/tv-series/lists/on-the-air) — Get TV shows airing in the next 7 days.
+- [`popular()`](/docs/api-reference/tv-series/lists/popular) — Get TV shows ordered by popularity.
+- [`top_rated()`](/docs/api-reference/tv-series/lists/top-rated) — Get TV shows ordered by rating.

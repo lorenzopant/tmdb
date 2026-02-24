@@ -1,0 +1,31 @@
+---
+title: Popular
+description: Get a list of TV shows ordered by popularity.
+---
+
+Get a list of TV shows ordered by TMDB popularity score.
+
+```ts
+async popular(params?: TVSeriesListParams): Promise<PaginatedResponse<TVSeriesResultItem>>
+```
+
+> **TMDB Reference:** [TV Popular](https://developer.themoviedb.org/reference/tv-series-popular-list)
+
+## Parameters
+
+| Name       | Type                                                | Required | Description                                          |
+| ---------- | --------------------------------------------------- | -------- | ---------------------------------------------------- |
+| `language` | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized results. Defaults to `en-US`. |
+| `page`     | `number`                                            | ❌       | Page number for paginated results. Defaults to `1`.  |
+
+## Returns
+
+[`PaginatedResponse<TVSeriesResultItem>`](/docs/types/search#tvseriesresultitem)
+
+## Example
+
+```ts
+const { results, total_pages } = await tmdb.tvSeriesLists.popular({ page: 1 });
+
+console.log(results.map((s) => s.name));
+```

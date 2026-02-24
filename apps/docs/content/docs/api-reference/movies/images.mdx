@@ -14,11 +14,11 @@ async images(params: MovieImagesParams): Promise<MovieImages>
 
 ## Parameters
 
-| Name                     | Type                                                            | Required | Description                                                       |
-| ------------------------ | --------------------------------------------------------------- | -------- | ----------------------------------------------------------------- |
-| `movie_id`               | `number`                                                        | ✅       | TMDB movie identifier.                                            |
-| `language`               | [`Language`](/docs/types/options#language) \| `LanguageISO6391` | ❌       | Language for image metadata. Defaults to `en-US`.                 |
-| `include_image_language` | [`Language`](/docs/types/options#language) \| `LanguageISO6391` | ❌       | Include images with additional language tags (e.g., `"en,null"`). |
+| Name                     | Type                                                                     | Required | Description                                                       |
+| ------------------------ | ------------------------------------------------------------------------ | -------- | ----------------------------------------------------------------- |
+| `movie_id`               | `number`                                                                 | ✅       | TMDB movie identifier.                                            |
+| `language`               | [`Language`](/docs/types/options/language#language) \| `LanguageISO6391` | ❌       | Language for image metadata. Defaults to `en-US`.                 |
+| `include_image_language` | [`Language`](/docs/types/options/language#language) \| `LanguageISO6391` | ❌       | Include images with additional language tags (e.g., `"en,null"`). |
 
 ## Returns
 
