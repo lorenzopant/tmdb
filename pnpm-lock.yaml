@@ -26,6 +26,9 @@ importers:
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
+      framer-motion:
+        specifier: ^12.34.3
+        version: 12.34.3(react-dom@19.2.4)(react@19.2.4)
       fumadocs-core:
         specifier: 16.6.5
         version: 16.6.5(@types/react@19.2.14)(lucide-react@0.570.0)(next@16.1.6)(react-dom@19.2.4)(react@19.2.4)(zod@4.3.6)

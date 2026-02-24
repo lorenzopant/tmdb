@@ -16,6 +16,7 @@
 		"@radix-ui/react-collapsible": "^1.1.12",
 		"@takumi-rs/image-response": "^0.68.17",
 		"class-variance-authority": "^0.7.1",
+		"framer-motion": "^12.34.3",
 		"fumadocs-core": "16.6.5",
 		"fumadocs-mdx": "14.2.8",
 		"fumadocs-typescript": "^5.1.4",
