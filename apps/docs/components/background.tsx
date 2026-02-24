@@ -4,12 +4,14 @@ import { motion } from "framer-motion";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/cn";
 import { useTmdb } from "@/components/tmdb";
+import { useTheme } from "@/app/hooks/use-theme";
 
 export interface BoxesProps {
 	className?: string;
 	rows?: number;
 	cols?: number;
 	posters: string[];
+	isDark: boolean;
 }
 
 /**
@@ -48,7 +50,7 @@ function buildGrid(rows: number, cols: number, posters: string[]): string[][] {
 	return grid;
 }
 
-const PosterCell = React.memo(({ src, showPlus }: { src: string; showPlus: boolean }) => (
+const PosterCell = React.memo(({ src, showPlus, isDark }: { src: string; showPlus: boolean; isDark: boolean }) => (
 	<motion.div
 		className="relative w-45 h-64 border-r border-t border-slate-700/40 overflow-hidden"
 		initial={{ opacity: 0.25 }}
@@ -62,7 +64,7 @@ const PosterCell = React.memo(({ src, showPlus }: { src: string; showPlus: boole
 				role="presentation"
 				loading="lazy"
 				decoding="async"
-				className="h-full w-full object-cover"
+				className={cn("h-full w-full object-cover")}
 				draggable={false}
 			/>
 		)}
@@ -82,17 +84,19 @@ const PosterCell = React.memo(({ src, showPlus }: { src: string; showPlus: boole
 
 PosterCell.displayName = "PosterCell";
 
-const PosterRow = React.memo(({ rowIndex, cols, posters }: { rowIndex: number; cols: number; posters: string[] }) => (
-	<div className="relative w-45 h-64 border-l border-slate-700/40">
-		{posters.map((src, colIndex) => (
-			<PosterCell key={colIndex} src={src} showPlus={rowIndex % 2 === 0 && colIndex % 2 === 0} />
-		))}
-	</div>
-));
+const PosterRow = React.memo(
+	({ rowIndex, cols, posters, isDark }: { rowIndex: number; cols: number; isDark: boolean; posters: string[] }) => (
+		<div className="relative w-45 h-64 border-l border-slate-700/40">
+			{posters.map((src, colIndex) => (
+				<PosterCell key={colIndex} src={src} showPlus={rowIndex % 2 === 0 && colIndex % 2 === 0} isDark={isDark} />
+			))}
+		</div>
+	),
+);
 
 PosterRow.displayName = "PosterRow";
 
-export const PosterBoxes = ({ className, rows = 150, cols = 100, posters }: BoxesProps) => {
+export const PosterBoxes = ({ className, rows = 150, cols = 100, posters, isDark }: BoxesProps) => {
 	const grid = useMemo(() => buildGrid(rows, cols, posters), [rows, cols, posters]);
 
 	return (
@@ -108,7 +112,7 @@ export const PosterBoxes = ({ className, rows = 150, cols = 100, posters }: Boxe
 			}}
 		>
 			{grid.map((rowPosters, rowIndex) => (
-				<PosterRow key={rowIndex} rowIndex={rowIndex} cols={cols} posters={rowPosters} />
+				<PosterRow key={rowIndex} rowIndex={rowIndex} cols={cols} isDark={isDark} posters={rowPosters} />
 			))}
 		</div>
 	);
@@ -116,7 +120,10 @@ export const PosterBoxes = ({ className, rows = 150, cols = 100, posters }: Boxe
 
 export function BackgroundPosters({ children }: { children?: React.ReactNode }) {
 	const tmdb = useTmdb();
+	const theme = useTheme();
 	const [posters, setPosters] = useState<string[]>([]);
+
+	const isDark = theme === "dark";
 
 	const fetchPosters = useCallback(async () => {
 		const [page1, page2] = await Promise.all([tmdb.movie_lists.top_rated(), tmdb.movie_lists.top_rated({ page: 2 })]);
@@ -135,17 +142,22 @@ export function BackgroundPosters({ children }: { children?: React.ReactNode }) 
 	if (!posters.length) return null;
 
 	return (
-		<div className="fixed inset-0 overflow-hidden bg-black">
-			{/* Grid — z-0, pointer-events-auto */}
-			<PosterBoxes posters={posters} />
+		<div className={cn("fixed inset-0 overflow-hidden", isDark ? "bg-black" : "bg-white")}>
+			<PosterBoxes posters={posters} isDark={isDark} />
 
 			{/* Vignette */}
-			<div className="pointer-events-none absolute inset-0 z-10 bg-black mask-[radial-gradient(ellipse_at_center,transparent_20%,black)]" />
+			<div
+				className={cn(
+					"pointer-events-none absolute inset-0 z-10",
+					isDark
+						? "bg-black mask-[radial-gradient(ellipse_at_center,transparent_20%,black)]"
+						: "bg-white mask-[radial-gradient(ellipse_at_center,transparent_20%,white)]",
+				)}
+			/>
 
 			{/* Dim */}
-			<div className="pointer-events-none absolute inset-0 z-10 bg-black/20" />
+			<div className={cn("pointer-events-none absolute inset-0 z-10", isDark ? "bg-black/20" : "bg-white/20")} />
 
-			{/* Content slot — pointer-events-none wrapper, children re-enable as needed */}
 			{children && (
 				<div className="pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center gap-6 px-6 text-center">
 					{children}
