@@ -1,7 +1,7 @@
 {
 	"$schema": "https://openapi.vercel.sh/vercel.json",
 	"buildCommand": "npx turbo run build --filter=docs",
-	"outputDirectory": "apps/docs/.next",
+	"outputDirectory": "apps/docs/.next/**",
 	"installCommand": "pnpm install --no-frozen-lockfile",
 	"framework": "nextjs"
 }
