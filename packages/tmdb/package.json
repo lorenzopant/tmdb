@@ -8,7 +8,7 @@
 		"type": "git",
 		"url": "git+https://github.com/lorenzopant/tmdb"
 	},
-	"homepage": "https://lorenzopant-docs.vercel.app/",
+	"homepage": "https://lorenzopant-tmdb-docs.vercel.app",
 	"bugs": {
 		"url": "https://github.com/lorenzopant/tmdb/issues"
 	},
