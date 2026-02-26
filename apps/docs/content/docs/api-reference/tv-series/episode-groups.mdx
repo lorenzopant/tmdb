@@ -1,0 +1,31 @@
+---
+title: Episode Groups
+description: Get the episode groups that have been added to a TV show.
+---
+
+Get the episode groups that have been added to a TV show.
+Use the returned group ID with the TV episode group details endpoint to get the full group structure.
+
+```ts
+async episode_groups(params: TVBaseParam): Promise<TVEpisodeGroups>
+```
+
+> **TMDB Reference:** [TV Series Episode Groups](https://developer.themoviedb.org/reference/tv-series-episode-groups)
+
+## Parameters
+
+| Name        | Type     | Required | Description                |
+| ----------- | -------- | -------- | -------------------------- |
+| `series_id` | `number` | ✅       | TMDB TV series identifier. |
+
+## Returns
+
+[`TVEpisodeGroups`](/docs/types/tv-series#tvepisodegroups)
+
+## Example
+
+```ts
+const { results } = await tmdb.tvSeries.episode_groups({ series_id: 1396 });
+
+console.log(results.map((g) => `${g.name} (${g.episode_count} episodes)`));
+```

@@ -1,0 +1,31 @@
+---
+title: Top Rated
+description: Get a list of TV shows ordered by rating.
+---
+
+Get a list of TV shows ordered by average user rating on TMDB.
+
+```ts
+async top_rated(params?: TVSeriesListParams): Promise<PaginatedResponse<TVSeriesResultItem>>
+```
+
+> **TMDB Reference:** [TV Top Rated](https://developer.themoviedb.org/reference/tv-series-top-rated-list)
+
+## Parameters
+
+| Name       | Type                                                | Required | Description                                          |
+| ---------- | --------------------------------------------------- | -------- | ---------------------------------------------------- |
+| `language` | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized results. Defaults to `en-US`. |
+| `page`     | `number`                                            | ❌       | Page number for paginated results. Defaults to `1`.  |
+
+## Returns
+
+[`PaginatedResponse<TVSeriesResultItem>`](/docs/types/search#tvseriesresultitem)
+
+## Example
+
+```ts
+const { results } = await tmdb.tvSeriesLists.top_rated({ language: "en-US" });
+
+console.log(results.map((s) => `${s.name} (${s.vote_average})`));
+```

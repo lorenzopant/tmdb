@@ -1,0 +1,43 @@
+---
+title: Top Rated
+description: Get a list of movies ordered by rating.
+---
+
+Returns a paginated list of movies ordered by their average user rating on TMDB.
+
+```ts
+async top_rated(params?: MovieListParams): Promise<PaginatedResponse<MovieResultItem>>
+```
+
+> **TMDB Reference:** [Movie Top Rated](https://developer.themoviedb.org/reference/movie-top-rated-list)
+
+## Parameters
+
+| Name       | Type                                                             | Required | Description                                                       |
+| ---------- | ---------------------------------------------------------------- | -------- | ----------------------------------------------------------------- |
+| `language` | [`Language`](/docs/types/options/language#language)              | ❌       | Language for localized titles and overviews. Defaults to `en-US`. |
+| `page`     | `number`                                                         | ❌       | Page number for paginated results. Defaults to `1`.               |
+| `region`   | [`CountryISO3166_1`](/docs/types/options/region#countryiso31661) | ❌       | ISO 3166-1 country code to filter results by country.             |
+
+## Returns
+
+A [`PaginatedResponse<MovieResultItem>`](/docs/types/common#paginatedresponset) containing
+an array of [`MovieResultItem`](/docs/types/search#movieresultitem) objects.
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const { results } = await tmdb.movieLists.top_rated();
+
+// With params
+const german = await tmdb.movieLists.top_rated({ language: "de-DE", region: "DE" });
+```
+
+## Types
+
+- [MovieListParams](/docs/types/movies#movielistparams)
+- [PaginatedResponse](/docs/types/common#paginatedresponset)
+- [MovieResultItem](/docs/types/search#movieresultitem)

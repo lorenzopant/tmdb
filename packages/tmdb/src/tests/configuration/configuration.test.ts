@@ -9,7 +9,7 @@ const tmdb = new TMDB(token, { language: "it-IT", region: "IT" });
 
 describe("Configuration API", () => {
 	it("should fetch the configuration successfully", async () => {
-		const config = await tmdb.config.get();
+		const config = await tmdb.configuration.details();
 		// Check that images object exists
 		expect(config).toHaveProperty("images");
 		expect(config.images).toHaveProperty("base_url");
@@ -36,27 +36,27 @@ describe("Configuration API", () => {
 	});
 
 	it("(COUNTRIES) should get list of countries used in TMDB", async () => {
-		const countries = await tmdb.config.countries();
+		const countries = await tmdb.configuration.countries();
 		expect(countries.length).toBeGreaterThan(0);
 		expect(countries[0].iso_3166_1).toBe("AD");
 	});
 
 	it("(COUNTRIES) should get list of countries used in TMDB with specifed language", async () => {
-		const countries = await tmdb.config.countries({ language: "it-IT" });
+		const countries = await tmdb.configuration.countries({ language: "it-IT" });
 		expect(countries.length).toBeGreaterThan(1);
 		expect(countries[1]).toBeDefined();
 		expect(countries[1].native_name).toBe("Emirati Arabi Uniti");
 	});
 
 	it("(JOBS) should get list of jobs used in TMDB", async () => {
-		const jobs = await tmdb.config.jobs();
+		const jobs = await tmdb.configuration.jobs();
 		expect(jobs.length).toBeGreaterThan(1);
 		expect(jobs[0].department).toBeDefined();
 		expect(jobs[0].jobs.length).toBeGreaterThan(0);
 	});
 
 	it("(LANGUAGES) should get list of languages used in TMDB", async () => {
-		const languages = await tmdb.config.languages();
+		const languages = await tmdb.configuration.languages();
 		expect(languages.length).toBeGreaterThan(0);
 		expect(languages[0]).toBeDefined();
 		expect(languages[0].iso_639_1).toBeDefined();
@@ -64,13 +64,13 @@ describe("Configuration API", () => {
 	});
 
 	it("(PRIMARY TRANSLATIONS) should get list of officially supported translations in TMDB", async () => {
-		const translations = await tmdb.config.primary_translations();
+		const translations = await tmdb.configuration.primary_translations();
 		expect(translations.length).toBeGreaterThan(0);
 		expect(translations[0]).toBeDefined();
 	});
 
 	it("(TIMEZONES) should get list of timezones used in TMDB", async () => {
-		const timezones = await tmdb.config.timezones();
+		const timezones = await tmdb.configuration.timezones();
 		expect(timezones.length).toBeGreaterThan(1);
 		expect(timezones[0]).toBeDefined();
 		expect(timezones[0].iso_3166_1).toBeDefined();

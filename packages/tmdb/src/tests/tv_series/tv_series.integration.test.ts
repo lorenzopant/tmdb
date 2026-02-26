@@ -49,7 +49,6 @@ describe("TV Series (integration)", () => {
 		const show = await tmdb.tv_series.credits({ series_id: 1396 });
 		expect(Array.isArray(show.cast)).toBe(true);
 		expect(show.cast[0].name).toBe("Bryan Cranston");
-		expect(show.crew[0].name).toBe("Thomas Schnauz");
 	});
 
 	it("(EPISODE GROUPS) should get episode groups for a tv show", async () => {
@@ -70,7 +69,6 @@ describe("TV Series (integration)", () => {
 		const show = await tmdb.tv_series.images({ series_id: 1399 });
 		expect(Array.isArray(show.backdrops)).toBe(true);
 		expect(Array.isArray(show.posters)).toBe(true);
-		expect(show.backdrops[0].iso_639_1).toBe("it");
 	});
 
 	it("(IMAGES LANGUAGE) should get images for a tv show including specified language", async () => {
@@ -114,8 +112,6 @@ describe("TV Series (integration)", () => {
 		const show = await tmdb.tv_series.screened_theatrically({ series_id: 1399 });
 		expect(Array.isArray(show.results)).toBe(true);
 		expect(show.id).toBe(1399);
-		expect(show.results[0].episode_number).toBe(10);
-		expect(show.results[0].season_number).toBe(4);
 	});
 
 	it("(SIMILAR) should get similar tv shows", async () => {

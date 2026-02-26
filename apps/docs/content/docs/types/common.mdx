@@ -1,0 +1,433 @@
+---
+title: Common
+description: Shared types used across multiple API methods.
+---
+
+import { TypeTable } from "fumadocs-ui/components/type-table";
+
+These types are shared across multiple API namespaces. Rather than duplicating definitions,
+they are centralised here and referenced throughout the API reference and other type pages.
+
+## Media
+
+These types represent core media entities returned across multiple API methods.
+They are shared between movie and TV series responses.
+
+---
+
+### `Genre`
+
+A single genre entry with an ID and localized name.
+
+<AutoTypeTable path="common/media.ts" name="Genre" />
+
+---
+
+### `GenresResponse`
+
+The response shape returned by [`genres.movie_list()`](/docs/api-reference/genres/movie-list)
+and [`genres.tv_list()`](/docs/api-reference/genres/tv-list).
+
+<AutoTypeTable path="common/media.ts" name="GenresResponse" />
+
+---
+
+### `ProductionCompany`
+
+A production company involved in creating a movie or TV show.
+
+<AutoTypeTable path="common/media.ts" name="ProductionCompany" />
+
+---
+
+### `ProductionCountry`
+
+A country where a movie or TV show was produced.
+
+<AutoTypeTable path="common/media.ts" name="ProductionCountry" />
+
+---
+
+### `SpokenLanguage`
+
+A spoken language featured in a movie or TV show.
+
+<AutoTypeTable path="common/media.ts" name="SpokenLanguage" />
+
+---
+
+### `Collection`
+
+A named collection of related movies (e.g., a franchise or saga).
+
+<AutoTypeTable path="common/media.ts" name="Collection" />
+
+---
+
+### `Credit`
+
+Base type shared by [`Cast`](#cast) and [`Crew`](#crew), containing common person fields.
+
+<AutoTypeTable path="common/media.ts" name="Credit" />
+
+---
+
+### `Cast`
+
+A cast member in a movie or TV show. Extends [`Credit`](#credit).
+
+<AutoTypeTable path="common/media.ts" name="Cast" />
+
+---
+
+### `Crew`
+
+A crew member in a movie or TV show. Extends [`Credit`](#credit).
+
+<AutoTypeTable path="common/media.ts" name="Crew" />
+
+---
+
+### `Keyword`
+
+A keyword tag associated with a movie or TV show.
+
+<AutoTypeTable path="common/media.ts" name="Keyword" />
+
+---
+
+### `Changes`
+
+<TypeTable
+	type={{
+		changes: {
+			type: "Change[]",
+			description: "Array of changes grouped by field.",
+		},
+	}}
+/>
+
+---
+
+### `Change`
+
+<TypeTable
+	type={{
+		key: {
+			type: "string",
+			description: 'Name of the field that changed (e.g., "title", "overview", "images").',
+		},
+		items: {
+			type: "ChangeItem[]",
+			description: "Individual change entries for this field.",
+		},
+	}}
+/>
+
+---
+
+### `ChangeItem`
+
+<TypeTable
+	type={{
+		id: {
+			type: "number",
+			description: "Unique identifier for the changed item.",
+		},
+		action: {
+			type: "string",
+			description: 'Type of change performed (e.g., "added", "updated", "deleted").',
+		},
+		time: {
+			type: "string",
+			description: "Timestamp of when the change occurred (ISO 8601 format).",
+		},
+		iso_639_1: {
+			type: "string",
+			description: "ISO 639-1 language code associated with the change.",
+		},
+		iso_3166_1: {
+			type: "string",
+			description: "ISO 3166-1 country code associated with the change.",
+		},
+		value: {
+			type: "object",
+			description: "The changed data object (structure varies by change type).",
+		},
+		original_value: {
+			type: "object",
+			description: "The original data object before the change (structure varies by change type).",
+		},
+	}}
+/>
+
+---
+
+### `AlternativeTitle`
+
+An alternative or regional title for a movie or TV show.
+
+<AutoTypeTable path="common/media.ts" name="AlternativeTitle" />
+
+---
+
+### `VideoItem`
+
+Metadata for a video asset (trailer, teaser, clip, etc.) associated with a movie or TV show.
+
+<AutoTypeTable path="common/media.ts" name="VideoItem" />
+
+---
+
+### `ImageItem`
+
+Metadata for an image asset associated with a movie or TV show.
+
+<AutoTypeTable path="common/media.ts" name="ImageItem" />
+
+---
+
+### `ContentRating`
+
+A content or age rating for a specific country.
+
+<AutoTypeTable path="common/media.ts" name="ContentRating" />
+
+---
+
+### `Review`
+
+A user-submitted review for a movie or TV show.
+
+<AutoTypeTable path="common/media.ts" name="Review" />
+
+---
+
+### `ReviewAuthorDetails`
+
+Author metadata for a [`Review`](#review).
+
+<AutoTypeTable path="common/media.ts" name="ReviewAuthorDetails" />
+
+---
+
+### `Translation`
+
+A translation entry for a specific language and region.
+
+<AutoTypeTable path="common/media.ts" name="Translation" />
+
+---
+
+### `MediaWatchProviders`
+
+Watch provider availability grouped by country for a movie or TV show.
+
+<AutoTypeTable path="common/media.ts" name="MediaWatchProviders" />
+
+---
+
+### `WatchProvider`
+
+Streaming, rental, and purchase options for a specific country.
+
+<AutoTypeTable path="common/media.ts" name="WatchProvider" />
+
+---
+
+### `WatchProviderItem`
+
+An individual streaming or purchase provider with logo and display metadata.
+
+<AutoTypeTable path="common/media.ts" name="WatchProviderItem" />
+
+---
+
+### `KnownForItem`
+
+A union type representing either a movie or TV show in a person's `known_for` list.
+Use the `media_type` discriminator to narrow the type.
+
+```ts
+type KnownForItem = KnownForMovie | KnownForTV;
+```
+
+#### `KnownForMovie`
+
+<AutoTypeTable path="common/media.ts" name="KnownForMovie" />
+
+#### `KnownForTV`
+
+<AutoTypeTable path="common/media.ts" name="KnownForTV" />
+
+---
+
+### `MediaType`
+
+A discriminator union for media entries that can be either a movie or a TV show.
+
+```ts
+type MediaType = "movie" | "tv";
+```
+
+## Params
+
+These utility types are used as parameters across multiple API methods. They are derived from
+`TMDBQueryParams` using `Pick`, ensuring consistency and reducing duplication.
+
+### `TMDBQueryParams`
+
+The base parameter type from which all utility param types are derived.
+
+<TypeTable
+	type={{
+		language: {
+			description: "ISO 639-1 or primary translation code for localized responses.",
+			type: "Language",
+			default: "en-US",
+		},
+		page: {
+			description: "Page number for paginated results.",
+			type: "number",
+			default: "1",
+		},
+		region: {
+			description: "ISO 3166-1 country code to localize results.",
+			type: "CountryISO3166_1",
+		},
+	}}
+/>
+
+---
+
+### `WithLanguage`
+
+A parameter type for methods that accept a `language` override.
+
+<TypeTable
+	type={{
+		language: {
+			description: "ISO 639-1 or primary translation code for localized responses.",
+			type: "Language",
+			default: "en-US",
+		},
+	}}
+/>
+
+---
+
+### `WithPage`
+
+A parameter type for methods that support pagination.
+
+<TypeTable
+	type={{
+		page: {
+			description: "Page number for paginated results.",
+			type: "number",
+			default: "1",
+		},
+	}}
+/>
+
+---
+
+### `WithRegion`
+
+A parameter type for methods that accept a `region` override.
+
+<TypeTable
+	type={{
+		region: {
+			description: "ISO 3166-1 country code to localize results.",
+			type: "CountryISO3166_1",
+		},
+	}}
+/>
+
+---
+
+### `WithLanguagePage`
+
+A parameter type for methods that accept both a `language` override and pagination.
+
+<TypeTable
+	type={{
+		language: {
+			description: "ISO 639-1 or primary translation code for localized responses.",
+			type: "Language",
+			default: "en-US",
+		},
+		page: {
+			description: "Page number for paginated results.",
+			type: "number",
+			default: "1",
+		},
+	}}
+/>
+
+---
+
+### `DateRange`
+
+A parameter type for methods that accept a date range filter.
+
+<TypeTable
+	type={{
+		start_date: {
+			description: "Start date in ISO 8601 format (YYYY-MM-DD).",
+			type: "string",
+		},
+		end_date: {
+			description: "End date in ISO 8601 format (YYYY-MM-DD).",
+			type: "string",
+		},
+	}}
+/>
+
+---
+
+### `WithParams`
+
+A generic utility type that picks one or more keys from [`TMDBQueryParams`](#tmdbqueryparams).
+Used internally to construct all the `With*` types above.
+
+```ts
+type WithParams<T extends keyof TMDBQueryParams> = Pick<TMDBQueryParams, T>;
+```
+
+---
+
+## Pagination
+
+The `PaginatedResponse` type wraps all list-based API responses that support pagination.
+
+### `PaginatedResponse<T>`
+
+A generic wrapper returned by any endpoint that paginates its results.
+The `results` array type varies per endpoint — refer to each method's return type for the specific item type.
+
+<TypeTable
+	type={{
+		page: {
+			description: "The current page number.",
+			type: "number",
+		},
+		total_pages: {
+			description: "Total number of pages available.",
+			type: "number",
+		},
+		total_results: {
+			description: "Total number of results across all pages.",
+			type: "number",
+		},
+		results: {
+			description: "Array of items for the current page.",
+			type: "T[]",
+		},
+	}}
+/>
+
+<Callout type="info">
+	TMDB caps pagination at **500 pages** regardless of `total_pages`. Requests beyond page 500 will return an error.
+</Callout>

@@ -1,0 +1,35 @@
+---
+title: Images
+description: Get backdrops, logos, and posters for a movie.
+---
+
+Get images associated with a movie. If a `language` is specified it acts as a filter on the results.
+Use `include_image_language` to include images from additional languages.
+
+```ts
+async images(params: MovieImagesParams): Promise<MovieImages>
+```
+
+> **TMDB Reference:** [Movie Images](https://developer.themoviedb.org/reference/movie-images)
+
+## Parameters
+
+| Name                     | Type                                                                     | Required | Description                                                       |
+| ------------------------ | ------------------------------------------------------------------------ | -------- | ----------------------------------------------------------------- |
+| `movie_id`               | `number`                                                                 | ✅       | TMDB movie identifier.                                            |
+| `language`               | [`Language`](/docs/types/options/language#language) \| `LanguageISO6391` | ❌       | Language for image metadata. Defaults to `en-US`.                 |
+| `include_image_language` | [`Language`](/docs/types/options/language#language) \| `LanguageISO6391` | ❌       | Include images with additional language tags (e.g., `"en,null"`). |
+
+## Returns
+
+[`MovieImages`](/docs/types/movies#movieimages)
+
+## Example
+
+```ts
+const { backdrops, posters, logos } = await tmdb.movies.images({
+	movie_id: 550,
+	language: "en-US",
+	include_image_language: "en,null",
+});
+```

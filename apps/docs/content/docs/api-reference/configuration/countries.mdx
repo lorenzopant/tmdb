@@ -1,0 +1,46 @@
+---
+title: Countries
+description: Get the list of countries used throughout TMDB.
+---
+
+Returns the list of countries (ISO 3166-1) used throughout TMDB.
+
+```ts
+async countries(params?: ConfigurationCountriesParams): Promise<Country[]>
+```
+
+> **TMDB Reference:** [Configuration Countries](https://developer.themoviedb.org/reference/configuration-countries)
+
+## Parameters
+
+| Name       | Type                                                | Required | Description                                                                                |
+| ---------- | --------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------ |
+| `language` | [`Language`](/docs/types/options/language#language) | ❌       | ISO 639-1 language code for localized country names. Defaults to `en-US` if not specified. |
+
+## Returns
+
+An array of [`ConfigurationCountry`](/docs/types/configuration#configurationcountry) objects, each representing a country
+supported by TMDB with its ISO code and names.
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const countries = await tmdb.configuration.countries();
+
+console.log(countries);
+// [
+//   { iso_3166_1: "IT", english_name: "Italy", native_name: "Italia" },
+//   { iso_3166_1: "US", english_name: "United States", native_name: "United States" },
+//   ...
+// ]
+
+// With a language override
+const localized = await tmdb.configuration.countries({ language: "it-IT" });
+```
+
+## Types
+
+- [ConfigurationCountry](/docs/types/configuration#configurationcountry)

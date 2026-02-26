@@ -1,7 +1,6 @@
-import { ApiClient } from "../client";
 import { MovieResultItem, PaginatedResponse } from "../types";
-import { TMDBOptions } from "../types/config";
 import { MovieListParams } from "../types/movies";
+import { TMDBAPIBase } from "./base";
 
 import { MOVIE_ENDPOINTS } from "./movies";
 
@@ -12,15 +11,7 @@ export enum MovieListEndpoints {
 	UPCOMING = "/upcoming",
 }
 
-export class MovieListsAPI {
-	private client: ApiClient;
-	private defaultOptions: TMDBOptions;
-
-	constructor(client: ApiClient, defaultOptions: TMDBOptions = {}) {
-		this.client = client;
-		this.defaultOptions = defaultOptions;
-	}
-
+export class MovieListsAPI extends TMDBAPIBase {
 	private withDefaults(params: MovieListParams): MovieListParams {
 		const { language = this.defaultOptions.language, region = this.defaultOptions.region, ...rest } = params;
 		return { language, region, ...rest };

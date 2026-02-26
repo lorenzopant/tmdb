@@ -1,0 +1,41 @@
+---
+title: Changes
+description: Get the change history for a TV show.
+---
+
+Get the change history for a TV show. By default only the last 24 hours are returned.
+You can query up to 14 days in a single request using `start_date` and `end_date`.
+
+<Callout type="info">
+	TV show changes differ from movie changes in that edits on seasons and episodes also create a top-level change entry. These appear under
+	the `season` and `episode` keys and contain a `series_id` and `episode_id` for further lookup.
+</Callout>
+
+```ts
+async changes(params: TVChangeParams): Promise<TVSeriesChanges>
+```
+
+> **TMDB Reference:** [TV Series Changes](https://developer.themoviedb.org/reference/tv-series-changes)
+
+## Parameters
+
+| Name         | Type     | Required | Description                                         |
+| ------------ | -------- | -------- | --------------------------------------------------- |
+| `series_id`  | `number` | ✅       | TMDB TV series identifier.                          |
+| `page`       | `number` | ❌       | Page number for paginated results. Defaults to `1`. |
+| `start_date` | `string` | ❌       | Start of date range (YYYY-MM-DD).                   |
+| `end_date`   | `string` | ❌       | End of date range (YYYY-MM-DD).                     |
+
+## Returns
+
+[`TVSeriesChanges`](/docs/types/tv-series#tvserieschanges) — see also [`Changes`](/docs/types/common#changes).
+
+## Example
+
+```ts
+const changes = await tmdb.tvSeries.changes({
+	series_id: 1396,
+	start_date: "2024-01-01",
+	end_date: "2024-01-14",
+});
+```

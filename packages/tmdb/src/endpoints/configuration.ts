@@ -1,5 +1,5 @@
 import { ENDPOINTS } from "../routes";
-import { Country } from "../types";
+import { ConfigurationCountry } from "../types";
 import {
 	ConfigurationCountriesParams,
 	ConfigurationJob,
@@ -20,7 +20,7 @@ export class ConfigurationAPI extends TMDBAPIBase {
 	 * For example, you can get a list of valid image sizes and the valid image address.
 	 * @reference https://developer.themoviedb.org/reference/configuration-details
 	 */
-	async get(): Promise<ConfigurationResponse> {
+	async details(): Promise<ConfigurationResponse> {
 		return this.client.request<ConfigurationResponse>(ENDPOINTS.CONFIGURATION.DETAILS);
 	}
 
@@ -32,8 +32,8 @@ export class ConfigurationAPI extends TMDBAPIBase {
 	 * @param language Language (Defaults to en-US)
 	 * @reference https://developer.themoviedb.org/reference/configuration-countries
 	 */
-	async countries(params?: ConfigurationCountriesParams): Promise<Country[]> {
-		return this.client.request<Country[]>(ENDPOINTS.CONFIGURATION.COUNTRIES, this.withLanguage(params));
+	async countries(params?: ConfigurationCountriesParams): Promise<ConfigurationCountry[]> {
+		return this.client.request<ConfigurationCountry[]>(ENDPOINTS.CONFIGURATION.COUNTRIES, this.withLanguage(params));
 	}
 
 	/**

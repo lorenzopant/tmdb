@@ -1,0 +1,43 @@
+---
+title: Jobs
+description: Get the list of departments and jobs used throughout TMDB.
+---
+
+Returns the full list of departments and their associated job titles used throughout TMDB
+to categorize crew members on movies and TV series.
+
+```ts
+async jobs(): Promise<ConfigurationJob[]>
+```
+
+> **TMDB Reference:** [Configuration Jobs](https://developer.themoviedb.org/reference/configuration-jobs)
+
+## Parameters
+
+This method takes no parameters.
+
+## Returns
+
+An array of [`ConfigurationJob`](/docs/types/configuration#configurationjob) objects, each representing a department
+and the jobs within it.
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const jobs = await tmdb.configuration.jobs();
+
+console.log(jobs);
+// [
+//   { department: "Directing", jobs: ["Director", "Co-Director", ...] },
+//   { department: "Writing", jobs: ["Screenplay", "Writer", ...] },
+//   { department: "Production", jobs: ["Producer", "Executive Producer", ...] },
+//   ...
+// ]
+```
+
+## Types
+
+- [ConfigurationJob](/docs/types/configuration#configurationjob)

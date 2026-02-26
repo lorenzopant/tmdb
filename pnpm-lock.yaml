@@ -17,18 +17,37 @@ importers:
       '@lorenzopant/tmdb':
         specifier: workspace:*
         version: link:../../packages/tmdb
+      '@radix-ui/react-collapsible':
+        specifier: ^1.1.12
+        version: 1.1.12(@types/react-dom@19.2.3)(@types/react@19.2.14)(react-dom@19.2.4)(react@19.2.4)
       '@takumi-rs/image-response':
         specifier: ^0.68.17
         version: 0.68.17
+<<<<<<< HEAD
       '@vercel/analytics':
         specifier: ^1.6.1
         version: 1.6.1(next@16.1.6(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
+=======
+      class-variance-authority:
+        specifier: ^0.7.1
+        version: 0.7.1
+      framer-motion:
+        specifier: ^12.34.3
+        version: 12.34.3(react-dom@19.2.4)(react@19.2.4)
+>>>>>>> feat/docs
       fumadocs-core:
         specifier: 16.6.5
         version: 16.6.5(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.4)(@types/mdast@4.0.4)(@types/react@19.2.14)(lucide-react@0.570.0(react@19.2.4))(next@16.1.6(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(zod@4.3.6)
       fumadocs-mdx:
         specifier: 14.2.8
+<<<<<<< HEAD
         version: 14.2.8(@types/mdast@4.0.4)(@types/mdx@2.0.13)(@types/react@19.2.14)(fumadocs-core@16.6.5(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.4)(@types/mdast@4.0.4)(@types/react@19.2.14)(lucide-react@0.570.0(react@19.2.4))(next@16.1.6(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(zod@4.3.6))(next@16.1.6(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)(vite@7.3.1(@types/node@25.3.0)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2))
+=======
+        version: 14.2.8(@types/mdx@2.0.13)(@types/react@19.2.14)(fumadocs-core@16.6.5)(next@16.1.6)(react@19.2.4)
+      fumadocs-typescript:
+        specifier: ^5.1.4
+        version: 5.1.4(@types/react@19.2.14)(fumadocs-core@16.6.5)(fumadocs-ui@16.6.5)(react@19.2.4)(typescript@5.9.3)
+>>>>>>> feat/docs
       fumadocs-ui:
         specifier: 16.6.5
         version: 16.6.5(@takumi-rs/image-response@0.68.17)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(fumadocs-core@16.6.5(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.4)(@types/mdast@4.0.4)(@types/react@19.2.14)(lucide-react@0.570.0(react@19.2.4))(next@16.1.6(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(zod@4.3.6))(next@16.1.6(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(tailwindcss@4.2.0)
@@ -6668,7 +6687,13 @@ snapshots:
 
   balanced-match@1.0.2: {}
 
+<<<<<<< HEAD
   balanced-match@4.0.3: {}
+=======
+  /balanced-match@4.0.3:
+    resolution: {integrity: sha512-1pHv8LX9CpKut1Zp4EXey7Z8OfH11ONNH6Dhi2WDUt31VVZFXZzKwXcysBgqSumFCmR+0dqjMK5v5JiFHzi0+g==}
+    engines: {node: 20 || >=22}
+>>>>>>> feat/docs
 
   baseline-browser-mapping@2.10.0: {}
 
@@ -6868,7 +6893,12 @@ snapshots:
 
   clsx@2.1.1: {}
 
+<<<<<<< HEAD
   code-block-writer@13.0.3: {}
+=======
+  /code-block-writer@13.0.3:
+    resolution: {integrity: sha512-Oofo0pq3IKnsFtuHqSF7TqBfr71aeyZDVJ0HpmqB7FBM2qEigL0iPONSCZSO9pE9dZTAxANe5XHG9Uy0YMv8cg==}
+>>>>>>> feat/docs
 
   collapse-white-space@2.1.0: {}
 
@@ -7707,7 +7737,66 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+<<<<<<< HEAD
   fumadocs-ui@16.6.5(@takumi-rs/image-response@0.68.17)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(fumadocs-core@16.6.5(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.4)(@types/mdast@4.0.4)(@types/react@19.2.14)(lucide-react@0.570.0(react@19.2.4))(next@16.1.6(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(zod@4.3.6))(next@16.1.6(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(tailwindcss@4.2.0):
+=======
+  /fumadocs-typescript@5.1.4(@types/react@19.2.14)(fumadocs-core@16.6.5)(fumadocs-ui@16.6.5)(react@19.2.4)(typescript@5.9.3):
+    resolution: {integrity: sha512-myh3CzJ+2auPQfIM26GnYPeUPTEpkTJdtf6tbadZPHu+6ww9BEG3Vr0TWiRnkb27cw7+CePbaqL8Yp2ZAzuBow==}
+    peerDependencies:
+      '@types/estree': '*'
+      '@types/hast': '*'
+      '@types/mdast': '*'
+      '@types/react': '*'
+      fumadocs-core: ^16.5.0
+      fumadocs-ui: ^16.5.0
+      react: '*'
+      typescript: '*'
+    peerDependenciesMeta:
+      '@types/estree':
+        optional: true
+      '@types/hast':
+        optional: true
+      '@types/mdast':
+        optional: true
+      '@types/react':
+        optional: true
+      fumadocs-ui:
+        optional: true
+    dependencies:
+      '@types/react': 19.2.14
+      estree-util-value-to-estree: 3.5.0
+      fumadocs-core: 16.6.5(@types/react@19.2.14)(lucide-react@0.570.0)(next@16.1.6)(react-dom@19.2.4)(react@19.2.4)(zod@4.3.6)
+      fumadocs-ui: 16.6.5(@takumi-rs/image-response@0.68.17)(@types/react-dom@19.2.3)(@types/react@19.2.14)(fumadocs-core@16.6.5)(next@16.1.6)(react-dom@19.2.4)(react@19.2.4)(tailwindcss@4.2.0)
+      hast-util-to-estree: 3.1.3
+      hast-util-to-jsx-runtime: 2.3.6
+      react: 19.2.4
+      remark: 15.0.1
+      remark-rehype: 11.1.2
+      ts-morph: 27.0.2
+      typescript: 5.9.3
+      unified: 11.0.5
+      unist-util-visit: 5.1.0
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
+  /fumadocs-ui@16.6.5(@takumi-rs/image-response@0.68.17)(@types/react-dom@19.2.3)(@types/react@19.2.14)(fumadocs-core@16.6.5)(next@16.1.6)(react-dom@19.2.4)(react@19.2.4)(tailwindcss@4.2.0):
+    resolution: {integrity: sha512-R2Rb0t85y4kiqeDQy1I2CfYCxYiE0XsATlyNWumDpMd92HAZKfQ1zLtr9ldJLDWi7C9SQWrPmFxSC8khnS5Hqw==}
+    peerDependencies:
+      '@takumi-rs/image-response': ^0.68.17
+      '@types/react': '*'
+      fumadocs-core: 16.6.5
+      next: 16.x.x
+      react: ^19.2.0
+      react-dom: ^19.2.0
+    peerDependenciesMeta:
+      '@takumi-rs/image-response':
+        optional: true
+      '@types/react':
+        optional: true
+      next:
+        optional: true
+>>>>>>> feat/docs
     dependencies:
       '@fumadocs/tailwind': 0.0.2(tailwindcss@4.2.0)
       '@radix-ui/react-accordion': 1.2.12(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -9165,7 +9254,12 @@ snapshots:
     dependencies:
       entities: 6.0.1
 
+<<<<<<< HEAD
   path-browserify@1.0.1: {}
+=======
+  /path-browserify@1.0.1:
+    resolution: {integrity: sha512-b7uo2UCUOYZcnF/3ID0lulOJi/bafxa1xPe7ZPsammBSpjSWQkjNxlt635YGS2MiR9GjvuXCtz2emr3jbsz98g==}
+>>>>>>> feat/docs
 
   path-exists@4.0.0: {}
 
@@ -9980,7 +10074,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+<<<<<<< HEAD
   typescript@5.9.3: {}
+=======
+  /typescript@5.9.3:
+    resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+>>>>>>> feat/docs
 
   ufo@1.6.3: {}
 

@@ -1,0 +1,45 @@
+---
+title: Companies
+description: Search for production companies by their original and alternative names.
+---
+
+Search for production companies by their original and alternative names.
+
+```ts
+async company(params: SearchCompanyParams): Promise<PaginatedResponse<CompanyResultItem>>
+```
+
+> **TMDB Reference:** [Search Company](https://developer.themoviedb.org/reference/search-company)
+
+## Parameters
+
+| Name    | Type     | Required | Description                                         |
+| ------- | -------- | -------- | --------------------------------------------------- |
+| `query` | `string` | ✅       | Search query text.                                  |
+| `page`  | `number` | ❌       | Page number for paginated results. Defaults to `1`. |
+
+## Returns
+
+A [`PaginatedResponse<CompanyResultItem>`](/docs/types/common#paginatedresponset) containing
+an array of [`CompanyResultItem`](/docs/types/search#companyresultitem) objects.
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const { results } = await tmdb.search.company({ query: "Warner Bros" });
+
+console.log(results);
+// [
+//   { id: 174, name: "Warner Bros. Pictures", origin_country: "US", ... },
+//   ...
+// ]
+```
+
+## Types
+
+- [SearchCompanyParams](/docs/types/search#searchcompanyparams)
+- [PaginatedResponse](/docs/types/common#paginatedresponset)
+- [CompanyResultItem](/docs/types/search#companyresultitem)

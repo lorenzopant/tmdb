@@ -1,0 +1,54 @@
+---
+title: Movie
+description: Get the list of official genres for movies.
+---
+
+Returns the list of official genres used to categorize movies on TMDB.
+
+```ts
+async movie_list(params?: WithLanguage): Promise<GenresResponse>
+```
+
+> **TMDB Reference:** [Genre Movie List](https://developer.themoviedb.org/reference/genre-movie-list)
+
+## Parameters
+
+| Name       | Type                                                | Required | Description                                              |
+| ---------- | --------------------------------------------------- | -------- | -------------------------------------------------------- |
+| `language` | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized genre names. Defaults to `en-US`. |
+
+## Returns
+
+A [`GenresResponse`](/docs/types/common#genresresponse) object containing an array of
+[`Genre`](/docs/types/common#genre) objects.
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const { genres } = await tmdb.genres.movie_list();
+
+console.log(genres);
+// [
+//   { id: 28, name: "Action" },
+//   { id: 12, name: "Adventure" },
+//   { id: 16, name: "Animation" },
+//   ...
+// ]
+
+// With a language override
+const { genres: italianGenres } = await tmdb.genres.movie_list({ language: "it-IT" });
+// [
+//   { id: 28, name: "Azione" },
+//   { id: 12, name: "Avventura" },
+//   ...
+// ]
+```
+
+## Types
+
+- [GenresResponse](/docs/types/common#genresresponse)
+- [Genre](/docs/types/common#genre)
+- [WithLanguage](/docs/types/common#withlanguage)

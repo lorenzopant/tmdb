@@ -1,3 +1,4 @@
+import { CountryISO3166_1 } from "./countries";
 import { Language } from "./languages";
 
 export type ImageConfiguration = {
@@ -22,6 +23,15 @@ export type ConfigurationResponse = {
 	images: ImageConfiguration;
 	/** List of keys that can be used to track configuration changes */
 	change_keys: string[];
+};
+
+export type ConfigurationCountry = {
+	/** ISO 3166-1 alpha-2 country code */
+	iso_3166_1: CountryISO3166_1;
+	/** English name of the country */
+	english_name: string;
+	/** Native name of the country in its local language */
+	native_name: string;
 };
 
 export type ConfigurationCountriesParams = {

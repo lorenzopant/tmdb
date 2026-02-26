@@ -1,0 +1,30 @@
+---
+title: Alternative Titles
+description: Get alternative titles for a movie across different countries and languages.
+---
+
+Get the alternative titles for a movie, such as regional or language-specific names.
+
+```ts
+async alternative_titles(params: MovieAlternativeTitlesParams): Promise<MovieAlternativeTitles>
+```
+
+> **TMDB Reference:** [Movie Alternative Titles](https://developer.themoviedb.org/reference/movie-alternative-titles)
+
+## Parameters
+
+| Name       | Type                                                      | Required | Description                           |
+| ---------- | --------------------------------------------------------- | -------- | ------------------------------------- |
+| `movie_id` | `number`                                                  | ✅       | TMDB movie identifier.                |
+| `country`  | [`CountryISO3166_1`](/docs/types/options#countryiso31661) | ❌       | Filter results to a specific country. |
+
+## Returns
+
+[`MovieAlternativeTitles`](/docs/types/movies#moviealternativetitles)
+
+## Example
+
+```ts
+const { titles } = await tmdb.movies.alternative_titles({ movie_id: 550 });
+const { titles } = await tmdb.movies.alternative_titles({ movie_id: 550, country: "IT" });
+```

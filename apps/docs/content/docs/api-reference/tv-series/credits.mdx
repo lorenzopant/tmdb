@@ -1,0 +1,33 @@
+---
+title: Credits
+description: Get the latest season cast and crew for a TV show.
+---
+
+Get the latest season credits for a TV show. This returns only the most recent season's data.
+To get the full cast and crew across all seasons, use [`aggregate_credits()`](/docs/api-reference/tv-series/aggregate-credits) instead.
+
+```ts
+async credits(params: TVCreditsParams): Promise<TVCredits>
+```
+
+> **TMDB Reference:** [TV Series Credits](https://developer.themoviedb.org/reference/tv-series-credits)
+
+## Parameters
+
+| Name        | Type                                       | Required | Description                                          |
+| ----------- | ------------------------------------------ | -------- | ---------------------------------------------------- |
+| `series_id` | `number`                                   | ✅       | TMDB TV series identifier.                           |
+| `language`  | [`Language`](/docs/types/options#language) | ❌       | Language for localized results. Defaults to `en-US`. |
+
+## Returns
+
+[`TVCredits`](/docs/types/tv-series#tvcredits)
+
+## Example
+
+```ts
+const { cast, crew } = await tmdb.tvSeries.credits({ series_id: 1396 });
+
+const director = crew.find((m) => m.job === "Director");
+const topCast = cast.slice(0, 5);
+```

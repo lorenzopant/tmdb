@@ -1,0 +1,97 @@
+---
+title: Configuration
+description: Type definitions for the ConfigurationAPI responses.
+---
+
+These types represent the data structures returned by the [`ConfigurationAPI`](/docs/api-reference/configuration) methods.
+
+---
+
+## `ConfigurationResponse`
+
+The top-level response returned by [`configuration.details()`](/docs/api-reference/configuration/details).
+Contains image configuration settings used to construct valid image URLs.
+
+<AutoTypeTable path="/config/configuration.ts" name="ConfigurationResponse" />
+
+<Callout type="info">
+	The `images` field is the primary reason to call `configuration.details()` — it provides the live base URLs and valid size options
+	directly from TMDB, which may differ from the static constants exported by this package.
+</Callout>
+
+---
+
+## `ImageConfiguration`
+
+Describes the image hosting configuration returned by TMDB, including base URLs and all
+supported sizes for each image type. Used within [`ConfigurationResponse`](#configurationresponse).
+
+<AutoTypeTable path="/config/configuration.ts" name="ImageConfiguration" />
+
+<Callout type="tip">
+  Prefer `secure_base_url` over `base_url` in all production environments.
+  Combine it with one of the size arrays and a file path to build a complete image URL:
+
+```
+https://image.tmdb.org/t/p/{size}/{file_path}
+```
+
+For example: `https://image.tmdb.org/t/p/w500/abc.jpg`.
+See the [Images configuration reference](/docs/getting-started/options/images) for the full list of size constants.
+
+</Callout>
+
+---
+
+## `ConfigurationLanguage`
+
+Represents a single language entry as returned by
+[`configuration.languages()`](/docs/api-reference/configuration/languages).
+Each entry corresponds to a language TMDB has recorded in its database.
+
+<AutoTypeTable path="/config/configuration.ts" name="ConfigurationLanguage" />
+
+<Callout type="info">
+	This differs from the [`Language`](/docs/types/language) type used in request parameters. `ConfigurationLanguage` is a **response
+	shape** describing a language entry; `Language` is the **input type** used to filter or localize API responses.
+</Callout>
+
+---
+
+## `ConfigurationCountry`
+
+Represents a single country entry as returned by
+[`configuration.countries()`](/docs/api-reference/configuration/countries).
+Country codes follow the [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) standard.
+
+<AutoTypeTable path="/config/configuration.ts" name="ConfigurationCountry" />
+
+<Callout type="info">
+	For the list of country codes accepted as **input** (e.g., the `region` option), see the
+	[`CountryISO3166_1`](/docs/types/options/region) type.
+</Callout>
+
+---
+
+## `ConfigurationTimezone`
+
+Represents a single timezone entry as returned by
+[`configuration.timezones()`](/docs/api-reference/configuration/timezones).
+Each entry maps an ISO 3166-1 country code to one or more
+[IANA timezone](https://www.iana.org/time-zones) identifiers.
+
+<AutoTypeTable path="/config/configuration.ts" name="ConfigurationTimezone" />
+
+<Callout type="info">
+	For the `Timezone` type used as a constructor option, see the [Timezone types reference](/docs/types/options/timezone).
+</Callout>
+
+---
+
+## `ConfigurationJob`
+
+Represents a single department and its associated job titles, as returned by
+[`configuration.jobs()`](/docs/api-reference/configuration/jobs).
+These are used throughout TMDB to categorize crew members on movies and TV series.
+
+<AutoTypeTable path="/config/configuration.ts" name="ConfigurationJob" />

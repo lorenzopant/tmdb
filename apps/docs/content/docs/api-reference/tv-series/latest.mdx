@@ -1,0 +1,27 @@
+---
+title: Latest
+description: Get the most recently added TV show on TMDB.
+---
+
+Get the newest TV show added to TMDB. This is a live response that changes continuously as new shows are added.
+
+```ts
+async latest(): Promise<TVSeriesDetails>
+```
+
+> **TMDB Reference:** [TV Series Latest](https://developer.themoviedb.org/reference/tv-series-latest-id)
+
+## Parameters
+
+No parameters.
+
+## Returns
+
+[`TVSeriesDetails`](/docs/types/tv-series#tvseriesdetails)
+
+## Example
+
+```ts
+const latest = await tmdb.tvSeries.latest();
+console.log(latest.name);
+```

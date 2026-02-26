@@ -1,0 +1,50 @@
+---
+title: Timezones
+description: Get the list of timezones used throughout TMDB.
+---
+
+Returns the list of timezones used throughout TMDB, mapped per country. Used primarily
+for TV series queries that filter airing times by region.
+
+```ts
+async timezones(): Promise<ConfigurationTimezone[]>
+```
+
+> **TMDB Reference:** [Configuration Timezones](https://developer.themoviedb.org/reference/configuration-timezones)
+
+## Parameters
+
+This method takes no parameters.
+
+## Returns
+
+An array of [`ConfigurationTimezone`](/docs/types/configuration#configurationtimezone) objects,
+each mapping an ISO 3166-1 country code to one or more IANA timezone identifiers.
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const timezones = await tmdb.configuration.timezones();
+
+console.log(timezones);
+// [
+//   { iso_3166_1: "IT", zones: ["Europe/Rome"] },
+//   { iso_3166_1: "US", zones: ["America/New_York", "America/Chicago", "America/Denver", "America/Los_Angeles", ...] },
+//   { iso_3166_1: "AU", zones: ["Australia/Sydney", "Australia/Melbourne", ...] },
+//   ...
+// ]
+```
+
+<Callout type="info">
+	Countries with large geographic spans (US, Russia, Australia, Brazil, Canada) map to multiple IANA timezone identifiers. For the
+	`timezone` constructor option, choose the zone that best represents your primary user base. See the [Timezone types
+	reference](/docs/types/options/timezone) for more details.
+</Callout>
+
+## Types
+
+- [ConfigurationTimezone](/docs/types/configuration#configurationtimezone)
+- [Timezone](/docs/types/options/timezone)

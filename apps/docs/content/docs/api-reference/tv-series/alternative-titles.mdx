@@ -1,0 +1,29 @@
+---
+title: Alternative Titles
+description: Get alternative titles for a TV show across different countries and languages.
+---
+
+Get the alternative titles that have been added to a TV show.
+
+```ts
+async alternative_titles(params: TVBaseParam): Promise<TVAlternativeTitles>
+```
+
+> **TMDB Reference:** [TV Series Alternative Titles](https://developer.themoviedb.org/reference/tv-series-alternative-titles)
+
+## Parameters
+
+| Name        | Type     | Required | Description                |
+| ----------- | -------- | -------- | -------------------------- |
+| `series_id` | `number` | ✅       | TMDB TV series identifier. |
+
+## Returns
+
+[`TVAlternativeTitles`](/docs/types/tv-series#tvalternativetitles)
+
+## Example
+
+```ts
+const { results } = await tmdb.tvSeries.alternative_titles({ series_id: 1396 });
+console.log(results.map((t) => `${t.iso_3166_1}: ${t.title}`));
+```

@@ -1,0 +1,30 @@
+---
+title: Keywords
+description: Get the keywords associated with a movie.
+---
+
+Get the keywords that have been added to a movie.
+
+```ts
+async keywords(params: MovieKeywordsParams): Promise<MovieKeywords>
+```
+
+> **TMDB Reference:** [Movie Keywords](https://developer.themoviedb.org/reference/movie-keywords)
+
+## Parameters
+
+| Name       | Type     | Required | Description            |
+| ---------- | -------- | -------- | ---------------------- |
+| `movie_id` | `number` | ✅       | TMDB movie identifier. |
+
+## Returns
+
+[`MovieKeywords`](/docs/types/movies#moviekeywords)
+
+## Example
+
+```ts
+const { keywords } = await tmdb.movies.keywords({ movie_id: 550 });
+console.log(keywords.map((k) => k.name));
+// ["based on novel or book", "support group", "nihilism", ...]
+```

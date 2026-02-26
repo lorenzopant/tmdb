@@ -1,0 +1,142 @@
+---
+title: Language
+description: Type definitions for language and translation codes used across the TMDB client.
+---
+
+These types represent the language system used throughout the TMDB API.
+TMDB primarily uses [ISO 639-1](https://en.wikipedia.org/wiki/ISO_639-1) codes, optionally paired
+with an [ISO 3166-1](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code to form locale strings.
+
+> **TMDB Reference:** [Languages overview](https://developer.themoviedb.org/docs/languages) ·
+> [Configuration: Languages endpoint](https://developer.themoviedb.org/reference/configuration-languages)
+
+---
+
+## `Language`
+
+The main language type accepted across all client methods and constructor options.
+It is a union of [`PrimaryTranslations`](#primarytranslations) and [`LanguageISO6391`](#languageiso6391).
+
+```ts
+type Language = PrimaryTranslations | LanguageISO6391;
+```
+
+Prefer [`PrimaryTranslations`](#primarytranslations) locale codes (e.g., `"it-IT"`, `"en-US"`) wherever possible,
+as they map to TMDB's fully-supported translation set and return richer localized data.
+Use bare [`LanguageISO6391`](#languageiso6391) codes only when a primary translation is not available
+for your target language.
+
+---
+
+## `PrimaryTranslations`
+
+A union of locale strings in `language-REGION` format that TMDB has dedicated, curated translation
+support for. These are the recommended values to use for the `language` option.
+
+```ts
+type PrimaryTranslations =
+	| "af-ZA" // Afrikaans (South Africa)
+	| "ar-AE" // Arabic (UAE)
+	| "ar-SA" // Arabic (Saudi Arabia)
+	| "be-BY" // Belarusian (Belarus)
+	| "bg-BG" // Bulgarian (Bulgaria)
+	| "bn-BD" // Bengali (Bangladesh)
+	| "ca-ES" // Catalan (Spain)
+	| "cs-CZ" // Czech (Czechia)
+	| "cy-GB" // Welsh (United Kingdom)
+	| "da-DK" // Danish (Denmark)
+	| "de-AT" // German (Austria)
+	| "de-CH" // German (Switzerland)
+	| "de-DE" // German (Germany)
+	| "el-GR" // Greek (Greece)
+	| "en-AU" // English (Australia)
+	| "en-CA" // English (Canada)
+	| "en-GB" // English (United Kingdom)
+	| "en-IE" // English (Ireland)
+	| "en-NZ" // English (New Zealand)
+	| "en-US" // English (United States)
+	| "es-ES" // Spanish (Spain)
+	| "es-MX" // Spanish (Mexico)
+	| "et-EE" // Estonian (Estonia)
+	| "eu-ES" // Basque (Spain)
+	| "fa-IR" // Persian (Iran)
+	| "fi-FI" // Finnish (Finland)
+	| "fr-CA" // French (Canada)
+	| "fr-FR" // French (France)
+	| "he-IL" // Hebrew (Israel)
+	| "hi-IN" // Hindi (India)
+	| "hr-HR" // Croatian (Croatia)
+	| "hu-HU" // Hungarian (Hungary)
+	| "id-ID" // Indonesian (Indonesia)
+	| "it-IT" // Italian (Italy)
+	| "ja-JP" // Japanese (Japan)
+	| "ko-KR" // Korean (South Korea)
+	| "lt-LT" // Lithuanian (Lithuania)
+	| "lv-LV" // Latvian (Latvia)
+	| "nl-NL" // Dutch (Netherlands)
+	| "nb-NO" // Norwegian Bokmål (Norway)
+	| "pl-PL" // Polish (Poland)
+	| "pt-BR" // Portuguese (Brazil)
+	| "pt-PT" // Portuguese (Portugal)
+	| "ro-RO" // Romanian (Romania)
+	| "ru-RU" // Russian (Russia)
+	| "sk-SK" // Slovak (Slovakia)
+	| "sv-SE" // Swedish (Sweden)
+	| "tr-TR" // Turkish (Turkey)
+	| "uk-UA" // Ukrainian (Ukraine)
+	| "zh-CN" // Chinese Simplified (China)
+	| "zh-TW"; // Chinese Traditional (Taiwan)
+// ... and more
+```
+
+> The full union contains ~80 locale codes. See the
+> [TMDB primary translations reference](https://developer.themoviedb.org/reference/configuration-primary-translations)
+> for the authoritative list, or inspect the `PrimaryTranslations` type directly in the package source.
+
+### Format
+
+Locale strings follow the `language-REGION` format, combining an
+[ISO 639-1](https://en.wikipedia.org/wiki/ISO_639-1) language code with an
+[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code:
+
+```
+it-IT   →  Italian, Italy
+en-US   →  English, United States
+pt-BR   →  Portuguese, Brazil
+```
+
+---
+
+## `LanguageISO6391`
+
+A union of bare [ISO 639-1](https://en.wikipedia.org/wiki/ISO_639-1) two-letter language codes.
+These are supported by TMDB but may return incomplete or untranslated data for some fields,
+as they don't map to a specific regional translation set.
+
+```ts
+type LanguageISO6391 =
+	| "en" // English
+	| "it" // Italian
+	| "fr" // French
+	| "de" // German
+	| "es" // Spanish
+	| "pt" // Portuguese
+	| "ja" // Japanese
+	| "ko" // Korean
+	| "zh" // Chinese
+	| "ru" // Russian
+	| "ar" // Arabic
+	| "hi" // Hindi
+	| "tr" // Turkish
+	| "nl" // Dutch
+	| "pl" // Polish
+	| "sv" // Swedish
+	| "uk"; // Ukrainian
+// ... and more
+```
+
+> The full union contains 180+ ISO 639-1 codes. Note that some codes here (e.g., `"xx"`)
+> are non-standard placeholders used by TMDB for content with no defined language.
+> See the [TMDB Languages endpoint](https://developer.themoviedb.org/reference/configuration-languages)
+> for the complete list. We also provide a method for fetching the configuration endpoint directly in our
+> package.

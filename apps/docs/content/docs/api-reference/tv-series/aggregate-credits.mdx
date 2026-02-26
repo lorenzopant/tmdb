@@ -1,0 +1,34 @@
+---
+title: Aggregate Credits
+description: Get the full cast and crew across all seasons and episodes of a TV show.
+---
+
+Get the aggregate credits (cast and crew) for a TV show across all seasons and episodes.
+This is the same view shown on the TMDB website, as opposed to [`credits()`](/docs/api-reference/tv-series/credits)
+which only returns the latest season data.
+
+```ts
+async aggregate_credits(params: TVAggregateCreditsParams): Promise<TVAggregateCredits>
+```
+
+> **TMDB Reference:** [TV Series Aggregate Credits](https://developer.themoviedb.org/reference/tv-series-aggregate-credits)
+
+## Parameters
+
+| Name        | Type                                                | Required | Description                                          |
+| ----------- | --------------------------------------------------- | -------- | ---------------------------------------------------- |
+| `series_id` | `number`                                            | ✅       | TMDB TV series identifier.                           |
+| `language`  | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized results. Defaults to `en-US`. |
+
+## Returns
+
+[`TVAggregateCredits`](/docs/types/tv-series#tvaggregatedcredits)
+
+## Example
+
+```ts
+const { cast, crew } = await tmdb.tvSeries.aggregate_credits({ series_id: 1396 });
+
+const mainCast = cast.filter((m) => m.total_episode_count > 10);
+const directors = crew.filter((m) => m.department === "Directing");
+```

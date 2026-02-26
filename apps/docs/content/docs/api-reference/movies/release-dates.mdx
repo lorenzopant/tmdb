@@ -1,0 +1,34 @@
+---
+title: Release Dates
+description: Get release dates and certifications per country for a movie.
+---
+
+Get the release dates and certifications for a movie across different countries and release types.
+
+```ts
+async release_dates(params: MovieReleaseDatesParams): Promise<MovieReleaseDates>
+```
+
+> **TMDB Reference:** [Movie Release Dates](https://developer.themoviedb.org/reference/movie-release-dates)
+
+## Parameters
+
+| Name       | Type     | Required | Description            |
+| ---------- | -------- | -------- | ---------------------- |
+| `movie_id` | `number` | ✅       | TMDB movie identifier. |
+
+## Returns
+
+[`MovieReleaseDates`](/docs/types/movies#moviereleasedates)
+
+Release types are represented by the [`ReleaseType`](/docs/types/enums#releasetype) enum.
+
+## Example
+
+```ts
+const { results } = await tmdb.movies.release_dates({ movie_id: 550 });
+
+const us = results.find((r) => r.iso_3166_1 === "US");
+console.log(us?.release_dates);
+// [{ certification: "R", type: 3, release_date: "1999-10-15T00:00:00.000Z", ... }]
+```

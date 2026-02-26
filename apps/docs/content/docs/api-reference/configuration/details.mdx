@@ -1,0 +1,51 @@
+---
+title: Details
+description: Query the API configuration details including image base URLs and sizes.
+---
+
+Query the API configuration details. The data returned here is designed to provide the
+required information needed when integrating the API — most importantly the image base URLs
+and valid image sizes.
+
+```ts
+async details(): Promise<ConfigurationResponse>
+```
+
+> **TMDB Reference:** [Configuration Details](https://developer.themoviedb.org/reference/configuration-details)
+
+## Parameters
+
+This method takes no parameters.
+
+## Returns
+
+A [`ConfigurationResponse`](/docs/types/configuration#configurationresponse) object containing
+image hosting configuration and other system-level data.
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const config = await tmdb.configuration.get();
+
+console.log(config.images);
+// {
+//   base_url: "http://image.tmdb.org/t/p/",
+//   secure_base_url: "https://image.tmdb.org/t/p/",
+//   poster_sizes: ["w92", "w154", "w185", "w342", "w500", "w780", "original"],
+//   backdrop_sizes: ["w300", "w780", "w1280", "original"],
+//   logo_sizes: ["w45", "w92", "w154", "w185", "w300", "w500", "original"],
+//   ...
+// }
+```
+
+<Callout type="info">
+	This data changes infrequently. Consider caching the response rather than calling this endpoint on every request.
+</Callout>
+
+## Types
+
+- [ConfigurationResponse](/docs/types/configuration#configurationresponse)
+- [ImageConfiguration](/docs/types/configuration#imageconfiguration)

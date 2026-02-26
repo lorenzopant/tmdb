@@ -1,0 +1,29 @@
+---
+title: Screened Theatrically
+description: Get episodes of a TV show that have been screened theatrically.
+---
+
+Get the seasons and episodes of a TV show that have been screened theatrically.
+
+```ts
+async screened_theatrically(params: TVBaseParam): Promise<TVScreenedTheatrically>
+```
+
+> **TMDB Reference:** [TV Series Screened Theatrically](https://developer.themoviedb.org/reference/tv-series-screened-theatrically)
+
+## Parameters
+
+| Name        | Type     | Required | Description                |
+| ----------- | -------- | -------- | -------------------------- |
+| `series_id` | `number` | ✅       | TMDB TV series identifier. |
+
+## Returns
+
+[`TVScreenedTheatrically`](/docs/types/tv-series#tvscreenedtheatrically)
+
+## Example
+
+```ts
+const { results } = await tmdb.tvSeries.screened_theatrically({ series_id: 1396 });
+console.log(results.map((e) => `S${e.season_number}E${e.episode_number}`));
+```

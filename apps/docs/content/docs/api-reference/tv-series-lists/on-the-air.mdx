@@ -1,0 +1,37 @@
+---
+title: On The Air
+description: Get a list of TV shows airing in the next 7 days.
+---
+
+Get a list of TV shows that will air in the next 7 days. Use the `timezone` parameter to anchor
+the date window to a specific region.
+
+```ts
+async on_the_air(params?: TVSeriesListParams): Promise<PaginatedResponse<TVSeriesResultItem>>
+```
+
+> **TMDB Reference:** [TV On The Air](https://developer.themoviedb.org/reference/tv-series-on-the-air-list)
+
+## Parameters
+
+| Name       | Type                                                | Required | Description                                                  |
+| ---------- | --------------------------------------------------- | -------- | ------------------------------------------------------------ |
+| `language` | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized results. Defaults to `en-US`.         |
+| `page`     | `number`                                            | ❌       | Page number for paginated results. Defaults to `1`.          |
+| `timezone` | `string`                                            | ❌       | Timezone to anchor the 7-day window (e.g., `"Europe/Rome"`). |
+
+## Returns
+
+[`PaginatedResponse<TVSeriesResultItem>`](/docs/types/search#tvseriesresultitem)
+
+## Example
+
+```ts
+const { results } = await tmdb.tvSeriesLists.on_the_air({
+	language: "en-US",
+	timezone: "Europe/Rome",
+	page: 1,
+});
+
+console.log(results.map((s) => s.name));
+```

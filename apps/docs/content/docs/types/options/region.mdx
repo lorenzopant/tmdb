@@ -1,0 +1,73 @@
+---
+title: Region & Country
+description: Type definitions for country and region codes used across the TMDB client.
+---
+
+These types represent the country and region system used throughout the TMDB API.
+All country codes follow the [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) standard.
+
+> **TMDB Reference:** [Region support overview](https://developer.themoviedb.org/docs/region-support) ·
+> [Configuration: Countries endpoint](https://developer.themoviedb.org/reference/configuration-countries)
+
+---
+
+## `CountryISO3166_1`
+
+A union of all [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country codes
+supported by TMDB. Used for the `region` constructor option and any endpoint parameter that accepts a region.
+
+```ts
+type CountryISO3166_1 =
+	| "US" // United States
+	| "GB" // United Kingdom
+	| "IT" // Italy
+	| "FR" // France
+	| "DE" // Germany
+	| "ES" // Spain
+	| "PT" // Portugal
+	| "BR" // Brazil
+	| "CA" // Canada
+	| "AU" // Australia
+	| "JP" // Japan
+	| "KR" // South Korea
+	| "CN" // China
+	| "IN" // India
+	| "MX" // Mexico
+	| "RU" // Russia
+	| "NL" // Netherlands
+	| "SE" // Sweden
+	| "PL" // Poland
+	| "TR" // Turkey
+	| "AR" // Argentina
+	| "ZA"; // South Africa
+// ... and more
+```
+
+> The full union contains 200+ country codes derived from the `TMDBCountries` constant.
+> See the [TMDB Countries endpoint](https://developer.themoviedb.org/reference/configuration-countries)
+> for the authoritative list.
+
+### How region affects results
+
+The `region` parameter acts as a **presentation filter**, not a data filter. According to the
+[TMDB region support docs](https://developer.themoviedb.org/docs/region-support), it affects:
+
+- **Release dates** — Returns the region-specific theatrical release date when available,
+  falling back to the primary release date if not found
+- **Age certifications** — Returns the content rating for the specified country
+- **Watch providers** — Filters streaming/rental availability to the given country
+- **Filtered lists** — Endpoints like "now playing" and "upcoming" use the region to determine
+  what is currently in cinemas in that country
+
+---
+
+## `Country`
+
+Represents a full country object as returned by the TMDB API. Used in responses from
+country-listing endpoints.
+
+| Property       | Type               | Description                                    |
+| -------------- | ------------------ | ---------------------------------------------- |
+| `iso_3166_1`   | `CountryISO3166_1` | ISO 3166-1 alpha-2 country code (e.g., `"IT"`) |
+| `english_name` | `string`           | Country name in English                        |
+| `native_name`  | `string`           | Country name in its native language            |

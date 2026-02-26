@@ -1,0 +1,43 @@
+---
+title: Popular
+description: Get a list of movies ordered by popularity.
+---
+
+Returns a paginated list of movies ordered by TMDB's popularity score.
+
+```ts
+async popular(params?: MovieListParams): Promise<PaginatedResponse<MovieResultItem>>
+```
+
+> **TMDB Reference:** [Movie Popular](https://developer.themoviedb.org/reference/movie-popular-list)
+
+## Parameters
+
+| Name       | Type                                                             | Required | Description                                                       |
+| ---------- | ---------------------------------------------------------------- | -------- | ----------------------------------------------------------------- |
+| `language` | [`Language`](/docs/types/options/language#language)              | ❌       | Language for localized titles and overviews. Defaults to `en-US`. |
+| `page`     | `number`                                                         | ❌       | Page number for paginated results. Defaults to `1`.               |
+| `region`   | [`CountryISO3166_1`](/docs/types/options/region#countryiso31661) | ❌       | ISO 3166-1 country code to filter results by country.             |
+
+## Returns
+
+A [`PaginatedResponse<MovieResultItem>`](/docs/types/common#paginatedresponset) containing
+an array of [`MovieResultItem`](/docs/types/search#movieresultitem) objects.
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const { results } = await tmdb.movieLists.popular();
+
+// With params
+const page2 = await tmdb.movieLists.popular({ page: 2, language: "fr-FR", region: "FR" });
+```
+
+## Types
+
+- [MovieListParams](/docs/types/movies#movielistparams)
+- [PaginatedResponse](/docs/types/common#paginatedresponset)
+- [MovieResultItem](/docs/types/search#movieresultitem)

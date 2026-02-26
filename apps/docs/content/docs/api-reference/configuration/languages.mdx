@@ -1,0 +1,48 @@
+---
+title: Languages
+description: Get the list of languages used throughout TMDB.
+---
+
+Returns the list of languages (ISO 639-1) used throughout TMDB.
+
+```ts
+async languages(): Promise<ConfigurationLanguage[]>
+```
+
+> **TMDB Reference:** [Configuration Languages](https://developer.themoviedb.org/reference/configuration-languages)
+
+## Parameters
+
+This method takes no parameters.
+
+## Returns
+
+An array of [`ConfigurationLanguage`](/docs/types/configuration#configurationlanguage) objects,
+each representing a language recorded in the TMDB database.
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const languages = await tmdb.configuration.languages();
+
+console.log(languages);
+// [
+//   { iso_639_1: "en", english_name: "English", name: "English" },
+//   { iso_639_1: "it", english_name: "Italian", name: "Italiano" },
+//   { iso_639_1: "fr", english_name: "French", name: "Français" },
+//   ...
+// ]
+```
+
+<Callout type="info">
+	This returns all languages TMDB has recorded, which is broader than the set of fully-supported translation locales. For localization
+	purposes, prefer using [`primary_translations()`](/docs/api-reference/configuration/primary-translations) or the
+	[`Language`](/docs/types/options/language) type.
+</Callout>
+
+## Types
+
+- [ConfigurationLanguage](/docs/types/configuration#configurationlanguage)
