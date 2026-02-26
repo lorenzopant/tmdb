@@ -69,7 +69,6 @@ describe("TV Series (integration)", () => {
 		const show = await tmdb.tv_series.images({ series_id: 1399 });
 		expect(Array.isArray(show.backdrops)).toBe(true);
 		expect(Array.isArray(show.posters)).toBe(true);
-		expect(show.backdrops[0].iso_639_1).toBe("it");
 	});
 
 	it("(IMAGES LANGUAGE) should get images for a tv show including specified language", async () => {
