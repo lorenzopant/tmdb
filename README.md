@@ -60,8 +60,8 @@ For full setup instructions, authentication details, and more usage examples, se
 ## ✨ Core Features
 
 - **End-to-end TypeScript types**: Every endpoint has accurate request/response types:
-    - **Fully typed params** ( SearchMoviesParams , MovieDetailsParams , TVDetailsParams , etc.)
-    - **Fully typed responses** ( MovieDetails , TVSeriesDetails , PaginatedResponses , etc.)
+- **Fully typed params** ( SearchMoviesParams , MovieDetailsParams , TVDetailsParams , etc.)
+- **Fully typed responses** ( MovieDetails , TVSeriesDetails , PaginatedResponses , etc.)
 - **Appendable responses**: Use  append_to_response  to get related data in a single request, with correct types for the appended data.
 - **Modular API structure**: Separate namespaces for Movies, TV Series, Search, Lists, etc., each with their own methods and types.
 - **Comprehensive documentation**: Auto-generated API reference with examples, plus guides and type documentation.
