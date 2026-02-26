@@ -4,7 +4,7 @@ import { TMDBProvider } from "@/components/tmdb";
 
 export default function Layout({ children }: LayoutProps<"/">) {
 	return (
-		<TMDBProvider apiKey={process.env.NEXT_PUBLIC_TMDB_KEY || ""}>
+		<TMDBProvider apiKey={process.env.TMDB_KEY || ""}>
 			<HomeLayout {...baseOptions()}>{children}</HomeLayout>;
 		</TMDBProvider>
 	);
