@@ -6,7 +6,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 
 export const meta: Metadata = {
-	title: "lorenzopant/tmdb",
+	title: "@lorenzopant/tmdb",
 };
 
 const inter = Inter({

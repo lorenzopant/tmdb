@@ -10,8 +10,9 @@ export const gitConfig = {
 export function baseOptions(): BaseLayoutProps {
 	return {
 		nav: {
-			title: "🍿 tmdb",
+			title: "🍿 @lorenzopant/tmdb",
 		},
+		themeSwitch: { mode: "light-dark-system" },
 		githubUrl: `https://github.com/${gitConfig.user}/${gitConfig.repo}`,
 	};
 }
