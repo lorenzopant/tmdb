@@ -1,4 +1,4 @@
-# TMDB API TS
+# 🍿 @lorenzopant/tmdb
 
 A **TypeScript-first** lightweight client for [The Movie Database (TMDB)](https://developer.themoviedb.org/docs/getting-started) API.
 
@@ -9,7 +9,7 @@ Feel free to open pull requests on the project repository.
 - 🔥 Simple and tiny wrapper
 - 🚀 Designed for server-side and frontend use (NextJS, React, Vue, etc.)
 
-## Full documentation is available at [@lorenzopant/tmdb](https://lorenzopant-docs.vercel.app/)
+## Full documentation is available at [@lorenzopant/tmdb](https://lorenzopant-tmdb-docs.vercel.app)
 
 ---
 
@@ -17,6 +17,10 @@ Feel free to open pull requests on the project repository.
 
 ```bash
 npm install @lorenzopant/tmdb
+// or
+pnpm add @lorenzopant/tmdb
+// or
+yard add @lorenzopant/tmdb
 ```
 
 ---
