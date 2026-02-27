@@ -1,4 +1,4 @@
-# Contributing to tmdb-api-ts
+# Contributing to @lorenzopant/tmdb
 
 Thank you for considering contributing to **tmdb-api-ts**! Whether it's bug reports, feature requests, documentation improvements, or code contributions — all help is appreciated 🙌
 
