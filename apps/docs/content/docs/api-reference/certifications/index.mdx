@@ -1,0 +1,23 @@
+---
+title: Certifications
+description: Query system-level certification data from TMDB, including content ratings and their associated countries.
+---
+
+The `Certifications` provides access to content rating information for movies and TV shows on TMDB. This includes the various certification ratings (e.g., PG-13, R, TV-MA)
+along with the countries that use them. You can use this data to understand the content ratings associated with media items and filter results based on certifications.
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+tmdb.certifications; // access methods
+
+// or standalone
+import { CertificationsAPI } from "@lorenzopant/tmdb";
+const certifications = new CertificationsAPI("your-api-key");
+```
+
+## Methods
+
+- [`movie_certifications()`](/docs/api-reference/certifications/movie-certifications) — Query the available movie certifications and their associated countries.
+- [`tv_certifications()`](/docs/api-reference/certifications/tv-certifications) — Query the available TV certifications and their associated countries.
