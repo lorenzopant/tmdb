@@ -127,7 +127,7 @@ Planned features and improvements include:
 | ----------------- | ------ |
 | Account           | ❌     |
 | Authentication    | ❌     |
-| Certifications    | ❌     |
+| Certifications    | ✅     |
 | Changes           | ❌     |
 | Collections       | ❌     |
 | Companies         | ❌     |
