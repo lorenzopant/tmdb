@@ -122,3 +122,34 @@ Planned features and improvements include:
 - More comprehensive examples and guides in the documentation.
 - Performance optimizations and caching strategies.
 - Community contributions and feedback-driven improvements.
+
+| API Endpoint      | Status |
+| ----------------- | ------ |
+| Account           | ❌     |
+| Authentication    | ❌     |
+| Certifications    | ❌     |
+| Changes           | ❌     |
+| Collections       | ❌     |
+| Companies         | ❌     |
+| Configuration     | ✅     |
+| Credits           | ❌     |
+| Discover          | ❌     |
+| Find              | ❌     |
+| Genres            | ✅     |
+| Guest Sessions    | ❌     |
+| Keywords          | ❌     |
+| Lists             | ❌     |
+| Movie Lists       | ✅     |
+| Movies            | ✅     |
+| Networks          | ❌     |
+| People Lists      | ❌     |
+| People            | ❌     |
+| Reviews           | ❌     |
+| Search            | 🚧     |
+| Trending          | ❌     |
+| TV Series Lists   | ✅     |
+| TV Series         | ✅     |
+| TV Seasons        | ❌     |
+| TV Episodes       | ❌     |
+| TV Episode Groups | ❌     |
+| Watch Providers   | ❌     |
