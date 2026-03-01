@@ -7,4 +7,8 @@ export const ENDPOINTS = {
 		TIMEZONES: "/configuration/timezones",
 		PRIMARY_TRANSLATIONS: "/configuration/primary_translations",
 	},
+	CERTIFICATIONS: {
+		MOVIE_CERTIFICATIONS: "/certification/movie/list",
+		TV_CERTIFICATIONS: "/certification/tv/list",
+	},
 };
