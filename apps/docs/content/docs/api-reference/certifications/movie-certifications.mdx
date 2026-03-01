@@ -1,0 +1,51 @@
+---
+title: Movie Certifications
+description: Query the available movie certifications and their associated countries.
+---
+
+Query the available movie certifications and their associated countries.
+
+```ts
+async movie_certifications(): Promise<Certifications>
+```
+
+> **TMDB Reference:** [Movie Certifications](https://developer.themoviedb.org/reference/certification-movie-list)
+
+## Parameters
+
+This method takes no parameters.
+
+## Returns
+
+A [`Certifications`](/docs/types/common#certifications) object containing
+the available movie certifications and their associated countries.
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const certifications = await tmdb.certifications.movie_certifications();
+
+console.log(certifications);
+// {
+//   certifications: {
+//     US: [
+//       { certification: "G", meaning: "General Audiences", order: 1 },
+//       { certification: "PG", meaning: "Parental Guidance Suggested", order: 2 },
+//       ...
+//     ],
+//     ...
+//   }
+// }
+```
+
+<Callout type="info">
+	This data changes infrequently. Consider caching the response rather than calling this endpoint on every request.
+</Callout>
+
+## Types
+
+- [Certifications](/docs/types/common#certifications)
+- [CertificationItem](/docs/types/common#certificationitem)
