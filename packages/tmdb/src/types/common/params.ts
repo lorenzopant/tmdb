@@ -28,3 +28,4 @@ export type WithLanguage = WithParams<"language">;
 export type WithPage = WithParams<"page">;
 export type WithRegion = WithParams<"region">;
 export type WithLanguagePage = WithParams<"language" | "page">;
+export type WithPageAndDateRange = WithParams<"page"> & DateRange;

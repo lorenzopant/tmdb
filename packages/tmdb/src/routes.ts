@@ -11,4 +11,9 @@ export const ENDPOINTS = {
 		MOVIE_CERTIFICATIONS: "/certification/movie/list",
 		TV_CERTIFICATIONS: "/certification/tv/list",
 	},
+	CHANGES: {
+		MOVIE_LIST: "/movie/changes",
+		PEOPLE_LIST: "/person/changes",
+		TV_LIST: "/tv/changes",
+	},
 };

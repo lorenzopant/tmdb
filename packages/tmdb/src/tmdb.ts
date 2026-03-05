@@ -2,6 +2,7 @@
 
 import { ApiClient } from "./client";
 import { CertificationsAPI } from "./endpoints/certifications";
+import { ChangesAPI } from "./endpoints/changes";
 import { ConfigurationAPI } from "./endpoints/configuration";
 import { GenresAPI } from "./endpoints/genres";
 import { MovieListsAPI } from "./endpoints/movie_lists";
@@ -25,6 +26,7 @@ export class TMDB {
 	public tv_lists: TVSeriesListsAPI;
 	public tv_series: TVSeriesAPI;
 	public certifications: CertificationsAPI;
+	public changes: ChangesAPI;
 	// etc...
 
 	/**
@@ -45,5 +47,6 @@ export class TMDB {
 		this.tv_lists = new TVSeriesListsAPI(this.client, this.options);
 		this.tv_series = new TVSeriesAPI(this.client, this.options);
 		this.certifications = new CertificationsAPI(this.client, this.options);
+		this.changes = new ChangesAPI(this.client, this.options);
 	}
 }
