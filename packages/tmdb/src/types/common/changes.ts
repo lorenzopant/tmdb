@@ -35,3 +35,13 @@ export type ChangeItem = {
 	/** The original data object (structure varies by change type) */
 	original_value?: object;
 };
+
+/**
+ * Represents a single change result item from the changes endpoint.
+ */
+export type ChangeResultItem = {
+	/** Id of the movie, tv show or person */
+	id: number;
+	/** Whether the movie, tv show or person is marked as adult content */
+	adult: boolean;
+};

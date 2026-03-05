@@ -74,7 +74,7 @@ export type Collection = {
  * Represents common class for cast and crew types
  */
 export type Credit = {
-	// ** Indicates whether the cast member is an adult
+	// ** Indicates whether the cast member is marked for adult content
 	adult: boolean;
 	// ** The gender of the cast member, or null if not specified (1 = female, 2 = male)
 	gender: number | null;

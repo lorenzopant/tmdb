@@ -1,0 +1,51 @@
+---
+title: Movie List
+description: Query the movies that have been changed in the last 24 hours.
+---
+
+Query the movies that have been changed in the last 24 hours, or since a specified date.
+
+```ts
+async movie_list(): Promise<PaginatedResponse<ChangeResultItem>>
+```
+
+> **TMDB Reference:** [Movie List](https://developer.themoviedb.org/reference/changes-movie-list)
+
+## Parameters
+
+| Name         | Type     | Required | Description                                                          |
+| ------------ | -------- | -------- | -------------------------------------------------------------------- |
+| `page`       | `number` | ❌       | Page number for paginated results. Defaults to `1` if not specified. |
+| `start_date` | `string` | ❌       | The start date for the range of changes to query.                    |
+| `end_date`   | `string` | ❌       | The end date for the range of changes to query.                      |
+
+## Returns
+
+A [`PaginatedResponse`](/docs/types/common#paginatedresponset) of [`ChangeResultItem`](/docs/types/common#changeresultitem) objects containing
+the associated movie changes ids.
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const movieChanges = await tmdb.changes.movie_list();
+
+console.log(movieChanges);
+// {
+//   page: 1,
+//   results: [
+//     { id: 123, adult: false },
+//     { id: 456, adult: false },
+//     ...
+//   ],
+//   total_pages: 10,
+//   total_results: 200
+// }
+```
+
+## Types
+
+- [PaginatedResponse](/docs/types/common#paginatedresponset)
+- [ChangeResultItem](/docs/types/common#changeresultitem)

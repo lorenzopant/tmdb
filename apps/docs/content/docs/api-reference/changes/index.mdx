@@ -1,0 +1,24 @@
+---
+title: Changes
+description: Query a list of items (movies, tv shows or people) that have been changed in the last 24 hours, or since a specified date.
+---
+
+The `Changes` provides access to movies, TV shows and people that have been changed on TMDB in the last 24 hours, or since a specified date.
+To get a list of changes, use the `changes` method on the appropriate API module (e.g., `tmdb.movies.changes()`, `tmdb.tv_series.changes()`, or `tmdb.people.changes()`).
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+tmdb.changes; // access methods
+
+// or standalone
+import { ChangesAPI } from "@lorenzopant/tmdb";
+const changes = new ChangesAPI("your-api-key");
+```
+
+## Methods
+
+- [`movie_list()`](/docs/api-reference/changes/movie-list) — Query the movies that have been changed.
+- [`tv_list()`](/docs/api-reference/changes/tv-list) — Query the TV shows that have been changed.
+- [`people_list()`](/docs/api-reference/changes/people-list) — Query the people that have been changed.
