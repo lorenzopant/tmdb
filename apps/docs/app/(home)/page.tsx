@@ -1,4 +1,5 @@
 import { BackgroundPosters } from "@/components/background";
+import { Star } from "lucide-react";
 import Link from "next/link";
 
 export default function HomePage() {
@@ -28,10 +29,13 @@ export default function HomePage() {
 						Get Started
 					</Link>
 					<Link
-						href="/docs/api-reference"
-						className="rounded-lg border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 px-5 py-2.5 text-sm font-semibold text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10 transition-colors backdrop-blur-sm"
+						href="https://github.com/lorenzopant/tmdb"
+						rel="opener"
+						target="__blank"
+						className="rounded-lg border flex items-center gap-2 border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 px-5 py-2.5 text-sm font-semibold text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10 transition-colors backdrop-blur-sm"
 					>
-						API Reference
+						<Star className="size-4.5" />
+						Star on GitHub
 					</Link>
 				</div>
 
