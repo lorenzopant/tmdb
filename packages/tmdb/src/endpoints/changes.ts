@@ -1,5 +1,5 @@
 import { ENDPOINTS } from "../routes";
-import { ChangeResults, WithPageAndDateRange } from "../types";
+import { ChangeResultItem, PaginatedResponse, WithPageAndDateRange } from "../types";
 import { TMDBAPIBase } from "./base";
 
 export class ChangesAPI extends TMDBAPIBase {
@@ -14,8 +14,8 @@ export class ChangesAPI extends TMDBAPIBase {
 	 * @param end_date End date for change items
 	 * @reference https://developer.themoviedb.org/reference/changes-movie-list
 	 */
-	async movie_list(params?: WithPageAndDateRange): Promise<ChangeResults> {
-		return this.client.request<ChangeResults>(ENDPOINTS.CHANGES.MOVIE_LIST, params);
+	async movie_list(params?: WithPageAndDateRange): Promise<PaginatedResponse<ChangeResultItem>> {
+		return this.client.request<PaginatedResponse<ChangeResultItem>>(ENDPOINTS.CHANGES.MOVIE_LIST, params);
 	}
 
 	/**
@@ -29,8 +29,8 @@ export class ChangesAPI extends TMDBAPIBase {
 	 * @param end_date End date for change items
 	 * @reference https://developer.themoviedb.org/reference/changes-people-list
 	 */
-	async people_list(params?: WithPageAndDateRange): Promise<ChangeResults> {
-		return this.client.request<ChangeResults>(ENDPOINTS.CHANGES.PEOPLE_LIST, params);
+	async people_list(params?: WithPageAndDateRange): Promise<PaginatedResponse<ChangeResultItem>> {
+		return this.client.request<PaginatedResponse<ChangeResultItem>>(ENDPOINTS.CHANGES.PEOPLE_LIST, params);
 	}
 
 	/**
@@ -44,7 +44,7 @@ export class ChangesAPI extends TMDBAPIBase {
 	 * @param end_date End date for change items
 	 * @reference https://developer.themoviedb.org/reference/changes-tv-list
 	 */
-	async tv_list(params?: WithPageAndDateRange): Promise<ChangeResults> {
-		return this.client.request<ChangeResults>(ENDPOINTS.CHANGES.TV_LIST, params);
+	async tv_list(params?: WithPageAndDateRange): Promise<PaginatedResponse<ChangeResultItem>> {
+		return this.client.request<PaginatedResponse<ChangeResultItem>>(ENDPOINTS.CHANGES.TV_LIST, params);
 	}
 }
