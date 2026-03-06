@@ -86,13 +86,13 @@ export type CollectionTranslationData = {
 };
 
 /** Base param used by all collection queries */
-export type BaseCollectionParam = {
+export type CollectionBaseParam = {
 	/** Uniquely identifies a collection in TMDB. */
 	collection_id: number;
 };
 
-export type CollectionDetailsParams = BaseCollectionParam & WithLanguage;
-export type CollectionImagesParams = BaseCollectionParam & {
+export type CollectionDetailsParams = CollectionBaseParam & WithLanguage;
+export type CollectionImagesParams = CollectionBaseParam & {
 	language?: Language | LanguageISO6391;
 	include_image_language?: Language | LanguageISO6391;
 };

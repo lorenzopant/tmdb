@@ -5,3 +5,4 @@ export * from "./networks";
 export * from "./search";
 export * from "./tv";
 export * from "./utility";
+export * from "./other";

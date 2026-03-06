@@ -1,6 +1,6 @@
 import { ENDPOINTS } from "../routes";
 import {
-	BaseCollectionParam,
+	CollectionBaseParam,
 	Collection,
 	CollectionDetailsParams,
 	CollectionImages,
@@ -52,7 +52,7 @@ export class CollectionsAPI extends TMDBAPIBase {
 	 * @param collection_id Unique identifier for the collection
 	 * @reference https://developer.themoviedb.org/reference/collection-translations
 	 */
-	async translations(params: BaseCollectionParam): Promise<CollectionTranslations> {
+	async translations(params: CollectionBaseParam): Promise<CollectionTranslations> {
 		const endpoint = `${ENDPOINTS.COLLECTIONS.DETAILS}/${params.collection_id}${ENDPOINTS.COLLECTIONS.TRANSLATIONS}`;
 		return this.client.request<CollectionTranslations>(endpoint, params);
 	}
