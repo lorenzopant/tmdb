@@ -1,5 +1,12 @@
 import { ENDPOINTS } from "../routes";
-import { ChangeResultItem, PaginatedResponse, WithPageAndDateRange } from "../types";
+import { Collection } from "../types";
+import {
+	BaseCollectionParam,
+	CollectionDetailsParams,
+	CollectionImages,
+	CollectionImagesParams,
+	CollectionTranslations,
+} from "../types/other/collections";
 import { TMDBAPIBase } from "./base";
 
 export class CollectionsAPI extends TMDBAPIBase {
@@ -13,37 +20,39 @@ export class CollectionsAPI extends TMDBAPIBase {
 	 * @param language Language for the response
 	 * @reference https://developer.themoviedb.org/reference/collection-details
 	 */
-	async movie_list(params?: WithPageAndDateRange): Promise<PaginatedResponse<ChangeResultItem>> {
-		return this.client.request<PaginatedResponse<ChangeResultItem>>(ENDPOINTS.CHANGES.MOVIE_LIST, params);
+	async details(params: CollectionDetailsParams): Promise<Collection> {
+		const endpoint = `${ENDPOINTS.COLLECTIONS.DETAILS}/${params.collection_id}`;
+		return this.client.request<Collection>(endpoint, params);
 	}
 
 	/**
-	 * People List
-	 * GET - https://api.themoviedb.org/3/person/changes
+	 * Images
+	 * GET - https://api.themoviedb.org/3/collection/{collection_id}/images
 	 *
-	 * Get a list of all of the person ids that have been changed in the past 24 hours.
+	 * Get the images that belong to a collection.
+	 * This method will return the backdrops and posters that have been added to a collection.
 	 *
-	 * @param page Page number
-	 * @param start_date Start date for change items
-	 * @param end_date End date for change items
-	 * @reference https://developer.themoviedb.org/reference/changes-people-list
+	 * @param collection_id Unique identifier for the collection
+	 * @param language Language for the response
+	 * @param include_image_language Additional language for images
+	 * @reference https://developer.themoviedb.org/reference/collection-images
 	 */
-	async people_list(params?: WithPageAndDateRange): Promise<PaginatedResponse<ChangeResultItem>> {
-		return this.client.request<PaginatedResponse<ChangeResultItem>>(ENDPOINTS.CHANGES.PEOPLE_LIST, params);
+	async images(params: CollectionImagesParams): Promise<CollectionImages> {
+		const endpoint = `${ENDPOINTS.COLLECTIONS.DETAILS}/${params.collection_id}${ENDPOINTS.COLLECTIONS.IMAGES}`;
+		return this.client.request<CollectionImages>(endpoint, params);
 	}
 
 	/**
-	 * TV List
-	 * GET - https://api.themoviedb.org/3/tv/changes
+	 * Translations
+	 * GET - https://api.themoviedb.org/3/collection/{collection_id}/translations
 	 *
-	 * Get a list of all of the tv show ids that have been changed in the past 24 hours.
+	 * Get collection translations by ID.
 	 *
-	 * @param page Page number
-	 * @param start_date Start date for change items
-	 * @param end_date End date for change items
-	 * @reference https://developer.themoviedb.org/reference/changes-tv-list
+	 * @param collection_id Unique identifier for the collection
+	 * @reference https://developer.themoviedb.org/reference/collection-translations
 	 */
-	async tv_list(params?: WithPageAndDateRange): Promise<PaginatedResponse<ChangeResultItem>> {
-		return this.client.request<PaginatedResponse<ChangeResultItem>>(ENDPOINTS.CHANGES.TV_LIST, params);
+	async translations(params: BaseCollectionParam): Promise<CollectionTranslations> {
+		const endpoint = `${ENDPOINTS.COLLECTIONS.DETAILS}/${params.collection_id}${ENDPOINTS.COLLECTIONS.TRANSLATIONS}`;
+		return this.client.request<CollectionTranslations>(endpoint, params);
 	}
 }
