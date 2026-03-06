@@ -1,4 +1,4 @@
-import { Collection, Genre, ProductionCompany, ProductionCountry, SpokenLanguage } from "../common";
+import { MovieCollection, Genre, ProductionCompany, ProductionCountry, SpokenLanguage } from "../common";
 import { MovieAlternativeTitles } from "./alternative_titles";
 import { MovieChanges } from "./changes";
 import { MovieCredits } from "./credits";
@@ -21,7 +21,7 @@ export type MovieDetails = {
 	/** Path to backdrop image, null if not available */
 	backdrop_path: string | null;
 	/** Collection the movie belongs to (e.g., "The Lord of the Rings Collection"), null if standalone */
-	belongs_to_collection: Collection | null;
+	belongs_to_collection: MovieCollection | null;
 	/** Production budget in US dollars */
 	budget: number;
 	/** Array of genres associated with the movie */

@@ -1,7 +1,7 @@
 import { ENDPOINTS } from "../routes";
-import { Collection } from "../types";
 import {
 	BaseCollectionParam,
+	Collection,
 	CollectionDetailsParams,
 	CollectionImages,
 	CollectionImagesParams,
@@ -21,8 +21,9 @@ export class CollectionsAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/collection-details
 	 */
 	async details(params: CollectionDetailsParams): Promise<Collection> {
+		const { language = this.defaultOptions.language, ...rest } = params;
 		const endpoint = `${ENDPOINTS.COLLECTIONS.DETAILS}/${params.collection_id}`;
-		return this.client.request<Collection>(endpoint, params);
+		return this.client.request<Collection>(endpoint, { language, ...rest });
 	}
 
 	/**

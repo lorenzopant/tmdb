@@ -59,7 +59,7 @@ export type SpokenLanguage = {
 /**
  * Represents a collection of movies.
  */
-export type Collection = {
+export type MovieCollection = {
 	// ** The unique identifier for the collection
 	id: number;
 	// ** The name of the collection
