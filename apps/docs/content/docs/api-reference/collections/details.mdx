@@ -1,0 +1,36 @@
+---
+title: Details
+description: Query the details of a specific collection.
+---
+
+```ts
+async details(params: CollectionDetailsParams): Promise<Collection>
+```
+
+> **TMDB Reference:** [Collection Details](https://developer.themoviedb.org/reference/collection-details)
+
+## Parameters
+
+| Name            | Type                                                | Required | Description                                          |
+| --------------- | --------------------------------------------------- | -------- | ---------------------------------------------------- |
+| `collection_id` | `number`                                            | ✅       | TMDB collection identifier.                          |
+| `language`      | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized results. Defaults to `en-US`. |
+
+## Returns
+
+A [`Collection`](/docs/types/others#collection) object containing
+the details of the specified collection.
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const collection = await tmdb.collections.details({ collection_id: 10 }); // Star Wars Collection
+```
+
+## Types
+
+- [Collection](/docs/types/others#collection)
+- [CollectionItem](/docs/types/others#collectionitem)
