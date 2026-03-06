@@ -1,4 +1,5 @@
-import { MediaType } from "../common";
+import { ImageItem, MediaType, Translation, WithLanguage } from "../common";
+import { Language, LanguageISO6391 } from "../config";
 import { MovieResultItem } from "../search";
 
 /**
@@ -37,4 +38,61 @@ export type CollectionItem = Omit<MovieResultItem, "title" | "original_title"> &
 	name: string;
 	/** Name of the media item in its original language */
 	original_name: string;
+};
+
+/**
+ * Represents the images associated with a TMDB collection,
+ * including backdrops and posters.
+ */
+export type CollectionImages = {
+	/** Unique TMDB identifier for the collection */
+	id: number;
+	/** List of backdrop images available for the collection */
+	backdrops: ImageItem[];
+	/** List of poster images available for the collection */
+	posters: ImageItem[];
+};
+
+/**
+ * Represents the available translations for a TMDB collection.
+ */
+export type CollectionTranslations = {
+	/** Unique TMDB identifier for the collection */
+	id: number;
+	/** List of translations available for the collection */
+	translations: CollectionTranslationItem[];
+};
+
+/**
+ * Represents a single translation entry for a collection,
+ * containing the localized data payload.
+ */
+export type CollectionTranslationItem = Translation & {
+	/** Localized data for this translation */
+	data: CollectionTranslationData;
+};
+
+/**
+ * Contains the localized fields provided by a collection translation.
+ * All fields are optional as not every translation may supply all values.
+ */
+export type CollectionTranslationData = {
+	/** Localized title of the collection */
+	title?: string;
+	/** Localized overview or synopsis of the collection */
+	overview?: string;
+	/** Localized homepage URL for the collection */
+	homepage?: string;
+};
+
+/** Base param used by all collection queries */
+export type BaseCollectionParam = {
+	/** Uniquely identifies a collection in TMDB. */
+	collection_id: number;
+};
+
+export type CollectionDetailsParams = BaseCollectionParam & WithLanguage;
+export type CollectionImagesParams = BaseCollectionParam & {
+	language?: Language | LanguageISO6391;
+	include_image_language?: Language | LanguageISO6391;
 };
