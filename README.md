@@ -129,7 +129,7 @@ Planned features and improvements include:
 | Authentication    | ❌     |
 | Certifications    | ✅     |
 | Changes           | ✅     |
-| Collections       | ❌     |
+| Collections       | ✅     |
 | Companies         | ❌     |
 | Configuration     | ✅     |
 | Credits           | ❌     |
