@@ -17,7 +17,7 @@ export const ENDPOINTS = {
 		TV_LIST: "/tv/changes",
 	},
 	COLLECTIONS: {
-		DETAILS: "/collection/",
+		DETAILS: "/collection",
 		IMAGES: "/images",
 		TRANSLATIONS: "/translations",
 	},
