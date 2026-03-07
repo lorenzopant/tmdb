@@ -1,168 +1,119 @@
-"use client";
+import { TMDB } from "@lorenzopant/tmdb";
+import { cache } from "react";
 
-import { motion } from "framer-motion";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { cn } from "@/lib/cn";
-import { useTmdb } from "@/components/tmdb";
-import { useTheme } from "@/app/hooks/use-theme";
+const COLUMN_COUNT = 9;
+const POSTERS_PER_COLUMN = 8;
 
-export interface BoxesProps {
-	className?: string;
-	rows?: number;
-	cols?: number;
-	posters: string[];
-	isDark: boolean;
-}
-
-/**
- * Fisher-Yates shuffle — returns a new shuffled array
- */
-function shuffle<T>(arr: T[]): T[] {
-	const a = [...arr];
-	for (let i = a.length - 1; i > 0; i--) {
+function shuffle<T>(items: T[]) {
+	const list = [...items];
+	for (let i = list.length - 1; i > 0; i--) {
 		const j = Math.floor(Math.random() * (i + 1));
-		[a[i], a[j]] = [a[j], a[i]];
+		[list[i], list[j]] = [list[j], list[i]];
 	}
-	return a;
+	return list;
 }
 
-/**
- * Builds a grid where no two adjacent cells (horizontal or vertical) share the same poster.
- * Falls back to a random pick when the pool is too small to guarantee uniqueness.
- */
-function buildGrid(rows: number, cols: number, posters: string[]): string[][] {
-	const grid: string[][] = [];
+const getPosterColumns = cache(async () => {
+	const token = process.env.TMDB_KEY;
 
-	for (let r = 0; r < rows; r++) {
-		const row: string[] = [];
-		for (let c = 0; c < cols; c++) {
-			const forbidden = new Set<string>();
-			if (c > 0) forbidden.add(row[c - 1]);
-			if (r > 0) forbidden.add(grid[r - 1][c]);
+	if (!token) return [] as string[][];
 
-			const candidates = posters.filter((p) => !forbidden.has(p));
-			const pool = candidates.length > 0 ? candidates : posters;
-			row.push(pool[Math.floor(Math.random() * pool.length)]);
-		}
-		grid.push(row);
-	}
-
-	return grid;
-}
-
-const PosterCell = React.memo(({ src, showPlus, isDark }: { src: string; showPlus: boolean; isDark: boolean }) => (
-	<motion.div
-		className="relative w-45 h-64 border-r border-t border-slate-700/40 overflow-hidden"
-		initial={{ opacity: 0.25 }}
-		whileHover={{ opacity: 0.9, transition: { duration: 0.15 } }}
-		transition={{ duration: 0.4 }}
-	>
-		{src && (
-			<img
-				src={src}
-				alt=""
-				role="presentation"
-				loading="lazy"
-				decoding="async"
-				className={cn("h-full w-full object-cover")}
-				draggable={false}
-			/>
-		)}
-		{showPlus && (
-			<svg
-				className="pointer-events-none absolute -left-5.5 -top-3.5 h-6 w-10 text-slate-700/60"
-				fill="none"
-				stroke="currentColor"
-				strokeWidth="1.5"
-				viewBox="0 0 24 24"
-			>
-				<path d="M12 6v12m6-6H6" strokeLinecap="round" strokeLinejoin="round" />
-			</svg>
-		)}
-	</motion.div>
-));
-
-PosterCell.displayName = "PosterCell";
-
-const PosterRow = React.memo(
-	({ rowIndex, cols, posters, isDark }: { rowIndex: number; cols: number; isDark: boolean; posters: string[] }) => (
-		<div className="relative w-45 h-64 border-l border-slate-700/40">
-			{posters.map((src, colIndex) => (
-				<PosterCell key={colIndex} src={src} showPlus={rowIndex % 2 === 0 && colIndex % 2 === 0} isDark={isDark} />
-			))}
-		</div>
-	),
-);
-
-PosterRow.displayName = "PosterRow";
-
-export const PosterBoxes = ({ className, rows = 150, cols = 100, posters, isDark }: BoxesProps) => {
-	const grid = useMemo(() => buildGrid(rows, cols, posters), [rows, cols, posters]);
-
-	return (
-		<div
-			className={cn("pointer-events-auto absolute inset-0 z-0 flex", className)}
-			style={{
-				transform: "translate(-50%, -50%) skewX(-48deg) skewY(14deg) scale(0.675)",
-				transformOrigin: "center center",
-				top: "50%",
-				left: "50%",
-				width: "300vw",
-				height: "300vh",
-			}}
-		>
-			{grid.map((rowPosters, rowIndex) => (
-				<PosterRow key={rowIndex} rowIndex={rowIndex} cols={cols} isDark={isDark} posters={rowPosters} />
-			))}
-		</div>
-	);
-};
-
-export function BackgroundPosters({ children }: { children?: React.ReactNode }) {
-	const tmdb = useTmdb();
-	const theme = useTheme();
-	const [posters, setPosters] = useState<string[]>([]);
-
-	const isDark = theme === "dark";
-
-	const fetchPosters = useCallback(async () => {
+	try {
+		const tmdb = new TMDB(token);
 		const [page1, page2] = await Promise.all([tmdb.movie_lists.top_rated(), tmdb.movie_lists.top_rated({ page: 2 })]);
 
-		const urls = [...page1.results, ...page2.results]
-			.filter((m) => m.poster_path)
-			.map((m) => tmdb.images.poster(m.poster_path, "w185"));
+		const posters = shuffle(
+			[...page1.results, ...page2.results]
+				.filter((movie) => movie.poster_path)
+				.map((movie) => tmdb.images.poster(movie.poster_path!, "w342")),
+		);
 
-		setPosters(shuffle(urls));
-	}, []);
+		if (posters.length === 0) return [] as string[][];
 
-	useEffect(() => {
-		fetchPosters();
-	}, [fetchPosters]);
+		return Array.from({ length: COLUMN_COUNT }, (_, columnIndex) =>
+			Array.from({ length: POSTERS_PER_COLUMN }, (_, posterIndex) => {
+				const index = (columnIndex * POSTERS_PER_COLUMN + posterIndex) % posters.length;
+				return posters[index];
+			}),
+		);
+	} catch {
+		return [] as string[][];
+	}
+});
 
-	if (!posters.length) return null;
+function PosterColumn({ posters, reverse, duration }: { posters: string[]; reverse?: boolean; duration: number }) {
+	const loop = [...posters, ...posters];
 
 	return (
-		<div className={cn("fixed inset-0 overflow-hidden", isDark ? "bg-black" : "bg-white")}>
-			<PosterBoxes posters={posters} isDark={isDark} />
-
-			{/* Vignette */}
+		<div className="relative h-120 w-36 overflow-hidden rounded-[1.75rem] border border-black/10 bg-white/35 shadow-[0_24px_70px_rgba(15,23,42,0.1)] backdrop-blur-[6px] dark:border-white/10 dark:bg-white/5 dark:shadow-[0_28px_72px_rgba(0,0,0,0.35)] sm:h-144 sm:w-44 lg:h-160 lg:w-48">
 			<div
-				className={cn(
-					"pointer-events-none absolute inset-0 z-10",
-					isDark
-						? "bg-black mask-[radial-gradient(ellipse_at_center,transparent_20%,black)]"
-						: "bg-white mask-[radial-gradient(ellipse_at_center,transparent_20%,white)]",
-				)}
-			/>
+				className="flex flex-col gap-3 will-change-transform"
+				style={{
+					animationName: reverse ? "poster-marquee-reverse" : "poster-marquee",
+					animationDuration: `${duration}s`,
+					animationIterationCount: "infinite",
+					animationTimingFunction: "linear",
+				}}
+			>
+				{loop.map((src, index) => (
+					<img
+						key={`${src}-${index}`}
+						src={src}
+						alt=""
+						role="presentation"
+						loading="lazy"
+						decoding="async"
+						width="342"
+						height="513"
+						className="aspect-2/3 w-full rounded-[1.25rem] object-cover saturate-[0.95] contrast-[1.02]"
+					/>
+				))}
+			</div>
+			<div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/30 dark:ring-white/10" />
+		</div>
+	);
+}
 
-			{/* Dim */}
-			<div className={cn("pointer-events-none absolute inset-0 z-10", isDark ? "bg-black/20" : "bg-white/20")} />
+export async function BackgroundPosters({ children }: { children?: React.ReactNode }) {
+	const columns = await getPosterColumns();
+	const hasPosters = columns.some((column) => column.length > 0 && Boolean(column[0]));
 
-			{children && (
-				<div className="pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center gap-6 px-6 text-center">
-					{children}
+	return (
+		<div className="relative flex min-h-full flex-1 items-center justify-center overflow-hidden">
+			<div aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-70 dark:opacity-100">
+				<div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.14),transparent_34%),radial-gradient(circle_at_20%_30%,rgba(59,130,246,0.12),transparent_30%),radial-gradient(circle_at_80%_20%,rgba(244,114,182,0.12),transparent_28%)] dark:bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.18),transparent_34%),radial-gradient(circle_at_20%_30%,rgba(59,130,246,0.2),transparent_30%),radial-gradient(circle_at_80%_20%,rgba(244,114,182,0.18),transparent_28%)]" />
+				<div className="absolute inset-0 bg-[linear-gradient(rgba(15,23,42,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(15,23,42,0.05)_1px,transparent_1px)] bg-size-[44px_44px] dark:bg-[linear-gradient(rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.06)_1px,transparent_1px)]" />
+			</div>
+
+			{hasPosters && (
+				<div className="pointer-events-none absolute inset-0 overflow-hidden opacity-55 dark:opacity-70">
+					<div className="absolute left-1/2 top-1/2 h-[170vh] w-[240vw] -translate-x-1/2 -translate-y-1/2 mask-[radial-gradient(ellipse_at_center,black_38%,transparent_83%)]">
+						<div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.08),transparent_55%)] dark:bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.05),transparent_55%)]" />
+					</div>
+					<div className="absolute left-1/2 top-1/2 flex w-[220vw] -translate-x-1/2 -translate-y-1/2 justify-center gap-3 sm:gap-5 lg:gap-6">
+						{columns.map((column, index) => (
+							<div
+								key={index}
+								className="animate-[poster-column-float_8s_ease-in-out_infinite]"
+								style={{
+									animationDelay: `${index * 0.8}s`,
+								}}
+							>
+								<PosterColumn
+									posters={column}
+									reverse={index % 2 === 1}
+									duration={index % 2 === 0 ? 34 + index * 1.5 : 30 + index * 1.5}
+								/>
+							</div>
+						))}
+					</div>
 				</div>
 			)}
+
+			<div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.76)_0%,rgba(255,255,255,0.83)_24%,rgba(255,255,255,0.91)_48%,rgba(255,255,255,0.97)_76%)] dark:bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.82)_0%,rgba(0,0,0,0.77)_24%,rgba(0,0,0,0.8)_48%,rgba(0,0,0,0.9)_76%)]" />
+			<div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.95),transparent_22%,transparent_78%,rgba(255,255,255,0.95))] dark:bg-[linear-gradient(to_bottom,rgba(0,0,0,0.95),transparent_22%,transparent_78%,rgba(0,0,0,0.95))]" />
+
+			{children && <div className="relative z-10 flex w-full flex-1 flex-col">{children}</div>}
 		</div>
 	);
 }

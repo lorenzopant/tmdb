@@ -1,3 +1,34 @@
 @import 'tailwindcss';
 @import 'fumadocs-ui/css/neutral.css';
 @import 'fumadocs-ui/css/preset.css';
+
+@keyframes poster-marquee {
+	from {
+		transform: translateY(0);
+	}
+
+	to {
+		transform: translateY(-50%);
+	}
+}
+
+@keyframes poster-marquee-reverse {
+	from {
+		transform: translateY(-50%);
+	}
+
+	to {
+		transform: translateY(0);
+	}
+}
+
+@keyframes poster-column-float {
+	0%,
+	100% {
+		transform: translateY(0) scale(1);
+	}
+
+	50% {
+		transform: translateY(-10px) scale(1.012);
+	}
+}
