@@ -130,7 +130,7 @@ Planned features and improvements include:
 | Certifications    | ✅     |
 | Changes           | ✅     |
 | Collections       | ✅     |
-| Companies         | ❌     |
+| Companies         | ✅     |
 | Configuration     | ✅     |
 | Credits           | ❌     |
 | Discover          | ❌     |
