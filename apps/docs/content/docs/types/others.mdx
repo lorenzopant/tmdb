@@ -1,0 +1,57 @@
+---
+title: Others
+description: Other miscellaneous types used across the TMDB API.
+---
+
+import { TypeTable } from "fumadocs-ui/components/type-table";
+
+## Collection
+
+Types related to the [CollectionsAPI](/docs/api-reference/collections) namespace.
+
+### `Collection`
+
+<AutoTypeTable path="other/collections.ts" name="Collection" />
+
+### `CollectionItem`
+
+<AutoTypeTable path="other/collections.ts" name="CollectionItem" />
+
+### `CollectionImages`
+
+<AutoTypeTable path="other/collections.ts" name="CollectionImages" />
+
+### `CollectionTranslations`
+
+<AutoTypeTable path="other/collections.ts" name="CollectionTranslations" />
+
+### `CollectionTranslationData`
+
+<AutoTypeTable path="other/collections.ts" name="CollectionTranslationData" />
+
+### `CollectionTranslationItem`
+
+<AutoTypeTable path="other/collections.ts" name="CollectionTranslationItem" />
+
+### `CollectionBaseParam`
+
+<AutoTypeTable path="other/collections.ts" name="CollectionBaseParam" />
+
+### `CollectionDetailsParams`
+
+<TypeTable
+	type={{
+		collection_id: { type: "number", required: true, description: "TMDB collection identifier." },
+		language: { type: "Language", description: "Language for localized results.", default: "en-US" },
+	}}
+/>
+
+### `CollectionImagesParams`
+
+<TypeTable
+	type={{
+		collection_id: { type: "number", required: true, description: "TMDB collection identifier." },
+		language: { type: "Language", description: "Language for localized results.", default: "en-US" },
+		include_image_language: { type: "Language", description: "Language to include in the response." },
+	}}
+/>

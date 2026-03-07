@@ -1,0 +1,45 @@
+---
+title: Images
+description: Query the images associated with a specific collection.
+---
+
+This method returns the backdrop and poster images associated with a specific collection.
+It can be used to retrieve all the images for a collection.
+
+```ts
+async images(params: CollectionImagesParams): Promise<CollectionImages>
+```
+
+> **TMDB Reference:** [Collection Images](https://developer.themoviedb.org/reference/collection-images)
+
+## Parameters
+
+| Name                     | Type                                                | Required | Description                                          |
+| ------------------------ | --------------------------------------------------- | -------- | ---------------------------------------------------- |
+| `collection_id`          | `number`                                            | ✅       | TMDB collection identifier.                          |
+| `language`               | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized results. Defaults to `en-US`. |
+| `include_image_language` | [`Language`](/docs/types/options/language#language) | ❌       | Additional language for localized results.           |
+
+<Callout type="info">
+	If you have a language specified, it will act as a filter on the returned items. You can use the include_image_language param to query
+	additional languages.
+</Callout>
+
+## Returns
+
+A [`CollectionImages`](/docs/types/others#collectionimages) object containing
+the images of the specified collection.
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const collection = await tmdb.collections.images({ collection_id: 10 }); // Star Wars Collection Images
+```
+
+## Types
+
+- [CollectionImages](/docs/types/others#collectionimages)
+- [ImageItem](/docs/types/common#imageitem)

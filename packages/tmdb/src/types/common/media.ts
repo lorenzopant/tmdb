@@ -59,15 +59,15 @@ export type SpokenLanguage = {
 /**
  * Represents a collection of movies.
  */
-export type Collection = {
+export type MovieCollection = {
 	// ** The unique identifier for the collection
 	id: number;
 	// ** The name of the collection
 	name: string;
-	// ** The path to the poster image of the collection, or null if not available
-	poster_path: string | null;
-	// ** The path to the backdrop image of the collection, or null if not available
-	backdrop_path: string | null;
+	// ** The path to the poster image of the collection, if present (sanitized nulls may surface as undefined)
+	poster_path?: string | null;
+	// ** The path to the backdrop image of the collection, if present (sanitized nulls may surface as undefined)
+	backdrop_path?: string | null;
 };
 
 /**

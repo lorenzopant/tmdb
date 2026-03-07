@@ -15,7 +15,7 @@ The complete representation of a movie as returned by [`movies.details()`](/docs
 	type={{
 		adult: { type: "boolean", description: "Whether the movie is marked as adult content." },
 		backdrop_path: { type: "string | null", description: "Path to the backdrop image." },
-		belongs_to_collection: { type: "Collection | null", description: "Collection the movie belongs to, null if standalone." },
+		belongs_to_collection: { type: "MovieCollection | null", description: "Collection the movie belongs to, null if standalone." },
 		budget: { type: "number", description: "Production budget in US dollars." },
 		genres: { type: "Genre[]", description: "Array of genres associated with the movie." },
 		homepage: { type: "string | null", description: "Official homepage URL." },

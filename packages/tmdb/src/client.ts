@@ -29,8 +29,8 @@ export class ApiClient {
 
 	/**
 	 * Recursively converts null values to undefined in API responses.
-	 * This allows TypeScript optional properties to work as expected.
-	 * This will automatically convert null or empty responses from TMDB into undefined values.
+	 * This allows optional properties to model fields that TMDB returns as nullable.
+	 * Response types for nullable fields should account for possible undefined values.
 	 */
 	private sanitizeNulls<T>(value: unknown): T {
 		// Only convert null to undefined, keep undefined as-is

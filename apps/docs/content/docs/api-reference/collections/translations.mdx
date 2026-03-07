@@ -1,0 +1,39 @@
+---
+title: Translations
+description: Query the translations associated with a specific collection.
+---
+
+This method returns the translations associated with a specific collection.
+It can be used to retrieve all the translations for a collection.
+
+```ts
+async translations(params: CollectionTranslationsParams): Promise<CollectionTranslations>
+```
+
+> **TMDB Reference:** [Collection Translations](https://developer.themoviedb.org/reference/collection-translations)
+
+## Parameters
+
+| Name            | Type     | Required | Description                 |
+| --------------- | -------- | -------- | --------------------------- |
+| `collection_id` | `number` | ✅       | TMDB collection identifier. |
+
+## Returns
+
+A [`CollectionTranslations`](/docs/types/others#collectiontranslations) object containing
+the translations of the specified collection.
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const collection = await tmdb.collections.translations({ collection_id: 10 }); // Star Wars Collection Translations
+```
+
+## Types
+
+- [CollectionTranslations](/docs/types/others#collectiontranslations)
+- [CollectionTranslationItem](/docs/types/others#collectiontranslationitem)
+- [CollectionTranslationData](/docs/types/others#collectiontranslationdata)
