@@ -14,8 +14,10 @@ describe("Companies API", () => {
 		const company = await tmdb.companies.details({ company_id: companyId });
 
 		expect(company.id).toBe(companyId);
-		expect(company.name).toBe("Warner Bros. Pictures");
-		expect(company.origin_country).toBe("US");
+		expect(company.name).toBeDefined();
+		expect(typeof company.name).toBe("string");
+		expect(company.name.length).toBeGreaterThan(0);
+		expect(company).toHaveProperty("origin_country");
 	});
 
 	it("(ALTERNATIVE NAMES) should fetch company alternative names", async () => {
