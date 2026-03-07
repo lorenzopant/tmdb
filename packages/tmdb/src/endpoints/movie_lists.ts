@@ -1,15 +1,7 @@
 import { MovieResultItem, PaginatedResponse } from "../types";
+import { ENDPOINTS } from "../routes";
 import { MovieListParams } from "../types/movies";
 import { TMDBAPIBase } from "./base";
-
-import { MOVIE_ENDPOINTS } from "./movies";
-
-export enum MovieListEndpoints {
-	NOW_PLAYING = "/now_playing",
-	POPULAR = "/popular",
-	TOP_RATED = "/top_rated",
-	UPCOMING = "/upcoming",
-}
 
 export class MovieListsAPI extends TMDBAPIBase {
 	private withDefaults(params: MovieListParams): MovieListParams {
@@ -24,7 +16,7 @@ export class MovieListsAPI extends TMDBAPIBase {
 	 * @returns Specific to endpoint (MovieListResult)
 	 */
 	private fetch_movie_list(endpoint: string, params: MovieListParams = {}): Promise<PaginatedResponse<MovieResultItem>> {
-		return this.client.request<PaginatedResponse<MovieResultItem>>(MOVIE_ENDPOINTS.MOVIE + endpoint, this.withDefaults(params));
+		return this.client.request<PaginatedResponse<MovieResultItem>>(ENDPOINTS.MOVIES.DETAILS + endpoint, this.withDefaults(params));
 	}
 
 	/**
@@ -37,7 +29,7 @@ export class MovieListsAPI extends TMDBAPIBase {
 	 * @param region ISO-3166-1 code
 	 */
 	async now_playing(params: MovieListParams = {}): Promise<PaginatedResponse<MovieResultItem>> {
-		return this.fetch_movie_list(MovieListEndpoints.NOW_PLAYING, params);
+		return this.fetch_movie_list(ENDPOINTS.MOVIES.NOW_PLAYING, params);
 	}
 
 	/**
@@ -50,7 +42,7 @@ export class MovieListsAPI extends TMDBAPIBase {
 	 * @param region ISO-3166-1 code
 	 */
 	async popular(params: MovieListParams = {}): Promise<PaginatedResponse<MovieResultItem>> {
-		return this.fetch_movie_list(MovieListEndpoints.POPULAR, params);
+		return this.fetch_movie_list(ENDPOINTS.MOVIES.POPULAR, params);
 	}
 
 	/**
@@ -63,7 +55,7 @@ export class MovieListsAPI extends TMDBAPIBase {
 	 * @param region ISO-3166-1 code
 	 */
 	async top_rated(params: MovieListParams = {}): Promise<PaginatedResponse<MovieResultItem>> {
-		return this.fetch_movie_list(MovieListEndpoints.TOP_RATED, params);
+		return this.fetch_movie_list(ENDPOINTS.MOVIES.TOP_RATED, params);
 	}
 
 	/**
@@ -76,6 +68,6 @@ export class MovieListsAPI extends TMDBAPIBase {
 	 * @param region ISO-3166-1 code
 	 */
 	async upcoming(params: MovieListParams = {}): Promise<PaginatedResponse<MovieResultItem>> {
-		return this.fetch_movie_list(MovieListEndpoints.UPCOMING, params);
+		return this.fetch_movie_list(ENDPOINTS.MOVIES.UPCOMING, params);
 	}
 }

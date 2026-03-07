@@ -1,4 +1,5 @@
 import { MediaWatchProviders } from "../types";
+import { ENDPOINTS } from "../routes";
 import {
 	TVAggregateCreditsParams,
 	TVAlternativeTitles,
@@ -30,29 +31,15 @@ import { TVScreenedTheatrically } from "../types/tv/screened_theatrically";
 import { TVAppendToResponseNamespace, TVSeriesDetails, TVDetailsWithAppends } from "../types/tv/tv_series";
 import { TMDBAPIBase } from "./base";
 
-export const TV_SERIES_ENDPOINTS = {
-	TV: "/tv",
-	TV_AGGREGATE_CREDITS: "/aggregate_credits",
-	TV_ALTERNATIVE_TITLES: "/alternative_titles",
-	TV_CHANGES: "/changes",
-	TV_CONTENT_RATINGS: "/content_ratings",
-	TV_CREDITS: "/credits",
-	TV_EPISODE_GROUPS: "/episode_groups",
-	TV_EXTERNAL_IDS: "/external_ids",
-	TV_IMAGES: "/images",
-	TV_KEYWORDS: "/keywords",
-	TV_LATEST: "/latest",
-	TV_LISTS: "/lists",
-	TV_RECOMMENDATIONS: "/recommendations",
-	TV_REVIEWS: "/reviews",
-	TV_SCREENED_THEATRICALLY: "/screened_theatrically",
-	TV_SIMILAR: "/similar",
-	TV_TRANSLATIONS: "/translations",
-	TV_VIDEOS: "/videos",
-	TV_WATCH_PROVIDERS: "/watch/providers",
-};
-
 export class TVSeriesAPI extends TMDBAPIBase {
+	private seriesPath(series_id: number): string {
+		return `${ENDPOINTS.TV_SERIES.DETAILS}/${series_id}`;
+	}
+
+	private seriesSubPath(series_id: number, route: string): string {
+		return `${this.seriesPath(series_id)}${route}`;
+	}
+
 	/**
 	 * Details
 	 * GET - https://api.themoviedb.org/3/tv/{series_id}
@@ -68,7 +55,7 @@ export class TVSeriesAPI extends TMDBAPIBase {
 		params: TVDetailsParams & { append_to_response?: T[number] | T },
 	): Promise<T extends [] ? TVSeriesDetails : TVDetailsWithAppends<T>> {
 		const { language = this.defaultOptions.language, ...rest } = params;
-		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}`;
+		const endpoint = this.seriesPath(params.series_id);
 		return this.client.request(endpoint, { language, ...rest });
 	}
 
@@ -87,7 +74,7 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	 */
 	async aggregate_credits(params: TVAggregateCreditsParams): Promise<TVAggregateCredits> {
 		const { language = this.defaultOptions.language, ...rest } = params;
-		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_AGGREGATE_CREDITS}`;
+		const endpoint = this.seriesSubPath(params.series_id, ENDPOINTS.TV_SERIES.AGGREGATE_CREDITS);
 		return this.client.request(endpoint, { language, ...rest });
 	}
 
@@ -101,7 +88,7 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/tv-series-alternative-titles
 	 */
 	async alternative_titles(params: TVBaseParam): Promise<TVAlternativeTitles> {
-		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_ALTERNATIVE_TITLES}`;
+		const endpoint = this.seriesSubPath(params.series_id, ENDPOINTS.TV_SERIES.ALTERNATIVE_TITLES);
 		return this.client.request(endpoint);
 	}
 
@@ -123,7 +110,7 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/tv-series-changes
 	 */
 	async changes(params: TVChangeParams): Promise<TVSeriesChanges> {
-		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_CHANGES}`;
+		const endpoint = this.seriesSubPath(params.series_id, ENDPOINTS.TV_SERIES.CHANGES);
 		return this.client.request(endpoint, { ...params });
 	}
 
@@ -137,7 +124,7 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/tv-series-content-ratings
 	 */
 	async content_ratings(params: TVBaseParam): Promise<TVContentRatings> {
-		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_CONTENT_RATINGS}`;
+		const endpoint = this.seriesSubPath(params.series_id, ENDPOINTS.TV_SERIES.CONTENT_RATINGS);
 		return this.client.request(endpoint);
 	}
 
@@ -156,7 +143,7 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/tv-series-credits
 	 */
 	async credits(params: TVCreditsParams): Promise<TVCredits> {
-		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_CREDITS}`;
+		const endpoint = this.seriesSubPath(params.series_id, ENDPOINTS.TV_SERIES.CREDITS);
 		const { language = this.defaultOptions.language, ...rest } = params;
 		return this.client.request(endpoint, { language, ...rest });
 	}
@@ -172,7 +159,7 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/tv-series-episode-groups
 	 */
 	async episode_groups(params: TVBaseParam): Promise<TVEpisodeGroups> {
-		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_EPISODE_GROUPS}`;
+		const endpoint = this.seriesSubPath(params.series_id, ENDPOINTS.TV_SERIES.EPISODE_GROUPS);
 		return this.client.request(endpoint);
 	}
 
@@ -186,7 +173,7 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/tv-series-external-ids
 	 */
 	async external_ids(params: TVBaseParam): Promise<TVExternalIDs> {
-		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_EXTERNAL_IDS}`;
+		const endpoint = this.seriesSubPath(params.series_id, ENDPOINTS.TV_SERIES.EXTERNAL_IDS);
 		return this.client.request(endpoint);
 	}
 
@@ -207,7 +194,7 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	 */
 	async images(params: TVImagesParams): Promise<TVImages> {
 		const { language = this.defaultOptions.language, ...rest } = params;
-		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_IMAGES}`;
+		const endpoint = this.seriesSubPath(params.series_id, ENDPOINTS.TV_SERIES.IMAGES);
 		return this.client.request(endpoint, { language, ...rest });
 	}
 
@@ -221,7 +208,7 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/tv-series-keywords
 	 */
 	async keywords(params: TVBaseParam): Promise<TVKeywords> {
-		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_KEYWORDS}`;
+		const endpoint = this.seriesSubPath(params.series_id, ENDPOINTS.TV_SERIES.KEYWORDS);
 		return this.client.request(endpoint);
 	}
 
@@ -235,7 +222,7 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/tv-series-latest-id
 	 */
 	async latest(): Promise<TVSeriesDetails> {
-		const endpoint = `${TV_SERIES_ENDPOINTS.TV}${TV_SERIES_ENDPOINTS.TV_LATEST}`;
+		const endpoint = `${ENDPOINTS.TV_SERIES.DETAILS}${ENDPOINTS.TV_SERIES.LATEST}`;
 		return this.client.request(endpoint);
 	}
 
@@ -251,7 +238,7 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/lists-copy (TODO: Check this url for updates, it's like this on TMDB docs (??))
 	 */
 	async lists(params: TVSeriesListsParams): Promise<TVSeriesLists> {
-		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_LISTS}`;
+		const endpoint = this.seriesSubPath(params.series_id, ENDPOINTS.TV_SERIES.LISTS);
 		const { language = this.defaultOptions.language, ...rest } = params;
 		return this.client.request(endpoint, { language, ...rest });
 	}
@@ -268,7 +255,7 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/tv-series-recommendations
 	 */
 	async recommendations(params: TVRecommendationsParams): Promise<TVRecommendations> {
-		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_RECOMMENDATIONS}`;
+		const endpoint = this.seriesSubPath(params.series_id, ENDPOINTS.TV_SERIES.RECOMMENDATIONS);
 		const { language = this.defaultOptions.language, ...rest } = params;
 		return this.client.request(endpoint, { language, ...rest });
 	}
@@ -285,7 +272,7 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/tv-series-recommendations
 	 */
 	async reviews(params: TVReviewsParams): Promise<TVReviews> {
-		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_REVIEWS}`;
+		const endpoint = this.seriesSubPath(params.series_id, ENDPOINTS.TV_SERIES.REVIEWS);
 		const { language = this.defaultOptions.language, ...rest } = params;
 		return this.client.request(endpoint, { language, ...rest });
 	}
@@ -300,7 +287,7 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/tv-series-screened-theatrically
 	 */
 	async screened_theatrically(params: TVBaseParam): Promise<TVScreenedTheatrically> {
-		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_SCREENED_THEATRICALLY}`;
+		const endpoint = this.seriesSubPath(params.series_id, ENDPOINTS.TV_SERIES.SCREENED_THEATRICALLY);
 		return this.client.request(endpoint);
 	}
 
@@ -316,7 +303,7 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/tv-series-similar
 	 */
 	async similar(params: TVSimilarParams): Promise<TVSimilar> {
-		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_SIMILAR}`;
+		const endpoint = this.seriesSubPath(params.series_id, ENDPOINTS.TV_SERIES.SIMILAR);
 		const { language = this.defaultOptions.language, ...rest } = params;
 		return this.client.request(endpoint, { language, ...rest });
 	}
@@ -333,7 +320,7 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/tv-series-translations
 	 */
 	async translations(params: TVBaseParam): Promise<TVTranslations> {
-		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_TRANSLATIONS}`;
+		const endpoint = this.seriesSubPath(params.series_id, ENDPOINTS.TV_SERIES.TRANSLATIONS);
 		return this.client.request<TVTranslations>(endpoint);
 	}
 
@@ -347,7 +334,7 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/tv-series-videos
 	 */
 	async videos(params: TVBaseParam): Promise<TVVideos> {
-		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_VIDEOS}`;
+		const endpoint = this.seriesSubPath(params.series_id, ENDPOINTS.TV_SERIES.VIDEOS);
 		return this.client.request<TVVideos>(endpoint);
 	}
 
@@ -370,7 +357,7 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/tv-series-watch-providers
 	 */
 	async watch_providers(params: TVBaseParam): Promise<MediaWatchProviders> {
-		const endpoint = `${TV_SERIES_ENDPOINTS.TV}/${params.series_id}${TV_SERIES_ENDPOINTS.TV_WATCH_PROVIDERS}`;
+		const endpoint = this.seriesSubPath(params.series_id, ENDPOINTS.TV_SERIES.WATCH_PROVIDERS);
 		return this.client.request<MediaWatchProviders>(endpoint);
 	}
 }

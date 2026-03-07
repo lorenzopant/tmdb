@@ -1,16 +1,8 @@
 import { ApiClient } from "../client";
 import { PaginatedResponse, TVSeriesResultItem } from "../types";
+import { ENDPOINTS } from "../routes";
 import { TMDBOptions } from "../types/config";
 import { TVSeriesListParams } from "../types/tv";
-
-import { TV_SERIES_ENDPOINTS } from "./tv_series";
-
-export enum TVSeriesListEndpoints {
-	AIRING_TODAY = "/airing_today",
-	ON_THE_AIR = "/on_the_air",
-	TOP_RATED = "/top_rated",
-	POPULAR = "/popular",
-}
 
 export class TVSeriesListsAPI {
 	private client: ApiClient;
@@ -33,7 +25,7 @@ export class TVSeriesListsAPI {
 	 * @returns PaginatedResponse of TVSeriesResultItem
 	 */
 	private fetch_tv_series_list(endpoint: string, params: TVSeriesListParams = {}): Promise<PaginatedResponse<TVSeriesResultItem>> {
-		return this.client.request<PaginatedResponse<TVSeriesResultItem>>(TV_SERIES_ENDPOINTS.TV + endpoint, this.withDefaults(params));
+		return this.client.request<PaginatedResponse<TVSeriesResultItem>>(ENDPOINTS.TV_SERIES.DETAILS + endpoint, this.withDefaults(params));
 	}
 
 	/**
@@ -46,7 +38,7 @@ export class TVSeriesListsAPI {
 	 * @param timezone Timezone for the "today"
 	 */
 	async airing_today(params: TVSeriesListParams = {}): Promise<PaginatedResponse<TVSeriesResultItem>> {
-		return this.fetch_tv_series_list(TVSeriesListEndpoints.AIRING_TODAY, params);
+		return this.fetch_tv_series_list(ENDPOINTS.TV_SERIES.AIRING_TODAY, params);
 	}
 
 	/**
@@ -59,7 +51,7 @@ export class TVSeriesListsAPI {
 	 * @param timezone Timezone for the "today"
 	 */
 	async on_the_air(params: TVSeriesListParams = {}): Promise<PaginatedResponse<TVSeriesResultItem>> {
-		return this.fetch_tv_series_list(TVSeriesListEndpoints.ON_THE_AIR, params);
+		return this.fetch_tv_series_list(ENDPOINTS.TV_SERIES.ON_THE_AIR, params);
 	}
 
 	/**
@@ -71,7 +63,7 @@ export class TVSeriesListsAPI {
 	 * @param page Page (Defaults to 1)
 	 */
 	async popular(params: TVSeriesListParams = {}): Promise<PaginatedResponse<TVSeriesResultItem>> {
-		return this.fetch_tv_series_list(TVSeriesListEndpoints.POPULAR, params);
+		return this.fetch_tv_series_list(ENDPOINTS.TV_SERIES.POPULAR, params);
 	}
 
 	/**
@@ -83,6 +75,6 @@ export class TVSeriesListsAPI {
 	 * @param page Page (Defaults to 1)
 	 */
 	async top_rated(params: TVSeriesListParams = {}): Promise<PaginatedResponse<TVSeriesResultItem>> {
-		return this.fetch_tv_series_list(TVSeriesListEndpoints.TOP_RATED, params);
+		return this.fetch_tv_series_list(ENDPOINTS.TV_SERIES.TOP_RATED, params);
 	}
 }

@@ -1,4 +1,5 @@
 import { ApiClient } from "../client";
+import { ENDPOINTS } from "../routes";
 import { MediaWatchProviders } from "../types";
 import { TMDBOptions } from "../types/config";
 import {
@@ -35,29 +36,6 @@ import {
 	MovieWatchProvidersParams,
 } from "../types/movies/params";
 
-export const MOVIE_ENDPOINTS = {
-	MOVIE: "/movie",
-	ALTERNATIVE_TITLES: "/alternative_titles",
-	CREDITS: "/credits",
-	EXTERNAL_IDS: "/external_ids",
-	KEYWORDS: "/keywords",
-	CHANGES: "/changes",
-	IMAGES: "/images",
-	LATEST: "/latest",
-	RECOMMENDATIONS: "/recommendations",
-	RELEASE_DATES: "/release_dates",
-	SIMILAR: "/similar",
-	TRANSLATIONS: "/translations",
-	VIDEOS: "/videos",
-	WATCH_PROVIDERS: "/watch/providers",
-	REVIEWS: "/reviews",
-	// Missing:
-	// ACCOUNT_STATES
-	// LISTS
-	// ADD RATING
-	// DELETE RATING
-};
-
 export class MoviesAPI {
 	private client: ApiClient;
 	private defaultOptions: TMDBOptions;
@@ -65,6 +43,14 @@ export class MoviesAPI {
 	constructor(client: ApiClient, options: TMDBOptions = {}) {
 		this.client = client;
 		this.defaultOptions = options;
+	}
+
+	private moviePath(movie_id: number): string {
+		return `${ENDPOINTS.MOVIES.DETAILS}/${movie_id}`;
+	}
+
+	private movieSubPath(movie_id: number, route: string): string {
+		return `${this.moviePath(movie_id)}${route}`;
 	}
 
 	/**
@@ -82,7 +68,7 @@ export class MoviesAPI {
 		params: MovieDetailsParams & { append_to_response?: T[number] | T },
 	): Promise<T extends [] ? MovieDetails : MovieDetailsWithAppends<T>> {
 		const { language = this.defaultOptions.language, ...rest } = params;
-		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}`;
+		const endpoint = this.moviePath(params.movie_id);
 		return this.client.request(endpoint, { language, ...rest });
 	}
 
@@ -97,7 +83,7 @@ export class MoviesAPI {
 	 * @reference https://developer.themoviedb.org/reference/movie-alternative-titles
 	 */
 	async alternative_titles(params: MovieAlternativeTitlesParams): Promise<MovieAlternativeTitles> {
-		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}${MOVIE_ENDPOINTS.ALTERNATIVE_TITLES}`;
+		const endpoint = this.movieSubPath(params.movie_id, ENDPOINTS.MOVIES.ALTERNATIVE_TITLES);
 		return this.client.request<MovieAlternativeTitles>(endpoint, params);
 	}
 
@@ -112,7 +98,7 @@ export class MoviesAPI {
 	 * @reference https://developer.themoviedb.org/reference/movie-credits
 	 */
 	async credits(params: MovieCreditsParams): Promise<MovieCredits> {
-		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}${MOVIE_ENDPOINTS.CREDITS}`;
+		const endpoint = this.movieSubPath(params.movie_id, ENDPOINTS.MOVIES.CREDITS);
 		const { language = this.defaultOptions.language, ...rest } = params;
 		return this.client.request<MovieCredits>(endpoint, { language, ...rest });
 	}
@@ -129,7 +115,7 @@ export class MoviesAPI {
 	 * @reference https://developer.themoviedb.org/reference/movie-external-ids
 	 */
 	async external_ids(params: MovieExternalIDsParams): Promise<MovieExternalIDs> {
-		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}${MOVIE_ENDPOINTS.EXTERNAL_IDS}`;
+		const endpoint = this.movieSubPath(params.movie_id, ENDPOINTS.MOVIES.EXTERNAL_IDS);
 		return this.client.request<MovieExternalIDs>(endpoint);
 	}
 
@@ -144,7 +130,7 @@ export class MoviesAPI {
 	 * @reference https://developer.themoviedb.org/reference/movie-keywords
 	 */
 	async keywords(params: MovieKeywordsParams): Promise<MovieKeywords> {
-		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}${MOVIE_ENDPOINTS.KEYWORDS}`;
+		const endpoint = this.movieSubPath(params.movie_id, ENDPOINTS.MOVIES.KEYWORDS);
 		return this.client.request<MovieKeywords>(endpoint);
 	}
 
@@ -163,7 +149,7 @@ export class MoviesAPI {
 	 * @reference https://developer.themoviedb.org/reference/movie-changes
 	 */
 	async changes(params: MovieChangesParams): Promise<MovieChanges> {
-		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}${MOVIE_ENDPOINTS.CHANGES}`;
+		const endpoint = this.movieSubPath(params.movie_id, ENDPOINTS.MOVIES.CHANGES);
 		return this.client.request<MovieChanges>(endpoint, params);
 	}
 
@@ -184,7 +170,7 @@ export class MoviesAPI {
 	 */
 	async images(params: MovieImagesParams): Promise<MovieImages> {
 		const { language = this.defaultOptions.language, ...rest } = params;
-		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}${MOVIE_ENDPOINTS.IMAGES}`;
+		const endpoint = this.movieSubPath(params.movie_id, ENDPOINTS.MOVIES.IMAGES);
 		return this.client.request<MovieImages>(endpoint, { language, ...rest });
 	}
 
@@ -198,7 +184,7 @@ export class MoviesAPI {
 	 * @reference https://developer.themoviedb.org/reference/movie-latest-id
 	 */
 	async latest(): Promise<MovieDetails> {
-		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}${MOVIE_ENDPOINTS.LATEST}`;
+		const endpoint = `${ENDPOINTS.MOVIES.DETAILS}${ENDPOINTS.MOVIES.LATEST}`;
 		return this.client.request<MovieDetails>(endpoint);
 	}
 
@@ -216,7 +202,7 @@ export class MoviesAPI {
 	 */
 	async recommendations(params: MovieRecommendationsParams): Promise<MovieRecommendations> {
 		const { language = this.defaultOptions.language, ...rest } = params;
-		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}${MOVIE_ENDPOINTS.RECOMMENDATIONS}`;
+		const endpoint = this.movieSubPath(params.movie_id, ENDPOINTS.MOVIES.RECOMMENDATIONS);
 		return this.client.request<MovieRecommendations>(endpoint, { language, ...rest });
 	}
 
@@ -237,7 +223,7 @@ export class MoviesAPI {
 	 * @reference https://developer.themoviedb.org/reference/movie-release-dates
 	 */
 	async release_dates(params: MovieReleaseDatesParams): Promise<MovieReleaseDates> {
-		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}${MOVIE_ENDPOINTS.RELEASE_DATES}`;
+		const endpoint = this.movieSubPath(params.movie_id, ENDPOINTS.MOVIES.RELEASE_DATES);
 		return this.client.request<MovieReleaseDates>(endpoint);
 	}
 
@@ -254,7 +240,7 @@ export class MoviesAPI {
 	 */
 	async reviews(params: MovieReviewsParams): Promise<MovieReviews> {
 		const { language = this.defaultOptions.language, ...rest } = params;
-		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}${MOVIE_ENDPOINTS.REVIEWS}`;
+		const endpoint = this.movieSubPath(params.movie_id, ENDPOINTS.MOVIES.REVIEWS);
 		return this.client.request<MovieReviews>(endpoint, { language, ...rest });
 	}
 
@@ -273,7 +259,7 @@ export class MoviesAPI {
 	 */
 	async similar(params: MovieSimilarParams): Promise<MovieSimilar> {
 		const { language = this.defaultOptions.language, ...rest } = params;
-		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}${MOVIE_ENDPOINTS.SIMILAR}`;
+		const endpoint = this.movieSubPath(params.movie_id, ENDPOINTS.MOVIES.SIMILAR);
 		return this.client.request<MovieSimilar>(endpoint, { language, ...rest });
 	}
 
@@ -289,7 +275,7 @@ export class MoviesAPI {
 	 * @reference https://developer.themoviedb.org/reference/movie-translations
 	 */
 	async translations(params: MovieTranslationsParams): Promise<MovieTranslations> {
-		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}${MOVIE_ENDPOINTS.TRANSLATIONS}`;
+		const endpoint = this.movieSubPath(params.movie_id, ENDPOINTS.MOVIES.TRANSLATIONS);
 		return this.client.request<MovieTranslations>(endpoint);
 	}
 
@@ -304,7 +290,7 @@ export class MoviesAPI {
 	 */
 	async videos(params: MovieVideosParams): Promise<MovieVideos> {
 		const { language = this.defaultOptions.language, ...rest } = params;
-		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}${MOVIE_ENDPOINTS.VIDEOS}`;
+		const endpoint = this.movieSubPath(params.movie_id, ENDPOINTS.MOVIES.VIDEOS);
 		return this.client.request<MovieVideos>(endpoint, { language, ...rest });
 	}
 
@@ -325,7 +311,7 @@ export class MoviesAPI {
 	 * @reference https://developer.themoviedb.org/reference/movie-videos
 	 */
 	async watch_providers(params: MovieWatchProvidersParams): Promise<MediaWatchProviders> {
-		const endpoint = `${MOVIE_ENDPOINTS.MOVIE}/${params.movie_id}${MOVIE_ENDPOINTS.WATCH_PROVIDERS}`;
+		const endpoint = this.movieSubPath(params.movie_id, ENDPOINTS.MOVIES.WATCH_PROVIDERS);
 		return this.client.request<MediaWatchProviders>(endpoint);
 	}
 }
