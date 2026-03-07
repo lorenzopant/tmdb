@@ -3,6 +3,7 @@
 import { ApiClient } from "./client";
 import { CertificationsAPI } from "./endpoints/certifications";
 import { ChangesAPI } from "./endpoints/changes";
+import { CompaniesAPI } from "./endpoints/companies";
 import { CollectionsAPI } from "./endpoints/collections";
 import { ConfigurationAPI } from "./endpoints/configuration";
 import { GenresAPI } from "./endpoints/genres";
@@ -28,6 +29,7 @@ export class TMDB {
 	public tv_series: TVSeriesAPI;
 	public certifications: CertificationsAPI;
 	public changes: ChangesAPI;
+	public companies: CompaniesAPI;
 	public collections: CollectionsAPI;
 	// etc...
 
@@ -50,6 +52,7 @@ export class TMDB {
 		this.tv_series = new TVSeriesAPI(this.client, this.options);
 		this.certifications = new CertificationsAPI(this.client, this.options);
 		this.changes = new ChangesAPI(this.client, this.options);
+		this.companies = new CompaniesAPI(this.client, this.options);
 		this.collections = new CollectionsAPI(this.client, this.options);
 	}
 }

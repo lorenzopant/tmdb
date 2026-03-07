@@ -1,0 +1,37 @@
+---
+title: Alternative Names
+description: Query the alternative names associated with a specific company.
+---
+
+This method returns the alternative names associated with a specific company.
+
+```ts
+async alternativeNames(params: CompanyAlternativeNamesParams): Promise<CompanyAlternativeNames>
+```
+
+> **TMDB Reference:** [Company Alternative Names](https://developer.themoviedb.org/reference/company-alternative-names)
+
+## Parameters
+
+| Name         | Type     | Required | Description               |
+| ------------ | -------- | -------- | ------------------------- |
+| `company_id` | `number` | ✅       | TMDB company identifier. |
+
+## Returns
+
+A [`CompanyAlternativeNames`](/docs/types/others#companyalternativenames) object containing
+the alternative names of the specified company.
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const company = await tmdb.companies.alternativeNames({ company_id: 174 });
+```
+
+## Types
+
+- [CompanyAlternativeNames](/docs/types/others#companyalternativenames)
+- [CompanyAlternativeName](/docs/types/others#companyalternativename)
