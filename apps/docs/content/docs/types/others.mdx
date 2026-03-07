@@ -55,3 +55,61 @@ Types related to the [CollectionsAPI](/docs/api-reference/collections) namespace
 		include_image_language: { type: "Language", description: "Language to include in the response." },
 	}}
 />
+
+## Companies
+
+Types related to the [CompaniesAPI](/docs/api-reference/companies) namespace.
+
+### `CompanySummary`
+
+<AutoTypeTable path="other/companies.ts" name="CompanySummary" />
+
+### `Company`
+
+<AutoTypeTable path="other/companies.ts" name="Company" />
+
+### `CompanyAlternativeName`
+
+<AutoTypeTable path="other/companies.ts" name="CompanyAlternativeName" />
+
+### `CompanyAlternativeNames`
+
+<AutoTypeTable path="other/companies.ts" name="CompanyAlternativeNames" />
+
+### `CompanyImages`
+
+<AutoTypeTable path="other/companies.ts" name="CompanyImages" />
+
+### `CompanyImage`
+
+<AutoTypeTable path="other/companies.ts" name="CompanyImage" />
+
+### `CompanyBaseParam`
+
+<AutoTypeTable path="other/companies.ts" name="CompanyBaseParam" />
+
+### `CompanyDetailsParams`
+
+<TypeTable
+	type={{
+		company_id: { type: "number", required: true, description: "TMDB company identifier." },
+	}}
+/>
+
+### `CompanyAlternativeNamesParams`
+
+<TypeTable
+	type={{
+		company_id: { type: "number", required: true, description: "TMDB company identifier." },
+	}}
+/>
+
+### `CompanyImagesParams`
+
+<TypeTable
+	type={{
+		company_id: { type: "number", required: true, description: "TMDB company identifier." },
+		language: { type: "Language", description: "Language for localized results.", default: "en-US" },
+		include_image_language: { type: "Language", description: "Language to include in the response." },
+	}}
+/>

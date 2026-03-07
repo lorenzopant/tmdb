@@ -57,7 +57,7 @@ export type CompanyImages = {
 	/** Unique company identifier */
 	id: number;
 	/** Logos available for the company */
-	logos: ImageItem[];
+	logos: CompanyImage[];
 };
 
 /**
