@@ -1,7 +1,6 @@
 import { BackgroundPosters } from "@/components/background";
 import { Star } from "lucide-react";
 import Link from "next/link";
-import InstallTmdbCommand from "@/components/install-command";
 
 export default async function HomePage() {
 	return (
