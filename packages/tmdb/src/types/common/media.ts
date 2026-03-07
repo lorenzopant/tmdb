@@ -1,6 +1,7 @@
 // src/types/common/media.ts
 
 import { CountryISO3166_1 } from "../config/countries";
+import { LiteralUnion } from "../utility";
 
 /**
  * Represents a genre of a movie or TV show.
@@ -173,7 +174,7 @@ export type ImageItem = {
 	/** Image height in pixels */
 	height: number;
 	/** ISO 639-1 language code if image contains text, null otherwise */
-	iso_639_1: string | null;
+	iso_639_1?: string | null;
 	/** Relative path to the image file (append to base URL) */
 	file_path: string;
 	/** Average user rating for this image */
@@ -237,7 +238,11 @@ export type KnownForTV = BaseKnownForItem & {
  */
 export type KnownForItem = KnownForMovie | KnownForTV;
 
+/** Available media types on TMDB */
 export type MediaType = "movie" | "tv";
+
+/** Available file type on svg (for images) */
+export type FileType = LiteralUnion<".png" | ".svg">;
 
 /**
  * Content rating information for a TV show or movie
