@@ -17,10 +17,10 @@ export type Collection = {
 	original_name: string;
 	/** Short description or synopsis of the collection */
 	overview: string;
-	/** Relative path to the collection's poster image on TMDB (e.g. `"/abc123.jpg"`) */
-	poster_path: string;
-	/** Relative path to the collection's backdrop image on TMDB (e.g. `"/xyz789.jpg"`) */
-	backdrop_path: string;
+	/** Relative path to the collection's poster image on TMDB, if available (sanitized nulls become undefined) */
+	poster_path?: string | null;
+	/** Relative path to the collection's backdrop image on TMDB, if available (sanitized nulls become undefined) */
+	backdrop_path?: string | null;
 	/** Ordered list of media items that make up the collection */
 	parts: CollectionItem[];
 };
