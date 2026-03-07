@@ -21,7 +21,7 @@ describe("Companies API", () => {
 	});
 
 	it("(ALTERNATIVE NAMES) should fetch company alternative names", async () => {
-		const company = await tmdb.companies.alternativeNames({ company_id: companyId });
+		const company = await tmdb.companies.alternative_names({ company_id: companyId });
 
 		expect(company.id).toBe(companyId);
 		expect(Array.isArray(company.results)).toBe(true);

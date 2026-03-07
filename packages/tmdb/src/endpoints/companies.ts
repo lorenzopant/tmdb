@@ -37,7 +37,7 @@ export class CompaniesAPI extends TMDBAPIBase {
 	 * @param company_id Unique identifier for the company
 	 * @reference https://developer.themoviedb.org/reference/company-alternative-names
 	 */
-	async alternativeNames(params: CompanyAlternativeNamesParams): Promise<CompanyAlternativeNames> {
+	async alternative_names(params: CompanyAlternativeNamesParams): Promise<CompanyAlternativeNames> {
 		const endpoint = `${this.companyPath(params.company_id)}${ENDPOINTS.COMPANIES.ALTERNATIVE_NAMES}`;
 		return this.client.request<CompanyAlternativeNames>(endpoint, params);
 	}

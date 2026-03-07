@@ -1,0 +1,20 @@
+---
+title: Collections
+description: Retrieve movies and tv shows collection details from TMDB.
+---
+
+The `CollectionsAPI` provides access to collection metadata in TMDB, including top-level details,
+translations, and available poster images.
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+tmdb.collections; // access methods
+```
+
+## Methods
+
+- [`details()`](/docs/api-reference/collections/details) — Get the top level details of a collection by ID.
+- [`translations()`](/docs/api-reference/collections/translations) — Get the translations associated with a collection.
+- [`images()`](/docs/api-reference/collections/images) — Get the posters associated with a collection.
