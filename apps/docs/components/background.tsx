@@ -28,6 +28,8 @@ const getPosterColumns = cache(async () => {
 				.map((movie) => tmdb.images.poster(movie.poster_path!, "w342")),
 		);
 
+		if (posters.length === 0) return [] as string[][];
+
 		return Array.from({ length: COLUMN_COUNT }, (_, columnIndex) =>
 			Array.from({ length: POSTERS_PER_COLUMN }, (_, posterIndex) => {
 				const index = (columnIndex * POSTERS_PER_COLUMN + posterIndex) % posters.length;
@@ -74,6 +76,7 @@ function PosterColumn({ posters, reverse, duration }: { posters: string[]; rever
 
 export async function BackgroundPosters({ children }: { children?: React.ReactNode }) {
 	const columns = await getPosterColumns();
+	const hasPosters = columns.some((column) => column.length > 0 && Boolean(column[0]));
 
 	return (
 		<div className="relative flex min-h-full flex-1 items-center justify-center overflow-hidden">
@@ -82,7 +85,7 @@ export async function BackgroundPosters({ children }: { children?: React.ReactNo
 				<div className="absolute inset-0 bg-[linear-gradient(rgba(15,23,42,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(15,23,42,0.05)_1px,transparent_1px)] bg-size-[44px_44px] dark:bg-[linear-gradient(rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.06)_1px,transparent_1px)]" />
 			</div>
 
-			{columns.length > 0 && (
+			{hasPosters && (
 				<div className="pointer-events-none absolute inset-0 overflow-hidden opacity-55 dark:opacity-70">
 					<div className="absolute left-1/2 top-1/2 h-[170vh] w-[240vw] -translate-x-1/2 -translate-y-1/2 mask-[radial-gradient(ellipse_at_center,black_38%,transparent_83%)]">
 						<div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.08),transparent_55%)] dark:bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.05),transparent_55%)]" />
