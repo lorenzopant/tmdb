@@ -1,0 +1,51 @@
+---
+title: Images
+description: Query the logos associated with a specific company.
+---
+
+This method returns the logo images associated with a specific company.
+
+<Callout type="info">
+	<b>From TMDB: </b>
+	There are two image formats that are supported for companies, PNG's and SVG's. You can see which type the original file is by looking at
+	the file_type field. We prefer SVG's as they are resolution independent and as such, the width and height are only there to reflect the
+	original asset that was uploaded. An SVG can be scaled properly beyond those dimensions if you call them as a PNG.
+</Callout>
+
+```ts
+async images(params: CompanyImagesParams): Promise<CompanyImages>
+```
+
+> **TMDB Reference:** [Company Images](https://developer.themoviedb.org/reference/company-images)
+
+## Parameters
+
+| Name                     | Type                                                | Required | Description                                          |
+| ------------------------ | --------------------------------------------------- | -------- | ---------------------------------------------------- |
+| `company_id`             | `number`                                            | ✅       | TMDB company identifier.                             |
+| `language`               | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized results. Defaults to `en-US`. |
+| `include_image_language` | [`Language`](/docs/types/options/language#language) | ❌       | Additional language for localized results.           |
+
+<Callout type="info">
+	If you have a language specified, it will act as a filter on the returned items. You can use the include_image_language param to query
+	additional languages.
+</Callout>
+
+## Returns
+
+A [`CompanyImages`](/docs/types/others#companyimages) object containing
+the logos of the specified company.
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const company = await tmdb.companies.images({ company_id: 174, language: "en-US" });
+```
+
+## Types
+
+- [CompanyImages](/docs/types/others#companyimages)
+- [CompanyImage](/docs/types/others#companyimage)

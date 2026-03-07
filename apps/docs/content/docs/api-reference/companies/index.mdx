@@ -1,0 +1,20 @@
+---
+title: Companies
+description: Retrieve company details, alternative names, and logos from TMDB.
+---
+
+The `CompaniesAPI` provides access to company metadata in TMDB, including top-level details,
+alternative names, and available logo images.
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+tmdb.companies; // access methods
+```
+
+## Methods
+
+- [`details()`](/docs/api-reference/companies/details) — Get the top level details of a company by ID.
+- [`alternativeNames()`](/docs/api-reference/companies/alternative-names) — Get the alternative names associated with a company.
+- [`images()`](/docs/api-reference/companies/images) — Get the logos associated with a company.

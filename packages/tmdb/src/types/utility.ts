@@ -6,6 +6,9 @@ import { KnownForItem, KnownForMovie, KnownForTV } from "./common";
  */
 export type Prettify<T> = T extends object ? (T extends infer O ? { [K in keyof O]: Prettify<O[K]> } : never) : T;
 
+/** Keep literal suggestions but allow any string */
+export type LiteralUnion<T extends string> = T | (string & {});
+
 /**
  * Type guard checks for KnowForItems (tv or movie)
  * @returns

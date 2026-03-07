@@ -1,0 +1,35 @@
+---
+title: Details
+description: Query the details of a specific company.
+---
+
+```ts
+async details(params: CompanyDetailsParams): Promise<Company>
+```
+
+> **TMDB Reference:** [Company Details](https://developer.themoviedb.org/reference/company-details)
+
+## Parameters
+
+| Name         | Type     | Required | Description               |
+| ------------ | -------- | -------- | ------------------------- |
+| `company_id` | `number` | ✅       | TMDB company identifier. |
+
+## Returns
+
+A [`Company`](/docs/types/others#company) object containing
+the details of the specified company.
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const company = await tmdb.companies.details({ company_id: 174 }); // Warner Bros. Pictures
+```
+
+## Types
+
+- [Company](/docs/types/others#company)
+- [CompanySummary](/docs/types/others#companysummary)
