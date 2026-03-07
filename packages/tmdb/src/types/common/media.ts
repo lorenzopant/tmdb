@@ -1,7 +1,7 @@
 // src/types/common/media.ts
 
 import { CountryISO3166_1 } from "../config/countries";
-import { LiteralUnion } from "../utility";
+import type { LiteralUnion } from "../utility";
 
 /**
  * Represents a genre of a movie or TV show.
