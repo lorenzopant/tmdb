@@ -3,6 +3,15 @@ name: Publish to NPM
 on:
     workflow_dispatch:
         inputs:
+            release_type:
+                description: "Version bump type"
+                required: true
+                type: choice
+                default: patch
+                options:
+                    - patch
+                    - minor
+                    - major
             is_beta:
                 description: "Publish as Beta release?"
                 required: true
@@ -61,12 +70,14 @@ jobs:
             # Run release
             - name: Run release
               run: |
+                  RELEASE_TYPE="${{ github.event.inputs.release_type }}"
+
                   if [ "${{ github.event.inputs.is_beta }}" == "true" ]; then
-                  echo "Starting BETA release..."
-                  pnpm --filter=@lorenzopant/tmdb exec release-it --ci --preRelease=beta --npm.tag=beta
+                  echo "Starting BETA release with ${RELEASE_TYPE} bump..."
+                  pnpm --filter=@lorenzopant/tmdb exec release-it --ci --increment "${RELEASE_TYPE}" --preRelease=beta --npm.tag=beta
                   else
-                  echo "Starting PRODUCTION release..."
-                  pnpm --filter=@lorenzopant/tmdb exec release-it --ci
+                  echo "Starting PRODUCTION release with ${RELEASE_TYPE} bump..."
+                  pnpm --filter=@lorenzopant/tmdb exec release-it --ci --increment "${RELEASE_TYPE}"
                   fi
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
