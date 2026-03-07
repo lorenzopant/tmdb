@@ -1,4 +1,5 @@
 import { MovieResultItem, PaginatedResponse } from "../types";
+import { ENDPOINTS } from "../routes";
 import {
 	SearchCollectionsParams,
 	SearchCompanyParams,
@@ -11,16 +12,6 @@ import { CompanyResultItem } from "../types/search/company";
 import { KeywordResultItem } from "../types/search/keyword";
 import { TMDBAPIBase } from "./base";
 import { PersonResultItem } from "../types/search/person";
-
-export const SEARCH_ENDPOINTS = {
-	MOVIE: "/search/movie",
-	COLLECTION: "/search/collection",
-	COMPANY: "/search/company",
-	KEYWORD: "/search/keyword",
-	MULTI: "/search/multi",
-	PERSON: "/search/person",
-	TV: "/search/tv",
-};
 
 export class SearchAPI extends TMDBAPIBase {
 	/**
@@ -36,8 +27,7 @@ export class SearchAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/search-collection
 	 */
 	async collections(params: SearchCollectionsParams): Promise<PaginatedResponse<CollectionResultItem>> {
-		const endpoint = `${SEARCH_ENDPOINTS.COLLECTION}`;
-		return this.client.request<PaginatedResponse<CollectionResultItem>>(endpoint, this.applyDefaults(params));
+		return this.client.request<PaginatedResponse<CollectionResultItem>>(ENDPOINTS.SEARCH.COLLECTION, this.applyDefaults(params));
 	}
 
 	/**
@@ -55,8 +45,7 @@ export class SearchAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/search-movie
 	 */
 	async movies(params: SearchMoviesParams): Promise<PaginatedResponse<MovieResultItem>> {
-		const endpoint = `${SEARCH_ENDPOINTS.MOVIE}`;
-		return this.client.request<PaginatedResponse<MovieResultItem>>(endpoint, this.applyDefaults(params));
+		return this.client.request<PaginatedResponse<MovieResultItem>>(ENDPOINTS.SEARCH.MOVIE, this.applyDefaults(params));
 	}
 
 	/**
@@ -69,8 +58,7 @@ export class SearchAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/search-company
 	 */
 	async company(params: SearchCompanyParams): Promise<PaginatedResponse<CompanyResultItem>> {
-		const endpoint = `${SEARCH_ENDPOINTS.COMPANY}`;
-		return this.client.request<PaginatedResponse<CompanyResultItem>>(endpoint, this.applyDefaults(params));
+		return this.client.request<PaginatedResponse<CompanyResultItem>>(ENDPOINTS.SEARCH.COMPANY, this.applyDefaults(params));
 	}
 
 	/**
@@ -83,8 +71,7 @@ export class SearchAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/search-keyword
 	 */
 	async keyword(params: SearchKeywordsParams): Promise<PaginatedResponse<KeywordResultItem>> {
-		const endpoint = `${SEARCH_ENDPOINTS.KEYWORD}`;
-		return this.client.request<PaginatedResponse<KeywordResultItem>>(endpoint, this.applyDefaults(params));
+		return this.client.request<PaginatedResponse<KeywordResultItem>>(ENDPOINTS.SEARCH.KEYWORD, this.applyDefaults(params));
 	}
 
 	/**
@@ -97,7 +84,6 @@ export class SearchAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/search-person
 	 */
 	async person(params: SearchPersonParams): Promise<PaginatedResponse<PersonResultItem>> {
-		const endpoint = `${SEARCH_ENDPOINTS.PERSON}`;
-		return this.client.request<PaginatedResponse<PersonResultItem>>(endpoint, this.applyDefaults(params));
+		return this.client.request<PaginatedResponse<PersonResultItem>>(ENDPOINTS.SEARCH.PERSON, this.applyDefaults(params));
 	}
 }
