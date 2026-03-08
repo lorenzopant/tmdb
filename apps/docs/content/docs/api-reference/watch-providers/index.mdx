@@ -1,0 +1,25 @@
+---
+title: Watch Providers
+description: Retrieve TMDB watch provider catalogs and supported regions.
+---
+
+The `WatchProvidersAPI` provides access to the top-level TMDB watch provider catalogs for movies and TV, plus the list of supported regions.
+Powered by [JustWatch](https://www.justwatch.com/).
+
+<Callout type="warn">
+	**Attribution required.** You must attribute the source of this data as **JustWatch** in any usage. Failure to comply may result in API
+	access being revoked.
+</Callout>
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+tmdb.watch_providers; // access methods
+```
+
+## Methods
+
+- [`movie_providers()`](/docs/api-reference/watch-providers/movie-providers) — Get the list of movie watch providers supported by TMDB.
+- [`tv_providers()`](/docs/api-reference/watch-providers/tv-providers) — Get the list of TV watch providers supported by TMDB.
+- [`available_regions()`](/docs/api-reference/watch-providers/available-regions) — Get the list of regions with watch provider support.

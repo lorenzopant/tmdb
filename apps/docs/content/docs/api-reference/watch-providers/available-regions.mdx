@@ -1,0 +1,52 @@
+---
+title: Available Regions
+description: Query the list of regions with watch provider support.
+---
+
+Powered by [JustWatch](https://www.justwatch.com/).
+
+<Callout type="warn">
+	**Attribution required.** You must attribute the source of this data as **JustWatch** in any usage. Failure to comply may result in API
+	access being revoked.
+</Callout>
+
+```ts
+async available_regions(params?: WatchProviderRegionsParams): Promise<WatchProviderRegionsResponse>
+```
+
+> **TMDB Reference:** [Watch Providers Available Regions](https://developer.themoviedb.org/reference/watch-providers-available-regions)
+
+## Parameters
+
+| Name | Type | Required | Description |
+| ---- | ---- | -------- | ----------- |
+| `language` | [`Language`](/docs/types/options/language#language) | ❌ | Language used for localized region names. |
+
+## Returns
+
+[`WatchProviderRegionsResponse`](/docs/types/others#watchproviderregionsresponse)
+
+## Example
+
+```ts
+const regions = await tmdb.watch_providers.available_regions();
+
+console.log(regions.results[0]?.english_name);
+```
+
+```json
+{
+	"results": [
+		{
+			"iso_3166_1": "US",
+			"english_name": "United States of America",
+			"native_name": "United States"
+		}
+	]
+}
+```
+
+## Types
+
+- [WatchProviderRegionsParams](/docs/types/others#watchproviderregionsparams)
+- [WatchProviderRegionsResponse](/docs/types/others#watchproviderregionsresponse)
