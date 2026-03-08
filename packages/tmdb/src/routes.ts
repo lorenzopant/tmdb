@@ -16,6 +16,10 @@ export const ENDPOINTS = {
 		PEOPLE_LIST: "/person/changes",
 		TV_LIST: "/tv/changes",
 	},
+	DISCOVER: {
+		MOVIE: "/discover/movie",
+		TV: "/discover/tv",
+	},
 	CREDITS: {
 		DETAILS: "/credit",
 	},

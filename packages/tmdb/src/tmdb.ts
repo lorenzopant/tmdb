@@ -7,6 +7,7 @@ import { CompaniesAPI } from "./endpoints/companies";
 import { CreditsAPI } from "./endpoints/credits";
 import { CollectionsAPI } from "./endpoints/collections";
 import { ConfigurationAPI } from "./endpoints/configuration";
+import { DiscoverAPI } from "./endpoints/discover";
 import { GenresAPI } from "./endpoints/genres";
 import { MovieListsAPI } from "./endpoints/movie_lists";
 import { MoviesAPI } from "./endpoints/movies";
@@ -33,6 +34,7 @@ export class TMDB {
 	public companies: CompaniesAPI;
 	public credits: CreditsAPI;
 	public collections: CollectionsAPI;
+	public discover: DiscoverAPI;
 	// etc...
 
 	/**
@@ -57,5 +59,6 @@ export class TMDB {
 		this.companies = new CompaniesAPI(this.client, this.options);
 		this.credits = new CreditsAPI(this.client, this.options);
 		this.collections = new CollectionsAPI(this.client, this.options);
+		this.discover = new DiscoverAPI(this.client, this.options);
 	}
 }

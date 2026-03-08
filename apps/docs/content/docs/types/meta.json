@@ -1,3 +1,3 @@
 {
-	"pages": ["common", "options", "configuration.mdx", "movies", "tv-series.mdx", "search.mdx", "others.mdx", "enums.mdx"]
+	"pages": ["common", "options", "configuration.mdx", "discover.mdx", "movies", "tv-series.mdx", "search.mdx", "others.mdx", "enums.mdx"]
 }

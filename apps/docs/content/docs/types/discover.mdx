@@ -1,0 +1,227 @@
+---
+title: Discover
+description: Type definitions for discover filters, sort options, and result items.
+---
+
+import { TypeTable } from "fumadocs-ui/components/type-table";
+
+These types are used by the [`DiscoverAPI`](/docs/api-reference/discover).
+
+## Parameters
+
+### `DiscoverMovieParams`
+
+Parameters for [`discover.movie()`](/docs/api-reference/discover/movie).
+
+<TypeTable
+	type={{
+		include_adult: { type: "boolean", description: "Include adult titles in results." },
+		language: { type: "Language", description: "Language used for localized data." },
+		page: { type: "number", description: "Page number for paginated results." },
+		sort_by: { type: "DiscoverMovieSortBy", description: "Sort order for movie results." },
+		region: { type: "CountryISO3166_1", description: "Region used for release-date and availability filtering." },
+		certification: { type: "string", description: "Match a specific certification value." },
+		"certification.gte": { type: "string", description: "Minimum movie certification." },
+		"certification.lte": { type: "string", description: "Maximum movie certification." },
+		certification_country: { type: "CountryISO3166_1", description: "Country used when filtering certifications." },
+		include_video: { type: "boolean", description: "Include titles flagged as videos." },
+		"primary_release_date.gte": { type: "string", description: "Minimum primary release date (YYYY-MM-DD)." },
+		"primary_release_date.lte": { type: "string", description: "Maximum primary release date (YYYY-MM-DD)." },
+		primary_release_year: { type: "number", description: "Filter by primary release year." },
+		"release_date.gte": { type: "string", description: "Minimum release date (YYYY-MM-DD)." },
+		"release_date.lte": { type: "string", description: "Maximum release date (YYYY-MM-DD)." },
+		year: { type: "number", description: "Filter by release year." },
+		"with_cast": { type: "DiscoverFilterExpression<number>", description: "Filter by cast member IDs." },
+		"with_crew": { type: "DiscoverFilterExpression<number>", description: "Filter by crew member IDs." },
+		"with_people": { type: "DiscoverFilterExpression<number>", description: "Filter by cast or crew person IDs." },
+		"with_genres": { type: "DiscoverFilterExpression<number>", description: "Filter by genre IDs." },
+		"without_genres": { type: "DiscoverFilterExpression<number>", description: "Exclude genre IDs." },
+		"with_keywords": { type: "DiscoverFilterExpression<number>", description: "Filter by keyword IDs." },
+		"without_keywords": { type: "DiscoverFilterExpression<number>", description: "Exclude keyword IDs." },
+		"with_companies": { type: "DiscoverFilterExpression<number>", description: "Filter by production company IDs." },
+		"without_companies": { type: "DiscoverFilterExpression<number>", description: "Exclude production company IDs." },
+		"with_release_type": { type: "DiscoverFilterExpression<ReleaseType>", description: "Filter by TMDB release types." },
+		"with_runtime.gte": { type: "number", description: "Minimum runtime in minutes." },
+		"with_runtime.lte": { type: "number", description: "Maximum runtime in minutes." },
+		"vote_average.gte": { type: "number", description: "Minimum average vote." },
+		"vote_average.lte": { type: "number", description: "Maximum average vote." },
+		"vote_count.gte": { type: "number", description: "Minimum vote count." },
+		"vote_count.lte": { type: "number", description: "Maximum vote count." },
+		"with_watch_providers": { type: "DiscoverFilterExpression<number>", description: "Filter by watch provider IDs." },
+		"without_watch_providers": { type: "DiscoverFilterExpression<number>", description: "Exclude watch provider IDs." },
+		"with_watch_monetization_types": { type: "DiscoverFilterExpression<WatchMonetizationType>", description: "Filter by watch monetization types." },
+		watch_region: { type: "CountryISO3166_1", description: "Region used for watch provider filtering." },
+		"with_origin_country": { type: "CountryISO3166_1", description: "Filter by origin country." },
+		"with_original_language": { type: "LanguageISO6391", description: "Filter by original language." },
+	}}
+/>
+
+---
+
+### `DiscoverTVParams`
+
+Parameters for [`discover.tv()`](/docs/api-reference/discover/tv).
+
+<TypeTable
+	type={{
+		include_adult: { type: "boolean", description: "Include adult titles in results." },
+		language: { type: "Language", description: "Language used for localized data." },
+		page: { type: "number", description: "Page number for paginated results." },
+		sort_by: { type: "DiscoverTVSortBy", description: "Sort order for TV results." },
+		timezone: { type: "string", description: "Timezone used for date-based TV filters." },
+		"air_date.gte": { type: "string", description: "Minimum air date (YYYY-MM-DD)." },
+		"air_date.lte": { type: "string", description: "Maximum air date (YYYY-MM-DD)." },
+		"first_air_date.gte": { type: "string", description: "Minimum first air date (YYYY-MM-DD)." },
+		"first_air_date.lte": { type: "string", description: "Maximum first air date (YYYY-MM-DD)." },
+		first_air_date_year: { type: "number", description: "Filter by first air year." },
+		include_null_first_air_dates: { type: "boolean", description: "Include results with null first air dates." },
+		screened_theatrically: { type: "boolean", description: "Filter to TV series that screened theatrically." },
+		"with_networks": { type: "DiscoverFilterExpression<number>", description: "Filter by network IDs." },
+		"with_status": { type: "DiscoverFilterExpression<DiscoverTVStatus>", description: "Filter by TMDB TV status codes." },
+		"with_type": { type: "DiscoverFilterExpression<DiscoverTVType>", description: "Filter by TMDB TV type codes." },
+		"with_genres": { type: "DiscoverFilterExpression<number>", description: "Filter by genre IDs." },
+		"without_genres": { type: "DiscoverFilterExpression<number>", description: "Exclude genre IDs." },
+		"with_keywords": { type: "DiscoverFilterExpression<number>", description: "Filter by keyword IDs." },
+		"without_keywords": { type: "DiscoverFilterExpression<number>", description: "Exclude keyword IDs." },
+		"with_companies": { type: "DiscoverFilterExpression<number>", description: "Filter by production company IDs." },
+		"without_companies": { type: "DiscoverFilterExpression<number>", description: "Exclude production company IDs." },
+		"with_origin_country": { type: "CountryISO3166_1", description: "Filter by origin country." },
+		"with_original_language": { type: "LanguageISO6391", description: "Filter by original language." },
+		"vote_average.gte": { type: "number", description: "Minimum average vote." },
+		"vote_average.lte": { type: "number", description: "Maximum average vote." },
+		"vote_count.gte": { type: "number", description: "Minimum vote count." },
+		"vote_count.lte": { type: "number", description: "Maximum vote count." },
+		"with_watch_providers": { type: "DiscoverFilterExpression<number>", description: "Filter by watch provider IDs." },
+		"without_watch_providers": { type: "DiscoverFilterExpression<number>", description: "Exclude watch provider IDs." },
+		"with_watch_monetization_types": { type: "DiscoverFilterExpression<WatchMonetizationType>", description: "Filter by watch monetization types." },
+		watch_region: { type: "CountryISO3166_1", description: "Region used for watch provider filtering." },
+	}}
+/>
+
+---
+
+### `DiscoverFilterExpression<T>`
+
+Used for discover filters that accept serialized value lists such as genres, providers, release types, statuses, and types.
+
+```ts
+type DiscoverFilterExpression<T extends string | number = string | number> = T | `${T}` | string;
+```
+
+Comma-separated values are treated as AND filters by TMDB. Pipe-separated values are treated as OR filters.
+
+---
+
+## Sort Options
+
+### `DiscoverMovieSortBy`
+
+```ts
+type DiscoverMovieSortBy =
+	| "original_title.asc"
+	| "original_title.desc"
+	| "popularity.asc"
+	| "popularity.desc"
+	| "revenue.asc"
+	| "revenue.desc"
+	| "primary_release_date.asc"
+	| "primary_release_date.desc"
+	| "title.asc"
+	| "title.desc"
+	| "vote_average.asc"
+	| "vote_average.desc"
+	| "vote_count.asc"
+	| "vote_count.desc";
+```
+
+---
+
+### `DiscoverTVSortBy`
+
+```ts
+type DiscoverTVSortBy =
+	| "first_air_date.asc"
+	| "first_air_date.desc"
+	| "name.asc"
+	| "name.desc"
+	| "original_name.asc"
+	| "original_name.desc"
+	| "popularity.asc"
+	| "popularity.desc"
+	| "vote_average.asc"
+	| "vote_average.desc"
+	| "vote_count.asc"
+	| "vote_count.desc";
+```
+
+---
+
+## Discover Enums
+
+### `DiscoverTVStatus`
+
+Numeric values accepted by TMDB's `with_status` TV discover filter.
+
+<TypeTable
+	type={{
+		ReturningSeries: { type: "0", description: 'Returning series status.' },
+		Planned: { type: "1", description: "Planned status." },
+		InProduction: { type: "2", description: "In production status." },
+		Ended: { type: "3", description: "Ended status." },
+		Canceled: { type: "4", description: "Canceled status." },
+		Pilot: { type: "5", description: "Pilot status." },
+	}}
+/>
+
+---
+
+### `DiscoverTVType`
+
+Numeric values accepted by TMDB's `with_type` TV discover filter.
+
+<TypeTable
+	type={{
+		Documentary: { type: "0", description: "Documentary type." },
+		News: { type: "1", description: "News type." },
+		Miniseries: { type: "2", description: "Miniseries type." },
+		Reality: { type: "3", description: "Reality type." },
+		Scripted: { type: "4", description: "Scripted type." },
+		TalkShow: { type: "5", description: "Talk show type." },
+		Video: { type: "6", description: "Video type." },
+	}}
+/>
+
+---
+
+## Result Items
+
+### `DiscoverTVResultItem`
+
+A simplified TV series object returned by [`discover.tv()`](/docs/api-reference/discover/tv).
+
+<TypeTable
+	type={{
+		backdrop_path: { type: "string | null", description: "Path to the backdrop image." },
+		first_air_date: { type: "string", description: "First air date in ISO 8601 format (YYYY-MM-DD)." },
+		genre_ids: { type: "number[]", description: "Genre IDs associated with the series." },
+		id: { type: "number", description: "Unique TMDB TV series identifier." },
+		name: { type: "string", description: "Localized display name of the TV series." },
+		origin_country: { type: "CountryISO3166_1[]", description: "Origin country codes." },
+		original_language: { type: "string", description: "Original language code." },
+		original_name: { type: "string", description: "Original TV series name." },
+		overview: { type: "string", description: "Plot synopsis or overview." },
+		popularity: { type: "number", description: "Popularity score calculated by TMDB." },
+		poster_path: { type: "string | null", description: "Path to the poster image." },
+		vote_average: { type: "number", description: "Average vote score." },
+		vote_count: { type: "number", description: "Total number of votes." },
+	}}
+/>
+
+---
+
+## Related Types
+
+- [`MovieResultItem`](/docs/types/search#movieresultitem)
+- [`WatchMonetizationType`](/docs/types/common#watchmonetizationtype)
+- [`ReleaseType`](/docs/types/enums#releasetype)
+- [`PaginatedResponse`](/docs/types/common#paginatedresponset)

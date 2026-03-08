@@ -1,5 +1,6 @@
 export * from "./common";
 export * from "./config";
+export * from "./discover";
 export * from "./movies";
 export * from "./networks";
 export * from "./search";
