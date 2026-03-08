@@ -1,0 +1,21 @@
+---
+title: Discover
+description: Discover movies and TV series using TMDB's advanced filtering and sorting options.
+---
+
+The `DiscoverAPI` exposes TMDB's discover endpoints for movies and TV series.
+These methods support rich filtering, sorting, and pagination for building catalog views.
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+
+const movies = await tmdb.discover.movie({ sort_by: "popularity.desc" });
+const series = await tmdb.discover.tv({ sort_by: "vote_average.desc" });
+```
+
+## Methods
+
+- [`movie()`](/docs/api-reference/discover/movie) — Discover movies using filters such as release dates, certifications, cast, watch providers, and sort order.
+- [`tv()`](/docs/api-reference/discover/tv) — Discover TV series using filters such as air dates, status, type, networks, watch providers, and sort order.

@@ -1,0 +1,86 @@
+---
+title: Movie
+description: Discover movies by applying TMDB filters and sort options.
+---
+
+Discover movies by applying filters and sort options.
+
+```ts
+async movie(params?: DiscoverMovieParams): Promise<PaginatedResponse<MovieResultItem>>
+```
+
+> **TMDB Reference:** [Discover Movie](https://developer.themoviedb.org/reference/discover-movie)
+
+## Notes
+
+- If `region` is provided, TMDB uses the regional release date instead of the primary release date.
+- When `with_release_type` is specified, TMDB uses the order of the values to decide which release date to return.
+- Discover filter strings support both comma and pipe separators. Commas mean AND; pipes mean OR.
+
+## Parameters
+
+| Name | Type | Required | Description |
+| ---- | ---- | -------- | ----------- |
+| `include_adult` | `boolean` | ❌ | Include adult titles in results. |
+| `language` | [`Language`](/docs/types/options/language#language) | ❌ | Language used for localized result fields. |
+| `page` | `number` | ❌ | Page number for paginated results. |
+| `sort_by` | [`DiscoverMovieSortBy`](/docs/types/discover#discovermoviesortby) | ❌ | Sort order for movie discover results. |
+| `region` | [`CountryISO3166_1`](/docs/types/options/region#countryiso31661) | ❌ | Region used for release date and availability filtering. |
+| `certification` | `string` | ❌ | Match an exact certification value. |
+| `certification.gte` | `string` | ❌ | Minimum certification value. |
+| `certification.lte` | `string` | ❌ | Maximum certification value. |
+| `certification_country` | [`CountryISO3166_1`](/docs/types/options/region#countryiso31661) | ❌ | Country used when filtering certifications. |
+| `include_video` | `boolean` | ❌ | Include titles flagged as videos. |
+| `primary_release_date.gte` | `string` | ❌ | Minimum primary release date in `YYYY-MM-DD` format. |
+| `primary_release_date.lte` | `string` | ❌ | Maximum primary release date in `YYYY-MM-DD` format. |
+| `primary_release_year` | `number` | ❌ | Filter by primary release year. |
+| `release_date.gte` | `string` | ❌ | Minimum release date in `YYYY-MM-DD` format. |
+| `release_date.lte` | `string` | ❌ | Maximum release date in `YYYY-MM-DD` format. |
+| `year` | `number` | ❌ | Filter by release year. |
+| `with_cast` | `string` | ❌ | Filter by cast member IDs. |
+| `with_crew` | `string` | ❌ | Filter by crew member IDs. |
+| `with_people` | `string` | ❌ | Filter by cast or crew person IDs. |
+| `with_genres` | `string` | ❌ | Filter by genre IDs. |
+| `without_genres` | `string` | ❌ | Exclude genre IDs. |
+| `with_keywords` | `string` | ❌ | Filter by keyword IDs. |
+| `without_keywords` | `string` | ❌ | Exclude keyword IDs. |
+| `with_companies` | `string` | ❌ | Filter by production company IDs. |
+| `without_companies` | `string` | ❌ | Exclude production company IDs. |
+| `with_release_type` | `string` | ❌ | Filter by TMDB release types. Accepts comma or pipe-separated values. |
+| `with_runtime.gte` | `number` | ❌ | Minimum runtime in minutes. |
+| `with_runtime.lte` | `number` | ❌ | Maximum runtime in minutes. |
+| `vote_average.gte` | `number` | ❌ | Minimum average vote. |
+| `vote_average.lte` | `number` | ❌ | Maximum average vote. |
+| `vote_count.gte` | `number` | ❌ | Minimum vote count. |
+| `vote_count.lte` | `number` | ❌ | Maximum vote count. |
+| `with_watch_providers` | `string` | ❌ | Filter by watch provider IDs. |
+| `without_watch_providers` | `string` | ❌ | Exclude watch provider IDs. |
+| `with_watch_monetization_types` | `string` | ❌ | Filter by watch monetization types such as `flatrate`, `rent`, or `buy`. |
+| `watch_region` | [`CountryISO3166_1`](/docs/types/options/region#countryiso31661) | ❌ | Region used for watch provider filtering. |
+| `with_origin_country` | [`CountryISO3166_1`](/docs/types/options/region#countryiso31661) | ❌ | Filter by origin country. |
+| `with_original_language` | [`LanguageISO6391`](/docs/types/options/language#languageiso6391) | ❌ | Filter by original language. |
+
+## Returns
+
+A [`PaginatedResponse<MovieResultItem>`](/docs/types/common#paginatedresponset) containing an array of [`MovieResultItem`](/docs/types/search#movieresultitem) objects.
+
+## Example
+
+```ts
+const movies = await tmdb.discover.movie({
+	sort_by: "popularity.desc",
+	region: "US",
+	"primary_release_date.gte": "2024-01-01",
+	"primary_release_date.lte": "2024-12-31",
+	"with_genres": "28|12",
+	"with_watch_monetization_types": "flatrate|buy",
+});
+
+console.log(movies.results[0]?.title);
+```
+
+## Types
+
+- [DiscoverMovieParams](/docs/types/discover#discovermovieparams)
+- [PaginatedResponse](/docs/types/common#paginatedresponset)
+- [MovieResultItem](/docs/types/search#movieresultitem)
