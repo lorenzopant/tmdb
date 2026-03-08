@@ -22,7 +22,6 @@ describe("FindAPI", () => {
 
 		expect(clientMock.request).toHaveBeenCalledOnce();
 		expect(clientMock.request).toHaveBeenCalledWith("/find/tt0137523", {
-			external_id: "tt0137523",
 			external_source: "imdb_id",
 			language: "it-IT",
 		});
@@ -36,7 +35,19 @@ describe("FindAPI", () => {
 
 		expect(clientMock.request).toHaveBeenCalledOnce();
 		expect(clientMock.request).toHaveBeenCalledWith("/find/tt0137523", {
-			external_id: "tt0137523",
+			external_source: "imdb_id",
+			language: "en-US",
+		});
+	});
+
+	it("should encode reserved URL characters in the external id path segment", async () => {
+		await findAPI.by_id({
+			external_id: "tt/0137?523#frag",
+			external_source: "imdb_id",
+		});
+
+		expect(clientMock.request).toHaveBeenCalledOnce();
+		expect(clientMock.request).toHaveBeenCalledWith("/find/tt%2F0137%3F523%23frag", {
 			external_source: "imdb_id",
 			language: "en-US",
 		});
@@ -51,7 +62,6 @@ describe("FindAPI", () => {
 
 		expect(clientMock.request).toHaveBeenCalledOnce();
 		expect(clientMock.request).toHaveBeenCalledWith("/find/tt0137523", {
-			external_id: "tt0137523",
 			external_source: "imdb_id",
 			language: "en-US",
 		});

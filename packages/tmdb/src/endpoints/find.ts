@@ -15,8 +15,9 @@ export class FindAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/find-by-id
 	 */
 	async by_id(params: FindByIDParams): Promise<FindResults> {
-		const endpoint = `${ENDPOINTS.FIND}/${params.external_id}`;
-		const requestParams = this.withLanguage(params);
+		const { external_id, ...rest } = params;
+		const endpoint = `${ENDPOINTS.FIND}/${encodeURIComponent(external_id)}`;
+		const requestParams = this.withLanguage(rest);
 		return this.client.request<FindResults>(endpoint, requestParams);
 	}
 }

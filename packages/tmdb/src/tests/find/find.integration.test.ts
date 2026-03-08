@@ -6,7 +6,7 @@ import { TMDB } from "../../tmdb";
 const token = process.env.TMDB_ACCESS_TOKEN;
 if (!token) throw new Error("TMDB_ACCESS_TOKEN is not set, plaase set it in your enviroment variables.");
 
-const tmdb = new TMDB(token, { language: "en-US" });
+const tmdb = new TMDB(token, { language: "it-IT" });
 
 describe("Find API", () => {
 	it("(BY ID) should find a movie by IMDb ID", async () => {
@@ -25,6 +25,7 @@ describe("Find API", () => {
 		const result = await tmdb.find.by_id({
 			external_id: "tt0944947",
 			external_source: "imdb_id",
+			language: "en-US",
 		});
 
 		expect(result.tv_results.length).toBeGreaterThan(0);
