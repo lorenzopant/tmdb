@@ -10,6 +10,7 @@ import { ConfigurationAPI } from "./endpoints/configuration";
 import { DiscoverAPI } from "./endpoints/discover";
 import { FindAPI } from "./endpoints/find";
 import { GenresAPI } from "./endpoints/genres";
+import { KeywordsAPI } from "./endpoints/keywords";
 import { MovieListsAPI } from "./endpoints/movie_lists";
 import { MoviesAPI } from "./endpoints/movies";
 import { SearchAPI } from "./endpoints/search";
@@ -29,6 +30,7 @@ export class TMDB {
 	public images: ImageAPI;
 	public configuration: ConfigurationAPI;
 	public genres: GenresAPI;
+	public keywords: KeywordsAPI;
 	public tv_lists: TVSeriesListsAPI;
 	public tv_series: TVSeriesAPI;
 	public watch_providers: WatchProvidersAPI;
@@ -56,6 +58,7 @@ export class TMDB {
 		this.images = new ImageAPI(this.options.images);
 		this.configuration = new ConfigurationAPI(this.client, this.options);
 		this.genres = new GenresAPI(this.client, this.options);
+		this.keywords = new KeywordsAPI(this.client, this.options);
 		this.tv_lists = new TVSeriesListsAPI(this.client, this.options);
 		this.tv_series = new TVSeriesAPI(this.client, this.options);
 		this.watch_providers = new WatchProvidersAPI(this.client, this.options);

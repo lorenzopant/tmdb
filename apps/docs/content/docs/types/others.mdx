@@ -114,6 +114,37 @@ Types related to the [CompaniesAPI](/docs/api-reference/companies) namespace.
 	}}
 />
 
+## Keywords
+
+Types related to the [KeywordsAPI](/docs/api-reference/keywords) namespace.
+
+### `KeywordBaseParam`
+
+<TypeTable
+	type={{
+		keyword_id: { type: "number", required: true, description: "TMDB keyword identifier." },
+	}}
+/>
+
+### `KeywordDetailsParams`
+
+<TypeTable
+	type={{
+		keyword_id: { type: "number", required: true, description: "TMDB keyword identifier." },
+	}}
+/>
+
+### `KeywordMoviesParams`
+
+<TypeTable
+	type={{
+		keyword_id: { type: "number", required: true, description: "TMDB keyword identifier." },
+		language: { type: "Language", description: "Language for localized movie results.", default: "en-US" },
+		page: { type: "number", description: "Page number for paginated results.", default: "1" },
+		include_adult: { type: "boolean", description: "Include adult titles in results.", default: "false" },
+	}}
+/>
+
 ## Watch Providers
 
 Types related to the [WatchProvidersAPI](/docs/api-reference/watch-providers) namespace.

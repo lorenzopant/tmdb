@@ -28,4 +28,9 @@ describe("TMDB API Client", () => {
 		const tmdb = new TMDB("valid_access_token");
 		expect(tmdb.watch_providers).toBeDefined();
 	});
+
+	it("should expose the keywords api", () => {
+		const tmdb = new TMDB("valid_access_token");
+		expect(tmdb.keywords).toBeDefined();
+	});
 });

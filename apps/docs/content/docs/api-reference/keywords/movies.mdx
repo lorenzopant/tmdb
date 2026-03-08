@@ -1,0 +1,46 @@
+---
+title: Movies
+description: Query the movies associated with a specific keyword.
+---
+
+<Callout type="warn">
+	**Deprecated by TMDB.** Use [`discover.movie()`](/docs/api-reference/discover/movie) with the `with_keywords` instead.
+</Callout>
+
+```ts
+async movies(params: KeywordMoviesParams): Promise<PaginatedResponse<MovieResultItem>>
+```
+
+> **TMDB Reference:** [Keyword Movies](https://developer.themoviedb.org/reference/keyword-movies)
+
+## Notes
+
+- TMDB marks this endpoint as deprecated.
+- The SDK still exposes it for parity with the current TMDB API surface.
+
+## Parameters
+
+| Name            | Type                                                | Required | Description                           |
+| --------------- | --------------------------------------------------- | -------- | ------------------------------------- |
+| `keyword_id`    | `number`                                            | ✅       | TMDB keyword identifier.              |
+| `language`      | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized movie results. |
+| `page`          | `number`                                            | ❌       | Page number for paginated results.    |
+| `include_adult` | `boolean`                                           | ❌       | Include adult titles in results.      |
+
+## Returns
+
+A [`PaginatedResponse<MovieResultItem>`](/docs/types/common#paginatedresponset) containing the movies associated with the specified keyword.
+
+## Example
+
+```ts
+const movies = await tmdb.keywords.movies({ keyword_id: 4379 });
+
+console.log(movies.results[0]?.title);
+```
+
+## Types
+
+- [KeywordMoviesParams](/docs/types/others#keywordmoviesparams)
+- [PaginatedResponse](/docs/types/common#paginatedresponset)
+- [MovieResultItem](/docs/types/search#movieresultitem)

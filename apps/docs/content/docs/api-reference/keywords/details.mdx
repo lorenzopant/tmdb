@@ -1,0 +1,36 @@
+---
+title: Details
+description: Query the details of a specific keyword.
+---
+
+```ts
+async details(params: KeywordDetailsParams): Promise<Keyword>
+```
+
+> **TMDB Reference:** [Keyword Details](https://developer.themoviedb.org/reference/keyword-details)
+
+## Parameters
+
+| Name | Type | Required | Description |
+| ---- | ---- | -------- | ----------- |
+| `keyword_id` | `number` | ✅ | TMDB keyword identifier. |
+
+## Returns
+
+A [`Keyword`](/docs/types/common#keyword) object containing the details of the specified keyword.
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const keyword = await tmdb.keywords.details({ keyword_id: 4379 });
+
+console.log(keyword.name); // "time travel"
+```
+
+## Types
+
+- [Keyword](/docs/types/common#keyword)
+- [KeywordDetailsParams](/docs/types/others#keyworddetailsparams)

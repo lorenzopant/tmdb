@@ -38,6 +38,10 @@ export const ENDPOINTS = {
 		MOVIE_LIST: "/genre/movie/list",
 		TV_LIST: "/genre/tv/list",
 	},
+	KEYWORDS: {
+		DETAILS: "/keyword",
+		MOVIES: "/movies",
+	},
 	MOVIES: {
 		DETAILS: "/movie",
 		ALTERNATIVE_TITLES: "/alternative_titles",

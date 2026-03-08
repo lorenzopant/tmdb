@@ -1,0 +1,18 @@
+---
+title: Keywords
+description: Retrieve TMDB keywords and the movies associated with them.
+---
+
+The `KeywordsAPI` provides access to TMDB keyword metadata by ID and the associated movie list.
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+tmdb.keywords; // access methods
+```
+
+## Methods
+
+- [`details()`](/docs/api-reference/keywords/details) — Get the top level details of a keyword by ID.
+- [`movies()`](/docs/api-reference/keywords/movies) — <strong style={{ color: "red" }}>Deprecated by TMDB.</strong> Get the movies associated with a keyword.
