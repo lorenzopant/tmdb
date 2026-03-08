@@ -7,8 +7,8 @@ import { DiscoverMovieSortBy } from "./movie";
 import { DiscoverTVSortBy, DiscoverTVStatus, DiscoverTVType } from "./tv";
 
 /**
- * Comma-separated values are treated as OR filters by TMDB.
- * Pipe-separated values are treated as AND filters by TMDB.
+ * Comma-separated values are treated as AND filters by TMDB.
+ * Pipe-separated values are treated as OR filters by TMDB.
  *
  * The API expects these values serialized as query strings, not arrays.
  */
