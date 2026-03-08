@@ -16,7 +16,7 @@ export class FindAPI extends TMDBAPIBase {
 	 */
 	async by_id(params: FindByIDParams): Promise<FindResults> {
 		const endpoint = `${ENDPOINTS.FIND}/${params.external_id}`;
-		const requestParams = this.withLanguage(params) ?? params;
+		const requestParams = this.withLanguage(params);
 		return this.client.request<FindResults>(endpoint, requestParams);
 	}
 }
