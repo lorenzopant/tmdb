@@ -18,4 +18,9 @@ describe("TMDB API Client", () => {
 		const tmdb = new TMDB("valid_access_token");
 		expect(tmdb.discover).toBeDefined();
 	});
+
+	it("should expose the find api", () => {
+		const tmdb = new TMDB("valid_access_token");
+		expect(tmdb.find).toBeDefined();
+	});
 });
