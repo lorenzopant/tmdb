@@ -13,8 +13,9 @@ describe("Credits API", () => {
 		const credits = await tmdb.movies.credits({ movie_id: 550 });
 		const creditId = credits.cast[0]?.credit_id ?? credits.crew[0]?.credit_id;
 
-		expect(typeof creditId).toBe("string");
-		expect(creditId).toBeDefined();
+		if (!creditId) {
+			throw new Error("Expected movie 550 to have at least one cast or crew credit_id.");
+		}
 
 		const credit = await tmdb.credits.details({ credit_id: creditId });
 
