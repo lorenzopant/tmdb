@@ -22,12 +22,11 @@ on:
             - main
 
 jobs:
-    prepare_release_pr:
+    prepare_release_branch:
         if: github.event_name == 'workflow_dispatch'
         runs-on: ubuntu-latest
         permissions:
             contents: write
-            pull-requests: write
 
         steps:
             - uses: actions/checkout@v4
@@ -73,21 +72,38 @@ jobs:
               id: version
               run: echo "version=$(node -p "require('./packages/tmdb/package.json').version")" >> "$GITHUB_OUTPUT"
 
-            - name: Create release pull request
-              uses: peter-evans/create-pull-request@v7
-              with:
-                  branch: release/v${{ steps.version.outputs.version }}
-                  base: main
-                  commit-message: "chore: release v${{ steps.version.outputs.version }}"
-                  title: "chore: release v${{ steps.version.outputs.version }}"
-                  body: |
-                      This PR prepares release `${{ steps.version.outputs.version }}`.
+            - name: Create and push release branch
+              id: branch
+              run: |
+                  VERSION="${{ steps.version.outputs.version }}"
+                  BRANCH="release/v${VERSION}"
 
-                      After merge, the publish workflow will:
-                      - publish to npm only if this version is not already published
-                      - create and push the git tag if it does not exist
-                      - create the GitHub release if it does not exist
-                  labels: release
+                  git checkout -b "$BRANCH"
+                  git add packages/tmdb/package.json
+                  git commit -m "chore: release v${VERSION}"
+                  git push --force-with-lease origin "$BRANCH"
+
+                  echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+                  echo "compare_url=https://github.com/${{ github.repository }}/compare/main...${BRANCH}?expand=1" >> "$GITHUB_OUTPUT"
+
+            - name: Release instructions
+              run: |
+                  echo "Release branch created: ${{ steps.branch.outputs.branch }}"
+                  echo "Open this URL to create the PR:"
+                  echo "${{ steps.branch.outputs.compare_url }}"
+
+                  {
+                    echo "## Release branch ready"
+                    echo
+                    echo "- Branch: \`${{ steps.branch.outputs.branch }}\`"
+                    echo "- Open this URL to create the PR manually:"
+                    echo "- ${{ steps.branch.outputs.compare_url }}"
+                    echo
+                    echo "After the PR is merged into \`main\`, the publish job will:"
+                    echo "- publish to npm only if this version is not already published"
+                    echo "- create and push the git tag if it does not exist"
+                    echo "- create the GitHub release if it does not exist"
+                  } >> "$GITHUB_STEP_SUMMARY"
 
     publish_release:
         if: github.event_name == 'push'
