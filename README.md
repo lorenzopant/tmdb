@@ -137,7 +137,7 @@ Planned features and improvements include:
 | Find              | ✅     |
 | Genres            | ✅     |
 | Guest Sessions    | ❌     |
-| Keywords          | ❌     |
+| Keywords          | ✅     |
 | Lists             | ❌     |
 | Movie Lists       | ✅     |
 | Movies            | ✅     |
@@ -152,4 +152,4 @@ Planned features and improvements include:
 | TV Seasons        | ❌     |
 | TV Episodes       | ❌     |
 | TV Episode Groups | ❌     |
-| Watch Providers   | ❌     |
+| Watch Providers   | ✅     |
