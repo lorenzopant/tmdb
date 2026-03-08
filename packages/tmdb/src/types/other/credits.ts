@@ -19,8 +19,8 @@ export type CreditDetailsPerson = Omit<Credit, "credit_id">;
 type CreditDetailsMediaBase = {
 	/** Indicates whether the title is marked for adult content. */
 	adult: boolean;
-	/** Relative path to the backdrop image. */
-	backdrop_path: string | null;
+	/** Relative path to the backdrop image, if available. */
+	backdrop_path?: string | null;
 	/** Character name when the credit belongs to cast. */
 	character?: string;
 	/** Genre identifiers attached to the media item. */
@@ -31,8 +31,8 @@ type CreditDetailsMediaBase = {
 	original_language: string;
 	/** Plot summary. */
 	overview: string;
-	/** Relative path to the poster image. */
-	poster_path: string | null;
+	/** Relative path to the poster image, if available. */
+	poster_path?: string | null;
 	/** Popularity score. */
 	popularity: number;
 	/** Average vote score. */
@@ -63,8 +63,8 @@ export type CreditDetailsMovieMedia = CreditDetailsMediaBase & {
 export type CreditDetailsTVEpisode = {
 	/** Indicates whether the episode is marked for adult content. */
 	adult: boolean;
-	/** Episode air date in ISO 8601 format. */
-	air_date: string;
+	/** Episode air date in ISO 8601 format, if available. */
+	air_date?: string | null;
 	/** Episode number within the season. */
 	episode_number: number;
 	/** Episode type reported by TMDB. */
@@ -77,12 +77,12 @@ export type CreditDetailsTVEpisode = {
 	overview: string;
 	/** Production code if available. */
 	production_code: string;
-	/** Runtime in minutes. */
-	runtime: number | null;
+	/** Runtime in minutes, if available. */
+	runtime?: number | null;
 	/** Season number for the episode. */
 	season_number: number;
-	/** Episode still image path. */
-	still_path: string | null;
+	/** Episode still image path, if available. */
+	still_path?: string | null;
 	/** Average vote score. */
 	vote_average: number;
 	/** Total vote count. */
@@ -93,8 +93,8 @@ export type CreditDetailsTVEpisode = {
  * TV season summary embedded in a TV credit details response.
  */
 export type CreditDetailsTVSeason = {
-	/** Season air date in ISO 8601 format. */
-	air_date: string;
+	/** Season air date in ISO 8601 format, if available. */
+	air_date?: string | null;
 	/** Total number of episodes in the season. */
 	episode_count: number;
 	/** Unique season identifier. */
@@ -103,8 +103,8 @@ export type CreditDetailsTVSeason = {
 	name: string;
 	/** Plot summary. */
 	overview: string;
-	/** Relative path to the season poster. */
-	poster_path: string | null;
+	/** Relative path to the season poster, if available. */
+	poster_path?: string | null;
 	/** Season number within the series. */
 	season_number: number;
 	/** Average vote score. */
