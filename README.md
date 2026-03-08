@@ -133,7 +133,7 @@ Planned features and improvements include:
 | Companies         | ✅     |
 | Configuration     | ✅     |
 | Credits           | ✅     |
-| Discover          | ❌     |
+| Discover          | ✅     |
 | Find              | ❌     |
 | Genres            | ✅     |
 | Guest Sessions    | ❌     |
