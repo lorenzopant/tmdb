@@ -132,7 +132,7 @@ Planned features and improvements include:
 | Collections       | ✅     |
 | Companies         | ✅     |
 | Configuration     | ✅     |
-| Credits           | ❌     |
+| Credits           | ✅     |
 | Discover          | ❌     |
 | Find              | ❌     |
 | Genres            | ✅     |
