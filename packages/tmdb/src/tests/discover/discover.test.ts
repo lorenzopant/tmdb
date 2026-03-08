@@ -23,7 +23,7 @@ describe("DiscoverAPI", () => {
 			page: 2,
 			sort_by: "popularity.desc",
 			region: "IT",
-			"with_genres": "28|12",
+			with_genres: "28|12",
 		});
 
 		expect(clientMock.request).toHaveBeenCalledOnce();
@@ -33,7 +33,7 @@ describe("DiscoverAPI", () => {
 			include_adult: false,
 			page: 2,
 			sort_by: "popularity.desc",
-			"with_genres": "28|12",
+			with_genres: "28|12",
 		});
 	});
 
@@ -47,13 +47,28 @@ describe("DiscoverAPI", () => {
 		});
 	});
 
+	it("should keep movie defaults when language and region are explicitly undefined", async () => {
+		await discoverAPI.movie({
+			language: undefined,
+			region: undefined,
+			page: 4,
+		});
+
+		expect(clientMock.request).toHaveBeenCalledOnce();
+		expect(clientMock.request).toHaveBeenCalledWith("/discover/movie", {
+			language: "en-US",
+			region: "US",
+			page: 4,
+		});
+	});
+
 	it("should call client.request with the correct tv discover parameters", async () => {
 		await discoverAPI.tv({
 			page: 3,
 			sort_by: "vote_average.desc",
 			timezone: "America/New_York",
-			"with_status": "0|2",
-			"with_type": "2,4",
+			with_status: "0|2",
+			with_type: "2,4",
 		});
 
 		expect(clientMock.request).toHaveBeenCalledOnce();
@@ -62,8 +77,8 @@ describe("DiscoverAPI", () => {
 			timezone: "America/New_York",
 			page: 3,
 			sort_by: "vote_average.desc",
-			"with_status": "0|2",
-			"with_type": "2,4",
+			with_status: "0|2",
+			with_type: "2,4",
 		});
 	});
 
@@ -74,6 +89,21 @@ describe("DiscoverAPI", () => {
 		expect(clientMock.request).toHaveBeenCalledWith("/discover/tv", {
 			language: "en-US",
 			timezone: "Europe/Rome",
+		});
+	});
+
+	it("should keep tv defaults when language and timezone are explicitly undefined", async () => {
+		await discoverAPI.tv({
+			language: undefined,
+			timezone: undefined,
+			page: 5,
+		});
+
+		expect(clientMock.request).toHaveBeenCalledOnce();
+		expect(clientMock.request).toHaveBeenCalledWith("/discover/tv", {
+			language: "en-US",
+			timezone: "Europe/Rome",
+			page: 5,
 		});
 	});
 

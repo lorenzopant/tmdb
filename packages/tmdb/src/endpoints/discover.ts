@@ -17,10 +17,14 @@ export class DiscoverAPI extends TMDBAPIBase {
 	 */
 	private withMovieDefaults(params?: DiscoverMovieParams): DiscoverMovieParams | undefined {
 		if (!params && !this.defaultOptions.language && !this.defaultOptions.region) return undefined;
+
+		const language = params?.language ?? this.defaultOptions.language;
+		const region = params?.region ?? this.defaultOptions.region;
+
 		return {
-			language: this.defaultOptions.language,
-			region: this.defaultOptions.region,
 			...params,
+			language,
+			region,
 		};
 	}
 
@@ -29,10 +33,13 @@ export class DiscoverAPI extends TMDBAPIBase {
 			return undefined;
 		}
 
+		const language = params?.language ?? this.defaultOptions.language;
+		const timezone = params?.timezone ?? this.defaultOptions.timezone;
+
 		return {
-			language: this.defaultOptions.language,
-			timezone: this.defaultOptions.timezone,
 			...params,
+			language,
+			timezone,
 		};
 	}
 
