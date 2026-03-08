@@ -15,6 +15,7 @@ import { MoviesAPI } from "./endpoints/movies";
 import { SearchAPI } from "./endpoints/search";
 import { TVSeriesAPI } from "./endpoints/tv_series";
 import { TVSeriesListsAPI } from "./endpoints/tv_series_lists";
+import { WatchProvidersAPI } from "./endpoints/watch_providers";
 import { Errors } from "./errors/messages";
 import { ImageAPI } from "./images/images";
 import { TMDBOptions } from "./types/config";
@@ -30,6 +31,7 @@ export class TMDB {
 	public genres: GenresAPI;
 	public tv_lists: TVSeriesListsAPI;
 	public tv_series: TVSeriesAPI;
+	public watch_providers: WatchProvidersAPI;
 	public certifications: CertificationsAPI;
 	public changes: ChangesAPI;
 	public companies: CompaniesAPI;
@@ -56,6 +58,7 @@ export class TMDB {
 		this.genres = new GenresAPI(this.client, this.options);
 		this.tv_lists = new TVSeriesListsAPI(this.client, this.options);
 		this.tv_series = new TVSeriesAPI(this.client, this.options);
+		this.watch_providers = new WatchProvidersAPI(this.client, this.options);
 		this.certifications = new CertificationsAPI(this.client, this.options);
 		this.changes = new ChangesAPI(this.client, this.options);
 		this.companies = new CompaniesAPI(this.client, this.options);
