@@ -134,7 +134,7 @@ Planned features and improvements include:
 | Configuration     | ✅     |
 | Credits           | ✅     |
 | Discover          | ✅     |
-| Find              | ❌     |
+| Find              | ✅     |
 | Genres            | ✅     |
 | Guest Sessions    | ❌     |
 | Keywords          | ❌     |
