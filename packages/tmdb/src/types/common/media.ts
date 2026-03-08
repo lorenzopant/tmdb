@@ -166,6 +166,11 @@ export type VideoItem = {
 };
 
 /**
+ * Watch provider monetization filters supported by TMDB media discovery endpoints.
+ */
+export type WatchMonetizationType = "flatrate" | "free" | "ads" | "rent" | "buy";
+
+/**
  * Image metadata and details
  */
 export type ImageItem = {
