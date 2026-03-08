@@ -1,0 +1,22 @@
+---
+title: Find
+description: Find movies, TV shows, seasons, episodes, and people by external IDs.
+---
+
+The `FindAPI` exposes TMDB's external-ID lookup endpoint.
+Use it when you already have an external identifier such as an IMDb ID and want the matching TMDB record.
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+
+const result = await tmdb.find.by_id({
+	external_id: "tt0137523",
+	external_source: "imdb_id",
+});
+```
+
+## Methods
+
+- [`by_id()`](/docs/api-reference/find/by-id) — Find movies, TV shows, TV seasons, TV episodes, or people by external ID.
