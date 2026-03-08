@@ -76,12 +76,12 @@ jobs:
               id: branch
               run: |
                   VERSION="${{ steps.version.outputs.version }}"
-                  BRANCH="release/v${VERSION}"
+                  BRANCH="release/v${VERSION}-${{ github.run_id }}"
 
                   git checkout -b "$BRANCH"
                   git add packages/tmdb/package.json
                   git commit -m "chore: release v${VERSION}"
-                  git push --force-with-lease origin "$BRANCH"
+                  git push -u origin "$BRANCH"
 
                   echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
                   echo "compare_url=https://github.com/${{ github.repository }}/compare/main...${BRANCH}?expand=1" >> "$GITHUB_OUTPUT"
