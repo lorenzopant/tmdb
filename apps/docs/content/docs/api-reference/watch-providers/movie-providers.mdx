@@ -1,0 +1,58 @@
+---
+title: Movie Providers
+description: Query the list of supported movie watch providers.
+---
+
+Powered by [JustWatch](https://www.justwatch.com/).
+
+<Callout type="warn">
+	**Attribution required.** You must attribute the source of this data as **JustWatch** in any usage. Failure to comply may result in API
+	access being revoked.
+</Callout>
+
+```ts
+async movie_providers(params?: WatchProviderListParams): Promise<WatchProviderListResponse>
+```
+
+> **TMDB Reference:** [Watch Provider Movie List](https://developer.themoviedb.org/reference/watch-providers-movie-list)
+
+## Parameters
+
+| Name       | Type                                                | Required | Description                                 |
+| ---------- | --------------------------------------------------- | -------- | ------------------------------------------- |
+| `language` | [`Language`](/docs/types/options/language#language) | ❌       | Language used for localized provider names. |
+
+## Returns
+
+[`WatchProviderListResponse`](/docs/types/others#watchproviderlistresponse)
+
+## Example
+
+```ts
+const providers = await tmdb.watch_providers.movie_providers();
+
+console.log(providers.results[0]?.provider_name);
+```
+
+```json
+{
+	"results": [
+		{
+			"provider_id": 8,
+			"provider_name": "Netflix",
+			"logo_path": "/t2yyOv40HZeVlLjYsCsPHnWLk4W.jpg",
+			"display_priority": 8,
+			"display_priorities": {
+				"US": 8,
+				"IT": 10
+			}
+		}
+	]
+}
+```
+
+## Types
+
+- [WatchProviderListParams](/docs/types/others#watchproviderlistparams)
+- [WatchProviderListResponse](/docs/types/others#watchproviderlistresponse)
+- [WatchProviderListItem](/docs/types/others#watchproviderlistitem)

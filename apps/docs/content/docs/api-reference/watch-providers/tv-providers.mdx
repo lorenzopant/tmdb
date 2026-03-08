@@ -1,0 +1,58 @@
+---
+title: TV Providers
+description: Query the list of supported TV watch providers.
+---
+
+Powered by [JustWatch](https://www.justwatch.com/).
+
+<Callout type="warn">
+	**Attribution required.** You must attribute the source of this data as **JustWatch** in any usage. Failure to comply may result in API
+	access being revoked.
+</Callout>
+
+```ts
+async tv_providers(params?: WatchProviderListParams): Promise<WatchProviderListResponse>
+```
+
+> **TMDB Reference:** [Watch Provider TV List](https://developer.themoviedb.org/reference/watch-provider-tv-list)
+
+## Parameters
+
+| Name | Type | Required | Description |
+| ---- | ---- | -------- | ----------- |
+| `language` | [`Language`](/docs/types/options/language#language) | ❌ | Language used for localized provider names. |
+
+## Returns
+
+[`WatchProviderListResponse`](/docs/types/others#watchproviderlistresponse)
+
+## Example
+
+```ts
+const providers = await tmdb.watch_providers.tv_providers();
+
+console.log(providers.results[0]?.provider_name);
+```
+
+```json
+{
+	"results": [
+		{
+			"provider_id": 350,
+			"provider_name": "Apple TV+",
+			"logo_path": "/2E03IAZsX4ZaUqM7tXlctEPMGWS.jpg",
+			"display_priority": 2,
+			"display_priorities": {
+				"US": 2,
+				"GB": 4
+			}
+		}
+	]
+}
+```
+
+## Types
+
+- [WatchProviderListParams](/docs/types/others#watchproviderlistparams)
+- [WatchProviderListResponse](/docs/types/others#watchproviderlistresponse)
+- [WatchProviderListItem](/docs/types/others#watchproviderlistitem)

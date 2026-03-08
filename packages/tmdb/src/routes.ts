@@ -97,4 +97,9 @@ export const ENDPOINTS = {
 		VIDEOS: "/videos",
 		WATCH_PROVIDERS: "/watch/providers",
 	},
+	WATCH_PROVIDERS: {
+		MOVIE: "/watch/providers/movie",
+		TV: "/watch/providers/tv",
+		REGIONS: "/watch/providers/regions",
+	},
 };
