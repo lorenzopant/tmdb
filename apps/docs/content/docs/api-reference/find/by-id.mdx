@@ -1,0 +1,61 @@
+---
+title: By ID
+description: Find TMDB resources by external ID.
+---
+
+Find movies, TV shows, TV seasons, TV episodes, or people by external ID.
+
+```ts
+async by_id(params: FindByIDParams): Promise<FindResults>
+```
+
+> **TMDB Reference:** [Find By ID](https://developer.themoviedb.org/reference/find-by-id)
+
+## Notes
+
+- The endpoint returns grouped result arrays: `movie_results`, `tv_results`, `tv_season_results`, `tv_episode_results`, and `person_results`.
+- Only one or some of these arrays may contain matches for a given `external_id`.
+- If the `external_id` and `external_source` combination is valid syntactically but does not match a TMDB record, TMDB returns empty arrays.
+
+### Supported external sources
+
+| Source | Movies | TV Shows | TV Seasons | TV Episodes | People |
+| ------ | ------ | -------- | ---------- | ----------- | ------ |
+| IMDb | ✅ | ✅ | ✅ | ✅ | ❌ |
+| Facebook | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Instagram | ✅ | ✅ | ❌ | ❌ | ✅ |
+| TheTVDB | ❌ | ✅ | ✅ | ✅ | ❌ |
+| TikTok | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Twitter | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Wikidata | ✅ | ✅ | ✅ | ✅ | ✅ |
+| YouTube | ✅ | ✅ | ❌ | ❌ | ✅ |
+
+## Parameters
+
+| Name | Type | Required | Description |
+| ---- | ---- | -------- | ----------- |
+| `external_id` | `string` | ✅ | External identifier to look up, such as an IMDb ID. |
+| `external_source` | [`FindExternalSource`](/docs/types/find#findexternalsource) | ✅ | Source namespace the external ID belongs to. |
+| `language` | [`Language`](/docs/types/options/language#language) | ❌ | Language used for localized result fields. |
+
+## Returns
+
+[`FindResults`](/docs/types/find#findresults)
+
+## Example
+
+```ts
+const result = await tmdb.find.by_id({
+	external_id: "tt0137523",
+	external_source: "imdb_id",
+});
+
+console.log(result.movie_results[0]?.title); // Fight Club
+console.log(result.tv_results); // []
+```
+
+## Types
+
+- [FindByIDParams](/docs/types/find#findbyidparams)
+- [FindExternalSource](/docs/types/find#findexternalsource)
+- [FindResults](/docs/types/find#findresults)

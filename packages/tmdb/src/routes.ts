@@ -20,6 +20,7 @@ export const ENDPOINTS = {
 		MOVIE: "/discover/movie",
 		TV: "/discover/tv",
 	},
+	FIND: "/find",
 	CREDITS: {
 		DETAILS: "/credit",
 	},

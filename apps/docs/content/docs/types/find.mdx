@@ -1,0 +1,162 @@
+---
+title: Find
+description: Type definitions for finding TMDB resources by external IDs.
+---
+
+import { TypeTable } from "fumadocs-ui/components/type-table";
+
+These types are used by the [`FindAPI`](/docs/api-reference/find).
+
+## Parameters
+
+### `FindByIDParams`
+
+Parameters for [`find.by_id()`](/docs/api-reference/find/by-id).
+
+<TypeTable
+	type={{
+		external_id: { type: "string", description: "External identifier to look up." },
+		external_source: { type: "FindExternalSource", description: "Source namespace the external ID belongs to." },
+		language: { type: "Language", description: "Language used for localized result fields." },
+	}}
+/>
+
+---
+
+### `FindExternalSource`
+
+Supported external source values accepted by [`find.by_id()`](/docs/api-reference/find/by-id).
+
+```ts
+type FindExternalSource =
+	| "imdb_id"
+	| "tvdb_id"
+	| "freebase_mid"
+	| "freebase_id"
+	| "tvrage_id"
+	| "facebook_id"
+	| "instagram_id"
+	| "twitter_id";
+```
+
+---
+
+## Responses
+
+### `FindResults`
+
+Top-level response returned by [`find.by_id()`](/docs/api-reference/find/by-id).
+
+<TypeTable
+	type={{
+		movie_results: { type: "FindMovieResultItem[]", description: "Matching movie results." },
+		person_results: { type: "FindPersonResultItem[]", description: "Matching person results." },
+		tv_results: { type: "FindTVResultItem[]", description: "Matching TV series results." },
+		tv_episode_results: { type: "FindTVEpisodeResultItem[]", description: "Matching TV episode results." },
+		tv_season_results: { type: "FindTVSeasonResultItem[]", description: "Matching TV season results." },
+	}}
+/>
+
+---
+
+## Result Items
+
+### `FindMovieResultItem`
+
+<TypeTable
+	type={{
+		adult: { type: "boolean", description: "Whether the movie is marked as adult content." },
+		backdrop_path: { type: "string | null", description: "Path to the backdrop image." },
+		id: { type: "number", description: "Unique TMDB movie identifier." },
+		media_type: { type: '"movie"', description: "Media type discriminator." },
+		original_language: { type: "string", description: "Original language code." },
+		original_title: { type: "string", description: "Original movie title." },
+		overview: { type: "string", description: "Plot synopsis/overview." },
+		popularity: { type: "number", description: "Popularity score calculated by TMDB." },
+		poster_path: { type: "string | null", description: "Path to the poster image." },
+		release_date: { type: "string", description: "Release date in ISO 8601 format (YYYY-MM-DD)." },
+		title: { type: "string", description: "Localized movie title." },
+		video: { type: "boolean", description: "Whether the movie has an associated video." },
+		vote_average: { type: "number", description: "Average vote score." },
+		vote_count: { type: "number", description: "Total number of votes." },
+	}}
+/>
+
+---
+
+### `FindPersonResultItem`
+
+<TypeTable
+	type={{
+		adult: { type: "boolean", description: "Whether the person is marked as adult content." },
+		gender: { type: "number | null", description: "Gender value returned by TMDB." },
+		id: { type: "number", description: "Unique TMDB person identifier." },
+		known_for_department: { type: "string", description: "Primary department the person is known for." },
+		media_type: { type: '"person"', description: "Media type discriminator." },
+		name: { type: "string", description: "Display name of the person." },
+		original_name: { type: "string", description: "Original name of the person." },
+		popularity: { type: "number", description: "Popularity score calculated by TMDB." },
+		profile_path: { type: "string | null", description: "Path to the profile image." },
+	}}
+/>
+
+---
+
+### `FindTVResultItem`
+
+<TypeTable
+	type={{
+		adult: { type: "boolean", description: "Whether the series is marked as adult content." },
+		backdrop_path: { type: "string | null", description: "Path to the backdrop image." },
+		first_air_date: { type: "string", description: "First air date in ISO 8601 format (YYYY-MM-DD)." },
+		id: { type: "number", description: "Unique TMDB TV series identifier." },
+		media_type: { type: '"tv"', description: "Media type discriminator." },
+		name: { type: "string", description: "Localized TV series name." },
+		origin_country: { type: "CountryISO3166_1[]", description: "Origin country codes." },
+		original_language: { type: "string", description: "Original language code." },
+		original_name: { type: "string", description: "Original TV series name." },
+		overview: { type: "string", description: "Plot synopsis/overview." },
+		popularity: { type: "number", description: "Popularity score calculated by TMDB." },
+		poster_path: { type: "string | null", description: "Path to the poster image." },
+		vote_average: { type: "number", description: "Average vote score." },
+		vote_count: { type: "number", description: "Total number of votes." },
+	}}
+/>
+
+---
+
+### `FindTVEpisodeResultItem`
+
+<TypeTable
+	type={{
+		air_date: { type: "string", description: "Episode air date in ISO 8601 format (YYYY-MM-DD)." },
+		episode_number: { type: "number", description: "Episode number within the season." },
+		id: { type: "number", description: "Unique TMDB episode identifier." },
+		media_type: { type: '"tv_episode"', description: "Media type discriminator." },
+		name: { type: "string", description: "Episode name." },
+		overview: { type: "string", description: "Episode overview." },
+		production_code: { type: "string", description: "Production code if available." },
+		season_number: { type: "number", description: "Season number the episode belongs to." },
+		show_id: { type: "number", description: "Parent TV series identifier." },
+		still_path: { type: "string | null", description: "Path to the episode still image." },
+		vote_average: { type: "number", description: "Average vote score." },
+		vote_count: { type: "number", description: "Total number of votes." },
+	}}
+/>
+
+---
+
+### `FindTVSeasonResultItem`
+
+<TypeTable
+	type={{
+		air_date: { type: "string", description: "Season air date in ISO 8601 format (YYYY-MM-DD)." },
+		episode_count: { type: "number", description: "Number of episodes in the season." },
+		id: { type: "number", description: "Unique TMDB season identifier." },
+		media_type: { type: '"tv_season"', description: "Media type discriminator." },
+		name: { type: "string", description: "Season name." },
+		overview: { type: "string", description: "Season overview." },
+		poster_path: { type: "string | null", description: "Path to the season poster image." },
+		season_number: { type: "number", description: "Season number within the series." },
+	}}
+/>
