@@ -14,10 +14,7 @@ export type CreditDetailsParams = CreditBaseParam & WithLanguage;
 /**
  * Person data attached to a credit details response.
  */
-export type CreditDetailsPerson = Omit<Credit, "credit_id"> & {
-	/** Media type discriminator for the related person payload. */
-	media_type: "person";
-};
+export type CreditDetailsPerson = Omit<Credit, "credit_id">;
 
 type CreditDetailsMediaBase = {
 	/** Indicates whether the title is marked for adult content. */
