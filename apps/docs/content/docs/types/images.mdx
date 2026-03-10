@@ -50,7 +50,7 @@ A union of all valid image collection keys returned by TMDB image endpoints.
 type ImageCollectionKey = "backdrops" | "logos" | "posters" | "profiles" | "stills";
 ```
 
-### `ImagesResult<K, T>`
+### `ImagesResult<T, K>`
 
 A generic image result type. Use the type parameter to specify which image collectionsare present in the response for a given entity type.
 
@@ -58,7 +58,7 @@ A generic image result type. Use the type parameter to specify which image colle
 	type={{
 		id: { type: "number", description: "The unique TMDB identifier of the entity。" },
 		"K in ImageCollectionKey": {
-			type: "T[] usually ImageItem[]",
+			type: "T[] (usually ImageItem[])",
 			description: "One or more image collections, determined by the keys passed via the generic parameter K。",
 		},
 	}}

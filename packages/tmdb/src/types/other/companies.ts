@@ -1,4 +1,4 @@
-import { WithLanguage } from "../common";
+import { AlternativeName, AlternativeNamesResult, WithLanguage } from "../common";
 import { ImagesResult, OrganizationImage } from "../common/images";
 import { CountryISO3166_1 } from "../config/countries";
 import { Language, LanguageISO6391 } from "../config/languages";
@@ -34,22 +34,12 @@ export type Company = CompanySummary & {
 /**
  * A single alternative company name entry.
  */
-export type CompanyAlternativeName = {
-	/** Alternative company name */
-	name: string;
-	/** Optional classification for the name */
-	type: string;
-};
+export type CompanyAlternativeName = AlternativeName;
 
 /**
  * Alternative names response for a company.
  */
-export type CompanyAlternativeNames = {
-	/** Unique company identifier */
-	id: number;
-	/** List of alternative names associated with the company */
-	results: CompanyAlternativeName[];
-};
+export type CompanyAlternativeNames = AlternativeNamesResult;
 
 /**
  * Company logo images returned by `/company/{company_id}/images`.

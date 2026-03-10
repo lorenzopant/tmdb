@@ -1,0 +1,38 @@
+---
+title: Alternative Names
+description: Query the alternative names associated with a specific TV network.
+---
+
+This method returns the alternative names associated with a specific TV network.
+
+```ts
+async alternative_names(params: NetworkBaseParams): Promise<AlternativeNamesResult>
+```
+
+> **TMDB Reference:** [Network Alternative Names](https://developer.themoviedb.org/reference/network-alternative-names)
+
+## Parameters
+
+| Name         | Type     | Required | Description               |
+| ------------ | -------- | -------- | ------------------------- |
+| `network_id` | `number` | ✅       | TMDB network identifier. |
+
+## Returns
+
+An [`AlternativeNamesResult`](/docs/types/common#alternativenamesresult) object containing
+the alternative names of the specified network.
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const names = await tmdb.networks.alternative_names({ network_id: 49 });
+```
+
+## Types
+
+- [AlternativeNamesResult](/docs/types/common#alternativenamesresult)
+- [AlternativeName](/docs/types/common#alternativename)
+- [NetworkBaseParams](/docs/types/others#networkbaseparams)
