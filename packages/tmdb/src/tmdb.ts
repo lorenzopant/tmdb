@@ -20,6 +20,7 @@ import { WatchProvidersAPI } from "./endpoints/watch_providers";
 import { Errors } from "./errors/messages";
 import { ImageAPI } from "./images/images";
 import { TMDBOptions } from "./types/config";
+import { NetworksAPI } from "./endpoints/networks";
 
 export class TMDB {
 	private client: ApiClient;
@@ -41,6 +42,7 @@ export class TMDB {
 	public collections: CollectionsAPI;
 	public discover: DiscoverAPI;
 	public find: FindAPI;
+	public networks: NetworksAPI;
 	// etc...
 
 	/**
@@ -69,5 +71,6 @@ export class TMDB {
 		this.collections = new CollectionsAPI(this.client, this.options);
 		this.discover = new DiscoverAPI(this.client, this.options);
 		this.find = new FindAPI(this.client, this.options);
+		this.networks = new NetworksAPI(this.client, this.options);
 	}
 }

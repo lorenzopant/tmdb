@@ -63,6 +63,11 @@ export const ENDPOINTS = {
 		VIDEOS: "/videos",
 		WATCH_PROVIDERS: "/watch/providers",
 	},
+	NETWORKS: {
+		DETAILS: "/network",
+		ALTERNATIVE_NAMES: "/alternative_names",
+		IMAGES: "/images",
+	},
 	SEARCH: {
 		MOVIE: "/search/movie",
 		COLLECTION: "/search/collection",
