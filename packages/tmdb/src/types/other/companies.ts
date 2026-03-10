@@ -1,4 +1,5 @@
-import { FileType, ImageItem, WithLanguage } from "../common";
+import { WithLanguage } from "../common";
+import { ImagesResult, OrganizationImage } from "../common/images";
 import { CountryISO3166_1 } from "../config/countries";
 import { Language, LanguageISO6391 } from "../config/languages";
 
@@ -53,27 +54,7 @@ export type CompanyAlternativeNames = {
 /**
  * Company logo images returned by `/company/{company_id}/images`.
  */
-export type CompanyImages = {
-	/** Unique company identifier */
-	id: number;
-	/** Logos available for the company */
-	logos: CompanyImage[];
-};
-
-/**
- * Represents a single company logo (slightly different from ImageItem)
- *
- * Note on FileType from TMDB:
- * There are two image formats that are supported for companies, PNG's and SVG's.
- * You can see which type the original file is by looking at the file_type field.
- * We prefer SVG's as they are resolution independent and as such, the width and height are only
- * there to reflect the original asset that was uploaded.
- * An SVG can be scaled properly beyond those dimensions if you call them as a PNG.
- */
-export type CompanyImage = Omit<ImageItem, "iso_639_1"> & {
-	id: string;
-	file_type: FileType;
-};
+export type CompanyImages = ImagesResult<OrganizationImage, "logos">;
 
 /** Base param used by all company queries */
 export type CompanyBaseParam = {

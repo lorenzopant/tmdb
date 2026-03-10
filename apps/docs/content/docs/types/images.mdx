@@ -1,0 +1,54 @@
+---
+title: Images
+description: Shared image types used across company, network, movie, TV, and person endpoints.
+---
+
+import { TypeTable } from "fumadocs-ui/components/type-table";
+
+These types are shared across multiple API namespaces that return image data.
+Rather than duplicating definitions, they are centralised here and referenced throughout the API reference.
+
+## Core Types
+
+---
+
+### `ImageItem`
+
+Metadata for a single image asset. Used as the element type for all image collections
+returned by TMDB image endpoints.
+
+<AutoTypeTable path="common/images.ts" name="ImageItem" />
+
+---
+
+### `ImageCollectionKey`
+
+A union of all valid image collection keys returned by TMDB image endpoints.
+
+```ts
+type ImageCollectionKey = "backdrops" | "logos" | "posters" | "profiles" | "stills";
+```
+
+### `ImagesResult<K, T>`
+
+A generic image result type. Use the type parameter to specify which image collectionsare present in the response for a given entity type.
+
+<TypeTable
+	type={{
+		id: { type: "number", description: "The unique TMDB identifier of the entity。" },
+		"K in ImageCollectionKey": {
+			type: "T[] usually ImageItem[]",
+			description: "One or more image collections, determined by the keys passed via the generic parameter K。",
+		},
+	}}
+/>
+
+#### Example
+
+```ts
+export type MovieImages = ImagesResult<ImageItem, "backdrops" | "logos" | "posters">;
+
+export type TVSeriesImages = ImagesResult<TVImageItem, "backdrops" | "logos" | "posters">;
+
+export type CompanyImages = ImagesResult<OrganizationImage, "logos">;
+```
