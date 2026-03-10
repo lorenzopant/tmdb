@@ -1,4 +1,5 @@
-import { ImageItem, MediaType, Translation, WithLanguage } from "../common";
+import { MediaType, Translation, WithLanguage } from "../common";
+import { ImageItem, ImagesResult } from "../common/images";
 import { Language, LanguageISO6391 } from "../config";
 import { MovieResultItem } from "../search";
 
@@ -44,14 +45,7 @@ export type CollectionItem = Omit<MovieResultItem, "title" | "original_title"> &
  * Represents the images associated with a TMDB collection,
  * including backdrops and posters.
  */
-export type CollectionImages = {
-	/** Unique TMDB identifier for the collection */
-	id: number;
-	/** List of backdrop images available for the collection */
-	backdrops: ImageItem[];
-	/** List of poster images available for the collection */
-	posters: ImageItem[];
-};
+export type CollectionImages = ImagesResult<ImageItem, "backdrops" | "posters">;
 
 /**
  * Represents the available translations for a TMDB collection.

@@ -1,0 +1,20 @@
+---
+title: Networks
+description: Retrieve TV network details, alternative names, and logos from TMDB.
+---
+
+The `NetworksAPI` provides access to TV network metadata in TMDB, including top-level details,
+alternative names, and available logo images.
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+tmdb.networks; // access methods
+```
+
+## Methods
+
+- [`details()`](/docs/api-reference/networks/details) — Get the top level details of a network by ID.
+- [`alternative_names()`](/docs/api-reference/networks/alternative-names) — Get the alternative names associated with a network.
+- [`images()`](/docs/api-reference/networks/images) — Get the logos associated with a network.

@@ -6,7 +6,7 @@ description: Query the alternative names associated with a specific company.
 This method returns the alternative names associated with a specific company.
 
 ```ts
-async alternative_names(params: CompanyAlternativeNamesParams): Promise<CompanyAlternativeNames>
+async alternative_names(params: CompanyAlternativeNamesParams): Promise<AlternativeNamesResult>
 ```
 
 > **TMDB Reference:** [Company Alternative Names](https://developer.themoviedb.org/reference/company-alternative-names)
@@ -19,7 +19,7 @@ async alternative_names(params: CompanyAlternativeNamesParams): Promise<CompanyA
 
 ## Returns
 
-A [`CompanyAlternativeNames`](/docs/types/others#companyalternativenames) object containing
+A [`AlternativeNamesResult`](/docs/types/common#alternativenamesresult) object containing
 the alternative names of the specified company.
 
 ## Example
@@ -28,10 +28,10 @@ the alternative names of the specified company.
 import { TMDB } from "@lorenzopant/tmdb";
 
 const tmdb = new TMDB("your-api-key");
-const company = await tmdb.companies.alternativeNames({ company_id: 174 });
+const company = await tmdb.companies.alternative_names({ company_id: 174 });
 ```
 
 ## Types
 
-- [CompanyAlternativeNames](/docs/types/others#companyalternativenames)
-- [CompanyAlternativeName](/docs/types/others#companyalternativename)
+- [AlternativeNamesResult](/docs/types/common#alternativenamesresult)
+- [AlternativeName](/docs/types/common#alternativename)
