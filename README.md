@@ -141,7 +141,7 @@ Planned features and improvements include:
 | Lists             | ❌     |
 | Movie Lists       | ✅     |
 | Movies            | ✅     |
-| Networks          | ❌     |
+| Networks          | ✅     |
 | People Lists      | ❌     |
 | People            | ❌     |
 | Reviews           | ❌     |
