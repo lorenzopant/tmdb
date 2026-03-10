@@ -21,6 +21,27 @@ returned by TMDB image endpoints.
 
 ---
 
+### `OrganizationImage`
+
+Metadata for a single image asset. Used as the element type for company and network image collections.
+Slightly different from `ImageItem` as it includes fewer properties.
+
+<AutoTypeTable path="common/images.ts" name="OrganizationImage" />
+
+---
+
+### FileType
+
+A union of all valid file types returned by TMDB image endpoints.
+
+```ts
+type FileType = ".png" | ".svg";
+```
+
+or string if you want, made available via LiteralUnion interally.
+
+---
+
 ### `ImageCollectionKey`
 
 A union of all valid image collection keys returned by TMDB image endpoints.
