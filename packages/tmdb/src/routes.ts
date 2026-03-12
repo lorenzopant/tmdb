@@ -102,6 +102,18 @@ export const ENDPOINTS = {
 		VIDEOS: "/videos",
 		WATCH_PROVIDERS: "/watch/providers",
 	},
+	TV_SEASONS: {
+		DETAILS: "/season",
+	},
+	TV_EPISODES: {
+		DETAILS: "/episode",
+		CHANGES: "/changes",
+		CREDITS: "/credits",
+		EXTERNAL_IDS: "/external_ids",
+		IMAGES: "/images",
+		TRANSLATIONS: "/translations",
+		VIDEOS: "/videos",
+	},
 	WATCH_PROVIDERS: {
 		MOVIE: "/watch/providers/movie",
 		TV: "/watch/providers/tv",
