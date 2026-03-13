@@ -1,4 +1,5 @@
 import { Cast, Crew } from "../common";
+import { TVEpisodeCredits } from "./credits";
 
 /**
  * Represents a single episode of a TV series from the TMDB API.
@@ -43,7 +44,7 @@ export type TVEpisodeAppendToResponseNamespace = "credits" | "external_ids" | "i
  * Maps append-to-response keys to their corresponding response types.
  */
 export type TVEpisodeAppendableMap = {
-	credits: object;
+	credits: TVEpisodeCredits;
 	external_ids: object;
 	images: object;
 	translations: object;

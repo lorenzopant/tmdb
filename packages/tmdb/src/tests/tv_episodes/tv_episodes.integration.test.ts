@@ -23,11 +23,39 @@ describe("TV Episodes API", () => {
 		expect(episode.credits).toBeDefined();
 	});
 
-	// it("(AGGREGATE CREDITS) should get aggregate credits a tv show", async () => {
-	// 	const show = await tmdb.tv_series.aggregate_credits({ series_id: 1396, language: "es-ES" });
-	// 	expect(show.id).toBe(1396);
-	// 	expect(Array.isArray(show.cast)).toBe(true);
-	// 	expect(Array.isArray(show.crew)).toBe(true);
-	// 	expect(show.cast[0].name).toBe("Bryan Cranston");
-	// });
+	it("(CHANGES) should get changes for a tv episode", async () => {
+		const episode = await tmdb.tv_episodes.changes({ episode_id: 63056 });
+		expect(episode.changes).toBeDefined();
+		expect(Array.isArray(episode.changes)).toBe(true);
+	});
+
+	it("(CREDITS) should get credits for a tv episode", async () => {
+		const credits = await tmdb.tv_episodes.credits({ ...params });
+		expect(Array.isArray(credits.crew)).toBe(true);
+		expect(Array.isArray(credits.cast)).toBe(true);
+		expect(Array.isArray(credits.guest_stars)).toBe(true);
+		expect(credits.id).toBe(62085);
+	});
+
+	it("(EXTERNAL IDS) should get external ids for a tv episode", async () => {
+		const ids = await tmdb.tv_episodes.external_ids({ ...params });
+		expect(ids.imdb_id).toBeDefined();
+		expect(ids.wikidata_id).toBeDefined();
+	});
+
+	it("(IMAGES) should get images for a tv episode", async () => {
+		const images = await tmdb.tv_episodes.images({ ...params });
+		expect(Array.isArray(images.stills)).toBe(true);
+	});
+
+	it("(TRANSLATIONS) should get images for a tv episode", async () => {
+		const results = await tmdb.tv_episodes.translations({ ...params });
+		expect(Array.isArray(results.translations)).toBe(true);
+		expect(results.translations[0].data.name).toBeDefined();
+	});
+
+	it("(VIDEOS) should get videos for a tv episode", async () => {
+		const videos = await tmdb.tv_episodes.videos({ ...params });
+		expect(Array.isArray(videos.results)).toBe(true);
+	});
 });

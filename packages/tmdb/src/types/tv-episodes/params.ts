@@ -1,4 +1,5 @@
-import { WithParams } from "../common";
+import { WithLanguage, WithParams } from "../common";
+import { Language } from "../config";
 import { TVSeasonBaseParams } from "../tv-seasons/params";
 import { Prettify } from "../utility";
 import { TVEpisodeAppendToResponseNamespace } from "./tv_episodes";
@@ -15,7 +16,7 @@ export type TVEpisodeBaseParams = TVSeasonBaseParams & {
 
 /** Uniquely identifies an episode across different tv shows. */
 export type TVEpisodeId = {
-	episode_id: string;
+	episode_id: string | number;
 };
 
 /**
@@ -24,3 +25,11 @@ export type TVEpisodeId = {
 export type TVEpisodeDetailsParams = Prettify<
 	TVEpisodeBaseParams & { append_to_response?: TVEpisodeAppendToResponseNamespace[] } & WithParams<"language">
 >;
+
+/** Parameters for tv episode credits endpoint */
+export type TVEpisodeCreditsParams = TVEpisodeBaseParams & WithLanguage;
+
+export type TVEpisodeImagesParams = TVEpisodeBaseParams &
+	WithLanguage & {
+		include_image_language?: Language;
+	};
