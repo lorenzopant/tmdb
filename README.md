@@ -150,6 +150,6 @@ Planned features and improvements include:
 | TV Series Lists   | ✅     |
 | TV Series         | ✅     |
 | TV Seasons        | ❌     |
-| TV Episodes       | ❌     |
-| TV Episode Groups | ❌     |
+| TV Episodes       | ✅     |
+| TV Episode Groups | ✅     |
 | Watch Providers   | ✅     |
