@@ -27,7 +27,7 @@ a [`PaginatedResponse<Review>`](/docs/types/common#paginatedresponset).
 ## Example
 
 ```ts
-const { results, total_results } = await tmdb.tvSeries.reviews({ series_id: 1396 });
+const { results, total_results } = await tmdb.tv_series.reviews({ series_id: 1396 });
 console.log(`${total_results} reviews found`);
 console.log(results.content);
 ```

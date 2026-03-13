@@ -24,6 +24,6 @@ async alternative_titles(params: TVBaseParam): Promise<TVAlternativeTitles>
 ## Example
 
 ```ts
-const { results } = await tmdb.tvSeries.alternative_titles({ series_id: 1396 });
+const { results } = await tmdb.tv_series.alternative_titles({ series_id: 1396 });
 console.log(results.map((t) => `${t.iso_3166_1}: ${t.title}`));
 ```

@@ -27,6 +27,6 @@ a [`PaginatedResponse<TVSeriesResultItem>`](/docs/types/search#tvseriesresultite
 ## Example
 
 ```ts
-const { results } = await tmdb.tvSeries.recommendations({ series_id: 1396 });
+const { results } = await tmdb.tv_series.recommendations({ series_id: 1396 });
 console.log(results.map((s) => s.name));
 ```

@@ -24,7 +24,7 @@ async content_ratings(params: TVBaseParam): Promise<TVContentRatings>
 ## Example
 
 ```ts
-const { results } = await tmdb.tvSeries.content_ratings({ series_id: 1396 });
+const { results } = await tmdb.tv_series.content_ratings({ series_id: 1396 });
 
 const us = results.find((r) => r.iso_3166_1 === "US");
 console.log(us?.rating); // "TV-MA"

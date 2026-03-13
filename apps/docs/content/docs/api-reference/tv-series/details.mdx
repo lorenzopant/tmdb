@@ -30,11 +30,11 @@ or [`TVDetailsWithAppends<T>`](/docs/types/tv-series#tvdetailswithappendst) when
 
 ```ts
 // Basic details
-const show = await tmdb.tvSeries.details({ series_id: 1396 });
+const show = await tmdb.tv_series.details({ series_id: 1396 });
 console.log(show.name); // "Breaking Bad"
 
 // With appended data
-const show = await tmdb.tvSeries.details({
+const show = await tmdb.tv_series.details({
 	series_id: 1396,
 	append_to_response: ["credits", "videos", "keywords"],
 });

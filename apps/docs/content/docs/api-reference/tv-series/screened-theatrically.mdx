@@ -24,6 +24,6 @@ async screened_theatrically(params: TVBaseParam): Promise<TVScreenedTheatrically
 ## Example
 
 ```ts
-const { results } = await tmdb.tvSeries.screened_theatrically({ series_id: 1396 });
+const { results } = await tmdb.tv_series.screened_theatrically({ series_id: 1396 });
 console.log(results.map((e) => `S${e.season_number}E${e.episode_number}`));
 ```

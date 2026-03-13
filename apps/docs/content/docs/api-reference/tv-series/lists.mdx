@@ -26,6 +26,6 @@ async lists(params: TVSeriesListsParams): Promise<TVSeriesLists>
 ## Example
 
 ```ts
-const { results } = await tmdb.tvSeries.lists({ series_id: 1396 });
+const { results } = await tmdb.tv_series.lists({ series_id: 1396 });
 console.log(results.map((l) => l.name));
 ```

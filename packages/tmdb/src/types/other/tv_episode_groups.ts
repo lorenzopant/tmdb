@@ -18,7 +18,7 @@ export type TVEpisodeGroupDetails = {
 	/** Network associated with the episode group, if available */
 	network: NetworkItem | null;
 	/** Grouping strategy type (e.g., numbered by season, collections, etc.) */
-	type: number;
+	type: TVEpisodeGroupType;
 	/** Grouped episode entries */
 	groups: TVEpisodeGroupDetailsItem[];
 };
@@ -44,10 +44,23 @@ export type TVEpisodeGroupDetailsItem = {
  */
 export type TVEpisodeGroupEpisode = Omit<TVEpisode, "guest_stars" | "runtime"> & {
 	/** Production code for the episode, if available */
-	production_code: string | null;
+	production_code?: string | null;
 	/** Path to the episode still image, if available */
-	still_path: string | null;
+	still_path?: string | null;
 };
+
+/**
+ * Supported episode group type identifiers.
+ */
+export enum TVEpisodeGroupType {
+	OriginalAirDate = 1,
+	Absolute = 2,
+	Dvd = 3,
+	Digital = 4,
+	StoryArc = 5,
+	Production = 6,
+	TV = 7,
+}
 
 export type TVEpisodeGroupParams = {
 	/** Episode group identifier */

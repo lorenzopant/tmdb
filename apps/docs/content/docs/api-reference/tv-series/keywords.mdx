@@ -24,7 +24,7 @@ async keywords(params: TVBaseParam): Promise<TVKeywords>
 ## Example
 
 ```ts
-const { results } = await tmdb.tvSeries.keywords({ series_id: 1396 });
+const { results } = await tmdb.tv_series.keywords({ series_id: 1396 });
 console.log(results.map((k) => k.name));
 // ["drug dealer", "chemistry teacher", "new mexico", ...]
 ```

@@ -25,7 +25,7 @@ async episode_groups(params: TVBaseParam): Promise<TVEpisodeGroups>
 ## Example
 
 ```ts
-const { results } = await tmdb.tvSeries.episode_groups({ series_id: 1396 });
+const { results } = await tmdb.tv_series.episode_groups({ series_id: 1396 });
 
 console.log(results.map((g) => `${g.name} (${g.episode_count} episodes)`));
 ```
