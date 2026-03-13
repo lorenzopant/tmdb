@@ -1,18 +1,9 @@
-import { Translation } from "../common";
+import { TranslationResults } from "../common";
 
 /**
  * Movie translations containing all available language versions
  */
-export type MovieTranslations = {
-	/** Movie identifier */
-	id: number;
-	/** Array of translations in different languages */
-	translations: MovieTranslationItem[];
-};
-
-export type MovieTranslationItem = Translation & {
-	data: MovieTranslationData;
-};
+export type MovieTranslations = TranslationResults<MovieTranslationData>;
 
 /**
  * Translation data for a specific language

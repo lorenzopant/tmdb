@@ -1,23 +1,9 @@
-import { Translation } from "../common";
+import { TranslationResults } from "../common";
 
 /**
  * Represents the collection of available translations for a TV series.
  */
-export type TVTranslations = {
-	/** The unique identifier of the TV series. */
-	id: number;
-	/** The list of available translations for this TV series. */
-	translations: TVTranslationItem[];
-};
-
-/**
- * Represents a single translation entry for a TV series,
- * extending the base `Translation` type with TV-specific translated data.
- */
-export type TVTranslationItem = Translation & {
-	/** The translated content fields for this TV series. */
-	data: TVTranslationData;
-};
+export type TVTranslations = TranslationResults<TVTranslationData>;
 
 /**
  * The translated text fields for a TV series in a specific language.
