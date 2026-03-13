@@ -114,6 +114,9 @@ export const ENDPOINTS = {
 		TRANSLATIONS: "/translations",
 		VIDEOS: "/videos",
 	},
+	TV_EPISODE_GROUPS: {
+		DETAILS: "/tv/episode_group",
+	},
 	WATCH_PROVIDERS: {
 		MOVIE: "/watch/providers/movie",
 		TV: "/watch/providers/tv",

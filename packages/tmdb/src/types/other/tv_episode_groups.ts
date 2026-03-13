@@ -48,3 +48,8 @@ export type TVEpisodeGroupEpisode = Omit<TVEpisode, "guest_stars" | "runtime"> &
 	/** Path to the episode still image, if available */
 	still_path: string | null;
 };
+
+export type TVEpisodeGroupParams = {
+	/** Episode group identifier */
+	episode_group_id: string;
+};
