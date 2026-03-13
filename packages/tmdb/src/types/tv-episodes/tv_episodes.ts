@@ -1,5 +1,9 @@
 import { Cast, Crew } from "../common";
 import { TVEpisodeCredits } from "./credits";
+import { TVEpisodeExternalIDs } from "./external_ids";
+import { TVEpisodeImages } from "./images";
+import { TVEpisodeTranslations } from "./translations";
+import { TVEpisodeVideos } from "./videos";
 
 /**
  * Represents a single episode of a TV series from the TMDB API.
@@ -45,10 +49,10 @@ export type TVEpisodeAppendToResponseNamespace = "credits" | "external_ids" | "i
  */
 export type TVEpisodeAppendableMap = {
 	credits: TVEpisodeCredits;
-	external_ids: object;
-	images: object;
-	translations: object;
-	videos: object;
+	external_ids: TVEpisodeExternalIDs;
+	images: TVEpisodeImages;
+	translations: TVEpisodeTranslations;
+	videos: TVEpisodeVideos;
 };
 
 /**

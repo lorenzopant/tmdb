@@ -304,6 +304,7 @@ export type ReviewAuthorDetails = {
 	rating?: number;
 };
 
+/** Collection of translations for a media item (object with `id` and `translations`). */
 export type TranslationResults<T> = {
 	id: number | string;
 	translations: Translation<T>[];
@@ -312,7 +313,7 @@ export type TranslationResults<T> = {
 /**
  * Translation data for a specific language
  */
-export type Translation<T> = {
+export type Translation<T = unknown> = {
 	/** ISO 3166-1 alpha-2 country code */
 	iso_3166_1: string;
 	/** ISO 639-1 language code */
