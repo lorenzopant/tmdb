@@ -1,0 +1,38 @@
+---
+title: External IDs
+description: Get external platform identifiers for a TV episode.
+---
+
+Get a list of external IDs for a TV episode.
+Supported platforms include IMDb, TVDB, and Wikidata.
+
+```ts
+async external_ids(params: TVEpisodeBaseParams): Promise<TVEpisodeExternalIDs>
+```
+
+> **TMDB Reference:** [TV Episode External IDs](https://developer.themoviedb.org/reference/tv-episode-external-ids)
+
+## Parameters
+
+| Name             | Type     | Required | Description                         |
+| ---------------- | -------- | -------- | ----------------------------------- |
+| `series_id`      | `number` | ✅       | TMDB TV series identifier.          |
+| `season_number`  | `number` | ✅       | Season number within the TV series. |
+| `episode_number` | `number` | ✅       | Episode number within the season.   |
+
+## Returns
+
+[`TVEpisodeExternalIDs`](/docs/types/tv-episodes#tvepisodeexternalids)
+
+## Example
+
+```ts
+const ids = await tmdb.tv_episodes.external_ids({
+	series_id: 1396,
+	season_number: 1,
+	episode_number: 1,
+});
+
+console.log(ids.imdb_id);
+console.log(ids.tvdb_id);
+```

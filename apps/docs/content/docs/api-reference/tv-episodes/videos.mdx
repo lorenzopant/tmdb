@@ -1,0 +1,37 @@
+---
+title: Videos
+description: Get trailers, teasers, and clips for a TV episode.
+---
+
+Get the videos that belong to a TV episode, including trailers, teasers, and clips.
+
+```ts
+async videos(params: TVEpisodeBaseParams): Promise<TVEpisodeVideos>
+```
+
+> **TMDB Reference:** [TV Episode Videos](https://developer.themoviedb.org/reference/tv-episode-videos)
+
+## Parameters
+
+| Name             | Type     | Required | Description                         |
+| ---------------- | -------- | -------- | ----------------------------------- |
+| `series_id`      | `number` | ✅       | TMDB TV series identifier.          |
+| `season_number`  | `number` | ✅       | Season number within the TV series. |
+| `episode_number` | `number` | ✅       | Episode number within the season.   |
+
+## Returns
+
+[`TVEpisodeVideos`](/docs/types/tv-episodes#tvepisodevideos)
+
+## Example
+
+```ts
+const { results } = await tmdb.tv_episodes.videos({
+	series_id: 1396,
+	season_number: 1,
+	episode_number: 1,
+});
+
+const trailer = results.find((v) => v.type === "Trailer");
+console.log(`https://www.youtube.com/watch?v=${trailer?.key}`);
+```

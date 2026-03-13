@@ -1,0 +1,39 @@
+---
+title: Images
+description: Get still images for a TV episode.
+---
+
+Get still images associated with a TV episode. If a `language` is specified it acts as a filter on the results.
+Use `include_image_language` to include images from additional languages.
+
+```ts
+async images(params: TVEpisodeImagesParams): Promise<TVEpisodeImages>
+```
+
+> **TMDB Reference:** [TV Episode Images](https://developer.themoviedb.org/reference/tv-episode-images)
+
+## Parameters
+
+| Name                     | Type                                           | Required | Description                                                       |
+| ------------------------ | ---------------------------------------------- | -------- | ----------------------------------------------------------------- |
+| `series_id`              | `number`                                       | ✅       | TMDB TV series identifier.                                        |
+| `season_number`          | `number`                                       | ✅       | Season number within the TV series.                               |
+| `episode_number`         | `number`                                       | ✅       | Episode number within the season.                                 |
+| `language`               | [`Language`](/docs/types/options/language#language) | ❌       | Language for image metadata. Defaults to `en-US`.                 |
+| `include_image_language` | [`Language`](/docs/types/options/language#language) | ❌       | Include images with additional language tags (e.g., `"en,null"`). |
+
+## Returns
+
+[`TVEpisodeImages`](/docs/types/tv-episodes#tvepisodeimages)
+
+## Example
+
+```ts
+const { stills } = await tmdb.tv_episodes.images({
+	series_id: 1396,
+	season_number: 1,
+	episode_number: 1,
+	language: "en-US",
+	include_image_language: "en,null",
+});
+```

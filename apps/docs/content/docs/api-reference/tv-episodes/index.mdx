@@ -1,0 +1,27 @@
+---
+title: TV Episodes
+description: Fetch TV episode details, credits, images, videos, and translations from the TMDB catalog.
+---
+
+The `TVEpisodesAPI` provides access to TV episode data from TMDB — details, credits, images, translations, and videos.
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const episode = await tmdb.tv_episodes.details({
+	series_id: 1396,
+	season_number: 1,
+	episode_number: 1,
+});
+```
+
+## Methods
+
+- [`details()`](/docs/api-reference/tv-episodes/details) — Get the details of a TV episode by series, season, and episode number. Supports `append_to_response`.
+- [`changes()`](/docs/api-reference/tv-episodes/changes) — Get the change history for a TV episode.
+- [`credits()`](/docs/api-reference/tv-episodes/credits) — Get the cast, crew, and guest stars for a TV episode.
+- [`external_ids()`](/docs/api-reference/tv-episodes/external-ids) — Get external platform identifiers for a TV episode.
+- [`images()`](/docs/api-reference/tv-episodes/images) — Get still images for a TV episode.
+- [`translations()`](/docs/api-reference/tv-episodes/translations) — Get all available translations for a TV episode.
+- [`videos()`](/docs/api-reference/tv-episodes/videos) — Get trailers, teasers, and clips for a TV episode.

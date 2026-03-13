@@ -1,0 +1,194 @@
+---
+title: TV Episodes
+description: Type definitions for TV episode details, appended data, and query parameters.
+---
+
+import { TypeTable } from "fumadocs-ui/components/type-table";
+
+These types represent the TV episode domain — details, appended sub-resources, and query parameters.
+
+## `TVEpisode`
+
+The complete representation of a TV episode as returned by [`tv_episodes.details()`](/docs/api-reference/tv-episodes/details).
+
+<TypeTable
+	type={{
+		air_date: { type: "string", description: "Date the episode first aired (YYYY-MM-DD)." },
+		crew: { type: "Crew[]", description: "Crew members who worked on this episode." },
+		episode_number: { type: "number", description: "Episode number within the season." },
+		guest_stars: { type: 'Omit<Cast, "cast_id">[]', description: "Guest stars appearing in this episode." },
+		name: { type: "string", description: "Episode title or name." },
+		overview: { type: "string", description: "Episode synopsis or description." },
+		id: { type: "number", description: "Unique TMDB identifier for the episode." },
+		production_code: { type: "string | null", description: "Production code assigned by the studio, if available." },
+		runtime: { type: "number", description: "Runtime of the episode in minutes." },
+		season_number: { type: "number", description: "Season number this episode belongs to." },
+		still_path: { type: "string | null", description: "Path to the episode still image." },
+		vote_average: { type: "number", description: "Average user rating (0–10 scale)." },
+		vote_count: { type: "number", description: "Total number of user votes received." },
+	}}
+/>
+
+---
+
+## `TVEpisodeDetailsWithAppends<T>`
+
+Extends [`TVEpisode`](#tvepisode) with one or more appended sub-resources.
+`T` is a readonly array of [`TVEpisodeAppendToResponseNamespace`](#tvepisodeappendtoresponsenamespace) keys.
+
+```ts
+const episode: TVEpisodeDetailsWithAppends<["credits", "videos"]> = await tmdb.tv_episodes.details({
+	series_id: 1396,
+	season_number: 1,
+	episode_number: 1,
+	append_to_response: ["credits", "videos"],
+});
+```
+
+---
+
+## `TVEpisodeAppendToResponseNamespace`
+
+Union of all valid keys that can be passed to `append_to_response`.
+
+```ts
+type TVEpisodeAppendToResponseNamespace =
+	| "credits"
+	| "external_ids"
+	| "images"
+	| "translations"
+	| "videos";
+```
+
+---
+
+## Additional Resources
+
+Other types returned by TV episode endpoints.
+
+### `TVEpisodeCredits`
+
+<TypeTable
+	type={{
+		id: { type: "number | string", description: "TMDB identifier for the episode." },
+		cast: { type: 'Omit<Cast, "cast_id">[]', description: "List of cast members." },
+		crew: { type: "Crew[]", description: "List of crew members." },
+		guest_stars: { type: 'Omit<Cast, "cast_id">[]', description: "Guest stars appearing in this episode." },
+	}}
+/>
+
+---
+
+### `TVEpisodeExternalIDs`
+
+<TypeTable
+	type={{
+		id: { type: "number", description: "TMDB identifier for the episode." },
+		imdb_id: { type: "string | null", description: 'IMDb identifier (e.g., "tt0903747").' },
+		freebase_mid: { type: "string | null", description: "Freebase MID identifier (deprecated)." },
+		freebase_id: { type: "string | null", description: "Freebase ID (deprecated)." },
+		tvdb_id: { type: "number | null", description: "TheTVDB identifier." },
+		tvrage_id: { type: "number | null", description: "TVRage identifier (service discontinued)." },
+		wikidata_id: { type: "string | null", description: 'Wikidata identifier (e.g., "Q23572").' },
+	}}
+/>
+
+---
+
+### `TVEpisodeImages`
+
+<TypeTable
+	type={{
+		id: { type: "number", description: "TMDB identifier for the episode." },
+		stills: { type: "ImageItem[]", description: "Array of still images from the episode." },
+	}}
+/>
+
+---
+
+### `TVEpisodeTranslations`
+
+A [`TranslationResults<TVEpisodeTranslation>`](/docs/types/common#translationresults) array of episode translations.
+
+#### `TVEpisodeTranslation`
+
+<TypeTable
+	type={{
+		name: { type: "string | null", description: "Translated episode title." },
+		overview: { type: "string | null", description: "Translated episode overview." },
+	}}
+/>
+
+---
+
+### `TVEpisodeVideos`
+
+Alias for [`MovieVideos`](/docs/types/movies#movievideos).
+
+---
+
+## Parameters
+
+### `TVEpisodeBaseParams`
+
+<TypeTable
+	type={{
+		series_id: { type: "number", required: true, description: "TMDB TV series identifier." },
+		season_number: { type: "number", required: true, description: "Season number within the TV series." },
+		episode_number: { type: "number", required: true, description: "Episode number within the season." },
+	}}
+/>
+
+---
+
+### `TVEpisodeDetailsParams`
+
+<TypeTable
+	type={{
+		series_id: { type: "number", required: true, description: "TMDB TV series identifier." },
+		season_number: { type: "number", required: true, description: "Season number within the TV series." },
+		episode_number: { type: "number", required: true, description: "Episode number within the season." },
+		append_to_response: { type: "TVEpisodeAppendToResponseNamespace[]", description: "Sub-resources to append to the response." },
+		language: { type: "Language", description: "Language for localized results.", default: "en-US" },
+	}}
+/>
+
+---
+
+### `TVEpisodeCreditsParams`
+
+<TypeTable
+	type={{
+		series_id: { type: "number", required: true, description: "TMDB TV series identifier." },
+		season_number: { type: "number", required: true, description: "Season number within the TV series." },
+		episode_number: { type: "number", required: true, description: "Episode number within the season." },
+		language: { type: "Language", description: "Language for localized results.", default: "en-US" },
+	}}
+/>
+
+---
+
+### `TVEpisodeImagesParams`
+
+<TypeTable
+	type={{
+		series_id: { type: "number", required: true, description: "TMDB TV series identifier." },
+		season_number: { type: "number", required: true, description: "Season number within the TV series." },
+		episode_number: { type: "number", required: true, description: "Episode number within the season." },
+		language: { type: "Language", description: "Language for image metadata.", default: "en-US" },
+		include_image_language: {
+			type: "Language",
+			description: 'Include images with additional language tags (e.g., "en,null").',
+		},
+	}}
+/>
+
+---
+
+### `TVEpisodeId`
+
+<TypeTable
+	type={{
+		episode_id: { type: "number | string", required: true, description: "Unique TMDB identifier for the episode." },
+	}}
+/>
