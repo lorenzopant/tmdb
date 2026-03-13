@@ -25,7 +25,7 @@ async external_ids(params: TVBaseParam): Promise<TVExternalIDs>
 ## Example
 
 ```ts
-const ids = await tmdb.tvSeries.external_ids({ series_id: 1396 });
+const ids = await tmdb.tv_series.external_ids({ series_id: 1396 });
 console.log(ids.imdb_id); // "tt0903747"
 console.log(ids.tvdb_id); // 81189
 ```

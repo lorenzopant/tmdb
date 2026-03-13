@@ -24,7 +24,7 @@ async translations(params: TVBaseParam): Promise<TVTranslations>
 ## Example
 
 ```ts
-const { translations } = await tmdb.tvSeries.translations({ series_id: 1396 });
+const { translations } = await tmdb.tv_series.translations({ series_id: 1396 });
 
 const italian = translations.find((t) => t.iso_639_1 === "it");
 console.log(italian?.data.name); // Italian title

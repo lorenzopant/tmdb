@@ -24,7 +24,7 @@ async videos(params: TVBaseParam): Promise<TVVideos>
 ## Example
 
 ```ts
-const { results } = await tmdb.tvSeries.videos({ series_id: 1396 });
+const { results } = await tmdb.tv_series.videos({ series_id: 1396 });
 
 const trailer = results.find((v) => v.type === "Trailer");
 console.log(`https://www.youtube.com/watch?v=${trailer?.key}`);

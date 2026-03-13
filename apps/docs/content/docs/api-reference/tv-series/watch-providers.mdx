@@ -30,7 +30,7 @@ async watch_providers(params: TVBaseParam): Promise<MediaWatchProviders>
 ## Example
 
 ```ts
-const providers = await tmdb.tvSeries.watch_providers({ series_id: 1396 });
+const providers = await tmdb.tv_series.watch_providers({ series_id: 1396 });
 
 const us = providers.results["US"];
 console.log(us?.flatrate); // streaming providers

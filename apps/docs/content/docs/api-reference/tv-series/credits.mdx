@@ -26,7 +26,7 @@ async credits(params: TVCreditsParams): Promise<TVCredits>
 ## Example
 
 ```ts
-const { cast, crew } = await tmdb.tvSeries.credits({ series_id: 1396 });
+const { cast, crew } = await tmdb.tv_series.credits({ series_id: 1396 });
 
 const director = crew.find((m) => m.job === "Director");
 const topCast = cast.slice(0, 5);

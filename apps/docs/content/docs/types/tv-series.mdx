@@ -9,7 +9,7 @@ These types represent the full TV series domain — details, appended sub-resour
 
 ## `TVSeriesDetails`
 
-The complete representation of a TV show as returned by [`tvSeries.details()`](/docs/api-reference/tv-series/details).
+The complete representation of a TV show as returned by [`tv_series.details()`](/docs/api-reference/tv-series/details).
 
 <TypeTable
 	type={{
@@ -57,7 +57,7 @@ Extends [`TVSeriesDetails`](#tvseriesdetails) with one or more appended sub-reso
 `T` is a readonly array of [`TVAppendToResponseNamespace`](#tvappendtoresponsenamespace) keys.
 
 ```ts
-const show: TVDetailsWithAppends<["credits", "keywords"]> = await tmdb.tvSeries.details({
+const show: TVDetailsWithAppends<["credits", "keywords"]> = await tmdb.tv_series.details({
 	series_id: 1396,
 	append_to_response: ["credits", "keywords"],
 });

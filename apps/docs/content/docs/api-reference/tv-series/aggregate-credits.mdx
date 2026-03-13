@@ -27,7 +27,7 @@ async aggregate_credits(params: TVAggregateCreditsParams): Promise<TVAggregateCr
 ## Example
 
 ```ts
-const { cast, crew } = await tmdb.tvSeries.aggregate_credits({ series_id: 1396 });
+const { cast, crew } = await tmdb.tv_series.aggregate_credits({ series_id: 1396 });
 
 const mainCast = cast.filter((m) => m.total_episode_count > 10);
 const directors = crew.filter((m) => m.department === "Directing");
