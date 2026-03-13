@@ -1,0 +1,38 @@
+---
+title: Credits
+description: Get the cast, crew, and guest stars for a TV episode.
+---
+
+Get the credits for a TV episode, including guest stars specific to the episode.
+
+```ts
+async credits(params: TVEpisodeCreditsParams): Promise<TVEpisodeCredits>
+```
+
+> **TMDB Reference:** [TV Episode Credits](https://developer.themoviedb.org/reference/tv-episode-credits)
+
+## Parameters
+
+| Name             | Type                                           | Required | Description                                          |
+| ---------------- | ---------------------------------------------- | -------- | ---------------------------------------------------- |
+| `series_id`      | `number`                                       | ✅       | TMDB TV series identifier.                           |
+| `season_number`  | `number`                                       | ✅       | Season number within the TV series.                  |
+| `episode_number` | `number`                                       | ✅       | Episode number within the season.                    |
+| `language`       | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized results. Defaults to `en-US`. |
+
+## Returns
+
+[`TVEpisodeCredits`](/docs/types/tv-episodes#tvepisodecredits)
+
+## Example
+
+```ts
+const { cast, crew, guest_stars } = await tmdb.tv_episodes.credits({
+	series_id: 1396,
+	season_number: 1,
+	episode_number: 1,
+});
+
+const director = crew.find((m) => m.job === "Director");
+const topGuest = guest_stars[0];
+```

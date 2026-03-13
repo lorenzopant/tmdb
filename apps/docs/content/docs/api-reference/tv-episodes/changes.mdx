@@ -1,0 +1,29 @@
+---
+title: Changes
+description: Get the change history for a TV episode.
+---
+
+Get the change history for a TV episode. By default, only the last 24 hours are returned.
+
+```ts
+async changes(params: TVEpisodeId): Promise<Changes>
+```
+
+> **TMDB Reference:** [TV Episode Changes by ID](https://developer.themoviedb.org/reference/tv-episode-changes-by-id)
+
+## Parameters
+
+| Name         | Type                 | Required | Description                      |
+| ------------ | -------------------- | -------- | -------------------------------- |
+| `episode_id` | `number` \| `string` | ✅       | Unique TMDB identifier for the episode. |
+
+## Returns
+
+[`Changes`](/docs/types/common#changes)
+
+## Example
+
+```ts
+const changes = await tmdb.tv_episodes.changes({ episode_id: 63056 });
+console.log(changes.changes);
+```

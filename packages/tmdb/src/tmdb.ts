@@ -21,6 +21,7 @@ import { Errors } from "./errors/messages";
 import { ImageAPI } from "./images/images";
 import { TMDBOptions } from "./types/config";
 import { NetworksAPI } from "./endpoints/networks";
+import { TVEpisodesAPI } from "./endpoints/tv_episodes";
 
 export class TMDB {
 	private client: ApiClient;
@@ -43,6 +44,7 @@ export class TMDB {
 	public discover: DiscoverAPI;
 	public find: FindAPI;
 	public networks: NetworksAPI;
+	public tv_episodes: TVEpisodesAPI;
 	// etc...
 
 	/**
@@ -72,5 +74,6 @@ export class TMDB {
 		this.discover = new DiscoverAPI(this.client, this.options);
 		this.find = new FindAPI(this.client, this.options);
 		this.networks = new NetworksAPI(this.client, this.options);
+		this.tv_episodes = new TVEpisodesAPI(this.client, this.options);
 	}
 }

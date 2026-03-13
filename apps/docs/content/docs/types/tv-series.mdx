@@ -236,22 +236,7 @@ A [`PaginatedResponse<Review>`](/docs/types/common#paginatedresponset) of user r
 
 ### `TVTranslations`
 
-<TypeTable
-	type={{
-		id: { type: "number", description: "TMDB unique identifier for the TV series." },
-		translations: { type: "TVTranslationItem[]", description: "List of available translations." },
-	}}
-/>
-
-#### `TVTranslationItem`
-
-Extends [`Translation`](/docs/types/common#translation) with a `data` field.
-
-<TypeTable
-	type={{
-		data: { type: "TVTranslationData", description: "Translated content fields for this language." },
-	}}
-/>
+A [`TranslationResults<TVTranslationData>`](/docs/types/common#translationresults) collection of translations for a TV show.
 
 #### `TVTranslationData`
 

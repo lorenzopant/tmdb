@@ -1,4 +1,4 @@
-import { MediaType, Translation, WithLanguage } from "../common";
+import { MediaType, TranslationResults, WithLanguage } from "../common";
 import { ImageItem, ImagesResult } from "../common/images";
 import { Language, LanguageISO6391 } from "../config";
 import { MovieResultItem } from "../search";
@@ -50,21 +50,7 @@ export type CollectionImages = ImagesResult<ImageItem, "backdrops" | "posters">;
 /**
  * Represents the available translations for a TMDB collection.
  */
-export type CollectionTranslations = {
-	/** Unique TMDB identifier for the collection */
-	id: number;
-	/** List of translations available for the collection */
-	translations: CollectionTranslationItem[];
-};
-
-/**
- * Represents a single translation entry for a collection,
- * containing the localized data payload.
- */
-export type CollectionTranslationItem = Translation & {
-	/** Localized data for this translation */
-	data: CollectionTranslationData;
-};
+export type CollectionTranslations = TranslationResults<CollectionTranslationData>;
 
 /**
  * Contains the localized fields provided by a collection translation.

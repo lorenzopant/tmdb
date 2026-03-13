@@ -164,6 +164,13 @@ export type AlternativeTitle = {
 	type: string;
 };
 
+export type VideoResults = {
+	/** Media identifier */
+	id: number | string;
+	/** Array of video items */
+	results: VideoItem[];
+};
+
 /**
  * Video metadata and details
  */
@@ -297,10 +304,16 @@ export type ReviewAuthorDetails = {
 	rating?: number;
 };
 
+/** Collection of translations for a media item (object with `id` and `translations`). */
+export type TranslationResults<T> = {
+	id: number | string;
+	translations: Translation<T>[];
+};
+
 /**
  * Translation data for a specific language
  */
-export type Translation = {
+export type Translation<T = unknown> = {
 	/** ISO 3166-1 alpha-2 country code */
 	iso_3166_1: string;
 	/** ISO 639-1 language code */
@@ -310,7 +323,7 @@ export type Translation = {
 	/** English name of the language */
 	english_name: string;
 	/** Translated media (tv/movie) information */
-	data: object;
+	data: T;
 };
 
 /**

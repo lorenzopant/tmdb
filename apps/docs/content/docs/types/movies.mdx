@@ -211,22 +211,7 @@ See [`MovieResultItem`](/docs/types/search#movieresultitem).
 
 ### `MovieTranslations`
 
-<TypeTable
-	type={{
-		id: { type: "number", description: "Movie identifier." },
-		translations: { type: "MovieTranslationItem[]", description: "Array of translations in different languages." },
-	}}
-/>
-
-#### `MovieTranslationItem`
-
-Extends [`Translation`](/docs/types/common#translation) with a `data` field.
-
-<TypeTable
-	type={{
-		data: { type: "MovieTranslationData", description: "Translated content fields for this language." },
-	}}
-/>
+A [`TranslationResults<MovieTranslationData>`](/docs/types/common#translationresults) object containing translations for the movie.
 
 #### `MovieTranslationData`
 

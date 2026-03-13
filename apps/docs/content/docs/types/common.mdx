@@ -247,11 +247,27 @@ Author metadata for a [`Review`](#review).
 
 ---
 
-### `Translation`
+### `Translation<T = unknown>`
 
-A translation entry for a specific language and region.
+A translation entry for a specific language and region. `T` represents the translated data payload.
 
-<AutoTypeTable path="common/media.ts" name="Translation" />
+```ts
+type Translation<T = unknown> = {
+	iso_3166_1: string;
+	iso_639_1: string;
+	name: string;
+	english_name: string;
+	data: T;
+};
+```
+
+---
+
+### `TranslationResults`
+
+A collection of translation entries for a specific language and region.
+
+<AutoTypeTable path="common/media.ts" name="TranslationResults" />
 
 ---
 

@@ -1,11 +1,6 @@
-import { VideoItem } from "../common";
+import { VideoResults } from "../common";
 
 /**
  * Collection of videos (trailers, teasers, clips) for a movie
  */
-export type MovieVideos = {
-	/** Movie identifier */
-	id: number;
-	/** Array of video items */
-	results: VideoItem[];
-};
+export type MovieVideos = VideoResults;
