@@ -1,0 +1,39 @@
+---
+title: Details
+description: Get the full structure of a TV episode group by ID.
+---
+
+Get the full details for a TV episode group, including grouped episodes.
+
+```ts
+async details(params: TVEpisodeGroupDetailsParams): Promise<TVEpisodeGroupDetails>
+```
+
+> **TMDB Reference:** [TV Episode Group Details](https://developer.themoviedb.org/reference/tv-episode-group-details)
+
+## Parameters
+
+| Name               | Type     | Required | Description                      |
+| ------------------ | -------- | -------- | -------------------------------- |
+| `episode_group_id` | `string` | ✅       | TMDB episode group identifier.   |
+
+## Returns
+
+[`TVEpisodeGroupDetails`](/docs/types/others#tvepisodegroupdetails)
+
+## Example
+
+```ts
+const details = await tmdb.tv_episode_groups.details({
+	episode_group_id: "5d1f41e9a6d981000f4b7b82",
+});
+
+console.log(details.name);
+console.log(details.groups[0].episodes[0].name);
+```
+
+## Types
+
+- [TVEpisodeGroupDetails](/docs/types/others#tvepisodegroupdetails)
+- [TVEpisodeGroupDetailsItem](/docs/types/others#tvepisodegroupdetailsitem)
+- [TVEpisodeGroupEpisode](/docs/types/others#tvepisodegroupepisode)

@@ -35,3 +35,7 @@ const { results } = await tmdb.tv_episodes.videos({
 const trailer = results.find((v) => v.type === "Trailer");
 console.log(`https://www.youtube.com/watch?v=${trailer?.key}`);
 ```
+
+## Types
+
+- [TVEpisodeVideos](/docs/types/tv-episodes#tvepisodevideos)

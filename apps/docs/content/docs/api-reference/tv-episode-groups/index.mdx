@@ -1,0 +1,18 @@
+---
+title: TV Episode Groups
+description: Fetch TV episode group details by episode group ID.
+---
+
+The `TVEpisodeGroupsAPI` provides access to episode group details by ID.
+Use `tvSeries.episode_groups()` to list group IDs for a TV show.
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const details = await tmdb.tv_episode_groups.details({ episode_group_id: "5d1f41e9a6d981000f4b7b82" });
+```
+
+## Methods
+
+- [`details()`](/docs/api-reference/tv-episode-groups/details) — Get the full structure of a TV episode group by ID.
