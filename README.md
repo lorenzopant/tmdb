@@ -114,6 +114,38 @@ and also make sure you're compliant with the linting rules:
 pnpm lint
 ```
 
+## 🚀 Planned Features
+
+The following features are planned to improve developer experience and extend the wrapper's capabilities.
+
+### 🔧 Request & Response Layer
+
+- [ ] **Logger** — Log method name, URL, params, response status, and latency with configurable log levels (`debug`, `info`, `warn`, `error`)
+- [ ] **Request interceptors** — Hook into every request before it fires (e.g., inject custom headers, modify params)
+- [ ] **Response interceptors** — Transform or inspect every response globally before it reaches the caller
+- [ ] **Automatic retry with backoff** — Retry failed requests (e.g., `429 Too Many Requests` or `5xx`) with configurable max retries and exponential backoff
+
+### ⚡ Performance
+
+- [ ] **In-memory caching** — Cache GET responses by URL + params with a configurable TTL (TMDB data like genres or configurations rarely changes)
+- [ ] **Request deduplication** — Reuse in-flight Promises for identical concurrent requests instead of firing duplicates
+- [ ] **Rate limiter** — Automatically queue requests to stay within TMDB's API rate limits (40 requests per 10 seconds)
+
+### 🛠️ Developer Ergonomics
+
+- [ ] **Pagination helpers** — Expose an `autoPaginate()` utility or async generator that fetches all pages transparently
+- [ ] **Image URL builder** — Helper to resolve TMDB image paths into full URLs (e.g., `tmdb.image.url(path, { size: 'w500' })`)
+- [x] **Language/region defaults** — Set `language` and `region` once at the client level instead of passing them on every call
+- [x] **Typed errors** — Structured `TMDBError` objects with `statusCode`, `statusMessage`, and original request context instead of raw HTTP errors
+
+### 🧪 Testing Support
+
+- [ ] **Mock mode** — A `{ mock: true }` client option that returns fixture data without hitting the real API
+- [ ] **Dry-run mode** — Log what *would* be requested without making actual HTTP calls
+
+> 💡 Have a feature request? Open an issue or submit a PR!
+
+
 ## 🗺️ Roadmap
 
 Planned features and improvements include:
