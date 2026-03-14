@@ -107,7 +107,7 @@ export type TVEpisodeItem = {
 	/** The total number of votes received for the episode */
 	vote_count: number;
 	/** The date the episode first aired */
-	air_date: Date;
+	air_date: string;
 	/** The episode number within its season */
 	episode_number: number;
 	/** The production code used internally during filming */
