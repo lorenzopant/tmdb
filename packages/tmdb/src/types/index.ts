@@ -14,4 +14,3 @@ export * from "./find";
 export * from "./watch-providers";
 export * from "./keywords";
 export * from "./credits";
-export * from "./discover";
