@@ -1,9 +1,8 @@
-import { Cast, Crew } from "../common";
-import { TVEpisodeCredits } from "./credits";
-import { TVEpisodeExternalIDs } from "./external_ids";
-import { TVEpisodeImages } from "./images";
-import { TVEpisodeTranslations } from "./translations";
-import { TVEpisodeVideos } from "./videos";
+import { Cast, Crew, ImageItem, ImagesResult, TranslationResults, VideoResults, WithLanguage, WithParams } from "./common";
+import { Language } from "./config";
+import { TVSeasonBaseParams } from "./tv-seasons";
+import { TVExternalIDs } from "./tv-series";
+import { Prettify } from "./utility";
 
 /**
  * Represents a single episode of a TV series from the TMDB API.
@@ -62,3 +61,55 @@ export type TVEpisodeAppendableMap = {
 export type TVEpisodeDetailsWithAppends<T extends readonly TVEpisodeAppendToResponseNamespace[]> = TVEpisode & {
 	[K in T[number]]: TVEpisodeAppendableMap[K];
 };
+
+export type TVEpisodeCredits = {
+	id: number | string;
+	cast: Omit<Cast, "cast_id">[];
+	crew: Crew[];
+	guest_stars: Omit<Cast, "cast_id">[];
+};
+
+export type TVEpisodeExternalIDs = Omit<TVExternalIDs, "facebook_id" | "instagram_id" | "twitter_id">;
+
+export type TVEpisodeImages = ImagesResult<ImageItem, "stills">;
+
+export type TVEpisodeTranslations = TranslationResults<TVEpisodeTranslationData>;
+
+export type TVEpisodeTranslationData = {
+	name?: string | null;
+	overview?: string | null;
+};
+
+export type TVEpisodeVideos = VideoResults;
+
+// MARK: Parameters
+
+/**
+ * Almost every query within the TV Episodes domain
+ * will take this required param to identify the
+ * tv show episode.
+ */
+export type TVEpisodeBaseParams = TVSeasonBaseParams & {
+	/** Episode number */
+	episode_number: number;
+};
+
+/** Uniquely identifies an episode across different tv shows. */
+export type TVEpisodeId = {
+	episode_id: string | number;
+};
+
+/**
+ * Parameters for fetching TV episode details with optional additional data appended.
+ */
+export type TVEpisodeDetailsParams = Prettify<
+	TVEpisodeBaseParams & { append_to_response?: TVEpisodeAppendToResponseNamespace[] } & WithParams<"language">
+>;
+
+/** Parameters for tv episode credits endpoint */
+export type TVEpisodeCreditsParams = TVEpisodeBaseParams & WithLanguage;
+
+export type TVEpisodeImagesParams = TVEpisodeBaseParams &
+	WithLanguage & {
+		include_image_language?: Language;
+	};

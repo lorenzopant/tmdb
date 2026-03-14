@@ -1,5 +1,5 @@
 import { NetworkItem } from "./networks";
-import { TVEpisode } from "./tv-episodes/tv_episodes";
+import { TVEpisode } from "./tv-episodes";
 
 /**
  * Full details for a TV episode group, including grouped episode lists.

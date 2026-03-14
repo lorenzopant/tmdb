@@ -2,7 +2,7 @@ import { ApiClient } from "../client";
 import { PaginatedResponse, TVSeriesResultItem } from "../types";
 import { ENDPOINTS } from "../routes";
 import { TMDBOptions } from "../types/config";
-import { TVSeriesListParams } from "../types/tv_series";
+import { TVSeriesListParams } from "../types/tv-series";
 
 export class TVSeriesListsAPI {
 	private client: ApiClient;

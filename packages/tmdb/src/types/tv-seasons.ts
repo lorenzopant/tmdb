@@ -1,4 +1,4 @@
-import { TVBaseParam } from "../tv_series";
+import { TVBaseParam } from "./tv-series";
 
 /**
  * Almost every query within the TV Series Seasons domain

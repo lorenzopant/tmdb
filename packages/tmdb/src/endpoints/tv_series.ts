@@ -31,7 +31,7 @@ import {
 	TVSimilarParams,
 	TVTranslations,
 	TVVideos,
-} from "../types/tv_series";
+} from "../types/tv-series";
 
 export class TVSeriesAPI extends TMDBAPIBase {
 	private seriesPath(series_id: number): string {
