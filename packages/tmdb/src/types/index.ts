@@ -3,7 +3,7 @@ export * from "./config";
 export * from "./discover";
 export * from "./movies";
 export * from "./search";
-export * from "./tv";
+export * from "./tv_series";
 export * from "./tv-episodes/tv_episodes";
 export * from "./utility";
 export * from "./collections";

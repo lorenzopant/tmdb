@@ -2,7 +2,7 @@ import { ApiClient } from "../client";
 import { PaginatedResponse, TVSeriesResultItem } from "../types";
 import { ENDPOINTS } from "../routes";
 import { TMDBOptions } from "../types/config";
-import { TVSeriesListParams } from "../types/tv";
+import { TVSeriesListParams } from "../types/tv_series";
 
 export class TVSeriesListsAPI {
 	private client: ApiClient;
@@ -25,7 +25,10 @@ export class TVSeriesListsAPI {
 	 * @returns PaginatedResponse of TVSeriesResultItem
 	 */
 	private fetch_tv_series_list(endpoint: string, params: TVSeriesListParams = {}): Promise<PaginatedResponse<TVSeriesResultItem>> {
-		return this.client.request<PaginatedResponse<TVSeriesResultItem>>(ENDPOINTS.TV_SERIES.DETAILS + endpoint, this.withDefaults(params));
+		return this.client.request<PaginatedResponse<TVSeriesResultItem>>(
+			ENDPOINTS.TV_SERIES.DETAILS + endpoint,
+			this.withDefaults(params),
+		);
 	}
 
 	/**
