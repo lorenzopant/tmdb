@@ -98,10 +98,8 @@ export type TVSeriesResultItem = {
 	vote_average: number;
 	/** Total number of votes the series has received. */
 	vote_count: number;
-	/** Localized or display title for the series (may match name). */
-	title: string;
 	/** Original (non-localized) title of the series. */
-	original_title: string;
+	original_name: string;
 };
 
 /**
@@ -109,7 +107,7 @@ export type TVSeriesResultItem = {
  */
 export type MovieResultItem = {
 	/** Path to backdrop image */
-	backdrop_path: string;
+	backdrop_path?: string | null;
 	/** Unique movie identifier */
 	id: number;
 	/** Movie title (localized) */
@@ -119,7 +117,7 @@ export type MovieResultItem = {
 	/** Plot synopsis/overview */
 	overview: string;
 	/** Path to poster image */
-	poster_path: string;
+	poster_path?: string | null;
 	/** Whether the movie is marked as adult content */
 	adult: boolean;
 	/** Original language of the movie (ISO 639-1 code) */
