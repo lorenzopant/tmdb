@@ -134,7 +134,7 @@ The following features are planned to improve developer experience and extend th
 ### 🛠️ Developer Ergonomics
 
 - [ ] **Pagination helpers** — Expose an `autoPaginate()` utility or async generator that fetches all pages transparently
-- [ ] **Image URL builder** — Helper to resolve TMDB image paths into full URLs (e.g., `tmdb.image.url(path, { size: 'w500' })`)
+- [x] **Image URL builder** — Helper to resolve TMDB image paths into full URLs (e.g., `tmdb.images.poster(path, "w500")`)
 - [x] **Language/region defaults** — Set `language` and `region` once at the client level instead of passing them on every call
 - [x] **Typed errors** — Structured `TMDBError` objects with `statusCode`, `statusMessage`, and original request context instead of raw HTTP errors
 
