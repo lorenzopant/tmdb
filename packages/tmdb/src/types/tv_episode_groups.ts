@@ -16,7 +16,7 @@ export type TVEpisodeGroupDetails = {
 	/** Name of the episode group */
 	name: string;
 	/** Network associated with the episode group, if available */
-	network?: NetworkItem | null;
+	network: NetworkItem | null;
 	/** Grouping strategy type (e.g., numbered by season, collections, etc.) */
 	type: TVEpisodeGroupType;
 	/** Grouped episode entries */
