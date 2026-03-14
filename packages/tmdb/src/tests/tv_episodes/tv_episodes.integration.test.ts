@@ -2,7 +2,7 @@
 import { describe, expect, it } from "vitest";
 
 import { TMDB } from "../../tmdb";
-import { TVEpisodeBaseParams } from "../../types/tv-episodes/params";
+import { TVEpisodeBaseParams } from "../../types";
 
 const token = process.env.TMDB_ACCESS_TOKEN;
 if (!token) throw new Error("TMDB_ACCESS_TOKEN is not set, plaase set it in your enviroment variables.");

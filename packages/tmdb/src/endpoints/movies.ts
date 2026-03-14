@@ -17,8 +17,8 @@ import {
 	MovieSimilar,
 	MovieTranslations,
 	MovieVideos,
+	MovieChanges,
 } from "../types/movies";
-import { MovieChanges } from "../types/movies/changes";
 import {
 	MovieAlternativeTitlesParams,
 	MovieChangesParams,
@@ -34,7 +34,7 @@ import {
 	MovieTranslationsParams,
 	MovieVideosParams,
 	MovieWatchProvidersParams,
-} from "../types/movies/params";
+} from "../types";
 
 export class MoviesAPI {
 	private client: ApiClient;

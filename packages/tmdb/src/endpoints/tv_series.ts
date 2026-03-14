@@ -1,35 +1,37 @@
 import { MediaWatchProviders } from "../types";
 import { ENDPOINTS } from "../routes";
+import { TMDBAPIBase } from "./base";
 import {
+	TVAggregateCredits,
 	TVAggregateCreditsParams,
 	TVAlternativeTitles,
+	TVAppendToResponseNamespace,
 	TVBaseParam,
 	TVChangeParams,
+	TVContentRatings,
 	TVCredits,
 	TVCreditsParams,
 	TVDetailsParams,
+	TVDetailsWithAppends,
+	TVEpisodeGroups,
 	TVExternalIDs,
 	TVImages,
 	TVImagesParams,
 	TVKeywords,
 	TVRecommendations,
 	TVRecommendationsParams,
+	TVReviews,
 	TVReviewsParams,
+	TVScreenedTheatrically,
 	TVSeriesChanges,
+	TVSeriesDetails,
+	TVSeriesLists,
 	TVSeriesListsParams,
 	TVSimilar,
 	TVSimilarParams,
 	TVTranslations,
 	TVVideos,
-} from "../types/tv";
-import { TVAggregateCredits } from "../types/tv/aggregate_credits";
-import { TVContentRatings } from "../types/tv/content_ratings";
-import { TVEpisodeGroups } from "../types/tv/episode_groups";
-import { TVSeriesLists } from "../types/tv/lists";
-import { TVReviews } from "../types/tv/reviews";
-import { TVScreenedTheatrically } from "../types/tv/screened_theatrically";
-import { TVAppendToResponseNamespace, TVSeriesDetails, TVDetailsWithAppends } from "../types/tv/tv_series";
-import { TMDBAPIBase } from "./base";
+} from "../types/tv-series";
 
 export class TVSeriesAPI extends TMDBAPIBase {
 	private seriesPath(series_id: number): string {

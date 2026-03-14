@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiClient } from "../../client";
 import { TVSeriesAPI } from "../../endpoints/tv_series";
-import { TVAppendToResponseNamespace } from "../../types/tv/tv_series";
+import { TVAppendToResponseNamespace } from "../../types";
 
 describe("TVSeriesAPI", () => {
 	let clientMock: ApiClient;

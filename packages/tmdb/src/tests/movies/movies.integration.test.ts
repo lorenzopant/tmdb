@@ -31,7 +31,7 @@ describe("Movies (integration)", () => {
 
 	it("(MOVIE DETAILS) should get movie details with appended response", async () => {
 		const movie_id = 550; // Fight Club
-		const movie = await tmdb.movies.details({ movie_id, append_to_response: ["reviews"] });
+		const movie = await tmdb.movies.details({ movie_id, append_to_response: "reviews" });
 		expect(movie).toBeDefined();
 		expect(movie.id).toBe(movie_id);
 		expect(movie.title).toBe("Fight Club");

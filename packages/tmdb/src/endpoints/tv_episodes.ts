@@ -1,18 +1,21 @@
 import { ENDPOINTS } from "../routes";
-import { Changes } from "../types";
-import { TVEpisodeCredits } from "../types/tv-episodes";
-import { TVEpisodeExternalIDs } from "../types/tv-episodes/external_ids";
-import { TVEpisodeImages } from "../types/tv-episodes/images";
 import {
+	Changes,
+	TVEpisode,
+	TVEpisodeAppendToResponseNamespace,
 	TVEpisodeBaseParams,
+	TVEpisodeCredits,
 	TVEpisodeCreditsParams,
 	TVEpisodeDetailsParams,
+	TVEpisodeDetailsWithAppends,
+	TVEpisodeExternalIDs,
 	TVEpisodeId,
+	TVEpisodeImages,
 	TVEpisodeImagesParams,
-} from "../types/tv-episodes/params";
-import { TVEpisodeTranslations } from "../types/tv-episodes/translations";
-import { TVEpisode, TVEpisodeAppendToResponseNamespace, TVEpisodeDetailsWithAppends } from "../types/tv-episodes/tv_episodes";
-import { TVEpisodeVideos } from "../types/tv-episodes/videos";
+	TVEpisodeTranslations,
+	TVEpisodeVideos,
+} from "../types";
+
 import { TMDBAPIBase } from "./base";
 
 export class TVEpisodesAPI extends TMDBAPIBase {

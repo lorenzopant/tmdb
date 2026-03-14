@@ -1,5 +1,5 @@
 import { ENDPOINTS } from "../routes";
-import { CreditDetails, CreditDetailsParams } from "../types/other/credits";
+import { CreditDetails, CreditDetailsParams } from "../types/credits";
 import { TMDBAPIBase } from "./base";
 
 export class CreditsAPI extends TMDBAPIBase {

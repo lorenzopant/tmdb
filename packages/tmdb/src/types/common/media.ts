@@ -176,7 +176,7 @@ export type VideoResults = {
  */
 export type VideoItem = {
 	/** ISO 639-1 language code of the video */
-	iso_649_1: string;
+	iso_639_1: string;
 	/** ISO 3166-1 country code where the video is available */
 	iso_3166_1: string;
 	/** Video title or name */

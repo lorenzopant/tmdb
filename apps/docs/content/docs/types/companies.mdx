@@ -1,0 +1,50 @@
+---
+title: Companies
+description: Types related to the Companies namespace.
+---
+
+Types related to the [CompaniesAPI](/docs/api-reference/companies) namespace.
+
+import { TypeTable } from "fumadocs-ui/components/type-table";
+
+## `CompanySummary`
+
+<AutoTypeTable path="companies.ts" name="CompanySummary" />
+
+## `Company`
+
+<AutoTypeTable path="companies.ts" name="Company" />
+
+## `CompanyImages`
+
+<AutoTypeTable path="companies.ts" name="CompanyImages" />
+
+## `CompanyBaseParam`
+
+<AutoTypeTable path="companies.ts" name="CompanyBaseParam" />
+
+## `CompanyDetailsParams`
+
+<TypeTable
+	type={{
+		company_id: { type: "number", required: true, description: "TMDB company identifier." },
+	}}
+/>
+
+## `CompanyAlternativeNamesParams`
+
+<TypeTable
+	type={{
+		company_id: { type: "number", required: true, description: "TMDB company identifier." },
+	}}
+/>
+
+## `CompanyImagesParams`
+
+<TypeTable
+	type={{
+		company_id: { type: "number", required: true, description: "TMDB company identifier." },
+		language: { type: "Language", description: "Language for localized results.", default: "en-US" },
+		include_image_language: { type: "Language", description: "Language to include in the response." },
+	}}
+/>

@@ -1,17 +1,18 @@
-import { MovieResultItem, PaginatedResponse } from "../types";
-import { ENDPOINTS } from "../routes";
 import {
+	CollectionResultItem,
+	CompanyResultItem,
+	KeywordResultItem,
+	MovieResultItem,
+	PaginatedResponse,
+	PersonResultItem,
 	SearchCollectionsParams,
 	SearchCompanyParams,
 	SearchKeywordsParams,
 	SearchMoviesParams,
 	SearchPersonParams,
-} from "../types/search/params";
-import { CollectionResultItem } from "../types/search/collection";
-import { CompanyResultItem } from "../types/search/company";
-import { KeywordResultItem } from "../types/search/keyword";
+} from "../types";
+import { ENDPOINTS } from "../routes";
 import { TMDBAPIBase } from "./base";
-import { PersonResultItem } from "../types/search/person";
 
 export class SearchAPI extends TMDBAPIBase {
 	/**
