@@ -125,7 +125,7 @@ export type MovieAppendableMap = {
  * ```typescript
  * // Get movie details with credits and videos
  * const movie: MovieDetailsWithAppends<['credits', 'videos']> = await getMovie(550, {
- *   append_to_response: 'credits,videos'
+ *   append_to_response: ['credits','videos']
  * });
  * ```
  */
@@ -307,7 +307,9 @@ type MovieBaseParam = { movie_id: number };
  * Parameters for fetching movie details with optional additional data appended.
  */
 export type MovieDetailsParams = Prettify<
-	MovieBaseParam & { append_to_response?: MovieAppendToResponseNamespace[] } & WithParams<"language">
+	MovieBaseParam & {
+		append_to_response?: MovieAppendToResponseNamespace | MovieAppendToResponseNamespace[];
+	} & WithParams<"language">
 >;
 
 /**
