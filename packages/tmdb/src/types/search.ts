@@ -20,7 +20,7 @@ export type CollectionResultItem = {
 	/** Collection overview/description */
 	overview: string;
 	/** Path to poster image */
-	poster_path: string;
+	poster_path?: string | null;
 };
 
 /**
@@ -30,7 +30,7 @@ export type CompanyResultItem = {
 	/** Unique company identifier */
 	id: number;
 	/** Path to company logo image */
-	logo_path: string;
+	logo_path?: string | null;
 	/** Company name */
 	name: string;
 	/** ISO 3166-1 country code of company's origin */
@@ -61,7 +61,7 @@ export type PersonResultItem = {
 	/** TMDB popularity score based on views, votes, and activity */
 	popularity: number;
 	/** Path to person's profile image */
-	profile_path: string;
+	profile_path?: string | null;
 	/** List of notable movies or TV shows the person is known for */
 	known_for: KnownForItem[];
 };
@@ -75,7 +75,7 @@ export type PersonResultItem = {
  */
 export type TVSeriesResultItem = {
 	/** Relative path to the backdrop image for the series (nullable on some responses). */
-	backdrop_path: string;
+	backdrop_path?: string | null;
 	/** First air date of the series (YYYY-MM-DD). */
 	first_air_date: string;
 	/** Array of genre ids associated with the series. */
@@ -93,7 +93,7 @@ export type TVSeriesResultItem = {
 	/** Popularity score as returned by TMDB. */
 	popularity: number;
 	/** Relative path to the poster image for the series (nullable on some responses). */
-	poster_path: string;
+	poster_path?: string | null;
 	/** Average vote score for the series. */
 	vote_average: number;
 	/** Total number of votes the series has received. */
