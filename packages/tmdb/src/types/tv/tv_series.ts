@@ -1,6 +1,6 @@
 import { Credit, Genre, ProductionCompany, ProductionCountry, SpokenLanguage } from "../common";
 import { CountryISO3166_1 } from "../config/countries";
-import { NetworkItem } from "../other";
+import { NetworkItem } from "../networks";
 import { TVCredits } from "./credits";
 import { TVEpisodeItem } from "./episodes";
 import { TVExternalIDs } from "./external_ids";

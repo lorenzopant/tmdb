@@ -1,7 +1,7 @@
-import { AlternativeName, AlternativeNamesResult, WithLanguage } from "../common";
-import { ImagesResult, OrganizationImage } from "../common/images";
-import { CountryISO3166_1 } from "../config/countries";
-import { Language, LanguageISO6391 } from "../config/languages";
+import { AlternativeName, AlternativeNamesResult, WithLanguage } from "./common";
+import { ImagesResult, OrganizationImage } from "./common/images";
+import { CountryISO3166_1 } from "./config/countries";
+import { Language, LanguageISO6391 } from "./config/languages";
 
 /**
  * Minimal company data reused across company-related responses.

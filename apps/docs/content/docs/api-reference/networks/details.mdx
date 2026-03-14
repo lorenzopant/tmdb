@@ -11,13 +11,13 @@ async details(params: NetworkBaseParams): Promise<Network>
 
 ## Parameters
 
-| Name         | Type     | Required | Description               |
-| ------------ | -------- | -------- | ------------------------- |
+| Name         | Type     | Required | Description              |
+| ------------ | -------- | -------- | ------------------------ |
 | `network_id` | `number` | ✅       | TMDB network identifier. |
 
 ## Returns
 
-A [`Network`](/docs/types/others#network) object containing
+A [`Network`](/docs/types/networks#network) object containing
 the details of the specified network.
 
 ## Example
@@ -31,6 +31,6 @@ const network = await tmdb.networks.details({ network_id: 49 }); // HBO
 
 ## Types
 
-- [Network](/docs/types/others#network)
-- [NetworkItem](/docs/types/others#networkitem)
-- [NetworkBaseParams](/docs/types/others#networkbaseparams)
+- [Network](/docs/types/networks#network)
+- [NetworkItem](/docs/types/networks#networkitem)
+- [NetworkBaseParams](/docs/types/networks#networkbaseparams)

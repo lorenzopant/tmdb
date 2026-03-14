@@ -1,5 +1,5 @@
 import { ENDPOINTS } from "../routes";
-import { TVEpisodeGroupDetails, TVEpisodeGroupParams } from "../types/other/tv_episode_groups";
+import { TVEpisodeGroupDetails, TVEpisodeGroupParams } from "../types/tv_episode_groups";
 import { TMDBAPIBase } from "./base";
 
 export class TVEpisodeGroupsAPI extends TMDBAPIBase {

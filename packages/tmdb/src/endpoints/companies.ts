@@ -6,7 +6,7 @@ import {
 	CompanyImages,
 	CompanyImagesParams,
 	CompanyDetailsParams,
-} from "../types/other/companies";
+} from "../types/companies";
 import { TMDBAPIBase } from "./base";
 
 export class CompaniesAPI extends TMDBAPIBase {

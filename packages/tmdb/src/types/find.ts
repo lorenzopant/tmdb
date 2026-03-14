@@ -1,6 +1,6 @@
-import { CountryISO3166_1 } from "../config";
-import { Language } from "../config/languages";
-import { LiteralUnion } from "../utility";
+import { CountryISO3166_1 } from "./config";
+import { Language } from "./config/languages";
+import { LiteralUnion } from "./utility";
 
 /**
  * External source values accepted by TMDB's find-by-id endpoint.

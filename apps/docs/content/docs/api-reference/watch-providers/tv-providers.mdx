@@ -18,13 +18,13 @@ async tv_providers(params?: WatchProviderListParams): Promise<WatchProviderListR
 
 ## Parameters
 
-| Name | Type | Required | Description |
-| ---- | ---- | -------- | ----------- |
-| `language` | [`Language`](/docs/types/options/language#language) | ❌ | Language used for localized provider names. |
+| Name       | Type                                                | Required | Description                                 |
+| ---------- | --------------------------------------------------- | -------- | ------------------------------------------- |
+| `language` | [`Language`](/docs/types/options/language#language) | ❌       | Language used for localized provider names. |
 
 ## Returns
 
-[`WatchProviderListResponse`](/docs/types/others#watchproviderlistresponse)
+[`WatchProviderListResponse`](/docs/types/watch-providers#watchproviderlistresponse)
 
 ## Example
 
@@ -53,6 +53,6 @@ console.log(providers.results[0]?.provider_name);
 
 ## Types
 
-- [WatchProviderListParams](/docs/types/others#watchproviderlistparams)
-- [WatchProviderListResponse](/docs/types/others#watchproviderlistresponse)
-- [WatchProviderListItem](/docs/types/others#watchproviderlistitem)
+- [WatchProviderListParams](/docs/types/watch-providers#watchproviderlistparams)
+- [WatchProviderListResponse](/docs/types/watch-providers#watchproviderlistresponse)
+- [WatchProviderListItem](/docs/types/watch-providers#watchproviderlistitem)

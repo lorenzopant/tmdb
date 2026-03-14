@@ -1,7 +1,7 @@
-import { WithLanguage } from "../common";
-import { WatchProviderItem } from "../common/media";
-import { CountryISO3166_1 } from "../config";
-import { ConfigurationCountry } from "../config/configuration";
+import { WithLanguage } from "./common";
+import { WatchProviderItem } from "./common/media";
+import { CountryISO3166_1 } from "./config";
+import { ConfigurationCountry } from "./config/configuration";
 
 /**
  * Parameters supported by watch provider namespace endpoints.

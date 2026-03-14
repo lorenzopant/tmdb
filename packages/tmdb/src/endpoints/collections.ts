@@ -6,7 +6,7 @@ import {
 	CollectionImages,
 	CollectionImagesParams,
 	CollectionTranslations,
-} from "../types/other/collections";
+} from "../types/collections";
 import { TMDBAPIBase } from "./base";
 
 export class CollectionsAPI extends TMDBAPIBase {

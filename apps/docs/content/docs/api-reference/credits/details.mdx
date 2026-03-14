@@ -1,0 +1,39 @@
+---
+title: Details
+description: Get the full structure of a TV or movie credit by ID.
+---
+
+Get a movie or TV credit details by ID.
+
+```ts
+async details(params: CreditDetailsParams): Promise<CreditDetails>
+```
+
+> **TMDB Reference:** [Credit Details](https://developer.themoviedb.org/reference/credit-details)
+
+## Parameters
+
+| Name        | Type                                                | Required | Description                                          |
+| ----------- | --------------------------------------------------- | -------- | ---------------------------------------------------- |
+| `credit_id` | `string`                                            | ✅       | TMDB credit identifier.                              |
+| `language`  | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized results. Defaults to `en-US`. |
+
+## Returns
+
+[`CreditDetails`](/docs/types/credits#creditdetails)
+
+## Example
+
+```ts
+const details = await tmdb.credits.details({
+	credit_id: "6024a814c0ae36003d59cc3c",
+});
+
+console.log(details.name);
+console.log(details.credit_type);
+```
+
+## Types
+
+- [CreditDetails](/docs/types/credits#creditdetails)
+- [CreditDetailsParams](/docs/types/credits#creditdetailsparams)

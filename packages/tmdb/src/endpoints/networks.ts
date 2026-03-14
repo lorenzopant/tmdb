@@ -1,5 +1,6 @@
 import { ENDPOINTS } from "../routes";
-import { AlternativeNamesResult, Network, NetworkBaseParams, NetworkImages } from "../types";
+import { AlternativeNamesResult } from "../types";
+import { Network, NetworkBaseParams, NetworkImages } from "../types/networks";
 import { TMDBAPIBase } from "./base";
 
 export class NetworksAPI extends TMDBAPIBase {

@@ -1,0 +1,58 @@
+---
+title: Watch Providers
+description: Types related to the Watch Providers namespace.
+---
+
+Types related to the [WatchProvidersAPI](/docs/api-reference/watch-providers) namespace.
+
+import { TypeTable } from "fumadocs-ui/components/type-table";
+
+## `WatchProviderListParams`
+
+<TypeTable
+	type={{
+		language: { type: "Language", description: "Language used for localized provider names.", default: "en-US" },
+	}}
+/>
+
+## `WatchProviderRegionsParams`
+
+<TypeTable
+	type={{
+		language: { type: "Language", description: "Language used for localized region names.", default: "en-US" },
+	}}
+/>
+
+## `WatchProviderDisplayPriorities`
+
+```ts
+type WatchProviderDisplayPriorities = Partial<Record<CountryISO3166_1, number>>;
+```
+
+## `WatchProviderListItem`
+
+<TypeTable
+	type={{
+		logo_path: { type: "string", description: "Path to the provider logo image." },
+		provider_id: { type: "number", description: "Unique provider identifier." },
+		provider_name: { type: "string", description: "Provider name." },
+		display_priority: { type: "number", description: "Default display priority returned by TMDB." },
+		display_priorities: { type: "WatchProviderDisplayPriorities", description: "Country-specific display priority map." },
+	}}
+/>
+
+## `WatchProviderListResponse`
+
+<TypeTable
+	type={{
+		results: { type: "WatchProviderListItem[]", description: "List of supported watch providers." },
+	}}
+/>
+
+## `WatchProviderRegionsResponse`
+
+<TypeTable
+	type={{
+		results: { type: "ConfigurationCountry[]", description: "List of regions with watch provider support." },
+	}}
+/>

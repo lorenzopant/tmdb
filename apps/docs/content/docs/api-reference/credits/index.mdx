@@ -1,0 +1,17 @@
+---
+title: Credits
+description: Fetch credits details by credit ID.
+---
+
+The `CreditsAPI` provides access to movie or tv credits details by ID.
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const details = await tmdb.credits.details({ credit_id });
+```
+
+## Methods
+
+- [`details()`](/docs/api-reference/credits/details) — Get the full structure of a TV or movie credit by ID.

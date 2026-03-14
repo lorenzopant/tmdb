@@ -1,4 +1,4 @@
-import { TMDBQueryParams } from "../common";
+import { TMDBQueryParams } from "./common";
 
 /**
  * Base params used by keyword endpoints.

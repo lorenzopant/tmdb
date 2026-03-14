@@ -1,4 +1,4 @@
-import { NetworkItem } from "../other";
+import { NetworkItem } from "../networks";
 
 /**
  * Collection of episode groups for a TV series

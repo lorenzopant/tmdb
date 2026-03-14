@@ -18,13 +18,13 @@ async available_regions(params?: WatchProviderRegionsParams): Promise<WatchProvi
 
 ## Parameters
 
-| Name | Type | Required | Description |
-| ---- | ---- | -------- | ----------- |
-| `language` | [`Language`](/docs/types/options/language#language) | ❌ | Language used for localized region names. |
+| Name       | Type                                                | Required | Description                               |
+| ---------- | --------------------------------------------------- | -------- | ----------------------------------------- |
+| `language` | [`Language`](/docs/types/options/language#language) | ❌       | Language used for localized region names. |
 
 ## Returns
 
-[`WatchProviderRegionsResponse`](/docs/types/others#watchproviderregionsresponse)
+[`WatchProviderRegionsResponse`](/docs/types/watch-providers#watchproviderregionsresponse)
 
 ## Example
 
@@ -48,5 +48,5 @@ console.log(regions.results[0]?.english_name);
 
 ## Types
 
-- [WatchProviderRegionsParams](/docs/types/others#watchproviderregionsparams)
-- [WatchProviderRegionsResponse](/docs/types/others#watchproviderregionsresponse)
+- [WatchProviderRegionsParams](/docs/types/watch-providers#watchproviderregionsparams)
+- [WatchProviderRegionsResponse](/docs/types/watch-providers#watchproviderregionsresponse)

@@ -1,7 +1,7 @@
-import { MediaType, TranslationResults, WithLanguage } from "../common";
-import { ImageItem, ImagesResult } from "../common/images";
-import { Language, LanguageISO6391 } from "../config";
-import { MovieResultItem } from "../search";
+import { MediaType, TranslationResults, WithLanguage } from "./common";
+import { ImageItem, ImagesResult } from "./common/images";
+import { Language, LanguageISO6391 } from "./config";
+import { MovieResultItem } from "./search";
 
 /**
  * Represents a TMDB collection (e.g. a movie franchise or saga),

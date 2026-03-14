@@ -6,11 +6,16 @@
 		"configuration.mdx",
 		"discover.mdx",
 		"find.mdx",
+		"collections.mdx",
+		"companies.mdx",
+		"networks.mdx",
+		"keywords.mdx",
+		"watch-providers.mdx",
 		"movies",
 		"tv-series.mdx",
 		"tv-episodes.mdx",
+		"tv-episode-groups.mdx",
 		"search.mdx",
-		"others.mdx",
 		"enums.mdx"
 	]
 }

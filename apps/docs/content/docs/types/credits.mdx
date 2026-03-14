@@ -1,0 +1,21 @@
+---
+title: Credits
+description: Types related to the Credits namespace.
+---
+
+Types related to the [CreditsAPI](/docs/api-reference/credits) namespace.
+
+import { TypeTable } from "fumadocs-ui/components/type-table";
+
+## `CreditsDetails`
+
+<AutoTypeTable path="credits.ts" name="CreditDetails" />
+
+## `CreditDetailsParams`
+
+<TypeTable
+	type={{
+		credit_id: { type: "string", required: true, description: "TMDB credit identifier." },
+		language: { type: "Language", description: "Language for localized results.", default: "en-US" },
+	}}
+/>

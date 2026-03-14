@@ -1,5 +1,5 @@
-import { Credit, MediaType, WithLanguage } from "../common";
-import type { LiteralUnion } from "../utility";
+import { Credit, MediaType, WithLanguage } from "./common";
+import type { LiteralUnion } from "./utility";
 
 /**
  * Base params used by all credit queries.

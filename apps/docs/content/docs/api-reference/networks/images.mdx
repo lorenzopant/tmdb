@@ -13,13 +13,13 @@ async images(params: NetworkBaseParams): Promise<NetworkImages>
 
 ## Parameters
 
-| Name         | Type     | Required | Description               |
-| ------------ | -------- | -------- | ------------------------- |
+| Name         | Type     | Required | Description              |
+| ------------ | -------- | -------- | ------------------------ |
 | `network_id` | `number` | ✅       | TMDB network identifier. |
 
 ## Returns
 
-A [`NetworkImages`](/docs/types/others#networkimages) object containing
+A [`NetworkImages`](/docs/types/networks#networkimages) object containing
 the logos of the specified network.
 
 ## Example
@@ -33,6 +33,6 @@ const images = await tmdb.networks.images({ network_id: 49 });
 
 ## Types
 
-- [NetworkImages](/docs/types/others#networkimages)
+- [NetworkImages](/docs/types/networks#networkimages)
 - [OrganizationImage](/docs/types/images#organizationimage)
-- [NetworkBaseParams](/docs/types/others#networkbaseparams)
+- [NetworkBaseParams](/docs/types/networks#networkbaseparams)

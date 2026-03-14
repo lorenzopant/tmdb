@@ -1,5 +1,5 @@
-import { ImagesResult, OrganizationImage } from "../common/images";
-import { CountryISO3166_1 } from "../config/countries";
+import { ImagesResult, OrganizationImage } from "./common";
+import { CountryISO3166_1 } from "./config";
 
 /**
  * Represents a network entry as returned in search results or list responses.
