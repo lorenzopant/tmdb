@@ -11,6 +11,7 @@ export * from "./companies";
 export * from "./networks";
 export * from "./tv-episode-groups";
 export * from "./find";
-export * from "./watch_providers";
+export * from "./watch-providers";
 export * from "./keywords";
 export * from "./credits";
+export * from "./discover";
