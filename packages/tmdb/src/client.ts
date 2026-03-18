@@ -32,7 +32,7 @@ export class ApiClient {
 			},
 		});
 
-		if (!res.ok) await this.handleError(res);
+		if (!res.ok) await this.handleError(res, endpoint);
 
 		this.logger?.log({
 			type: "response",
@@ -79,7 +79,7 @@ export class ApiClient {
 		return sanitized as T;
 	}
 
-	private async handleError(res: Response): Promise<never> {
+	private async handleError(res: Response, endpoint: string): Promise<never> {
 		let errorMessage = res.statusText;
 		let tmdbStatusCode: number = -1;
 
@@ -98,7 +98,7 @@ export class ApiClient {
 		this.logger?.log({
 			type: "error",
 			method: "GET",
-			endpoint: new URL(res.url).pathname.replace(this.baseUrl, ""),
+			endpoint,
 			status: res.status,
 			statusText: res.statusText,
 			tmdbStatusCode,

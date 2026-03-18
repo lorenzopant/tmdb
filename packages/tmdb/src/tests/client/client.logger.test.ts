@@ -80,7 +80,7 @@ describe("ApiClient logger", () => {
 		expect(logger.mock.calls[1][0]).toMatchObject({
 			type: "error",
 			method: "GET",
-			endpoint: "/3/movie/550",
+			endpoint: "/movie/550",
 			tmdbStatusCode: 7,
 		});
 	});
