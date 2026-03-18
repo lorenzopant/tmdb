@@ -1,18 +1,9 @@
-import { ApiClient } from "../client";
-import { PaginatedResponse, TVSeriesResultItem } from "../types";
 import { ENDPOINTS } from "../routes";
-import { TMDBOptions } from "../types/config";
+import { PaginatedResponse, TVSeriesResultItem } from "../types";
 import { TVSeriesListParams } from "../types/tv-series";
+import { TMDBAPIBase } from "./base";
 
-export class TVSeriesListsAPI {
-	private client: ApiClient;
-	private defaultOptions: TMDBOptions;
-
-	constructor(client: ApiClient, defaultOptions: TMDBOptions = {}) {
-		this.client = client;
-		this.defaultOptions = defaultOptions;
-	}
-
+export class TVSeriesListsAPI extends TMDBAPIBase {
 	private withDefaults(params: TVSeriesListParams): TVSeriesListParams {
 		const { language = this.defaultOptions.language, timezone = this.defaultOptions.timezone, ...rest } = params;
 		return { language, timezone, ...rest };

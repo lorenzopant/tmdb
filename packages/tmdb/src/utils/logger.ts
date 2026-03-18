@@ -1,0 +1,58 @@
+export type TMDBLoggerEntry = {
+	type: "request" | "response" | "error";
+	method: "GET";
+	endpoint: string;
+	status?: number;
+	statusText?: string;
+	durationMs?: number;
+	tmdbStatusCode?: number;
+	errorMessage?: string;
+};
+
+export type TMDBLoggerFn = (entry: TMDBLoggerEntry) => void;
+
+export class TMDBLogger {
+	private logger?: TMDBLoggerFn;
+
+	constructor(logger?: TMDBLoggerFn) {
+		this.logger = logger;
+	}
+
+	static from(logger?: boolean | TMDBLoggerFn): TMDBLogger | undefined {
+		if (!logger) return undefined;
+		if (logger === true) return new TMDBLogger(TMDBLogger.defaultLogger);
+		if (typeof logger === "function") return new TMDBLogger(logger);
+		return undefined;
+	}
+
+	log(entry: TMDBLoggerEntry): void {
+		if (!this.logger) return;
+		try {
+			this.logger(entry);
+		} catch (error) {
+			// Avoid breaking requests if the logger throws.
+			console.warn(`TMDB logger error: ${error}`);
+		}
+	}
+
+	private static defaultLogger(entry: TMDBLoggerEntry): void {
+		const prefix = "🎬 [tmdb]";
+		const timestamp = new Date().toISOString();
+
+		if (entry.type === "request") {
+			console.log(`${prefix} ${timestamp} 🛰️ REQUEST ${entry.method} ${entry.endpoint}\n`);
+			return;
+		}
+
+		if (entry.type === "response") {
+			console.log(
+				`${prefix} ${timestamp} ✅ RESPONSE ${entry.method} ${entry.status} ${entry.statusText} ${entry.endpoint} (${entry.durationMs}ms)\n`,
+			);
+			return;
+		}
+
+		console.log(
+			`${prefix} ${timestamp} ❌ ${entry.method} ${entry.status} ${entry.statusText ?? "ERROR"} ${entry.endpoint} - ${entry.errorMessage} (tmdb: ${entry.tmdbStatusCode})\n`,
+		);
+	}
+}

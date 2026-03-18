@@ -61,10 +61,29 @@ The main client class. **Each API method supports all the parameters supported b
 #### Constructor
 
 ```typescript
-const tmdb = new TMDB(accessToken: string);
+const tmdb = new TMDB(accessToken: string, options?: TMDBOptions);
 ```
 
 - `accessToken`: **required**. Your TMDB API v4 access token.
+- `options.logger`: Enable debug logging for all network requests.
+
+Example:
+
+```typescript
+const tmdb = new TMDB("your_access_token", { logger: true });
+```
+
+Custom logger:
+
+```typescript
+const tmdb = new TMDB("your_access_token", {
+  logger: (entry) => {
+    if (entry.type === "response") {
+      console.log("TMDB:", entry.endpoint, entry.status, entry.durationMs);
+    }
+  },
+});
+```
 
 ---
 

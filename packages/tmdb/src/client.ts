@@ -1,11 +1,14 @@
 import { TMDBAPIErrorResponse, TMDBError } from "./errors/tmdb";
+import { TMDBLogger, TMDBLoggerFn } from "./utils/logger";
 
 export class ApiClient {
 	private accessToken: string;
 	private baseUrl: string = "https://api.themoviedb.org/3";
+	private logger?: TMDBLogger;
 
-	constructor(accessToken: string) {
+	constructor(accessToken: string, options: { logger?: boolean | TMDBLoggerFn } = {}) {
 		this.accessToken = accessToken;
+		this.logger = TMDBLogger.from(options.logger);
 	}
 
 	async request<T>(endpoint: string, params: Record<string, unknown | undefined> = {}): Promise<T> {
@@ -15,6 +18,13 @@ export class ApiClient {
 			url.searchParams.append(key, String(value));
 		}
 
+		const startedAt = Date.now();
+		this.logger?.log({
+			type: "request",
+			method: "GET",
+			endpoint,
+		});
+
 		const res = await fetch(url.toString(), {
 			headers: {
 				Authorization: `Bearer ${this.accessToken}`,
@@ -23,6 +33,16 @@ export class ApiClient {
 		});
 
 		if (!res.ok) await this.handleError(res);
+
+		this.logger?.log({
+			type: "response",
+			method: "GET",
+			endpoint,
+			status: res.status,
+			statusText: res.statusText,
+			durationMs: Date.now() - startedAt,
+		});
+
 		const data = await res.json();
 		return this.sanitizeNulls<T>(data);
 	}
@@ -74,6 +94,16 @@ export class ApiClient {
 			console.error(`Unknown error: ${error}`);
 			// If response is not JSON, fallback to HTTP status text
 		}
+
+		this.logger?.log({
+			type: "error",
+			method: "GET",
+			endpoint: new URL(res.url).pathname.replace(this.baseUrl, ""),
+			status: res.status,
+			statusText: res.statusText,
+			tmdbStatusCode,
+			errorMessage,
+		});
 
 		const error = new TMDBError(errorMessage, res.status, tmdbStatusCode);
 		throw error;

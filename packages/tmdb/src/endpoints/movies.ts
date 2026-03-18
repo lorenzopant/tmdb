@@ -1,25 +1,6 @@
-import { ApiClient } from "../client";
 import { ENDPOINTS } from "../routes";
-import { MediaWatchProviders } from "../types";
-import { TMDBOptions } from "../types/config";
 import {
-	MovieAlternativeTitles,
-	MovieAppendToResponseNamespace,
-	MovieCredits,
-	MovieDetails,
-	MovieDetailsWithAppends,
-	MovieExternalIDs,
-	MovieImages,
-	MovieKeywords,
-	MovieRecommendations,
-	MovieReleaseDates,
-	MovieReviews,
-	MovieSimilar,
-	MovieTranslations,
-	MovieVideos,
-	MovieChanges,
-} from "../types/movies";
-import {
+	MediaWatchProviders,
 	MovieAlternativeTitlesParams,
 	MovieChangesParams,
 	MovieCreditsParams,
@@ -35,16 +16,26 @@ import {
 	MovieVideosParams,
 	MovieWatchProvidersParams,
 } from "../types";
+import {
+	MovieAlternativeTitles,
+	MovieAppendToResponseNamespace,
+	MovieChanges,
+	MovieCredits,
+	MovieDetails,
+	MovieDetailsWithAppends,
+	MovieExternalIDs,
+	MovieImages,
+	MovieKeywords,
+	MovieRecommendations,
+	MovieReleaseDates,
+	MovieReviews,
+	MovieSimilar,
+	MovieTranslations,
+	MovieVideos,
+} from "../types/movies";
+import { TMDBAPIBase } from "./base";
 
-export class MoviesAPI {
-	private client: ApiClient;
-	private defaultOptions: TMDBOptions;
-
-	constructor(client: ApiClient, options: TMDBOptions = {}) {
-		this.client = client;
-		this.defaultOptions = options;
-	}
-
+export class MoviesAPI extends TMDBAPIBase {
 	private moviePath(movie_id: number): string {
 		return `${ENDPOINTS.MOVIES.DETAILS}/${movie_id}`;
 	}
