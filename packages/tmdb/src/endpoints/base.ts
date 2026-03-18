@@ -14,9 +14,11 @@ export abstract class TMDBAPIBase {
 	/**
 	 * Merges the endpoint's params with TMDB-wide defaults (language, region).
 	 * Works only for param types that include optional `language` and `region` fields.
+	 * Only request-safe defaults are merged — config-only options (logger, images, etc.) are excluded.
 	 */
 	protected applyDefaults<T extends object>(params?: T): T | undefined {
-		return { ...this.defaultOptions, ...params } as T;
+		const { language, region } = this.defaultOptions;
+		return { ...(language !== undefined && { language }), ...(region !== undefined && { region }), ...params } as T;
 	}
 
 	/**
