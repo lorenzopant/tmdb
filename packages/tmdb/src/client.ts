@@ -25,12 +25,24 @@ export class ApiClient {
 			endpoint,
 		});
 
-		const res = await fetch(url.toString(), {
-			headers: {
-				Authorization: `Bearer ${this.accessToken}`,
-				"Content-Type": "application/json;charset=utf-8",
-			},
-		});
+		let res: Response;
+		try {
+			res = await fetch(url.toString(), {
+				headers: {
+					Authorization: `Bearer ${this.accessToken}`,
+					"Content-Type": "application/json;charset=utf-8",
+				},
+			});
+		} catch (error) {
+			this.logger?.log({
+				type: "error",
+				method: "GET",
+				endpoint,
+				errorMessage: error instanceof Error ? error.message : String(error),
+				durationMs: Date.now() - startedAt,
+			});
+			throw error;
+		}
 
 		if (!res.ok) await this.handleError(res, endpoint);
 
