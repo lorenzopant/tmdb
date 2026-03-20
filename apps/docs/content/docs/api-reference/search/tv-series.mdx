@@ -1,0 +1,55 @@
+---
+title: TV Series
+description: Search for TV shows by their original, translated, and also known as names.
+---
+
+Search for TV shows by their original, translated, and also known as names.
+
+```ts
+async tv_series(params: SearchTVSeriesParams): Promise<PaginatedResponse<TVSeriesResultItem>>
+```
+
+> **TMDB Reference:** [Search TV](https://developer.themoviedb.org/reference/search-tv)
+
+## Parameters
+
+| Name                  | Type                                                | Required | Description                                                  |
+| --------------------- | --------------------------------------------------- | -------- | ------------------------------------------------------------ |
+| `query`               | `string`                                            | ✅       | Search query text.                                           |
+| `include_adult`       | `boolean`                                           | ❌       | Include adult (18+) content in results. Defaults to `false`. |
+| `language`            | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized results. Defaults to `en-US`.         |
+| `page`                | `number`                                            | ❌       | Page number for paginated results. Defaults to `1`.          |
+| `first_air_date_year` | `number`                                            | ❌       | Filter by first air date year (1000–9999).                   |
+| `year`                | `number`                                            | ❌       | Filter by any air date year, including episodes (1000–9999). |
+
+## Returns
+
+A [`PaginatedResponse<TVSeriesResultItem>`](/docs/types/common#paginatedresponset) containing
+an array of [`TVSeriesResultItem`](/docs/types/search#tvseriesresultitem) objects.
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const { results } = await tmdb.search.tv_series({ query: "Breaking Bad" });
+
+console.log(results);
+// [
+//   { id: 1396, name: "Breaking Bad", first_air_date: "2008-01-20", ... },
+//   ...
+// ]
+
+// Filter by first air date year
+const filtered = await tmdb.search.tv_series({
+	query: "Breaking Bad",
+	first_air_date_year: 2008,
+});
+```
+
+## Types
+
+- [SearchTVSeriesParams](/docs/types/search#searchtvseriesparams)
+- [PaginatedResponse](/docs/types/common#paginatedresponset)
+- [TVSeriesResultItem](/docs/types/search#tvseriesresultitem)

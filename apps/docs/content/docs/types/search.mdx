@@ -131,6 +131,53 @@ Accepts only `query` and `page`.
 
 ---
 
+### `SearchTVSeriesParams`
+
+Parameters for [`search.tv_series()`](/docs/api-reference/search/tv-series).
+
+<TypeTable
+	type={{
+		query: {
+			description: "Search query text.",
+			type: "string",
+			required: true,
+		},
+		include_adult: {
+			description: "Include adult (18+) content in results.",
+			type: "boolean",
+			default: "false",
+		},
+		language: {
+			description: "Language for localized results.",
+			type: "Language",
+		},
+		page: {
+			description: "Page number for paginated results.",
+			type: "number",
+			default: "1",
+		},
+		first_air_date_year: {
+			description: "Filter by first air date year (1000–9999).",
+			type: "number",
+		},
+		year: {
+			description: "Filter by any air date year, including episodes (1000–9999).",
+			type: "number",
+		},
+	}}
+/>
+
+---
+
+### `SearchMultiParams`
+
+Parameters for [`search.multi()`](/docs/api-reference/search/multi).
+Accepts `query`, `include_adult`, `language`, and `page`.
+
+<AutoTypeTable path="search.ts" name="SearchMultiParams" />
+
+---
+
 ## Result Items
 
 ### `MovieResultItem`
@@ -172,3 +219,25 @@ A company result item returned by [`search.company()`](/docs/api-reference/searc
 A keyword result item returned by [`search.keyword()`](/docs/api-reference/search/keyword).
 
 <AutoTypeTable path="search.ts" name="KeywordResultItem" />
+
+---
+
+### `PersonResultItem`
+
+A person result item returned by [`search.person()`](/docs/api-reference/search/person).
+
+<AutoTypeTable path="search.ts" name="PersonResultItem" />
+
+---
+
+### `MultiSearchResultItem`
+
+A discriminated union returned by [`search.multi()`](/docs/api-reference/search/multi).
+Each item includes a `media_type` field to distinguish between entity types.
+
+```ts
+type MultiSearchResultItem =
+	| (MovieResultItem & { media_type: "movie" })
+	| (TVSeriesResultItem & { media_type: "tv" })
+	| (PersonResultItem & { media_type: "person" });
+```

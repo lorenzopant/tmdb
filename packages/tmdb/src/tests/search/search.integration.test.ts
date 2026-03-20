@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import { describe, expect, it } from "vitest";
 import { TMDB } from "../../tmdb";
 
@@ -90,5 +91,66 @@ describe("Search (integration)", () => {
 		expect(persons.results.length).toBeGreaterThan(0);
 		expect(persons.results[0].name).toBe("Brad Pitt");
 		expect(persons.results[0].known_for[0].media_type).toBe("movie");
+	});
+
+	it("(SEARCH TV SERIES) should search for a TV series", async () => {
+		const tmdb = new TMDB(token);
+		const results = await tmdb.search.tv_series({ query: "Breaking Bad" });
+
+		expect(results.page).toBe(1);
+		expect(results.total_results).toBeGreaterThan(0);
+		expect(results.results.length).toBeGreaterThan(0);
+		expect(results.results[0].name).toBe("Breaking Bad");
+	});
+
+	it("(SEARCH TV SERIES) should filter by first_air_date_year", async () => {
+		const tmdb = new TMDB(token);
+		const results = await tmdb.search.tv_series({ query: "Breaking Bad", first_air_date_year: 2008 });
+
+		expect(results.total_results).toBeGreaterThan(0);
+		expect(results.results[0].first_air_date).toMatch(/^2008/);
+	});
+
+	it("(SEARCH TV SERIES) should merge default language into params", async () => {
+		const tmdb = new TMDB(token, { language: "it" });
+		const results = await tmdb.search.tv_series({ query: "Breaking Bad" });
+
+		expect(results.total_results).toBeGreaterThan(0);
+		expect(results.results).toBeInstanceOf(Array);
+	});
+
+	it("(SEARCH MULTI) should return mixed media_type results", async () => {
+		const tmdb = new TMDB(token);
+		const results = await tmdb.search.multi({ query: "Star Wars" });
+
+		expect(results.page).toBe(1);
+		expect(results.total_results).toBeGreaterThan(0);
+		expect(results.results.length).toBeGreaterThan(0);
+
+		const mediaTypes = new Set(results.results.map((r) => r.media_type));
+		// Star Wars returns movies, TV shows, and possibly people
+		expect(mediaTypes.size).toBeGreaterThan(1);
+	});
+
+	it("(SEARCH MULTI) should include movie results with title field", async () => {
+		const tmdb = new TMDB(token);
+		const results = await tmdb.search.multi({ query: "Inception" });
+
+		const movie = results.results.find((r) => r.media_type === "movie");
+		expect(movie).toBeDefined();
+		if (movie?.media_type === "movie") {
+			expect(movie.title).toBe("Inception");
+		}
+	});
+
+	it("(SEARCH MULTI) should include TV results with name field", async () => {
+		const tmdb = new TMDB(token);
+		const results = await tmdb.search.multi({ query: "Breaking Bad" });
+
+		const tv = results.results.find((r) => r.media_type === "tv");
+		expect(tv).toBeDefined();
+		if (tv?.media_type === "tv") {
+			expect(tv.name).toBe("Breaking Bad");
+		}
 	});
 });

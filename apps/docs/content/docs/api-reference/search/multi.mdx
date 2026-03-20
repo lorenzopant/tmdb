@@ -1,0 +1,52 @@
+---
+title: Multi
+description: Search for movies, TV shows, and people in a single request.
+---
+
+Search for movies, TV shows, and people in a single request.
+Each result includes a `media_type` field (`"movie"`, `"tv"`, or `"person"`) so you can distinguish between entity types.
+
+```ts
+async multi(params: SearchMultiParams): Promise<PaginatedResponse<MultiSearchResultItem>>
+```
+
+> **TMDB Reference:** [Search Multi](https://developer.themoviedb.org/reference/search-multi)
+
+## Parameters
+
+| Name            | Type                                                | Required | Description                                                  |
+| --------------- | --------------------------------------------------- | -------- | ------------------------------------------------------------ |
+| `query`         | `string`                                            | ✅       | Search query text.                                           |
+| `include_adult` | `boolean`                                           | ❌       | Include adult (18+) content in results. Defaults to `false`. |
+| `language`      | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized results. Defaults to `en-US`.         |
+| `page`          | `number`                                            | ❌       | Page number for paginated results. Defaults to `1`.          |
+
+## Returns
+
+A [`PaginatedResponse<MultiSearchResultItem>`](/docs/types/common#paginatedresponset) containing
+an array of [`MultiSearchResultItem`](/docs/types/search#multisearchresultitem) objects — a discriminated union on `media_type`.
+
+## Example
+
+```ts
+import { TMDB, MultiSearchResultItem } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const { results } = await tmdb.search.multi({ query: "Nolan" });
+
+for (const item of results) {
+	if (item.media_type === "movie") {
+		console.log("Movie:", item.title);
+	} else if (item.media_type === "tv") {
+		console.log("TV Show:", item.name);
+	} else if (item.media_type === "person") {
+		console.log("Person:", item.name);
+	}
+}
+```
+
+## Types
+
+- [SearchMultiParams](/docs/types/search#searchmultiparams)
+- [MultiSearchResultItem](/docs/types/search#multisearchresultitem)
+- [PaginatedResponse](/docs/types/common#paginatedresponset)
