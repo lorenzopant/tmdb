@@ -31,10 +31,34 @@ describe("ImageAPI", () => {
 		expect(url).toBe(`${IMAGE_SECURE_BASE_URL}w1280${path}`);
 	});
 
+	test("should use default backdrop size w780 when no size provided", () => {
+		const imageAPI = new ImageAPI();
+		const url = imageAPI.backdrop(path);
+		expect(url).toBe(`${IMAGE_SECURE_BASE_URL}w780${path}`);
+	});
+
+	test("should use default_image_sizes.backdrops when no size provided", () => {
+		const imageAPI = new ImageAPI({ default_image_sizes: { backdrops: "w1280" } });
+		const url = imageAPI.backdrop(path);
+		expect(url).toBe(`${IMAGE_SECURE_BASE_URL}w1280${path}`);
+	});
+
 	test("should generate logo URL", () => {
 		const imageAPI = new ImageAPI();
 		const url = imageAPI.logo(path, "w300");
 		expect(url).toBe(`${IMAGE_SECURE_BASE_URL}w300${path}`);
+	});
+
+	test("should use default logo size w185 when no size provided", () => {
+		const imageAPI = new ImageAPI();
+		const url = imageAPI.logo(path);
+		expect(url).toBe(`${IMAGE_SECURE_BASE_URL}w185${path}`);
+	});
+
+	test("should use default_image_sizes.logos when no size provided", () => {
+		const imageAPI = new ImageAPI({ default_image_sizes: { logos: "w500" } });
+		const url = imageAPI.logo(path);
+		expect(url).toBe(`${IMAGE_SECURE_BASE_URL}w500${path}`);
 	});
 
 	test("should generate profile URL", () => {
@@ -43,9 +67,33 @@ describe("ImageAPI", () => {
 		expect(url).toBe(`${IMAGE_SECURE_BASE_URL}h632${path}`);
 	});
 
+	test("should use default profile size w185 when no size provided", () => {
+		const imageAPI = new ImageAPI();
+		const url = imageAPI.profile(path);
+		expect(url).toBe(`${IMAGE_SECURE_BASE_URL}w185${path}`);
+	});
+
+	test("should use default_image_sizes.profiles when no size provided", () => {
+		const imageAPI = new ImageAPI({ default_image_sizes: { profiles: "h632" } });
+		const url = imageAPI.profile(path);
+		expect(url).toBe(`${IMAGE_SECURE_BASE_URL}h632${path}`);
+	});
+
 	test("should generate still URL", () => {
 		const imageAPI = new ImageAPI();
 		const url = imageAPI.still(path, "w300");
 		expect(url).toBe(`${IMAGE_SECURE_BASE_URL}w300${path}`);
+	});
+
+	test("should use default still size w300 when no size provided", () => {
+		const imageAPI = new ImageAPI();
+		const url = imageAPI.still(path);
+		expect(url).toBe(`${IMAGE_SECURE_BASE_URL}w300${path}`);
+	});
+
+	test("should use default_image_sizes.still when no size provided", () => {
+		const imageAPI = new ImageAPI({ default_image_sizes: { still: "w185" } });
+		const url = imageAPI.still(path);
+		expect(url).toBe(`${IMAGE_SECURE_BASE_URL}w185${path}`);
 	});
 });
