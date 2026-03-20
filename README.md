@@ -120,7 +120,7 @@ The following features are planned to improve developer experience and extend th
 
 ### 🔧 Request & Response Layer
 
-- [ ] **Logger** — Log method name, URL, params, response status, and latency with configurable log levels (`debug`, `info`, `warn`, `error`)
+- [x] **Logger** — Log method name, URL, params, response status, and latency with optionally custom log functions
 - [ ] **Request interceptors** — Hook into every request before it fires (e.g., inject custom headers, modify params)
 - [ ] **Response interceptors** — Transform or inspect every response globally before it reaches the caller
 - [ ] **Automatic retry with backoff** — Retry failed requests (e.g., `429 Too Many Requests` or `5xx`) with configurable max retries and exponential backoff
@@ -181,7 +181,7 @@ Planned features and improvements include:
 | Trending          | ❌     |
 | TV Series Lists   | ✅     |
 | TV Series         | ✅     |
-| TV Seasons        | ❌     |
+| TV Seasons        | ✅     |
 | TV Episodes       | ✅     |
 | TV Episode Groups | ✅     |
 | Watch Providers   | ✅     |
