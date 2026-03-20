@@ -1,11 +1,14 @@
 import { TMDBAPIErrorResponse, TMDBError } from "./errors/tmdb";
+import { TMDBLogger, TMDBLoggerFn } from "./utils/logger";
 
 export class ApiClient {
 	private accessToken: string;
 	private baseUrl: string = "https://api.themoviedb.org/3";
+	private logger?: TMDBLogger;
 
-	constructor(accessToken: string) {
+	constructor(accessToken: string, options: { logger?: boolean | TMDBLoggerFn } = {}) {
 		this.accessToken = accessToken;
+		this.logger = TMDBLogger.from(options.logger);
 	}
 
 	async request<T>(endpoint: string, params: Record<string, unknown | undefined> = {}): Promise<T> {
@@ -15,14 +18,43 @@ export class ApiClient {
 			url.searchParams.append(key, String(value));
 		}
 
-		const res = await fetch(url.toString(), {
-			headers: {
-				Authorization: `Bearer ${this.accessToken}`,
-				"Content-Type": "application/json;charset=utf-8",
-			},
+		const startedAt = Date.now();
+		this.logger?.log({
+			type: "request",
+			method: "GET",
+			endpoint,
 		});
 
-		if (!res.ok) await this.handleError(res);
+		let res: Response;
+		try {
+			res = await fetch(url.toString(), {
+				headers: {
+					Authorization: `Bearer ${this.accessToken}`,
+					"Content-Type": "application/json;charset=utf-8",
+				},
+			});
+		} catch (error) {
+			this.logger?.log({
+				type: "error",
+				method: "GET",
+				endpoint,
+				errorMessage: error instanceof Error ? error.message : String(error),
+				durationMs: Date.now() - startedAt,
+			});
+			throw error;
+		}
+
+		if (!res.ok) await this.handleError(res, endpoint);
+
+		this.logger?.log({
+			type: "response",
+			method: "GET",
+			endpoint,
+			status: res.status,
+			statusText: res.statusText,
+			durationMs: Date.now() - startedAt,
+		});
+
 		const data = await res.json();
 		return this.sanitizeNulls<T>(data);
 	}
@@ -59,7 +91,7 @@ export class ApiClient {
 		return sanitized as T;
 	}
 
-	private async handleError(res: Response): Promise<never> {
+	private async handleError(res: Response, endpoint: string): Promise<never> {
 		let errorMessage = res.statusText;
 		let tmdbStatusCode: number = -1;
 
@@ -74,6 +106,16 @@ export class ApiClient {
 			console.error(`Unknown error: ${error}`);
 			// If response is not JSON, fallback to HTTP status text
 		}
+
+		this.logger?.log({
+			type: "error",
+			method: "GET",
+			endpoint,
+			status: res.status,
+			statusText: res.statusText,
+			tmdbStatusCode,
+			errorMessage,
+		});
 
 		const error = new TMDBError(errorMessage, res.status, tmdbStatusCode);
 		throw error;

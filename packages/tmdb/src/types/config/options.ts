@@ -1,3 +1,4 @@
+import type { TMDBLoggerFn } from "../../utils/logger";
 import { CountryISO3166_1 } from "./countries";
 import { ImagesConfig } from "./images";
 import { Language } from "./languages";
@@ -27,4 +28,10 @@ export type TMDBOptions = {
 	 * Read more: https://www.themoviedb.org/talk/54c554679251416eae010d6d
 	 */
 	timezone?: Timezone;
+	/**
+	 * Enable request logging for debugging.
+	 * - `true` uses a built-in console logger.
+	 * - Pass a function to customize logging output.
+	 */
+	logger?: boolean | TMDBLoggerFn;
 };

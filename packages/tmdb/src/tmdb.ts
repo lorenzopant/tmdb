@@ -57,7 +57,7 @@ export class TMDB {
 	constructor(accessToken: string, options: TMDBOptions = {}) {
 		if (!accessToken) throw new Error(Errors.NO_ACCESS_TOKEN);
 		this.options = options;
-		this.client = new ApiClient(accessToken);
+		this.client = new ApiClient(accessToken, { logger: options.logger });
 		this.movies = new MoviesAPI(this.client, this.options);
 		this.movie_lists = new MovieListsAPI(this.client, this.options);
 		this.search = new SearchAPI(this.client, this.options);

@@ -1,0 +1,91 @@
+---
+title: Logger
+description: Types used by the TMDB client logging feature
+---
+
+import { TypeTable } from "fumadocs-ui/components/type-table";
+
+## `TMDBLoggerFn`
+
+A callback function that receives a [`TMDBLoggerEntry`](#tmdbloggerentry) for every request,
+response, and network error fired by the TMDB client.
+
+```ts
+type TMDBLoggerFn = (entry: TMDBLoggerEntry) => void;
+```
+
+Pass it to the `logger` option when creating a `TMDB` instance:
+
+```ts
+import { TMDB, TMDBLoggerFn } from "@lorenzopant/tmdb";
+
+const myLogger: TMDBLoggerFn = (entry) => {
+	console.log(entry.type, entry.endpoint);
+};
+
+const tmdb = new TMDB("your-api-key", { logger: myLogger });
+```
+
+---
+
+## `TMDBLoggerEntry`
+
+The object passed to your [`TMDBLoggerFn`](#tmdbloggerfn) on every log event.
+
+```ts
+type TMDBLoggerEntry = {
+	type: "request" | "response" | "error";
+	method: "GET";
+	endpoint: string;
+	status?: number;
+	statusText?: string;
+	durationMs?: number;
+	tmdbStatusCode?: number;
+	errorMessage?: string;
+};
+```
+
+### Fields
+
+<TypeTable
+	type={{
+		type: {
+			description:
+				"The lifecycle stage of the entry: `request` (before sending), `response` (on success), or `error` (on network failure).",
+			type: '"request" | "response" | "error"',
+		},
+		method: {
+			description: "The HTTP method used. Currently always `GET`.",
+			type: '"GET"',
+		},
+		endpoint: {
+			description: "The TMDB API path, e.g. `/movie/popular`.",
+			type: "string",
+		},
+		status: {
+			description: "HTTP status code of the response. Present on `response` and `error` entries.",
+			type: "number",
+			typeDescription: "optional",
+		},
+		statusText: {
+			description: "HTTP status text, e.g. `OK` or `Not Found`. Present on `response` and `error` entries.",
+			type: "string",
+			typeDescription: "optional",
+		},
+		durationMs: {
+			description: "Total round-trip time in milliseconds from request to response. Present on `response` and `error` entries.",
+			type: "number",
+			typeDescription: "optional",
+		},
+		tmdbStatusCode: {
+			description: "TMDB-specific error status code from the JSON error body, when available. Present on `error` entries.",
+			type: "number",
+			typeDescription: "optional",
+		},
+		errorMessage: {
+			description: "Human-readable error message. Present on `error` entries.",
+			type: "string",
+			typeDescription: "optional",
+		},
+	}}
+/>

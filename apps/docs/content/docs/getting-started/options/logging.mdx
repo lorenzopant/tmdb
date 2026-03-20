@@ -1,0 +1,92 @@
+---
+title: Logging
+description: Enable request and response logging in the TMDB client.
+---
+
+The TMDB client includes built-in logging support. You can enable it with a single flag or provide
+your own custom logger function to integrate with any logging library.
+
+---
+
+## Built-in logger
+
+Pass `logger: true` to enable the default console logger. It prints structured, emoji-prefixed
+lines for every outgoing request, successful response, and error.
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key", { logger: true });
+```
+
+**Sample output:**
+
+```
+🎬 [tmdb] 2026-03-20T10:00:00.000Z 🛰️ REQUEST GET /movie/popular
+
+🎬 [tmdb] 2026-03-20T10:00:00.120Z ✅ RESPONSE GET 200 OK /movie/popular (120ms)
+```
+
+---
+
+## Custom logger
+
+For full control, pass a [`TMDBLoggerFn`](/docs/types/logger#tmdbloggerfn) callback. The function receives a
+[`TMDBLoggerEntry`](/docs/types/logger#tmdbloggerentry) object on every request, response, and error.
+
+```ts
+import { TMDB, TMDBLoggerEntry } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key", {
+	logger: (entry: TMDBLoggerEntry) => {
+		console.log(`[${entry.type}] ${entry.method} ${entry.endpoint}`);
+	},
+});
+```
+
+### Integrating with a logging library
+
+You can forward log entries to any structured logger, such as [pino](https://getpino.io/) or
+[winston](https://github.com/winstonjs/winston):
+
+```ts
+import pino from "pino";
+import { TMDB } from "@lorenzopant/tmdb";
+
+const logger = pino();
+
+const tmdb = new TMDB("your-api-key", {
+	logger: (entry) => {
+		if (entry.type === "error") {
+			logger.error(entry, "TMDB request failed");
+		} else {
+			logger.info(entry, `TMDB ${entry.type}`);
+		}
+	},
+});
+```
+
+---
+
+## Log entry types
+
+Each log entry has a `type` field that indicates the stage of the request lifecycle:
+
+| `type`     | When it fires                                              |
+| ---------- | ---------------------------------------------------------- |
+| `request`  | Immediately before the HTTP request is sent                |
+| `response` | After a successful response is received                    |
+| `error`    | When a network error occurs (not for HTTP error responses) |
+
+See [`TMDBLoggerEntry`](/docs/types/logger#tmdbloggerentry) for the full shape of the object received by your logger.
+
+---
+
+## Disabling logging
+
+Logging is disabled by default. To explicitly disable it (or to turn it off conditionally), omit
+the `logger` option or pass `false`:
+
+```ts
+const tmdb = new TMDB("your-api-key", { logger: false });
+```
