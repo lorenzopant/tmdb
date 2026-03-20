@@ -3,13 +3,17 @@ import {
 	CompanyResultItem,
 	KeywordResultItem,
 	MovieResultItem,
+	MultiSearchResultItem,
 	PaginatedResponse,
 	PersonResultItem,
 	SearchCollectionsParams,
 	SearchCompanyParams,
 	SearchKeywordsParams,
 	SearchMoviesParams,
+	SearchMultiParams,
 	SearchPersonParams,
+	SearchTVSeriesParams,
+	TVSeriesResultItem,
 } from "../types";
 import { ENDPOINTS } from "../routes";
 import { TMDBAPIBase } from "./base";
@@ -86,5 +90,37 @@ export class SearchAPI extends TMDBAPIBase {
 	 */
 	async person(params: SearchPersonParams): Promise<PaginatedResponse<PersonResultItem>> {
 		return this.client.request<PaginatedResponse<PersonResultItem>>(ENDPOINTS.SEARCH.PERSON, this.applyDefaults(params));
+	}
+
+	/**
+	 * Search TV Series
+	 * GET - https://api.themoviedb.org/3/search/tv
+	 *
+	 * Search for TV shows by their original, translated and also known as names.
+	 * @param query Search query (required)
+	 * @param include_adult Include Adult (Defaults to false)
+	 * @param language Language (Defaults to en-US)
+	 * @param page Page (Defaults to 1)
+	 * @param first_air_date_year Filter by first air date year
+	 * @param year Filter by any air date year (including episodes)
+	 * @reference https://developer.themoviedb.org/reference/search-tv
+	 */
+	async tv_series(params: SearchTVSeriesParams): Promise<PaginatedResponse<TVSeriesResultItem>> {
+		return this.client.request<PaginatedResponse<TVSeriesResultItem>>(ENDPOINTS.SEARCH.TV, this.applyDefaults(params));
+	}
+
+	/**
+	 * Search Multi
+	 * GET - https://api.themoviedb.org/3/search/multi
+	 *
+	 * Search for movies, TV shows, and people in a single request.
+	 * @param query Search query (required)
+	 * @param include_adult Include Adult (Defaults to false)
+	 * @param language Language (Defaults to en-US)
+	 * @param page Page (Defaults to 1)
+	 * @reference https://developer.themoviedb.org/reference/search-multi
+	 */
+	async multi(params: SearchMultiParams): Promise<PaginatedResponse<MultiSearchResultItem>> {
+		return this.client.request<PaginatedResponse<MultiSearchResultItem>>(ENDPOINTS.SEARCH.MULTI, this.applyDefaults(params));
 	}
 }

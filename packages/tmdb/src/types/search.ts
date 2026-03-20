@@ -136,6 +136,15 @@ export type MovieResultItem = {
 	vote_count: number;
 };
 
+/**
+ * A single result item from the multi-search endpoint.
+ * Discriminated on `media_type`.
+ */
+export type MultiSearchResultItem =
+	| (MovieResultItem & { media_type: "movie" })
+	| (TVSeriesResultItem & { media_type: "tv" })
+	| (PersonResultItem & { media_type: "person" });
+
 // MARK: Parameters
 
 /**
@@ -177,3 +186,26 @@ export type SearchCompanyParams = Pick<SearchMoviesParams, "query" | "page">;
  * Parameters for searching people
  */
 export type SearchPersonParams = Pick<SearchMoviesParams, "query" | "page" | "include_adult" | "language">;
+
+/**
+ * Parameters for searching TV series
+ */
+export type SearchTVSeriesParams = {
+	/** Search query text */
+	query: string;
+	/** Include adult (18+) content in results (default: false) */
+	include_adult?: boolean;
+	/** ISO 639-1 language code with optional region (e.g., "en-US") */
+	language?: Language;
+	/** Page number for paginated results (default: 1) */
+	page?: number;
+	/** Filter by first air date year (1000–9999) */
+	first_air_date_year?: number;
+	/** Filter by any air date year, including episodes (1000–9999) */
+	year?: number;
+};
+
+/**
+ * Parameters for multi-search (movies, TV shows, and people in a single request)
+ */
+export type SearchMultiParams = Pick<SearchTVSeriesParams, "query" | "include_adult" | "language" | "page">;
