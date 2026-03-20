@@ -121,12 +121,12 @@ See the [Timezone reference](/docs/getting-started/options/timezone) for the ful
 
 ### `logger`
 
-**Type:** `boolean | `[`TMDBLoggerFn`](/docs/types/logger#tmdblognerfn)` · **Optional**
+**Type:** `boolean | TMDBLoggerFn` · **Optional**
 
 Enables logging for every HTTP request, response, and network error made by the client.
 
 - Pass `true` to use the built-in console logger.
-- Pass a [`TMDBLoggerFn`](/docs/types/logger#tmdblognerfn) callback to handle log entries yourself.
+- Pass a [`TMDBLoggerFn`](/docs/types/logger#tmdbloggerfn) callback to handle log entries yourself.
 - Omit the option (or pass `false`) to disable logging entirely.
 
 ```ts
