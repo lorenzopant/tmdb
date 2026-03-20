@@ -2,6 +2,7 @@
 	"pages": [
 		"common",
 		"options",
+		"logger.mdx",
 		"images.mdx",
 		"configuration.mdx",
 		"discover.mdx",

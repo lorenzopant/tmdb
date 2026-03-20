@@ -25,12 +25,13 @@ const tmdb = new TMDB("your-api-key", {
 
 ## Available Options
 
-| Option     | Type               | Description                                                                  |
-| ---------- | ------------------ | ---------------------------------------------------------------------------- |
-| `language` | `Language`         | Default language for all responses (ISO 639-1 or primary translation code).  |
-| `region`   | `CountryISO3166_1` | Default region for localized content like release dates and watch providers. |
-| `images`   | `ImagesConfig`     | Configuration for image base URLs and default image sizes.                   |
-| `timezone` | `Timezone`         | Default timezone for TV series airing time calculations.                     |
+| Option     | Type                      | Description                                                                  |
+| ---------- | ------------------------- | ---------------------------------------------------------------------------- |
+| `language` | `Language`                | Default language for all responses (ISO 639-1 or primary translation code).  |
+| `region`   | `CountryISO3166_1`        | Default region for localized content like release dates and watch providers. |
+| `images`   | `ImagesConfig`            | Configuration for image base URLs and default image sizes.                   |
+| `timezone` | `Timezone`                | Default timezone for TV series airing time calculations.                     |
+| `logger`   | `boolean \| TMDBLoggerFn` | Enable the built-in console logger or supply a custom logging function.      |
 
 ---
 
@@ -115,3 +116,29 @@ const tmdb = new TMDB(apiKey, { timezone: "Europe/Rome" });
 > "airing today" and "on the air" queries. Movie endpoints are not affected.
 
 See the [Timezone reference](/docs/getting-started/options/timezone) for the full list of supported values grouped by country.
+
+---
+
+### `logger`
+
+**Type:** `boolean | `[`TMDBLoggerFn`](/docs/types/logger#tmdblognerfn)` · **Optional**
+
+Enables logging for every HTTP request, response, and network error made by the client.
+
+- Pass `true` to use the built-in console logger.
+- Pass a [`TMDBLoggerFn`](/docs/types/logger#tmdblognerfn) callback to handle log entries yourself.
+- Omit the option (or pass `false`) to disable logging entirely.
+
+```ts
+// Built-in logger
+const tmdb = new TMDB(apiKey, { logger: true });
+
+// Custom logger
+const tmdb = new TMDB(apiKey, {
+	logger: (entry) => {
+		console.log(`[${entry.type}] ${entry.method} ${entry.endpoint}`);
+	},
+});
+```
+
+See the [Logging guide](/docs/getting-started/options/logging) for more examples and integration patterns.
