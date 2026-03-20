@@ -1,0 +1,41 @@
+---
+title: Videos
+description: Get trailers, teasers, and clips for a TV season.
+---
+
+Get the videos that belong to a TV season.
+
+```ts
+async videos(params: TVSeasonVideosParams): Promise<TVSeasonVideos>
+```
+
+> **TMDB Reference:** [TV Season Videos](https://developer.themoviedb.org/reference/tv-season-videos)
+
+## Parameters
+
+| Name                     | Type                                                | Required | Description                                       |
+| ------------------------ | --------------------------------------------------- | -------- | ------------------------------------------------- |
+| `series_id`              | `number`                                            | ✅       | TMDB TV series identifier.                        |
+| `season_number`          | `number`                                            | ✅       | Season number within the TV series.               |
+| `language`               | [`Language`](/docs/types/options/language#language) | ❌       | Language for video metadata. Defaults to `en-US`. |
+| `include_video_language` | `string`                                            | ❌       | Include videos with additional language tags.     |
+
+## Returns
+
+[`TVSeasonVideos`](/docs/types/tv-seasons#tvseasonvideos)
+
+## Example
+
+```ts
+const { results } = await tmdb.tv_seasons.videos({
+	series_id: 1396,
+	season_number: 1,
+});
+
+const trailer = results.find((v) => v.type === "Trailer");
+console.log(trailer?.key); // YouTube key
+```
+
+## Types
+
+- [TVSeasonVideos](/docs/types/tv-seasons#tvseasonvideos)

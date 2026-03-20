@@ -1,0 +1,39 @@
+---
+title: Translations
+description: Get all available translations for a TV season.
+---
+
+Get the translations that have been added to a TV season.
+
+```ts
+async translations(params: TVSeasonBaseParams): Promise<TVSeasonTranslations>
+```
+
+> **TMDB Reference:** [TV Season Translations](https://developer.themoviedb.org/reference/tv-season-translations)
+
+## Parameters
+
+| Name            | Type     | Required | Description                         |
+| --------------- | -------- | -------- | ----------------------------------- |
+| `series_id`     | `number` | ✅       | TMDB TV series identifier.          |
+| `season_number` | `number` | ✅       | Season number within the TV series. |
+
+## Returns
+
+[`TVSeasonTranslations`](/docs/types/tv-seasons#tvseasontranslations)
+
+## Example
+
+```ts
+const { translations } = await tmdb.tv_seasons.translations({
+	series_id: 1396,
+	season_number: 1,
+});
+
+const german = translations.find((t) => t.iso_639_1 === "de");
+console.log(german?.data.name);
+```
+
+## Types
+
+- [TVSeasonTranslations](/docs/types/tv-seasons#tvseasontranslations)

@@ -1,0 +1,191 @@
+---
+title: TV Seasons
+description: Type definitions for TV season details, appended data, and query parameters.
+---
+
+import { TypeTable } from "fumadocs-ui/components/type-table";
+
+These types represent the TV season domain — details, appended sub-resources, and query parameters.
+
+## `TVSeason`
+
+The complete representation of a TV season as returned by [`tv_seasons.details()`](/docs/api-reference/tv-seasons/details).
+
+<AutoTypeTable path="tv-seasons.ts" name="TVSeason" />
+
+---
+
+## `TVSeasonEpisode`
+
+Represents a single episode nested within a [`TVSeason`](#tvseason).
+
+<AutoTypeTable path="tv-seasons.ts" name="TVSeasonEpisode" />
+
+---
+
+## `TVSeasonDetailsWithAppends<T>`
+
+Extends [`TVSeason`](#tvseason) with one or more appended sub-resources.
+`T` is a readonly array of [`TVSeasonAppendToResponseNamespace`](#tvseasonappendtoresponsenamespace) keys.
+
+```ts
+const season: TVSeasonDetailsWithAppends<["credits", "images"]> = await tmdb.tv_seasons.details({
+	series_id: 1396,
+	season_number: 1,
+	append_to_response: ["credits", "images"],
+});
+```
+
+---
+
+## `TVSeasonAppendToResponseNamespace`
+
+Union of all valid keys that can be passed to `append_to_response`.
+
+```ts
+type TVSeasonAppendToResponseNamespace =
+	| "aggregate_credits"
+	| "credits"
+	| "external_ids"
+	| "images"
+	| "translations"
+	| "videos"
+	| "watch_providers";
+```
+
+---
+
+## Additional Resources
+
+Other types returned by TV season endpoints.
+
+### `TVSeasonAggregateCredits`
+
+Alias for [`TVAggregateCredits`](/docs/types/tv-series#tvaggregatecredits) — aggregate cast and crew across all episodes of the season.
+
+---
+
+### `TVSeasonCredits`
+
+<AutoTypeTable path="tv-seasons.ts" name="TVSeasonCredits" />
+
+---
+
+### `TVSeasonExternalIDs`
+
+<AutoTypeTable path="tv-seasons.ts" name="TVSeasonExternalIDs" />
+
+---
+
+### `TVSeasonImages`
+
+<AutoTypeTable path="tv-seasons.ts" name="TVSeasonImages" />
+
+---
+
+### `TVSeasonTranslations`
+
+A [`TranslationResults<TVSeasonTranslationData>`](/docs/types/common#translationresults) array of season translations.
+
+#### `TVSeasonTranslationData`
+
+<AutoTypeTable path="tv-seasons.ts" name="TVSeasonTranslationData" />
+
+---
+
+### `TVSeasonVideos`
+
+Alias for [`VideoResults`](/docs/types/common#videoresults).
+
+---
+
+## Parameters
+
+### `TVSeasonBaseParams`
+
+<TypeTable
+	type={{
+		series_id: { type: "number", required: true, description: "TMDB TV series identifier." },
+		season_number: { type: "number", required: true, description: "Season number within the TV series." },
+	}}
+/>
+
+---
+
+### `TVSeasonDetailsParams`
+
+<TypeTable
+	type={{
+		series_id: { type: "number", required: true, description: "TMDB TV series identifier." },
+		season_number: { type: "number", required: true, description: "Season number within the TV series." },
+		append_to_response: { type: "TVSeasonAppendToResponseNamespace[]", description: "Sub-resources to append to the response." },
+		language: { type: "Language", description: "Language for localized results.", default: "en-US" },
+	}}
+/>
+
+---
+
+### `TVSeasonCreditsParams`
+
+<TypeTable
+	type={{
+		series_id: { type: "number", required: true, description: "TMDB TV series identifier." },
+		season_number: { type: "number", required: true, description: "Season number within the TV series." },
+		language: { type: "Language", description: "Language for localized results.", default: "en-US" },
+	}}
+/>
+
+---
+
+### `TVSeasonImagesParams`
+
+<TypeTable
+	type={{
+		series_id: { type: "number", required: true, description: "TMDB TV series identifier." },
+		season_number: { type: "number", required: true, description: "Season number within the TV series." },
+		language: { type: "Language", description: "Language for image metadata.", default: "en-US" },
+		include_image_language: {
+			type: "string",
+			description: 'Include images with additional language tags (e.g., "en,null").',
+		},
+	}}
+/>
+
+---
+
+### `TVSeasonVideosParams`
+
+<TypeTable
+	type={{
+		series_id: { type: "number", required: true, description: "TMDB TV series identifier." },
+		season_number: { type: "number", required: true, description: "Season number within the TV series." },
+		language: { type: "Language", description: "Language for video metadata.", default: "en-US" },
+		include_video_language: {
+			type: "string",
+			description: "Include videos with additional language tags.",
+		},
+	}}
+/>
+
+---
+
+### `TVSeasonChangesParams`
+
+<TypeTable
+	type={{
+		season_id: { type: "number | string", required: true, description: "Unique TMDB identifier for the season." },
+		start_date: { type: "string", description: "Filter changes from this date (ISO 8601, e.g. 2024-01-01)." },
+		end_date: { type: "string", description: "Filter changes up to this date (ISO 8601, e.g. 2024-01-14)." },
+		page: { type: "number", description: "Page number of results to retrieve." },
+	}}
+/>
+
+---
+
+### `TVSeasonId`
+
+<TypeTable
+	type={{
+		season_id: { type: "number | string", required: true, description: "Unique TMDB identifier for the season." },
+	}}
+/>

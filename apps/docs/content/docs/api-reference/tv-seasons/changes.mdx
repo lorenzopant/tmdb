@@ -1,0 +1,36 @@
+---
+title: Changes
+description: Get the change history for a TV season.
+---
+
+Get the change history for a TV season by its internal TMDB season ID. By default, only the last 24 hours are returned.
+
+```ts
+async changes(params: TVSeasonChangesParams): Promise<Changes>
+```
+
+> **TMDB Reference:** [TV Season Changes by ID](https://developer.themoviedb.org/reference/tv-season-changes-by-id)
+
+## Parameters
+
+| Name         | Type                 | Required | Description                                                    |
+| ------------ | -------------------- | -------- | -------------------------------------------------------------- |
+| `season_id`  | `number` \| `string` | ✅       | Unique TMDB identifier for the season (not the season number). |
+| `start_date` | `string`             | ❌       | Filter from this date (ISO 8601, e.g. `"2024-01-01"`).         |
+| `end_date`   | `string`             | ❌       | Filter up to this date (ISO 8601, e.g. `"2024-01-14"`).        |
+| `page`       | `number`             | ❌       | Page of results to return.                                     |
+
+## Returns
+
+[`Changes`](/docs/types/common#changes)
+
+## Example
+
+```ts
+const changes = await tmdb.tv_seasons.changes({ season_id: 3624 });
+console.log(changes.changes);
+```
+
+## Types
+
+- [Changes](/docs/types/common#changes)

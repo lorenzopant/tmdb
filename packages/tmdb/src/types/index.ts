@@ -4,6 +4,7 @@ export * from "./discover";
 export * from "./movies";
 export * from "./search";
 export * from "./tv-series";
+export * from "./tv-seasons";
 export * from "./tv-episodes";
 export * from "./utility";
 export * from "./collections";
