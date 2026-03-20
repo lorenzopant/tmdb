@@ -45,7 +45,7 @@ export class TVSeasonsAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/tv-season-details
 	 */
 	async details<T extends readonly TVSeasonAppendToResponseNamespace[] = []>(
-		params: TVSeasonDetailsParams & { append_to_response?: T[number] | T },
+		params: Omit<TVSeasonDetailsParams, "append_to_response"> & { append_to_response?: T },
 	): Promise<T extends [] ? TVSeason : TVSeasonDetailsWithAppends<T>> {
 		const { language = this.defaultOptions.language, append_to_response, ...rest } = params;
 		const endpoint = this.seasonPath(rest);

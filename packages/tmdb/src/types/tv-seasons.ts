@@ -44,7 +44,7 @@ export type TVSeasonEpisode = TVEpisodeItem & {
  */
 export type TVSeason = {
 	/** ISO 8601 date when the season first aired */
-	air_date: string | null;
+	air_date?: string | null;
 	/** Array of episodes in this season */
 	episodes: TVSeasonEpisode[];
 	/** Unique TMDB identifier for the season */
@@ -151,7 +151,9 @@ export type TVSeasonVideos = VideoResults;
 // MARK: Parameters
 
 /** Parameters for the season details endpoint. */
-export type TVSeasonDetailsParams = TVSeasonBaseParams & WithLanguage;
+export type TVSeasonDetailsParams = Prettify<
+	TVSeasonBaseParams & { append_to_response?: TVSeasonAppendToResponseNamespace[] } & WithParams<"language">
+>;
 
 /** Parameters for the season aggregate credits endpoint. */
 export type TVSeasonAggregateCreditsParams = TVSeasonBaseParams & WithLanguage;
