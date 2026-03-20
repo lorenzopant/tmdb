@@ -1,0 +1,41 @@
+---
+title: Images
+description: Get the poster images for a TV season.
+---
+
+Get the images that belong to a TV season. Returns season posters.
+
+```ts
+async images(params: TVSeasonImagesParams): Promise<TVSeasonImages>
+```
+
+> **TMDB Reference:** [TV Season Images](https://developer.themoviedb.org/reference/tv-season-images)
+
+## Parameters
+
+| Name                     | Type                                                | Required | Description                                                       |
+| ------------------------ | --------------------------------------------------- | -------- | ----------------------------------------------------------------- |
+| `series_id`              | `number`                                            | ✅       | TMDB TV series identifier.                                        |
+| `season_number`          | `number`                                            | ✅       | Season number within the TV series.                               |
+| `language`               | [`Language`](/docs/types/options/language#language) | ❌       | Language for image metadata. Defaults to `en-US`.                 |
+| `include_image_language` | `string`                                            | ❌       | Include images with additional language tags (e.g., `"en,null"`). |
+
+## Returns
+
+[`TVSeasonImages`](/docs/types/tv-seasons#tvseasonimages)
+
+## Example
+
+```ts
+const { posters } = await tmdb.tv_seasons.images({
+	series_id: 1396,
+	season_number: 1,
+});
+
+const best = posters.sort((a, b) => b.vote_average - a.vote_average)[0];
+console.log(best.file_path);
+```
+
+## Types
+
+- [TVSeasonImages](/docs/types/tv-seasons#tvseasonimages)

@@ -104,6 +104,14 @@ export const ENDPOINTS = {
 	},
 	TV_SEASONS: {
 		DETAILS: "/season",
+		AGGREGATE_CREDITS: "/aggregate_credits",
+		CHANGES: "/changes",
+		CREDITS: "/credits",
+		EXTERNAL_IDS: "/external_ids",
+		IMAGES: "/images",
+		TRANSLATIONS: "/translations",
+		VIDEOS: "/videos",
+		WATCH_PROVIDERS: "/watch/providers",
 	},
 	TV_EPISODES: {
 		DETAILS: "/episode",

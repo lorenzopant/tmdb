@@ -23,6 +23,7 @@ import { TMDBOptions } from "./types/config";
 import { NetworksAPI } from "./endpoints/networks";
 import { TVEpisodesAPI } from "./endpoints/tv_episodes";
 import { TVEpisodeGroupsAPI } from "./endpoints/tv_episode_groups";
+import { TVSeasonsAPI } from "./endpoints/tv_seasons";
 
 export class TMDB {
 	private client: ApiClient;
@@ -47,6 +48,7 @@ export class TMDB {
 	public networks: NetworksAPI;
 	public tv_episodes: TVEpisodesAPI;
 	public tv_episode_groups: TVEpisodeGroupsAPI;
+	public tv_seasons: TVSeasonsAPI;
 	// etc...
 
 	/**
@@ -78,5 +80,6 @@ export class TMDB {
 		this.networks = new NetworksAPI(this.client, this.options);
 		this.tv_episodes = new TVEpisodesAPI(this.client, this.options);
 		this.tv_episode_groups = new TVEpisodeGroupsAPI(this.client, this.options);
+		this.tv_seasons = new TVSeasonsAPI(this.client, this.options);
 	}
 }

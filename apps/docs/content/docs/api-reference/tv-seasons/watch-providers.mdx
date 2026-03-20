@@ -1,0 +1,41 @@
+---
+title: Watch Providers
+description: Get streaming providers available for a TV season.
+---
+
+Get the watch providers for a specific TV season. Powered by JustWatch, this returns the streaming services that have the season available in each region.
+
+```ts
+async watch_providers(params: TVSeasonWatchProvidersParams): Promise<MediaWatchProviders>
+```
+
+> **TMDB Reference:** [TV Season Watch Providers](https://developer.themoviedb.org/reference/tv-season-watch-providers)
+
+## Parameters
+
+| Name            | Type                                                | Required | Description                                          |
+| --------------- | --------------------------------------------------- | -------- | ---------------------------------------------------- |
+| `series_id`     | `number`                                            | ✅       | TMDB TV series identifier.                           |
+| `season_number` | `number`                                            | ✅       | Season number within the TV series.                  |
+| `language`      | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized results. Defaults to `en-US`. |
+
+## Returns
+
+[`MediaWatchProviders`](/docs/types/watch-providers#mediawatchproviders)
+
+## Example
+
+```ts
+const providers = await tmdb.tv_seasons.watch_providers({
+	series_id: 1396,
+	season_number: 1,
+});
+
+const us = providers.results["US"];
+console.log(us?.flatrate); // Streaming providers
+console.log(us?.rent); // Rental providers
+```
+
+## Types
+
+- [MediaWatchProviders](/docs/types/watch-providers#mediawatchproviders)

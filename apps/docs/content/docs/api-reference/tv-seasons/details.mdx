@@ -1,0 +1,55 @@
+---
+title: Details
+description: Get the details of a TV season.
+---
+
+Get the details of a TV season by series ID and season number. Supports appending sub-resources in a single request via `append_to_response`.
+
+```ts
+async details<T extends readonly TVSeasonAppendToResponseNamespace[] = []>(
+  params: TVSeasonDetailsParams & { append_to_response?: T }
+): Promise<T extends [] ? TVSeason : TVSeasonDetailsWithAppends<T>>
+```
+
+> **TMDB Reference:** [TV Season Details](https://developer.themoviedb.org/reference/tv-season-details)
+
+## Parameters
+
+| Name                 | Type                                                                                              | Required | Description                                          |
+| -------------------- | ------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------- |
+| `series_id`          | `number`                                                                                          | ✅       | TMDB TV series identifier.                           |
+| `season_number`      | `number`                                                                                          | ✅       | Season number within the TV series.                  |
+| `append_to_response` | [`TVSeasonAppendToResponseNamespace[]`](/docs/types/tv-seasons#tvseasonappendtoresponsenamespace) | ❌       | Sub-resources to append to the response.             |
+| `language`           | [`Language`](/docs/types/options/language#language)                                               | ❌       | Language for localized results. Defaults to `en-US`. |
+
+## Returns
+
+[`TVSeason`](/docs/types/tv-seasons#tvseason) when no appends are provided,
+or [`TVSeasonDetailsWithAppends<T>`](/docs/types/tv-seasons#tvseasondetailswithappendst) when `append_to_response` is specified.
+
+## Example
+
+```ts
+// Basic details
+const season = await tmdb.tv_seasons.details({
+	series_id: 1396,
+	season_number: 1,
+});
+console.log(season.name);
+console.log(season.episodes.length);
+
+// With appended data
+const season = await tmdb.tv_seasons.details({
+	series_id: 1396,
+	season_number: 1,
+	append_to_response: ["credits", "images", "videos"],
+});
+console.log(season.credits.cast);
+console.log(season.images.posters);
+```
+
+## Types
+
+- [TVSeason](/docs/types/tv-seasons#tvseason)
+- [TVSeasonDetailsWithAppends](/docs/types/tv-seasons#tvseasondetailswithappendst)
+- [TVSeasonAppendToResponseNamespace](/docs/types/tv-seasons#tvseasonappendtoresponsenamespace)

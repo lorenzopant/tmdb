@@ -1,0 +1,39 @@
+---
+title: Credits
+description: Get the cast and crew for a TV season.
+---
+
+Get the credits for a TV season.
+
+```ts
+async credits(params: TVSeasonCreditsParams): Promise<TVSeasonCredits>
+```
+
+> **TMDB Reference:** [TV Season Credits](https://developer.themoviedb.org/reference/tv-season-credits)
+
+## Parameters
+
+| Name            | Type                                                | Required | Description                                          |
+| --------------- | --------------------------------------------------- | -------- | ---------------------------------------------------- |
+| `series_id`     | `number`                                            | ✅       | TMDB TV series identifier.                           |
+| `season_number` | `number`                                            | ✅       | Season number within the TV series.                  |
+| `language`      | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized results. Defaults to `en-US`. |
+
+## Returns
+
+[`TVSeasonCredits`](/docs/types/tv-seasons#tvseasoncredits)
+
+## Example
+
+```ts
+const { cast, crew } = await tmdb.tv_seasons.credits({
+	series_id: 1396,
+	season_number: 1,
+});
+
+const director = crew.find((m) => m.job === "Director");
+```
+
+## Types
+
+- [TVSeasonCredits](/docs/types/tv-seasons#tvseasoncredits)

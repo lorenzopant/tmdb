@@ -1,0 +1,28 @@
+---
+title: TV Seasons
+description: Fetch TV season details, credits, images, videos, translations, and watch providers from the TMDB catalog.
+---
+
+The `TVSeasonsAPI` provides access to TV season data from TMDB — details, aggregate credits, credits, images, translations, videos, watch providers, and change history.
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const season = await tmdb.tv_seasons.details({
+	series_id: 1396,
+	season_number: 1,
+});
+```
+
+## Methods
+
+- [`details()`](/docs/api-reference/tv-seasons/details) — Get the details of a TV season. Supports `append_to_response`.
+- [`aggregate_credits()`](/docs/api-reference/tv-seasons/aggregate-credits) — Get the aggregate cast and crew across all episodes of a season.
+- [`changes()`](/docs/api-reference/tv-seasons/changes) — Get the change history for a TV season by season ID.
+- [`credits()`](/docs/api-reference/tv-seasons/credits) — Get the cast and crew for a TV season.
+- [`external_ids()`](/docs/api-reference/tv-seasons/external-ids) — Get external platform identifiers for a TV season.
+- [`images()`](/docs/api-reference/tv-seasons/images) — Get poster images for a TV season.
+- [`translations()`](/docs/api-reference/tv-seasons/translations) — Get all available translations for a TV season.
+- [`videos()`](/docs/api-reference/tv-seasons/videos) — Get trailers, teasers, and clips for a TV season.
+- [`watch_providers()`](/docs/api-reference/tv-seasons/watch-providers) — Get streaming providers available for a TV season.

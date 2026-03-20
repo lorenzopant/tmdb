@@ -107,19 +107,19 @@ export type TVEpisodeItem = {
 	/** The total number of votes received for the episode */
 	vote_count: number;
 	/** The date the episode first aired */
-	air_date: string;
+	air_date?: string | null;
 	/** The episode number within its season */
 	episode_number: number;
 	/** The production code used internally during filming */
-	production_code: string;
+	production_code?: string | null;
 	/** The runtime of the episode in minutes */
-	runtime: number;
+	runtime?: number | null;
 	/** The season number this episode belongs to */
 	season_number: number;
 	/** The unique identifier of the TV show this episode belongs to */
 	show_id: number;
 	/** The path to the episode's still image (screenshot) */
-	still_path: string;
+	still_path?: string | null;
 };
 
 export type TVSeasonItem = {
