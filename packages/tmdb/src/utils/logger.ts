@@ -51,8 +51,8 @@ export class TMDBLogger {
 			return;
 		}
 
-		console.log(
-			`${prefix} ${timestamp} ❌ ${entry.method} ${entry.status} ${entry.statusText ?? "ERROR"} ${entry.endpoint} - ${entry.errorMessage} (tmdb: ${entry.tmdbStatusCode})\n`,
-		);
+		const statusPart = entry.status != null ? `${entry.status} ${entry.statusText}` : "NETWORK ERROR";
+		const tmdbPart = entry.tmdbStatusCode != null ? ` (tmdb: ${entry.tmdbStatusCode})` : "";
+		console.log(`${prefix} ${timestamp} ❌ ${entry.method} ${statusPart} ${entry.endpoint} - ${entry.errorMessage}${tmdbPart}\n`);
 	}
 }
