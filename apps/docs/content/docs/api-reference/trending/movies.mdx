@@ -1,0 +1,41 @@
+---
+title: Movies
+description: Get trending movies on TMDB for a given time window.
+---
+
+Get the trending movies on TMDB. Each result item includes the `media_type: "movie"` discriminator.
+
+```ts
+async movies(params: TrendingParams): Promise<PaginatedResponse<TrendingMovieResult>>
+```
+
+> **TMDB Reference:** [Trending Movies](https://developer.themoviedb.org/reference/trending-movies)
+
+## Parameters
+
+| Name          | Type                                                            | Required | Description                                                                                       |
+| ------------- | --------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------- |
+| `time_window` | [`TrendingTimeWindow`](/docs/types/trending#trendingtimewindow) | ✅       | Time window for trending data. `"day"` covers the last 24 hours, `"week"` covers the last 7 days. |
+| `language`    | [`Language`](/docs/types/options/language#language)             | ❌       | Language for localized results. Defaults to `en-US`.                                              |
+
+## Returns
+
+A [`PaginatedResponse<TrendingMovieResult>`](/docs/types/common#paginatedresponset) containing
+an array of [`TrendingMovieResult`](/docs/types/trending#trendingmovieresult) objects.
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const { results } = await tmdb.trending.movies({ time_window: "week", language: "en-US" });
+console.log(results[0].title); // "The Super Mario Bros. Movie"
+console.log(results[0].media_type); // "movie"
+```
+
+## Related Types
+
+- [TrendingParams](/docs/types/trending#trendingparams)
+- [TrendingMovieResult](/docs/types/trending#trendingmovieresult)
+- [PaginatedResponse](/docs/types/common#paginatedresponset)
