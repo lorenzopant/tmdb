@@ -7,5 +7,4 @@ vitest.config.ts
 .github/
 node_modules/
 coverage/
-README.md
 dist/scripts/
