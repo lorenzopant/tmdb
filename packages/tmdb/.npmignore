@@ -8,3 +8,4 @@ vitest.config.ts
 node_modules/
 coverage/
 README.md
+dist/scripts/
