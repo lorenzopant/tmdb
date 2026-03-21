@@ -1,0 +1,53 @@
+---
+title: Trending
+description: Type definitions for the Trending API namespace.
+---
+
+import { TypeTable } from "fumadocs-ui/components/type-table";
+
+Types for the [`TrendingAPI`](/docs/api-reference/trending) namespace.
+
+## `TrendingTimeWindow`
+
+```ts
+type TrendingTimeWindow = "day" | "week";
+```
+
+## `TrendingParams`
+
+<TypeTable
+	type={{
+		time_window: {
+			type: "TrendingTimeWindow",
+			description: 'Time window. `"day"` = last 24 hours, `"week"` = last 7 days.',
+			required: true,
+		},
+		language: { type: "Language", description: "Language for localised results.", default: "en-US" },
+	}}
+/>
+
+## `TrendingMovieResult`
+
+A trending movie item. Extends [`MovieResultItem`](/docs/types/search#movieresultitem) with `media_type`.
+
+<AutoTypeTable path="trending.ts" name="TrendingMovieResult" />
+
+## `TrendingTVResult`
+
+A trending TV show item. Extends [`TVSeriesResultItem`](/docs/types/search#tvseriesresultitem) with `media_type`.
+
+<AutoTypeTable path="trending.ts" name="TrendingTVResult" />
+
+## `TrendingPersonResult`
+
+A trending person item. Extends [`PersonResultItem`](/docs/types/search#personresultitem) with `media_type`.
+
+<AutoTypeTable path="trending.ts" name="TrendingPersonResult" />
+
+## `TrendingAllResult`
+
+Union type returned by [`trending.all()`](/docs/api-reference/trending/all). Discriminated by `media_type`.
+
+```ts
+type TrendingAllResult = TrendingMovieResult | TrendingTVResult | TrendingPersonResult;
+```

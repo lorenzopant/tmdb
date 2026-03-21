@@ -1,0 +1,53 @@
+---
+title: All
+description: Get trending movies, TV shows, and people on TMDB for a given time window.
+---
+
+Get the trending movies, TV shows and people on TMDB in a single call.
+Results are a discriminated union on `media_type` — each item is either `"movie"`, `"tv"`, or `"person"`.
+
+```ts
+async all(params: TrendingParams): Promise<PaginatedResponse<TrendingAllResult>>
+```
+
+> **TMDB Reference:** [Trending All](https://developer.themoviedb.org/reference/trending-all)
+
+## Parameters
+
+| Name          | Type                                                            | Required | Description                                                                                       |
+| ------------- | --------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------- |
+| `time_window` | [`TrendingTimeWindow`](/docs/types/trending#trendingtimewindow) | ✅       | Time window for trending data. `"day"` covers the last 24 hours, `"week"` covers the last 7 days. |
+| `language`    | [`Language`](/docs/types/options/language#language)             | ❌       | Language for localized results. Defaults to `en-US`.                                              |
+
+## Returns
+
+A [`PaginatedResponse<TrendingAllResult>`](/docs/types/common#paginatedresponset) containing
+an array of [`TrendingAllResult`](/docs/types/trending#trendingallresult) objects — a discriminated union on `media_type`.
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const { results } = await tmdb.trending.all({ time_window: "day" });
+
+for (const item of results) {
+	if (item.media_type === "movie") {
+		console.log(item.title); // "Fight Club"
+	} else if (item.media_type === "tv") {
+		console.log(item.name); // "The Mandalorian"
+	} else {
+		console.log(item.name); // "Ana de Armas"
+	}
+}
+```
+
+## Related Types
+
+- [TrendingParams](/docs/types/trending#trendingparams)
+- [TrendingAllResult](/docs/types/trending#trendingallresult)
+- [TrendingMovieResult](/docs/types/trending#trendingmovieresult)
+- [TrendingTVResult](/docs/types/trending#trendingtvresult)
+- [TrendingPersonResult](/docs/types/trending#trendingpersonresult)
+- [PaginatedResponse](/docs/types/common#paginatedresponset)

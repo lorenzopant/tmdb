@@ -1,0 +1,25 @@
+---
+title: Trending
+description: Get trending movies, TV shows, and people on TMDB for a given time window.
+---
+
+The `TrendingAPI` provides access to trending content on TMDB — movies, TV shows, and people — filtered by `"day"` or `"week"` time windows.
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+
+// All trending (movies, TV, and people mixed)
+const all = await tmdb.trending.all({ time_window: "day" });
+
+// Trending movies only
+const movies = await tmdb.trending.movies({ time_window: "week" });
+```
+
+## Methods
+
+- [`all()`](/docs/api-reference/trending/all) — Get trending movies, TV shows, and people in a single call.
+- [`movies()`](/docs/api-reference/trending/movies) — Get trending movies.
+- [`tv()`](/docs/api-reference/trending/tv) — Get trending TV shows.
+- [`people()`](/docs/api-reference/trending/people) — Get trending people.

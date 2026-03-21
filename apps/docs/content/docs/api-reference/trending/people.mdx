@@ -1,0 +1,43 @@
+---
+title: People
+description: Get trending people on TMDB for a given time window.
+---
+
+Get the trending people on TMDB. Each result item includes the `media_type: "person"` discriminator and a `known_for` array listing notable movies and TV shows.
+
+```ts
+async people(params: TrendingParams): Promise<PaginatedResponse<TrendingPersonResult>>
+```
+
+> **TMDB Reference:** [Trending People](https://developer.themoviedb.org/reference/trending-people)
+
+## Parameters
+
+| Name          | Type                                                            | Required | Description                                                                                       |
+| ------------- | --------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------- |
+| `time_window` | [`TrendingTimeWindow`](/docs/types/trending#trendingtimewindow) | ✅       | Time window for trending data. `"day"` covers the last 24 hours, `"week"` covers the last 7 days. |
+| `language`    | [`Language`](/docs/types/options/language#language)             | ❌       | Language for localized results. Defaults to `en-US`.                                              |
+
+## Returns
+
+A [`PaginatedResponse<TrendingPersonResult>`](/docs/types/common#paginatedresponset) containing
+an array of [`TrendingPersonResult`](/docs/types/trending#trendingpersonresult) objects.
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const { results } = await tmdb.trending.people({ time_window: "day" });
+const person = results[0];
+console.log(person.name); // "Ana de Armas"
+console.log(person.known_for_department); // "Acting"
+console.log(person.known_for[0].media_type); // "movie" | "tv"
+```
+
+## Related Types
+
+- [TrendingParams](/docs/types/trending#trendingparams)
+- [TrendingPersonResult](/docs/types/trending#trendingpersonresult)
+- [PaginatedResponse](/docs/types/common#paginatedresponset)
