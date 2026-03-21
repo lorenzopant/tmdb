@@ -1,0 +1,3 @@
+{
+	"markdown.validate.ignoredLinks": ["/docs/**", "**/new-namespace/**"]
+}
