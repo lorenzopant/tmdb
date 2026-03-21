@@ -1,5 +1,6 @@
 export * from "./common";
 export * from "./config";
+export * from "./interceptors";
 export * from "./discover";
 export * from "./trending";
 export * from "./movies";
