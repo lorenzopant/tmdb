@@ -354,31 +354,9 @@ console.log(result.name);
 ```
 ````
 
-> **CRITICAL — TypeTable rule:** When a method has parameters that include `language`, `include_image_language`, `region`, `country`, or any locale/language-related param, use `<TypeTable />` for the Parameters section **instead of** <AutoTypeTable />. Use a typescript codeblock when dealing with composite or complex types like `TVAppendToResponseNamespace` or `MovieAppendableMap`.
-
-```mdx
-import { TypeTable } from "fumadocs-ui/components/type-table";
-
-## Parameters
-
-<TypeTable
-	type={{
-		namespace_id: { type: "number", description: "TMDB identifier.", required: true },
-		language: { type: "Language", description: "Language for localized results.", default: "en-US" },
-		include_image_language: {
-			type: "Language | LanguageISO6391",
-			description: 'Include images from additional languages (e.g., `"en,null"`).',
-		},
-		region: { type: "CountryISO3166_1", description: "Filter results by country." },
-	}}
-/>
-```
-
-Use `<TypeTable />` also whenever displaying a parameter/type object with optional/default fields for clarity.
-
 #### 7c — Types page (`types/<namespace>.mdx`)
 
-```mdx
+````mdx
 ---
 title: New Namespace
 description: Type definitions for the New Namespace API.
@@ -392,15 +370,13 @@ These types represent the ... domain.
 
 The complete representation as returned by [`new_namespace.details()`](/docs/api-reference/new-namespace/details).
 
-<TypeTable
-	type={{
-		id: { type: "number", description: "Unique TMDB identifier." },
-		name: { type: "string", description: "Localized name." },
-		overview: { type: "string | null", description: "Description or synopsis." },
-	}}
-/>
+Use fumadocs <AutoTypeTable /> whenever possible. If the type includes a `language`, `region`, `country`, or `include_image_language` field, use a custom `<TypeTable />` for clarity like for params.
+
+If a type contains nested other complex types (like array of `OtherNamespaceType`) add a "Related Types" small section at the bottom of the type and point to them.
 
 ## `NewNamespaceDetailsParams`
+
+> **CRITICAL — TypeTable rule:** When a method has parameters that include `language`, `include_image_language`, `region`, `country`, or any locale/language-related param, use `<TypeTable />` for the Parameters section **instead of** <AutoTypeTable />. Use a typescript codeblock when dealing with composite or complex types like `TVAppendToResponseNamespace` or `MovieAppendableMap`.
 
 <TypeTable
 	type={{
@@ -408,6 +384,28 @@ The complete representation as returned by [`new_namespace.details()`](/docs/api
 		language: { type: "Language", description: "Language for localized results.", default: "en-US" },
 	}}
 />
+
+```mdx
+import { TypeTable } from "fumadocs-ui/components/type-table";
+
+## NamespaceMethodParams
+
+<TypeTable
+	type={{
+		namespace_id: { type: "number", description: "TMDB identifier.", required: true },
+		language: { type: "Language", description: "Language for localized results.", default: "en-US" },
+		include_image_language: {
+			type: "Language | LanguageISO6391",
+			description: 'Include images from additional languages (e.g., `"en,null"`).',
+		},
+		region: { type: "CountryISO3166_1", description: "Filter results by country." },
+	}}
+/>
+```
+````
+
+Use `<TypeTable />` also whenever displaying a parameter/type object with optional/default fields for clarity.
+
 ```
 
 ---
@@ -444,3 +442,10 @@ The complete representation as returned by [`new_namespace.details()`](/docs/api
 - **Do not** create circular type imports between namespace type files — use `types/common/` for shared entities
 - **Do not** forget to register the new API class as a `public` property in `tmdb.ts`
 - **Do not** use a markdown table for Parameters when the endpoint has `language`, `include_image_language`, `region`, or `country` params — always use `<TypeTable />` in that case
+
+```
+
+## Other general tips
+
+- When in doubt, look at existing API classes and types for examples of patterns and conventions.
+- Don't forget to add the new namespace to the `types/index.ts` exports and to the api-reference MDX index page.
