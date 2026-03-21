@@ -346,12 +346,24 @@ async details(params: NewNamespaceDetailsParams): Promise<NewNamespaceDetail>
 
 [`NewNamespaceDetail`](/docs/types/new-namespace#newnamespacedetail)
 
+For paginated endpoints, use prose format:
+
+> A [`PaginatedResponse<NewNamespaceItem>`](/docs/types/common#paginatedresponset) containing an array of [`NewNamespaceItem`](/docs/types/new-namespace#newnamespaceitem) objects.
+
 ## Example
 
 ```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
 const result = await tmdb.new_namespace.details({ namespace_id: 123 });
 console.log(result.name);
 ```
+
+## Related Types
+
+- [`NewNamespaceDetailsParams`](/docs/types/new-namespace#newnamespacedetailsparams)
+- [`NewNamespaceDetail`](/docs/types/new-namespace#newnamespacedetail)
 ````
 
 #### 7c — Types page (`types/<namespace>.mdx`)
@@ -427,8 +439,10 @@ Use `<TypeTable />` also whenever displaying a parameter/type object with option
 | Test imports           | Always from `"vitest"` — `beforeEach`, `describe`, `expect`, `it`, `vi`                |
 | Test mock              | `clientMock.request = vi.fn()` then `mockResolvedValue()`                              |
 | Doc params table       | Markdown table for simple params; `<TypeTable />` when language/region/country present |
+| Doc Returns section    | Prose: "A `PaginatedResponse<X>` containing an array of `Y` objects." with links       |
+| Doc Related Types      | Bullet list at bottom of method page linking all involved types                        |
 | TypeTable import       | `import { TypeTable } from "fumadocs-ui/components/type-table";`                       |
-| AutoTypeTable          | `<AutoTypeTable path="<namespace>.ts" name="TypeName" />` for shared/common types      |
+| AutoTypeTable          | `<AutoTypeTable path="<namespace>.ts" name="TypeName" />` for result/response types    |
 
 ---
 
@@ -442,6 +456,7 @@ Use `<TypeTable />` also whenever displaying a parameter/type object with option
 - **Do not** create circular type imports between namespace type files — use `types/common/` for shared entities
 - **Do not** forget to register the new API class as a `public` property in `tmdb.ts`
 - **Do not** use a markdown table for Parameters when the endpoint has `language`, `include_image_language`, `region`, or `country` params — always use `<TypeTable />` in that case
+- **Do not** assume `.filter()` narrows discriminated union types — `.filter(item => item.media_type === "movie")` returns the full union type; a type predicate is required: `.filter((item): item is XResult => item.media_type === "movie")`
 
 ```
 
@@ -449,3 +464,4 @@ Use `<TypeTable />` also whenever displaying a parameter/type object with option
 
 - When in doubt, look at existing API classes and types for examples of patterns and conventions.
 - Don't forget to add the new namespace to the `types/index.ts` exports and to the api-reference MDX index page.
+- Update the changelog with a brief description of the new API/endpoint following the existing format. Remove the "new" label from previous changelog entries if they are no longer new.

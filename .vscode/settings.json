@@ -1,6 +1,0 @@
-{
-	"markdown.validate.ignoredLinks": ["/docs/**", "**/new-namespace/**"],
-	"chat.tools.terminal.autoApprove": {
-		"mkdir": true
-	}
-}
