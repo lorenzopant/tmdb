@@ -1,8 +1,9 @@
+/// <reference types="node" />
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiClient } from "../../client";
 import { TMDB } from "../../tmdb";
-import { RequestContext, ResponseContext } from "../../types/interceptors";
+import { RequestContext, ResponseContext, ResponseInterceptor } from "../../types/interceptors";
 
 type MockResponse = {
 	ok: boolean;
@@ -175,26 +176,34 @@ describe("ApiClient response interceptors", () => {
 	});
 
 	it("should call a construction-time response interceptor with correct context", async () => {
-		const interceptor = vi.fn(<T>(ctx: ResponseContext<T>) => ctx.data);
+		const spy = vi.fn();
+		const interceptor: ResponseInterceptor = <T>(ctx: ResponseContext<T>) => {
+			spy(ctx);
+			return ctx.data;
+		};
 		const client = new ApiClient("valid_access_token", { interceptors: { response: [interceptor] } });
 
 		await client.request("/movie/550");
 
-		expect(interceptor).toHaveBeenCalledOnce();
-		const ctx = interceptor.mock.calls[0][0] as ResponseContext<unknown>;
+		expect(spy).toHaveBeenCalledOnce();
+		const ctx = spy.mock.calls[0][0] as ResponseContext<unknown>;
 		expect(ctx.status).toBe(200);
 		expect(ctx.request.endpoint).toBe("/movie/550");
 		expect(ctx.data).toEqual({ id: 42, title: "Inception" });
 	});
 
 	it('should call a use("response")-registered response interceptor', async () => {
-		const interceptor = vi.fn(<T>(ctx: ResponseContext<T>) => ctx.data);
+		const spy = vi.fn();
+		const interceptor: ResponseInterceptor = <T>(ctx: ResponseContext<T>) => {
+			spy(ctx);
+			return ctx.data;
+		};
 		const client = new ApiClient("valid_access_token");
 		client.use("response", interceptor);
 
 		await client.request("/movie/550");
 
-		expect(interceptor).toHaveBeenCalledOnce();
+		expect(spy).toHaveBeenCalledOnce();
 	});
 
 	it("should allow a response interceptor to transform the data", async () => {
@@ -246,11 +255,15 @@ describe("ApiClient response interceptors", () => {
 			statusText: "Not Found",
 			json: async () => ({ status_message: "Not found", status_code: 34 }),
 		});
-		const interceptor = vi.fn(<T>(ctx: ResponseContext<T>) => ctx.data);
+		const spy = vi.fn();
+		const interceptor: ResponseInterceptor = <T>(ctx: ResponseContext<T>) => {
+			spy(ctx);
+			return ctx.data;
+		};
 		const client = new ApiClient("valid_access_token", { interceptors: { response: [interceptor] } });
 
 		await expect(client.request("/movie/999999")).rejects.toThrow();
-		expect(interceptor).not.toHaveBeenCalled();
+		expect(spy).not.toHaveBeenCalled();
 	});
 
 	it("construction-time response interceptors and use() interceptors run together in order", async () => {
@@ -303,13 +316,17 @@ describe("TMDB.use()", () => {
 	});
 
 	it('should register a response interceptor via tmdb.use("response")', async () => {
-		const interceptor = vi.fn(<T>(ctx: ResponseContext<T>) => ctx.data);
+		const spy = vi.fn();
+		const interceptor: ResponseInterceptor = <T>(ctx: ResponseContext<T>) => {
+			spy(ctx);
+			return ctx.data;
+		};
 		const tmdb = new TMDB("valid_access_token");
 		tmdb.use("response", interceptor);
 
 		await tmdb.movie_lists.popular({});
 
-		expect(interceptor).toHaveBeenCalledOnce();
+		expect(spy).toHaveBeenCalledOnce();
 	});
 
 	it("should return this from use() to allow chaining", () => {
@@ -334,11 +351,15 @@ describe("TMDB.use()", () => {
 	});
 
 	it("should support construction-time interceptors.response via options", async () => {
-		const interceptor = vi.fn(<T>(ctx: ResponseContext<T>) => ctx.data);
+		const spy = vi.fn();
+		const interceptor: ResponseInterceptor = <T>(ctx: ResponseContext<T>) => {
+			spy(ctx);
+			return ctx.data;
+		};
 		const tmdb = new TMDB("valid_access_token", { interceptors: { response: [interceptor] } });
 
 		await tmdb.movie_lists.popular({});
 
-		expect(interceptor).toHaveBeenCalledOnce();
+		expect(spy).toHaveBeenCalledOnce();
 	});
 });
