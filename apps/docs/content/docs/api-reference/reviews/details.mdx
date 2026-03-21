@@ -1,0 +1,41 @@
+---
+title: Details
+description: Get the full details of a TMDB review by its review ID.
+---
+
+Retrieve the complete details of a single review, including author information, review content, and the media it belongs to.
+
+```ts
+async details(params: ReviewDetailsParams): Promise<ReviewDetails>
+```
+
+> **TMDB Reference:** [Review Details](https://developer.themoviedb.org/reference/review-details)
+
+## Parameters
+
+| Name        | Type     | Required | Description                 |
+| ----------- | -------- | -------- | --------------------------- |
+| `review_id` | `string` | ✅       | The TMDB review identifier. |
+
+## Returns
+
+[`ReviewDetails`](/docs/types/reviews#reviewdetails)
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const review = await tmdb.reviews.details({ review_id: "5acbc4e7c3a36814d01009f6" });
+
+console.log(review.author); // "eXo"
+console.log(review.media_title); // "Dilwale Dulhania Le Jayenge"
+console.log(review.media_type); // "movie"
+```
+
+## Related Types
+
+- [`ReviewDetailsParams`](/docs/types/reviews#reviewdetailsparams)
+- [`ReviewDetails`](/docs/types/reviews#reviewdetails)
+- [`Review`](/docs/types/common#review)

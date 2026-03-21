@@ -1,0 +1,18 @@
+---
+title: Reviews
+description: Retrieve TMDB review details by review ID.
+---
+
+The `ReviewsAPI` provides access to individual user reviews on TMDB.
+You can fetch the full detail of any review using its unique TMDB review ID.
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const review = await tmdb.reviews.details({ review_id: "5acbc4e7c3a36814d01009f6" });
+```
+
+## Methods
+
+- [`details()`](/docs/api-reference/reviews/details) — Get the full details of a review by its TMDB review ID.

@@ -1,0 +1,23 @@
+---
+title: Reviews
+description: Types related to the Reviews namespace.
+---
+
+Types related to the [ReviewsAPI](/docs/api-reference/reviews) namespace.
+
+import { TypeTable } from "fumadocs-ui/components/type-table";
+
+## `ReviewDetails`
+
+The complete representation of a review as returned by [`reviews.details()`](/docs/api-reference/reviews/details).
+Extends the base [`Review`](/docs/types/common#review) type with media context fields.
+
+<AutoTypeTable path="reviews.ts" name="ReviewDetails" />
+
+## `ReviewDetailsParams`
+
+<TypeTable
+	type={{
+		review_id: { type: "string", required: true, description: "The TMDB review identifier." },
+	}}
+/>
