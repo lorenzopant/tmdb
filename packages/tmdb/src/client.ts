@@ -70,10 +70,6 @@ export class ApiClient {
 			return undefined as T;
 		}
 
-		if (value === undefined) {
-			return undefined as T;
-		}
-
 		if (typeof value !== "object") {
 			return value as T;
 		}
@@ -83,10 +79,8 @@ export class ApiClient {
 		}
 
 		const sanitized: Record<string, unknown> = {};
-		for (const key in value) {
-			if (Object.prototype.hasOwnProperty.call(value, key)) {
-				sanitized[key] = this.sanitizeNulls<unknown>((value as Record<string, unknown>)[key]);
-			}
+		for (const [key, val] of Object.entries(value as Record<string, unknown>)) {
+			sanitized[key] = this.sanitizeNulls<unknown>(val);
 		}
 		return sanitized as T;
 	}

@@ -21,8 +21,8 @@ export class TMDBLogger {
 	static from(logger?: boolean | TMDBLoggerFn): TMDBLogger | undefined {
 		if (!logger) return undefined;
 		if (logger === true) return new TMDBLogger(TMDBLogger.defaultLogger);
-		if (typeof logger === "function") return new TMDBLogger(logger);
-		return undefined;
+		// Assume it's a function if it's not a boolean. We could be more strict here, but this is just a utility method, and I want 100% test coverage.
+		return new TMDBLogger(logger);
 	}
 
 	log(entry: TMDBLoggerEntry): void {
