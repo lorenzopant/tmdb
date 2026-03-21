@@ -1,19 +1,45 @@
 import { TMDBAPIErrorResponse, TMDBError } from "./errors/tmdb";
+import { RequestContext, RequestInterceptor } from "./types/interceptors";
 import { TMDBLogger, TMDBLoggerFn } from "./utils/logger";
 
 export class ApiClient {
 	private accessToken: string;
 	private baseUrl: string = "https://api.themoviedb.org/3";
 	private logger?: TMDBLogger;
+	private interceptors: RequestInterceptor[] = [];
 
-	constructor(accessToken: string, options: { logger?: boolean | TMDBLoggerFn } = {}) {
+	constructor(accessToken: string, options: { logger?: boolean | TMDBLoggerFn; interceptors?: RequestInterceptor[] } = {}) {
 		this.accessToken = accessToken;
 		this.logger = TMDBLogger.from(options.logger);
+		if (options.interceptors) {
+			this.interceptors = [...options.interceptors];
+		}
+	}
+
+	/**
+	 * Registers a request interceptor that will run before every HTTP request.
+	 * Interceptors run in registration order.
+	 */
+	use(interceptor: RequestInterceptor): void {
+		this.interceptors.push(interceptor);
 	}
 
 	async request<T>(endpoint: string, params: Record<string, unknown | undefined> = {}): Promise<T> {
-		const url = new URL(`${this.baseUrl}${endpoint}`);
-		for (const [key, value] of Object.entries(params)) {
+		let ctx: RequestContext = {
+			endpoint,
+			params: { ...params },
+			headers: {
+				Authorization: `Bearer ${this.accessToken}`,
+				"Content-Type": "application/json;charset=utf-8",
+			},
+		};
+
+		for (const interceptor of this.interceptors) {
+			ctx = await interceptor(ctx);
+		}
+
+		const url = new URL(`${this.baseUrl}${ctx.endpoint}`);
+		for (const [key, value] of Object.entries(ctx.params)) {
 			if (value === undefined) continue;
 			url.searchParams.append(key, String(value));
 		}
@@ -22,34 +48,31 @@ export class ApiClient {
 		this.logger?.log({
 			type: "request",
 			method: "GET",
-			endpoint,
+			endpoint: ctx.endpoint,
 		});
 
 		let res: Response;
 		try {
 			res = await fetch(url.toString(), {
-				headers: {
-					Authorization: `Bearer ${this.accessToken}`,
-					"Content-Type": "application/json;charset=utf-8",
-				},
+				headers: ctx.headers,
 			});
 		} catch (error) {
 			this.logger?.log({
 				type: "error",
 				method: "GET",
-				endpoint,
+				endpoint: ctx.endpoint,
 				errorMessage: error instanceof Error ? error.message : String(error),
 				durationMs: Date.now() - startedAt,
 			});
 			throw error;
 		}
 
-		if (!res.ok) await this.handleError(res, endpoint);
+		if (!res.ok) await this.handleError(res, ctx.endpoint);
 
 		this.logger?.log({
 			type: "response",
 			method: "GET",
-			endpoint,
+			endpoint: ctx.endpoint,
 			status: res.status,
 			statusText: res.statusText,
 			durationMs: Date.now() - startedAt,

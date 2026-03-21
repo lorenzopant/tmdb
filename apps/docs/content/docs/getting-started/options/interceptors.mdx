@@ -1,0 +1,149 @@
+---
+title: Interceptors
+description: Hook into every request before it fires to inject custom headers, modify params, or dynamically replace the access token.
+---
+
+Request interceptors let you run a function before every HTTP request the TMDB client makes.
+Each interceptor receives a [`RequestContext`](#requestcontext) object — containing the endpoint, query-string params, and headers — and must return the (possibly modified) context.
+
+---
+
+## Registering interceptors
+
+### At construction time
+
+Pass an `interceptors` array to the `TMDB` constructor. These run for every request made by this instance.
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key", {
+	interceptors: [
+		(ctx) => ({
+			...ctx,
+			params: { ...ctx.params, include_adult: false },
+		}),
+	],
+});
+```
+
+### At runtime with `use()`
+
+Call `tmdb.use()` after construction. It returns `this`, so calls can be chained.
+
+```ts
+const tmdb = new TMDB("your-api-key");
+
+tmdb.use((ctx) => ({
+	...ctx,
+	params: { ...ctx.params, include_adult: false },
+})).use(async (ctx) => {
+	const token = await refreshToken(); // async interceptors are supported
+	return {
+		...ctx,
+		headers: { ...ctx.headers, Authorization: `Bearer ${token}` },
+	};
+});
+```
+
+Interceptors registered via `use()` are appended after any construction-time interceptors and run in registration order.
+
+---
+
+## Examples
+
+### Force-disable adult content
+
+```ts
+tmdb.use((ctx) => ({
+	...ctx,
+	params: { ...ctx.params, include_adult: false },
+}));
+```
+
+### Dynamically refresh the access token (server-side)
+
+```ts
+tmdb.use(async (ctx) => {
+	const token = await getValidToken();
+	return {
+		...ctx,
+		headers: { ...ctx.headers, Authorization: `Bearer ${token}` },
+	};
+});
+```
+
+### Inject a custom header (server-side only)
+
+```ts
+tmdb.use((ctx) => ({
+	...ctx,
+	headers: { ...ctx.headers, "X-App-Version": "2.0.0" },
+}));
+```
+
+<Callout type="warn">
+  **Browser / CORS warning** — Adding non-standard headers (e.g. `X-*`) triggers a CORS preflight
+  (`OPTIONS`) request. The TMDB API only allows `Authorization` and `Content-Type` in
+  `Access-Control-Allow-Headers`, so custom headers will be **blocked by the browser**.
+  Header injection is safe **only in server-side environments** (Node.js, edge runtimes, etc.).
+
+Modifying `params` or `endpoint` is safe in all environments.
+
+</Callout>
+
+---
+
+## Execution order
+
+All interceptors run sequentially in the order they were registered — construction-time first, then `use()` calls.
+
+```ts
+const tmdb = new TMDB(token, {
+	interceptors: [interceptorA], // runs 1st
+});
+
+tmdb.use(interceptorB); // runs 2nd
+tmdb.use(interceptorC); // runs 3rd
+```
+
+If an interceptor throws, the error propagates and the HTTP request is **not** made.
+
+---
+
+## `RequestContext`
+
+The object passed to (and returned from) every interceptor.
+
+import { TypeTable } from "fumadocs-ui/components/type-table";
+
+<TypeTable
+	type={{
+		endpoint: {
+			type: "string",
+			description: 'The endpoint path for this request, e.g. `"/movie/popular"`.',
+			required: true,
+		},
+		params: {
+			type: "Record<string, unknown>",
+			description: "Query-string parameters that will be appended to the URL.",
+			required: true,
+		},
+		headers: {
+			type: "Record<string, string>",
+			description:
+				"HTTP headers sent with the request. Includes `Authorization` and `Content-Type` by default. Custom headers are safe only in server-side environments — browsers will block them via CORS preflight.",
+			required: true,
+		},
+	}}
+/>
+
+---
+
+## `RequestInterceptor`
+
+```ts
+type RequestInterceptor = (context: RequestContext) => RequestContext | Promise<RequestContext>;
+```
+
+A synchronous or asynchronous function that receives a [`RequestContext`](#requestcontext) and returns the (possibly modified) context.

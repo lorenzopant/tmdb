@@ -20,6 +20,7 @@ import { WatchProvidersAPI } from "./endpoints/watch_providers";
 import { Errors } from "./errors/messages";
 import { ImageAPI } from "./images/images";
 import { TMDBOptions } from "./types/config";
+import { RequestInterceptor } from "./types/interceptors";
 import { NetworksAPI } from "./endpoints/networks";
 import { TVEpisodesAPI } from "./endpoints/tv_episodes";
 import { TVEpisodeGroupsAPI } from "./endpoints/tv_episode_groups";
@@ -63,7 +64,7 @@ export class TMDB {
 	constructor(accessToken: string, options: TMDBOptions = {}) {
 		if (!accessToken) throw new Error(Errors.NO_ACCESS_TOKEN);
 		this.options = options;
-		this.client = new ApiClient(accessToken, { logger: options.logger });
+		this.client = new ApiClient(accessToken, { logger: options.logger, interceptors: options.interceptors });
 		this.movies = new MoviesAPI(this.client, this.options);
 		this.movie_lists = new MovieListsAPI(this.client, this.options);
 		this.search = new SearchAPI(this.client, this.options);
@@ -87,5 +88,20 @@ export class TMDB {
 		this.tv_seasons = new TVSeasonsAPI(this.client, this.options);
 		this.trending = new TrendingAPI(this.client, this.options);
 		this.reviews = new ReviewsAPI(this.client, this.options);
+	}
+
+	/**
+	 * Registers a request interceptor that runs before every HTTP request.
+	 * Interceptors run in the order they are registered.
+	 *
+	 * @example
+	 * tmdb.use((ctx) => ({
+	 *   ...ctx,
+	 *   headers: { ...ctx.headers, "X-Custom-Header": "value" },
+	 * }));
+	 */
+	use(interceptor: RequestInterceptor): this {
+		this.client.use(interceptor);
+		return this;
 	}
 }
