@@ -130,4 +130,10 @@ export const ENDPOINTS = {
 		TV: "/watch/providers/tv",
 		REGIONS: "/watch/providers/regions",
 	},
+	TRENDING: {
+		ALL: "/trending/all",
+		MOVIE: "/trending/movie",
+		TV: "/trending/tv",
+		PERSON: "/trending/person",
+	},
 };
