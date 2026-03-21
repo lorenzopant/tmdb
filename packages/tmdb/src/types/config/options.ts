@@ -1,5 +1,5 @@
-import type { RequestInterceptor } from "../interceptors";
 import type { TMDBLoggerFn } from "../../utils/logger";
+import type { TMDBInterceptors } from "../interceptors";
 import { CountryISO3166_1 } from "./countries";
 import { ImagesConfig } from "./images";
 import { Language } from "./languages";
@@ -36,16 +36,19 @@ export type TMDBOptions = {
 	 */
 	logger?: boolean | TMDBLoggerFn;
 	/**
-	 * Request interceptors that run before every HTTP request.
-	 * Each interceptor receives a {@link RequestContext} and must return the (possibly modified) context.
-	 * Interceptors run in registration order and may be async.
+	 * Request and response interceptors.
+	 * - `interceptors.request` — functions that run before every HTTP request.
+	 * - `interceptors.response` — functions that run after every successful response.
+	 *
+	 * Both types may be async and run in registration order.
 	 *
 	 * @example
 	 * new TMDB(token, {
-	 *   interceptors: [
-	 *     (ctx) => ({ ...ctx, headers: { ...ctx.headers, "X-My-Header": "value" } }),
-	 *   ],
+	 *   interceptors: {
+	 *     request: [(ctx) => ({ ...ctx, params: { ...ctx.params, include_adult: false } })],
+	 *     response: [(ctx) => { console.log(ctx.status, ctx.request.endpoint); return ctx.data; }],
+	 *   },
 	 * });
 	 */
-	interceptors?: RequestInterceptor[];
+	interceptors?: TMDBInterceptors;
 };

@@ -1,27 +1,38 @@
 import { TMDBAPIErrorResponse, TMDBError } from "./errors/tmdb";
-import { RequestContext, RequestInterceptor } from "./types/interceptors";
+import { RequestContext, RequestInterceptor, ResponseContext, ResponseInterceptor, TMDBInterceptors } from "./types/interceptors";
 import { TMDBLogger, TMDBLoggerFn } from "./utils/logger";
 
 export class ApiClient {
 	private accessToken: string;
 	private baseUrl: string = "https://api.themoviedb.org/3";
 	private logger?: TMDBLogger;
-	private interceptors: RequestInterceptor[] = [];
+	private requestInterceptors: RequestInterceptor[] = [];
+	private responseInterceptors: ResponseInterceptor[] = [];
 
-	constructor(accessToken: string, options: { logger?: boolean | TMDBLoggerFn; interceptors?: RequestInterceptor[] } = {}) {
+	constructor(accessToken: string, options: { logger?: boolean | TMDBLoggerFn; interceptors?: TMDBInterceptors } = {}) {
 		this.accessToken = accessToken;
 		this.logger = TMDBLogger.from(options.logger);
-		if (options.interceptors) {
-			this.interceptors = [...options.interceptors];
+		if (options.interceptors?.request) {
+			this.requestInterceptors = [...options.interceptors.request];
+		}
+		if (options.interceptors?.response) {
+			this.responseInterceptors = [...options.interceptors.response];
 		}
 	}
 
 	/**
-	 * Registers a request interceptor that will run before every HTTP request.
+	 * Registers an interceptor. Pass `"request"` to hook before the HTTP request,
+	 * or `"response"` to hook after a successful response.
 	 * Interceptors run in registration order.
 	 */
-	use(interceptor: RequestInterceptor): void {
-		this.interceptors.push(interceptor);
+	use(type: "request", fn: RequestInterceptor): void;
+	use(type: "response", fn: ResponseInterceptor): void;
+	use(type: "request" | "response", fn: RequestInterceptor | ResponseInterceptor): void {
+		if (type === "request") {
+			this.requestInterceptors.push(fn as RequestInterceptor);
+		} else {
+			this.responseInterceptors.push(fn as ResponseInterceptor);
+		}
 	}
 
 	async request<T>(endpoint: string, params: Record<string, unknown | undefined> = {}): Promise<T> {
@@ -34,7 +45,7 @@ export class ApiClient {
 			},
 		};
 
-		for (const interceptor of this.interceptors) {
+		for (const interceptor of this.requestInterceptors) {
 			ctx = await interceptor(ctx);
 		}
 
@@ -79,7 +90,17 @@ export class ApiClient {
 		});
 
 		const data = await res.json();
-		return this.sanitizeNulls<T>(data);
+		let result = this.sanitizeNulls<T>(data);
+
+		if (this.responseInterceptors.length > 0) {
+			const rctx: ResponseContext<T> = { data: result, request: ctx, status: res.status };
+			for (const interceptor of this.responseInterceptors) {
+				result = await interceptor(rctx);
+				rctx.data = result;
+			}
+		}
+
+		return result;
 	}
 
 	/**

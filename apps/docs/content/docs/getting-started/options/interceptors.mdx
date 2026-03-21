@@ -1,82 +1,62 @@
 ---
 title: Interceptors
-description: Hook into every request before it fires to inject custom headers, modify params, or dynamically replace the access token.
+description: Hook into every request before it fires and transform every response globally before it reaches the caller.
 ---
 
-Request interceptors let you run a function before every HTTP request the TMDB client makes.
-Each interceptor receives a [`RequestContext`](#requestcontext) object — containing the endpoint, query-string params, and headers — and must return the (possibly modified) context.
+The TMDB client supports two interceptor hooks:
+
+- **Request interceptors** — run before every HTTP request (modify params, headers, or endpoint)
+- **Response interceptors** — run after every successful response, before data reaches the caller (transform or inspect data)
 
 ---
 
-## Registering interceptors
+## Request interceptors
 
-### At construction time
+Each request interceptor receives a [`RequestContext`](#requestcontext) and must return the (possibly modified) context.
 
-Pass an `interceptors` array to the `TMDB` constructor. These run for every request made by this instance.
+### Registering
 
 ```ts
 import { TMDB } from "@lorenzopant/tmdb";
 
+// At construction time
 const tmdb = new TMDB("your-api-key", {
-	interceptors: [
-		(ctx) => ({
-			...ctx,
-			params: { ...ctx.params, include_adult: false },
-		}),
-	],
+	interceptors: {
+		request: [(ctx) => ({ ...ctx, params: { ...ctx.params, include_adult: false } })],
+	},
+});
+
+// Or at runtime — returns `this` so calls can be chained
+tmdb.use("request", (ctx) => ({ ...ctx, params: { ...ctx.params, include_adult: false } })).use("request", async (ctx) => {
+	const token = await refreshToken();
+	return { ...ctx, headers: { ...ctx.headers, Authorization: `Bearer ${token}` } };
 });
 ```
 
-### At runtime with `use()`
+### Examples
 
-Call `tmdb.use()` after construction. It returns `this`, so calls can be chained.
-
-```ts
-const tmdb = new TMDB("your-api-key");
-
-tmdb.use((ctx) => ({
-	...ctx,
-	params: { ...ctx.params, include_adult: false },
-})).use(async (ctx) => {
-	const token = await refreshToken(); // async interceptors are supported
-	return {
-		...ctx,
-		headers: { ...ctx.headers, Authorization: `Bearer ${token}` },
-	};
-});
-```
-
-Interceptors registered via `use()` are appended after any construction-time interceptors and run in registration order.
-
----
-
-## Examples
-
-### Force-disable adult content
+**Force-disable adult content**
 
 ```ts
-tmdb.use((ctx) => ({
+tmdb.use("request", (ctx) => ({
 	...ctx,
 	params: { ...ctx.params, include_adult: false },
 }));
 ```
 
-### Dynamically refresh the access token (server-side)
+**Dynamically refresh the access token (server-side)**
 
 ```ts
-tmdb.use(async (ctx) => {
+tmdb.use("request", async (ctx) => {
 	const token = await getValidToken();
-	return {
-		...ctx,
-		headers: { ...ctx.headers, Authorization: `Bearer ${token}` },
-	};
+	return { ...ctx, headers: { ...ctx.headers, Authorization: `Bearer ${token}` } };
 });
 ```
 
-### Inject a custom header (server-side only)
+**Inject a custom header (server-side only)**
 
 ```ts
-tmdb.use((ctx) => ({
+tmdb.use("request", (ctx) => ({
 	...ctx,
 	headers: { ...ctx.headers, "X-App-Version": "2.0.0" },
 }));
@@ -94,28 +74,101 @@ Modifying `params` or `endpoint` is safe in all environments.
 
 ---
 
-## Execution order
+## Response interceptors
 
-All interceptors run sequentially in the order they were registered — construction-time first, then `use()` calls.
+Each response interceptor receives a [`ResponseContext`](#responsecontext) — containing the sanitized data, the originating request context, and the HTTP status code — and must return the (possibly transformed) data.
+
+Response interceptors run **only for successful responses**. Errors bypass them entirely.
+
+### Registering
 
 ```ts
-const tmdb = new TMDB(token, {
-	interceptors: [interceptorA], // runs 1st
+// At construction time
+const tmdb = new TMDB("your-api-key", {
+	interceptors: {
+		response: [
+			(ctx) => {
+				console.log(`[${ctx.status}] ${ctx.request.endpoint}`);
+				return ctx.data;
+			},
+		],
+	},
 });
 
-tmdb.use(interceptorB); // runs 2nd
-tmdb.use(interceptorC); // runs 3rd
+// Or at runtime — returns `this` so calls can be chained
+tmdb.use("response", (ctx) => {
+	console.log(ctx.data);
+	return ctx.data;
+}).use("response", async (ctx) => {
+	/* async supported */ return ctx.data;
+});
 ```
 
-If an interceptor throws, the error propagates and the HTTP request is **not** made.
+### Examples
+
+**Log every response**
+
+```ts
+tmdb.use("response", (ctx) => {
+	console.log(`[${ctx.status}] ${ctx.request.endpoint}`, ctx.data);
+	return ctx.data;
+});
+```
+
+**Add a computed field to every response**
+
+```ts
+tmdb.use("response", (ctx) => ({
+	...(ctx.data as object),
+	_fetched_at: new Date().toISOString(),
+}));
+```
+
+**Send every response to an analytics service**
+
+```ts
+tmdb.use("response", async (ctx) => {
+	await analytics.track({ endpoint: ctx.request.endpoint, status: ctx.status });
+	return ctx.data;
+});
+```
 
 ---
 
-## `RequestContext`
+## Execution order
 
-The object passed to (and returned from) every interceptor.
+```
+Request interceptors (registered order)
+        ↓
+   HTTP fetch
+        ↓
+Response interceptors (registered order)
+        ↓
+     Caller
+```
+
+Construction-time interceptors always run before runtime `use()` interceptors.
+If any interceptor throws, the error propagates and subsequent interceptors are skipped.
+
+```ts
+const tmdb = new TMDB(token, {
+	interceptors: {
+		request: [reqA], // runs 1st
+		response: [resA], // runs 1st for responses
+	},
+});
+
+tmdb.use("request", reqB); // runs 2nd
+tmdb.use("response", resB); // runs 2nd for responses
+```
+
+---
+
+## Types
 
 import { TypeTable } from "fumadocs-ui/components/type-table";
+
+### `RequestContext`
 
 <TypeTable
 	type={{
@@ -132,18 +185,39 @@ import { TypeTable } from "fumadocs-ui/components/type-table";
 		headers: {
 			type: "Record<string, string>",
 			description:
-				"HTTP headers sent with the request. Includes `Authorization` and `Content-Type` by default. Custom headers are safe only in server-side environments — browsers will block them via CORS preflight.",
+				"HTTP headers sent with the request. Includes `Authorization` and `Content-Type` by default. Custom headers are safe only in server-side environments.",
 			required: true,
 		},
 	}}
 />
 
----
-
-## `RequestInterceptor`
-
 ```ts
 type RequestInterceptor = (context: RequestContext) => RequestContext | Promise<RequestContext>;
 ```
 
-A synchronous or asynchronous function that receives a [`RequestContext`](#requestcontext) and returns the (possibly modified) context.
+### `ResponseContext<T>`
+
+<TypeTable
+	type={{
+		data: {
+			type: "T",
+			description:
+				"The sanitized response data (nulls already converted to `undefined`). This is the value that will be returned to the caller unless modified.",
+			required: true,
+		},
+		request: {
+			type: "Readonly<RequestContext>",
+			description: "The originating request context (endpoint, params, headers).",
+			required: true,
+		},
+		status: {
+			type: "number",
+			description: "The HTTP status code of the response (e.g. `200`).",
+			required: true,
+		},
+	}}
+/>
+
+```ts
+type ResponseInterceptor = <T>(context: ResponseContext<T>) => T | Promise<T>;
+```

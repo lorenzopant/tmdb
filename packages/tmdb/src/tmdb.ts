@@ -20,7 +20,7 @@ import { WatchProvidersAPI } from "./endpoints/watch_providers";
 import { Errors } from "./errors/messages";
 import { ImageAPI } from "./images/images";
 import { TMDBOptions } from "./types/config";
-import { RequestInterceptor } from "./types/interceptors";
+import { RequestInterceptor, ResponseInterceptor } from "./types/interceptors";
 import { NetworksAPI } from "./endpoints/networks";
 import { TVEpisodesAPI } from "./endpoints/tv_episodes";
 import { TVEpisodeGroupsAPI } from "./endpoints/tv_episode_groups";
@@ -64,7 +64,10 @@ export class TMDB {
 	constructor(accessToken: string, options: TMDBOptions = {}) {
 		if (!accessToken) throw new Error(Errors.NO_ACCESS_TOKEN);
 		this.options = options;
-		this.client = new ApiClient(accessToken, { logger: options.logger, interceptors: options.interceptors });
+		this.client = new ApiClient(accessToken, {
+			logger: options.logger,
+			interceptors: options.interceptors,
+		});
 		this.movies = new MoviesAPI(this.client, this.options);
 		this.movie_lists = new MovieListsAPI(this.client, this.options);
 		this.search = new SearchAPI(this.client, this.options);
@@ -91,17 +94,23 @@ export class TMDB {
 	}
 
 	/**
-	 * Registers a request interceptor that runs before every HTTP request.
-	 * Interceptors run in the order they are registered.
+	 * Registers an interceptor. Pass `"request"` to hook before the HTTP request,
+	 * or `"response"` to hook after a successful response.
+	 * Returns `this` so calls can be chained.
 	 *
 	 * @example
-	 * tmdb.use((ctx) => ({
-	 *   ...ctx,
-	 *   headers: { ...ctx.headers, "X-Custom-Header": "value" },
-	 * }));
+	 * tmdb
+	 *   .use("request", (ctx) => ({ ...ctx, params: { ...ctx.params, include_adult: false } }))
+	 *   .use("response", (ctx) => { console.log(ctx.status); return ctx.data; });
 	 */
-	use(interceptor: RequestInterceptor): this {
-		this.client.use(interceptor);
+	use(type: "request", fn: RequestInterceptor): this;
+	use(type: "response", fn: ResponseInterceptor): this;
+	use(type: "request" | "response", fn: RequestInterceptor | ResponseInterceptor): this {
+		if (type === "request") {
+			this.client.use("request", fn as RequestInterceptor);
+		} else {
+			this.client.use("response", fn as ResponseInterceptor);
+		}
 		return this;
 	}
 }

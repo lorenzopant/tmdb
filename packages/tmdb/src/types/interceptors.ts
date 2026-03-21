@@ -41,3 +41,53 @@ export type RequestContext = {
  * });
  */
 export type RequestInterceptor = (context: RequestContext) => RequestContext | Promise<RequestContext>;
+
+/**
+ * The context object passed to every response interceptor.
+ * Contains the sanitized, fully-typed response data and the originating request context.
+ */
+export type ResponseContext<T = unknown> = {
+	/** The sanitized response data (nulls already converted to undefined). */
+	data: T;
+	/** The originating request context (endpoint, params, headers). */
+	request: Readonly<RequestContext>;
+	/** The HTTP status code of the response. */
+	status: number;
+};
+
+/**
+ * A function that runs after every successful HTTP response, before the data reaches the caller.
+ * Receives a {@link ResponseContext} and must return the (possibly modified) data.
+ * May be async.
+ *
+ * @example
+ * // Log every response
+ * const logResponse: ResponseInterceptor = (ctx) => {
+ *   console.log(`[${ctx.status}] ${ctx.request.endpoint}`, ctx.data);
+ *   return ctx.data;
+ * };
+ *
+ * @example
+ * // Globally strip a wrapper field (if TMDB ever wraps responses)
+ * const unwrap: ResponseInterceptor = (ctx) => (ctx.data as any).results ?? ctx.data;
+ */
+export type ResponseInterceptor = <T>(context: ResponseContext<T>) => T | Promise<T>;
+
+/**
+ * Groups request and response interceptors under a single object.
+ * Pass this as `interceptors` in {@link TMDBOptions}.
+ *
+ * @example
+ * new TMDB(token, {
+ *   interceptors: {
+ *     request: [(ctx) => ({ ...ctx, params: { ...ctx.params, include_adult: false } })],
+ *     response: [(ctx) => { console.log(ctx.status); return ctx.data; }],
+ *   },
+ * });
+ */
+export type TMDBInterceptors = {
+	/** Interceptors that run before every HTTP request, in registration order. */
+	request?: RequestInterceptor[];
+	/** Interceptors that run after every successful HTTP response, in registration order. */
+	response?: ResponseInterceptor[];
+};

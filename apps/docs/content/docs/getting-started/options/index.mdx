@@ -25,14 +25,14 @@ const tmdb = new TMDB("your-api-key", {
 
 ## Available Options
 
-| Option         | Type                      | Description                                                                  |
-| -------------- | ------------------------- | ---------------------------------------------------------------------------- |
-| `language`     | `Language`                | Default language for all responses (ISO 639-1 or primary translation code).  |
-| `region`       | `CountryISO3166_1`        | Default region for localized content like release dates and watch providers. |
-| `images`       | `ImagesConfig`            | Configuration for image base URLs and default image sizes.                   |
-| `timezone`     | `Timezone`                | Default timezone for TV series airing time calculations.                     |
-| `logger`       | `boolean \| TMDBLoggerFn` | Enable the built-in console logger or supply a custom logging function.      |
-| `interceptors` | `RequestInterceptor[]`    | Functions that run before every HTTP request to modify params or headers.    |
+| Option         | Type                      | Description                                                                                        |
+| -------------- | ------------------------- | -------------------------------------------------------------------------------------------------- |
+| `language`     | `Language`                | Default language for all responses (ISO 639-1 or primary translation code).                        |
+| `region`       | `CountryISO3166_1`        | Default region for localized content like release dates and watch providers.                       |
+| `images`       | `ImagesConfig`            | Configuration for image base URLs and default image sizes.                                         |
+| `timezone`     | `Timezone`                | Default timezone for TV series airing time calculations.                                           |
+| `logger`       | `boolean \| TMDBLoggerFn` | Enable the built-in console logger or supply a custom logging function.                            |
+| `interceptors` | `TMDBInterceptors`        | Groups request and response interceptors under `interceptors.request` and `interceptors.response`. |
 
 ---
 
@@ -148,18 +148,33 @@ See the [Logging guide](/docs/getting-started/options/logging) for more examples
 
 ### `interceptors`
 
-**Type:** `RequestInterceptor[]` · **Optional**
+**Type:** `TMDBInterceptors` · **Optional**
 
-An array of functions that run before every HTTP request. Each interceptor receives a `RequestContext`
-(endpoint, params, headers) and must return the modified context. Interceptors may be async.
+Groups request and response interceptors under a single object.
+
+- `interceptors.request` — functions that run before every HTTP request.
+- `interceptors.response` — functions that run after every successful response.
+
+Both types may be async and run in registration order. You can also register interceptors at runtime with `tmdb.use("request", fn)` or `tmdb.use("response", fn)`.
 
 ```ts
 const tmdb = new TMDB(apiKey, {
-	interceptors: [(ctx) => ({ ...ctx, params: { ...ctx.params, include_adult: false } })],
+	interceptors: {
+		request: [(ctx) => ({ ...ctx, params: { ...ctx.params, include_adult: false } })],
+		response: [
+			(ctx) => {
+				console.log(ctx.status, ctx.request.endpoint);
+				return ctx.data;
+			},
+		],
+	},
 });
 
 // Or register at runtime (chainable)
-tmdb.use((ctx) => ({ ...ctx, params: { ...ctx.params, include_adult: false } }));
+tmdb.use("request", (ctx) => ({ ...ctx, params: { ...ctx.params, include_adult: false } })).use("response", (ctx) => {
+	console.log(ctx.data);
+	return ctx.data;
+});
 ```
 
-See the [Interceptors guide](/docs/getting-started/options/interceptors) for all patterns and the CORS warning for browser environments.
+See the [Interceptors guide](/docs/getting-started/options/interceptors) for all patterns, the CORS warning, and the full type reference.
