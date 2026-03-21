@@ -136,4 +136,7 @@ export const ENDPOINTS = {
 		TV: "/trending/tv",
 		PERSON: "/trending/person",
 	},
+	REVIEWS: {
+		DETAILS: "/review",
+	},
 };
