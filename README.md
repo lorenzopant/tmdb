@@ -176,7 +176,7 @@ Planned features and improvements include:
 | Networks          | ✅     |
 | People Lists      | ❌     |
 | People            | ❌     |
-| Reviews           | ❌     |
+| Reviews           | ✅     |
 | Search            | ✅     |
 | Trending          | ✅     |
 | TV Series Lists   | ✅     |
