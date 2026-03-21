@@ -178,7 +178,7 @@ Planned features and improvements include:
 | People            | ❌     |
 | Reviews           | ❌     |
 | Search            | ✅     |
-| Trending          | ❌     |
+| Trending          | ✅     |
 | TV Series Lists   | ✅     |
 | TV Series         | ✅     |
 | TV Seasons        | ✅     |
