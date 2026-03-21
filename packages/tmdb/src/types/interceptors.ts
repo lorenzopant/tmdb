@@ -58,20 +58,21 @@ export type ResponseContext<T = unknown> = {
 /**
  * A function that runs after every successful HTTP response, before the data reaches the caller.
  * Receives a {@link ResponseContext} and must return the (possibly modified) data.
+ * Returning `void` (or nothing) passes the data through unchanged — useful for inspect-only interceptors.
  * May be async.
  *
  * @example
- * // Log every response
+ * // Inspect without transforming — returning void is fine
  * const logResponse: ResponseInterceptor = (ctx) => {
  *   console.log(`[${ctx.status}] ${ctx.request.endpoint}`, ctx.data);
- *   return ctx.data;
  * };
  *
  * @example
- * // Globally strip a wrapper field (if TMDB ever wraps responses)
- * const unwrap: ResponseInterceptor = (ctx) => (ctx.data as any).results ?? ctx.data;
+ * // Transform the data
+ * const addField: ResponseInterceptor = (ctx) => ({ ...(ctx.data as object), _ts: Date.now() });
  */
-export type ResponseInterceptor = <T>(context: ResponseContext<T>) => T | Promise<T>;
+// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
+export type ResponseInterceptor = <T>(context: ResponseContext<T>) => T | Promise<T> | void;
 
 /**
  * Groups request and response interceptors under a single object.
@@ -81,7 +82,8 @@ export type ResponseInterceptor = <T>(context: ResponseContext<T>) => T | Promis
  * new TMDB(token, {
  *   interceptors: {
  *     request: [(ctx) => ({ ...ctx, params: { ...ctx.params, include_adult: false } })],
- *     response: [(ctx) => { console.log(ctx.status); return ctx.data; }],
+ *     response: [(ctx) => { console.log(ctx.status); }], // void = pass through
+ *   },
  *   },
  * });
  */

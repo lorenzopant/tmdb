@@ -95,8 +95,11 @@ export class ApiClient {
 		if (this.responseInterceptors.length > 0) {
 			const rctx: ResponseContext<T> = { data: result, request: ctx, status: res.status };
 			for (const interceptor of this.responseInterceptors) {
-				result = await interceptor(rctx);
-				rctx.data = result;
+				const returned = await interceptor(rctx);
+				if (returned !== undefined) {
+					result = returned as T;
+					rctx.data = result;
+				}
 			}
 		}
 

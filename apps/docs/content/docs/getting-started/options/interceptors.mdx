@@ -6,7 +6,9 @@ description: Hook into every request before it fires and transform every respons
 The TMDB client supports two interceptor hooks:
 
 - **Request interceptors** — run before every HTTP request (modify params, headers, or endpoint)
-- **Response interceptors** — run after every successful response, before data reaches the caller (transform or inspect data)
+- **Response interceptors** — run after every successful response, before data reaches the caller (transform or filter data)
+
+Both types of interceptors are registered either at construction time via the `interceptors` option or at runtime via the chainable `use()` method.
 
 ---
 
@@ -26,7 +28,7 @@ const tmdb = new TMDB("your-api-key", {
 	},
 });
 
-// Or at runtime — returns `this` so calls can be chained
+// Or at runtime — `use()` returns `this` so calls can be chained
 tmdb.use("request", (ctx) => ({ ...ctx, params: { ...ctx.params, include_adult: false } })).use("request", async (ctx) => {
 	const token = await refreshToken();
 	return { ...ctx, headers: { ...ctx.headers, Authorization: `Bearer ${token}` } };
@@ -35,7 +37,7 @@ tmdb.use("request", (ctx) => ({ ...ctx, params: { ...ctx.params, include_adult: 
 
 ### Examples
 
-**Force-disable adult content**
+**Force-disable adult content on every request**
 
 ```ts
 tmdb.use("request", (ctx) => ({
@@ -76,7 +78,14 @@ Modifying `params` or `endpoint` is safe in all environments.
 
 ## Response interceptors
 
-Each response interceptor receives a [`ResponseContext`](#responsecontext) — containing the sanitized data, the originating request context, and the HTTP status code — and must return the (possibly transformed) data.
+Each response interceptor receives a [`ResponseContext<T>`](#responsecontextt) — containing the sanitized response data, the originating request context, and the HTTP status code.
+
+**Return behaviour:**
+
+| Return value       | Effect                                                                                 |
+| ------------------ | -------------------------------------------------------------------------------------- |
+| A new value (`T`)  | Replaces the data passed to the next interceptor and ultimately returned to the caller |
+| `void` (no return) | Data is passed through unchanged — use this for side-effects like logging              |
 
 Response interceptors run **only for successful responses**. Errors bypass them entirely.
 
@@ -89,33 +98,75 @@ const tmdb = new TMDB("your-api-key", {
 		response: [
 			(ctx) => {
 				console.log(`[${ctx.status}] ${ctx.request.endpoint}`);
-				return ctx.data;
 			},
 		],
 	},
 });
 
-// Or at runtime — returns `this` so calls can be chained
+// Or at runtime — `use()` returns `this` so calls can be chained
 tmdb.use("response", (ctx) => {
 	console.log(ctx.data);
-	return ctx.data;
 }).use("response", async (ctx) => {
-	/* async supported */ return ctx.data;
+	await flush(ctx);
 });
 ```
 
 ### Examples
 
-**Log every response**
+**Log every response (void — data unchanged)**
+
+Return nothing to leave the data untouched. This is the simplest pattern for observability.
 
 ```ts
 tmdb.use("response", (ctx) => {
 	console.log(`[${ctx.status}] ${ctx.request.endpoint}`, ctx.data);
-	return ctx.data;
 });
 ```
 
-**Add a computed field to every response**
+**Filter movies without a poster image from list responses**
+
+A common need when building UIs: remove results that have no poster before they reach your components.
+
+Because a response interceptor runs on **every** response, `ctx.data` is typed as `T` (unknown at registration time). A naive cast to `PaginatedResponse<MovieResultItem>` compiles fine but is unsafe at runtime — the interceptor also fires for movie detail responses, TV series lists, genre lists, and anything else, none of which match the assumed shape.
+
+The safe pattern is to:
+
+1. Confirm the response is a paginated list before touching `results`
+2. Check each item individually before accessing `poster_path`, since `results` may contain `TVSeriesResultItem` or other types that don't carry that field
+
+```ts
+tmdb.use("response", (ctx) => {
+	const data = ctx.data as Record<string, unknown>;
+
+	// Guard 1: only act if this response has a results array
+	if (!Array.isArray(data?.results)) return;
+
+	return {
+		...data,
+		results: data.results.filter((item) => {
+			// Guard 2: if the item has no poster_path field at all (e.g. TV series,
+			// genre), keep it — this interceptor is not meant for that type.
+			if (typeof item !== "object" || item === null || !("poster_path" in item)) return true;
+			// Drop movies (or any item) where poster_path is explicitly null/undefined
+			return (item as { poster_path: unknown }).poster_path != null;
+		}),
+	};
+});
+```
+
+3. As a fallback you could also check the endpoint path (`ctx.request.endpoint`) to narrow the scope, but structural checks are more robust and future-proof than string-matching paths.
+4. As other fallback you could perform filtering in the caller code instead of a global interceptor, but this means repeating the same logic in every place that fetches lists of movies.
+
+<Callout type="warn">
+  **Avoid casting `ctx.data` directly to a specific response type** (e.g. `as PaginatedResponse<MovieResultItem>`).
+  TypeScript erases casts at runtime, so if the interceptor fires on a different endpoint your code will silently
+  operate on the wrong shape. Use structural checks (`Array.isArray`, `"field" in item`) to confirm the shape
+  before accessing any field.
+</Callout>
+
+Now every call to `tmdb.movie_lists.popular()`, `tmdb.movie_lists.top_rated()`, etc. will only return movies that have a poster image — and calls to any other endpoint pass through completely untouched.
+
+**Add a `_fetched_at` timestamp to every response**
 
 ```ts
 tmdb.use("response", (ctx) => ({
@@ -124,12 +175,11 @@ tmdb.use("response", (ctx) => ({
 }));
 ```
 
-**Send every response to an analytics service**
+**Send analytics asynchronously (void — data unchanged)**
 
 ```ts
 tmdb.use("response", async (ctx) => {
 	await analytics.track({ endpoint: ctx.request.endpoint, status: ctx.status });
-	return ctx.data;
 });
 ```
 
@@ -202,7 +252,7 @@ type RequestInterceptor = (context: RequestContext) => RequestContext | Promise<
 		data: {
 			type: "T",
 			description:
-				"The sanitized response data (nulls already converted to `undefined`). This is the value that will be returned to the caller unless modified.",
+				"The sanitized response data (nulls already converted to `undefined`). This is the value returned to the caller unless an interceptor replaces it.",
 			required: true,
 		},
 		request: {
@@ -219,5 +269,5 @@ type RequestInterceptor = (context: RequestContext) => RequestContext | Promise<
 />
 
 ```ts
-type ResponseInterceptor = <T>(context: ResponseContext<T>) => T | Promise<T>;
+type ResponseInterceptor = <T>(context: ResponseContext<T>) => T | Promise<T> | void;
 ```
