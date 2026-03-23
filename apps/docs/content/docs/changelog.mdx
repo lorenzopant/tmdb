@@ -6,8 +6,21 @@ icon: History
 
 ## 🚀 1.16.0 - 23 March 2026
 
-- ✨ New ✨ [People Lists API](/docs/api-reference/people-lists) — get a paginated list of people ordered by TMDB popularity
-- ✨ New ✨ [Reviews API](/docs/api-reference/reviews) — fetch full details of a single TMDB review by its review ID
+#### ✨ New
+
+- [People Lists API](/docs/api-reference/people-lists) — get a paginated list of people ordered by TMDB popularity
+- [Reviews API](/docs/api-reference/reviews) — fetch full details of a single TMDB review by its review ID
+
+#### 🧪 Tests
+
+- Split tests into unit and integration tests for easier contributions
+- Added more unit tests
+
+#### 🐞 Bug Fixes
+
+- `include_image_language` now accepts an array of languages (e.g. `["en", "null"]`) instead of a comma-separated string
+- `series_id` was incorrectly destructured and being passed into query params
+- `withDefaults()` returning `undefined` when passed `undefined` as value
 
 ## 🚀 1.15.1 - 21 March 2026
 
