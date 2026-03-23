@@ -17,13 +17,12 @@ describe("TVSeriesAPI", () => {
 		it("should call client.request with correct endpoint and language", async () => {
 			await tvSeriesAPI.details({ series_id: 1396, language: "en-US" });
 			expect(clientMock.request).toHaveBeenCalledOnce();
-			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396", { series_id: 1396, language: "en-US" });
+			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396", { language: "en-US" });
 		});
 
 		it("should pass append_to_response when specified", async () => {
 			await tvSeriesAPI.details({ series_id: 1396, append_to_response: ["credits", "images"] });
 			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396", {
-				series_id: 1396,
 				language: undefined,
 				append_to_response: ["credits", "images"],
 			});
@@ -47,19 +46,13 @@ describe("TVSeriesAPI", () => {
 		it("should call client.request with the correct endpoint and language", async () => {
 			await tvSeriesAPI.aggregate_credits({ series_id: 1396, language: "en-US" });
 			expect(clientMock.request).toHaveBeenCalledOnce();
-			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396/aggregate_credits", {
-				language: "en-US",
-				series_id: 1396,
-			});
+			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396/aggregate_credits", { language: "en-US" });
 		});
 
 		it("should use defaultOptions.language when not provided", async () => {
 			tvSeriesAPI = new TVSeriesAPI(clientMock, { language: "de-DE" });
 			await tvSeriesAPI.aggregate_credits({ series_id: 1396 });
-			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396/aggregate_credits", {
-				language: "de-DE",
-				series_id: 1396,
-			});
+			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396/aggregate_credits", { language: "de-DE" });
 		});
 	});
 
@@ -76,7 +69,6 @@ describe("TVSeriesAPI", () => {
 			await tvSeriesAPI.changes({ series_id: 1396, start_date: "2024-01-01", end_date: "2024-01-14" });
 			expect(clientMock.request).toHaveBeenCalledOnce();
 			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396/changes", {
-				series_id: 1396,
 				start_date: "2024-01-01",
 				end_date: "2024-01-14",
 			});
@@ -95,19 +87,13 @@ describe("TVSeriesAPI", () => {
 		it("should call client.request with the correct endpoint and language", async () => {
 			await tvSeriesAPI.credits({ series_id: 1396, language: "en-US" });
 			expect(clientMock.request).toHaveBeenCalledOnce();
-			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396/credits", {
-				language: "en-US",
-				series_id: 1396,
-			});
+			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396/credits", { language: "en-US" });
 		});
 
 		it("should use defaultOptions.language when not provided", async () => {
 			tvSeriesAPI = new TVSeriesAPI(clientMock, { language: "fr-FR" });
 			await tvSeriesAPI.credits({ series_id: 1396 });
-			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396/credits", {
-				language: "fr-FR",
-				series_id: 1396,
-			});
+			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396/credits", { language: "fr-FR" });
 		});
 	});
 
@@ -133,7 +119,6 @@ describe("TVSeriesAPI", () => {
 			expect(clientMock.request).toHaveBeenCalledOnce();
 			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396/images", {
 				language: "en-US",
-				series_id: 1396,
 				include_image_language: "en,null",
 			});
 		});
@@ -141,10 +126,7 @@ describe("TVSeriesAPI", () => {
 		it("should use defaultOptions.language when not provided", async () => {
 			tvSeriesAPI = new TVSeriesAPI(clientMock, { language: "es-ES" });
 			await tvSeriesAPI.images({ series_id: 1396 });
-			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396/images", {
-				language: "es-ES",
-				series_id: 1396,
-			});
+			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396/images", { language: "es-ES" });
 		});
 	});
 
@@ -168,20 +150,13 @@ describe("TVSeriesAPI", () => {
 		it("should call client.request with the correct endpoint and language", async () => {
 			await tvSeriesAPI.lists({ series_id: 1396, language: "en-US", page: 2 });
 			expect(clientMock.request).toHaveBeenCalledOnce();
-			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396/lists", {
-				language: "en-US",
-				series_id: 1396,
-				page: 2,
-			});
+			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396/lists", { language: "en-US", page: 2 });
 		});
 
 		it("should use defaultOptions.language when not provided", async () => {
 			tvSeriesAPI = new TVSeriesAPI(clientMock, { language: "it-IT" });
 			await tvSeriesAPI.lists({ series_id: 1396 });
-			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396/lists", {
-				language: "it-IT",
-				series_id: 1396,
-			});
+			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396/lists", { language: "it-IT" });
 		});
 	});
 
@@ -189,11 +164,7 @@ describe("TVSeriesAPI", () => {
 		it("should call client.request with the correct endpoint and params", async () => {
 			await tvSeriesAPI.recommendations({ series_id: 1396, language: "en-US", page: 1 });
 			expect(clientMock.request).toHaveBeenCalledOnce();
-			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396/recommendations", {
-				language: "en-US",
-				series_id: 1396,
-				page: 1,
-			});
+			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396/recommendations", { language: "en-US", page: 1 });
 		});
 	});
 
@@ -201,11 +172,7 @@ describe("TVSeriesAPI", () => {
 		it("should call client.request with the correct endpoint and params", async () => {
 			await tvSeriesAPI.reviews({ series_id: 1396, language: "en-US", page: 1 });
 			expect(clientMock.request).toHaveBeenCalledOnce();
-			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396/reviews", {
-				language: "en-US",
-				series_id: 1396,
-				page: 1,
-			});
+			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396/reviews", { language: "en-US", page: 1 });
 		});
 	});
 
@@ -221,11 +188,7 @@ describe("TVSeriesAPI", () => {
 		it("should call client.request with the correct endpoint and params", async () => {
 			await tvSeriesAPI.similar({ series_id: 1396, language: "en-US", page: 1 });
 			expect(clientMock.request).toHaveBeenCalledOnce();
-			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396/similar", {
-				language: "en-US",
-				series_id: 1396,
-				page: 1,
-			});
+			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396/similar", { language: "en-US", page: 1 });
 		});
 	});
 

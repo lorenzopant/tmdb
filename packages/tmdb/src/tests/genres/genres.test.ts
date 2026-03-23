@@ -26,9 +26,9 @@ describe("GenresAPI", () => {
 			expect(clientMock.request).toHaveBeenCalledWith("/genre/movie/list", { language: "it-IT" });
 		});
 
-		it("should apply defaultOptions.language when an empty params object is passed", async () => {
+		it("should apply defaultOptions.language when called without params", async () => {
 			genresAPI = new GenresAPI(clientMock, { language: "fr-FR" });
-			await genresAPI.movie_list({});
+			await genresAPI.movie_list();
 			expect(clientMock.request).toHaveBeenCalledWith("/genre/movie/list", { language: "fr-FR" });
 		});
 
@@ -53,9 +53,9 @@ describe("GenresAPI", () => {
 			expect(clientMock.request).toHaveBeenCalledWith("/genre/tv/list", { language: "es-ES" });
 		});
 
-		it("should apply defaultOptions.language when an empty params object is passed", async () => {
+		it("should apply defaultOptions.language when called without params", async () => {
 			genresAPI = new GenresAPI(clientMock, { language: "de-DE" });
-			await genresAPI.tv_list({});
+			await genresAPI.tv_list();
 			expect(clientMock.request).toHaveBeenCalledWith("/genre/tv/list", { language: "de-DE" });
 		});
 	});

@@ -22,7 +22,6 @@ describe("TVSeriesAPI", () => {
 		await tvAPI.details({ series_id, language, append_to_response });
 		expect(clientMock.request).toHaveBeenCalledOnce();
 		expect(clientMock.request).toHaveBeenCalledWith("/tv/1396", {
-			series_id,
 			append_to_response,
 			language,
 		});
@@ -33,7 +32,6 @@ describe("TVSeriesAPI", () => {
 		await tvAPI.details({ series_id });
 		expect(clientMock.request).toHaveBeenCalledOnce();
 		expect(clientMock.request).toHaveBeenCalledWith("/tv/1396", {
-			series_id,
 			append_to_response: undefined,
 			language: "en-US",
 		});
