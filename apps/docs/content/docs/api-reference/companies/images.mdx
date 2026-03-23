@@ -20,11 +20,11 @@ async images(params: CompanyImagesParams): Promise<CompanyImages>
 
 ## Parameters
 
-| Name                     | Type                                                | Required | Description                                          |
-| ------------------------ | --------------------------------------------------- | -------- | ---------------------------------------------------- |
-| `company_id`             | `number`                                            | ✅       | TMDB company identifier.                             |
-| `language`               | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized results. Defaults to `en-US`. |
-| `include_image_language` | [`Language`](/docs/types/options/language#language) | ❌       | Additional language for localized results.           |
+| Name                     | Type                                                | Required | Description                                                                                                       |
+| ------------------------ | --------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------- |
+| `company_id`             | `number`                                            | ✅       | TMDB company identifier.                                                                                          |
+| `language`               | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized results. Defaults to `en-US`.                                                              |
+| `include_image_language` | `(Language \| "null")[]`                            | ❌       | Languages to include images for. Pass an array (e.g., `["en", "null"]`). Use `"null"` to include untagged images. |
 
 <Callout type="info">
 	If you have a language specified, it will act as a filter on the returned items. You can use the include_image_language param to query
@@ -42,7 +42,11 @@ the logos of the specified company.
 import { TMDB } from "@lorenzopant/tmdb";
 
 const tmdb = new TMDB("your-api-key");
-const company = await tmdb.companies.images({ company_id: 174, language: "en-US" });
+const company = await tmdb.companies.images({
+	company_id: 174,
+	language: "en-US",
+	include_image_language: ["en", "null"],
+});
 ```
 
 ## Types

@@ -14,13 +14,13 @@ async images(params: TVEpisodeImagesParams): Promise<TVEpisodeImages>
 
 ## Parameters
 
-| Name                     | Type                                           | Required | Description                                                       |
-| ------------------------ | ---------------------------------------------- | -------- | ----------------------------------------------------------------- |
-| `series_id`              | `number`                                       | ✅       | TMDB TV series identifier.                                        |
-| `season_number`          | `number`                                       | ✅       | Season number within the TV series.                               |
-| `episode_number`         | `number`                                       | ✅       | Episode number within the season.                                 |
-| `language`               | [`Language`](/docs/types/options/language#language) | ❌       | Language for image metadata. Defaults to `en-US`.                 |
-| `include_image_language` | [`Language`](/docs/types/options/language#language) | ❌       | Include images with additional language tags (e.g., `"en,null"`). |
+| Name                     | Type                                                | Required | Description                                                                                                       |
+| ------------------------ | --------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------- |
+| `series_id`              | `number`                                            | ✅       | TMDB TV series identifier.                                                                                        |
+| `season_number`          | `number`                                            | ✅       | Season number within the TV series.                                                                               |
+| `episode_number`         | `number`                                            | ✅       | Episode number within the season.                                                                                 |
+| `language`               | [`Language`](/docs/types/options/language#language) | ❌       | Language for image metadata. Defaults to `en-US`.                                                                 |
+| `include_image_language` | `(Language \| "null")[]`                            | ❌       | Languages to include images for. Pass an array (e.g., `["en", "null"]`). Use `"null"` to include untagged images. |
 
 ## Returns
 
@@ -34,7 +34,7 @@ const { stills } = await tmdb.tv_episodes.images({
 	season_number: 1,
 	episode_number: 1,
 	language: "en-US",
-	include_image_language: "en,null",
+	include_image_language: ["en", "null"],
 });
 ```
 
