@@ -1,7 +1,7 @@
 import { AlternativeName, AlternativeNamesResult, WithLanguage } from "./common";
 import { ImagesResult, OrganizationImage } from "./common/images";
 import { CountryISO3166_1 } from "./config/countries";
-import { Language, LanguageISO6391 } from "./config/languages";
+import { Language } from "./config";
 
 /**
  * Minimal company data reused across company-related responses.
@@ -55,5 +55,6 @@ export type CompanyBaseParam = {
 export type CompanyDetailsParams = CompanyBaseParam;
 export type CompanyAlternativeNamesParams = CompanyBaseParam;
 export type CompanyImagesParams = CompanyBaseParam & {
-	include_image_language?: Language | LanguageISO6391;
+	/** Languages to include images for. Pass an array — it will be serialized as a comma-separated list (e.g. ["en", "null"]). Use "null" to include untagged images. */
+	include_image_language?: (Language | "null")[];
 } & WithLanguage;

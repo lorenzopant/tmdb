@@ -14,11 +14,11 @@ async images(params: CollectionImagesParams): Promise<CollectionImages>
 
 ## Parameters
 
-| Name                     | Type                                                | Required | Description                                          |
-| ------------------------ | --------------------------------------------------- | -------- | ---------------------------------------------------- |
-| `collection_id`          | `number`                                            | ✅       | TMDB collection identifier.                          |
-| `language`               | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized results. Defaults to `en-US`. |
-| `include_image_language` | [`Language`](/docs/types/options/language#language) | ❌       | Additional language for localized results.           |
+| Name                     | Type                                                | Required | Description                                                                                                       |
+| ------------------------ | --------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------- |
+| `collection_id`          | `number`                                            | ✅       | TMDB collection identifier.                                                                                       |
+| `language`               | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized results. Defaults to `en-US`.                                                              |
+| `include_image_language` | `(Language \| "null")[]`                            | ❌       | Languages to include images for. Pass an array (e.g., `["en", "null"]`). Use `"null"` to include untagged images. |
 
 <Callout type="info">
 	If you have a language specified, it will act as a filter on the returned items. You can use the include_image_language param to query
@@ -36,7 +36,11 @@ the images of the specified collection.
 import { TMDB } from "@lorenzopant/tmdb";
 
 const tmdb = new TMDB("your-api-key");
-const collection = await tmdb.collections.images({ collection_id: 10 }); // Star Wars Collection Images
+const collection = await tmdb.collections.images({
+	collection_id: 10,
+	language: "en-US",
+	include_image_language: ["en", "null"],
+}); // Star Wars Collection Images
 ```
 
 ## Types

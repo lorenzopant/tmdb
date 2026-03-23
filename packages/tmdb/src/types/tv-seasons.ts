@@ -1,4 +1,5 @@
 import { Cast, Crew, DateRange, ImageItem, ImagesResult, TranslationResults, VideoResults, WithLanguage, WithParams } from "./common";
+import { Language } from "./config";
 import { TVAggregateCredits, TVBaseParam, TVEpisodeItem, TVExternalIDs } from "./tv-series";
 import { MediaWatchProviders } from "./common/media";
 import { NetworkItem } from "./networks";
@@ -162,7 +163,11 @@ export type TVSeasonAggregateCreditsParams = TVSeasonBaseParams & WithLanguage;
 export type TVSeasonCreditsParams = TVSeasonBaseParams & WithLanguage;
 
 /** Parameters for the season images endpoint, with optional language filtering. */
-export type TVSeasonImagesParams = TVSeasonBaseParams & WithLanguage & { include_image_language?: string };
+export type TVSeasonImagesParams = TVSeasonBaseParams &
+	WithLanguage & {
+		/** Languages to include images for. Pass an array — it will be serialized as a comma-separated list (e.g. ["en", "null"]). Use "null" to include untagged images. */
+		include_image_language?: (Language | "null")[];
+	};
 
 /** Parameters for the season videos endpoint, with optional language filtering. */
 export type TVSeasonVideosParams = TVSeasonBaseParams & WithLanguage & { include_video_language?: string };

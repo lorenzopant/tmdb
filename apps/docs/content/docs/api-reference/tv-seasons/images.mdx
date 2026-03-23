@@ -13,12 +13,12 @@ async images(params: TVSeasonImagesParams): Promise<TVSeasonImages>
 
 ## Parameters
 
-| Name                     | Type                                                | Required | Description                                                       |
-| ------------------------ | --------------------------------------------------- | -------- | ----------------------------------------------------------------- |
-| `series_id`              | `number`                                            | ✅       | TMDB TV series identifier.                                        |
-| `season_number`          | `number`                                            | ✅       | Season number within the TV series.                               |
-| `language`               | [`Language`](/docs/types/options/language#language) | ❌       | Language for image metadata. Defaults to `en-US`.                 |
-| `include_image_language` | `string`                                            | ❌       | Include images with additional language tags (e.g., `"en,null"`). |
+| Name                     | Type                                                | Required | Description                                                                                                       |
+| ------------------------ | --------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------- |
+| `series_id`              | `number`                                            | ✅       | TMDB TV series identifier.                                                                                        |
+| `season_number`          | `number`                                            | ✅       | Season number within the TV series.                                                                               |
+| `language`               | [`Language`](/docs/types/options/language#language) | ❌       | Language for image metadata. Defaults to `en-US`.                                                                 |
+| `include_image_language` | `(Language \| "null")[]`                            | ❌       | Languages to include images for. Pass an array (e.g., `["en", "null"]`). Use `"null"` to include untagged images. |
 
 ## Returns
 
@@ -30,6 +30,7 @@ async images(params: TVSeasonImagesParams): Promise<TVSeasonImages>
 const { posters } = await tmdb.tv_seasons.images({
 	series_id: 1396,
 	season_number: 1,
+	include_image_language: ["en", "null"],
 });
 
 const best = posters.sort((a, b) => b.vote_average - a.vote_average)[0];

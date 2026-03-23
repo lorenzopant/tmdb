@@ -115,11 +115,11 @@ describe("TVSeriesAPI", () => {
 
 	describe("images", () => {
 		it("should call client.request with the correct endpoint and language", async () => {
-			await tvSeriesAPI.images({ series_id: 1396, language: "en-US", include_image_language: "en,null" });
+			await tvSeriesAPI.images({ series_id: 1396, language: "en-US", include_image_language: ["en", "null"] });
 			expect(clientMock.request).toHaveBeenCalledOnce();
 			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396/images", {
 				language: "en-US",
-				include_image_language: "en,null",
+				include_image_language: ["en", "null"],
 			});
 		});
 
