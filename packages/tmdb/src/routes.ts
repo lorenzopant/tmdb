@@ -139,4 +139,7 @@ export const ENDPOINTS = {
 	REVIEWS: {
 		DETAILS: "/review",
 	},
+	PEOPLE_LISTS: {
+		POPULAR: "/person/popular",
+	},
 };
