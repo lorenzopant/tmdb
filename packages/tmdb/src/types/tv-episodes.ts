@@ -111,5 +111,6 @@ export type TVEpisodeCreditsParams = TVEpisodeBaseParams & WithLanguage;
 
 export type TVEpisodeImagesParams = TVEpisodeBaseParams &
 	WithLanguage & {
-		include_image_language?: Language;
+		/** Languages to include images for. Pass an array — it will be serialized as a comma-separated list (e.g. ["en", "null"]). Use "null" to include untagged images. */
+		include_image_language?: (Language | "null")[];
 	};

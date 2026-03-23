@@ -82,11 +82,11 @@ describe("TVEpisodesAPI", () => {
 
 	describe("images", () => {
 		it("should call client.request with the correct endpoint and params", async () => {
-			await tvEpisodesAPI.images({ ...BASE_EPISODE_PARAMS, language: "en-US", include_image_language: "en,null" });
+			await tvEpisodesAPI.images({ ...BASE_EPISODE_PARAMS, language: "en-US", include_image_language: ["en", "null"] });
 			expect(clientMock.request).toHaveBeenCalledOnce();
 			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396/season/1/episode/1/images", {
 				language: "en-US",
-				include_image_language: "en,null",
+				include_image_language: ["en", "null"],
 			});
 		});
 

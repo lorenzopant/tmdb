@@ -370,8 +370,8 @@ export type MovieImagesParams = Prettify<
 	MovieBaseParam & {
 		/** Language for image metadata (supports both ISO-639-1 and full Language format) */
 		language?: Language | LanguageISO6391;
-		/** Include images with specific language tags (comma-separated, e.g., "en,null") */
-		include_image_language?: Language | LanguageISO6391;
+		/** Languages to include images for. Pass an array — it will be serialized as a comma-separated list (e.g. ["en", "null"]). Use "null" to include untagged images. */
+		include_image_language?: (Language | "null")[];
 	}
 >;
 
