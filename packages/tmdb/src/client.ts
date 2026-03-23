@@ -11,27 +11,43 @@ export class ApiClient {
 		this.logger = TMDBLogger.from(options.logger);
 	}
 
-	async request<T>(endpoint: string, params: Record<string, unknown | undefined> = {}): Promise<T> {
+	async request<T>(
+		endpoint: string,
+		params: Record<string, unknown | undefined> = {}
+	): Promise<T> {
 		const url = new URL(`${this.baseUrl}${endpoint}`);
+	
+		const isJwt = this.isJwt(this.accessToken);
+	
+		// Add params
 		for (const [key, value] of Object.entries(params)) {
 			if (value === undefined) continue;
 			url.searchParams.append(key, String(value));
 		}
-
+	
+		// If it is not a Bearer Token (see https://developer.themoviedb.org/docs/authentication-application )
+		if (!isJwt) {
+			url.searchParams.append("api_key", this.accessToken);
+		}
+	
 		const startedAt = Date.now();
 		this.logger?.log({
 			type: "request",
 			method: "GET",
 			endpoint,
 		});
-
+	
 		let res: Response;
 		try {
 			res = await fetch(url.toString(), {
-				headers: {
-					Authorization: `Bearer ${this.accessToken}`,
-					"Content-Type": "application/json;charset=utf-8",
-				},
+				headers: isJwt
+					? {
+							Authorization: `Bearer ${this.accessToken}`,
+							"Content-Type": "application/json;charset=utf-8",
+					  }
+					: {
+							"Content-Type": "application/json;charset=utf-8",
+					  },
 			});
 		} catch (error) {
 			this.logger?.log({
@@ -43,9 +59,9 @@ export class ApiClient {
 			});
 			throw error;
 		}
-
+	
 		if (!res.ok) await this.handleError(res, endpoint);
-
+	
 		this.logger?.log({
 			type: "response",
 			method: "GET",
@@ -54,11 +70,11 @@ export class ApiClient {
 			statusText: res.statusText,
 			durationMs: Date.now() - startedAt,
 		});
-
+	
 		const data = await res.json();
 		return this.sanitizeNulls<T>(data);
 	}
-
+	
 	/**
 	 * Recursively converts null values to undefined in API responses.
 	 * This allows optional properties to model fields that TMDB returns as nullable.
