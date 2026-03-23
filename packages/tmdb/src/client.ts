@@ -11,6 +11,10 @@ export class ApiClient {
 		this.logger = TMDBLogger.from(options.logger);
 	}
 
+	private isJwt(token: string): boolean {
+		return token.split(".").length === 3; // JWT tokens need 3 dots
+	}
+
 	async request<T>(
 		endpoint: string,
 		params: Record<string, unknown | undefined> = {}
@@ -26,6 +30,8 @@ export class ApiClient {
 		}
 	
 		// If it is not a Bearer Token (see https://developer.themoviedb.org/docs/authentication-application )
+		// Theoretically it is possible to send the bearer over the query string, but any device in between could catch the key then
+		// so it is "safer" to send it as a header.... (although it really does not matter lol)
 		if (!isJwt) {
 			url.searchParams.append("api_key", this.accessToken);
 		}
@@ -59,9 +65,9 @@ export class ApiClient {
 			});
 			throw error;
 		}
-	
+
 		if (!res.ok) await this.handleError(res, endpoint);
-	
+
 		this.logger?.log({
 			type: "response",
 			method: "GET",
@@ -70,11 +76,11 @@ export class ApiClient {
 			statusText: res.statusText,
 			durationMs: Date.now() - startedAt,
 		});
-	
+
 		const data = await res.json();
 		return this.sanitizeNulls<T>(data);
 	}
-	
+
 	/**
 	 * Recursively converts null values to undefined in API responses.
 	 * This allows optional properties to model fields that TMDB returns as nullable.
