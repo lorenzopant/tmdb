@@ -1,39 +1,65 @@
-/// <reference types="node" />
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { TMDB } from "../../tmdb";
+import { ApiClient } from "../../client";
+import { CompaniesAPI } from "../../endpoints/companies";
 
-const token = process.env.TMDB_ACCESS_TOKEN;
-if (!token) throw new Error("TMDB_ACCESS_TOKEN is not set, plaase set it in your enviroment variables.");
+describe("CompaniesAPI", () => {
+	let clientMock: ApiClient;
+	let companiesAPI: CompaniesAPI;
 
-const tmdb = new TMDB(token, { language: "en-US", region: "US" });
-const companyId = 174;
-
-describe("Companies API", () => {
-	it("(DETAILS) should fetch company details", async () => {
-		const company = await tmdb.companies.details({ company_id: companyId });
-
-		expect(company.id).toBe(companyId);
-		expect(company.name).toBeDefined();
-		expect(typeof company.name).toBe("string");
-		expect(company.name.length).toBeGreaterThan(0);
-		expect(company).toHaveProperty("origin_country");
+	beforeEach(() => {
+		clientMock = new ApiClient("valid_access_token");
+		clientMock.request = vi.fn();
+		companiesAPI = new CompaniesAPI(clientMock);
 	});
 
-	it("(ALTERNATIVE NAMES) should fetch company alternative names", async () => {
-		const company = await tmdb.companies.alternative_names({ company_id: companyId });
+	describe("details", () => {
+		it("should call client.request with the correct endpoint", async () => {
+			await companiesAPI.details({ company_id: 174 });
+			expect(clientMock.request).toHaveBeenCalledOnce();
+			expect(clientMock.request).toHaveBeenCalledWith("/company/174", { company_id: 174 });
+		});
 
-		expect(company.id).toBe(companyId);
-		expect(Array.isArray(company.results)).toBe(true);
+		it("should return the result from client.request", async () => {
+			const fakeResponse = { id: 174, name: "Warner Bros. Pictures" };
+			(clientMock.request as ReturnType<typeof vi.fn>).mockResolvedValue(fakeResponse);
+			const result = await companiesAPI.details({ company_id: 174 });
+			expect(result).toEqual(fakeResponse);
+		});
 	});
 
-	it("(IMAGES) should fetch company images", async () => {
-		const company = await tmdb.companies.images({ company_id: companyId, language: "en-US" });
+	describe("alternative_names", () => {
+		it("should call client.request with the correct endpoint", async () => {
+			await companiesAPI.alternative_names({ company_id: 174 });
+			expect(clientMock.request).toHaveBeenCalledOnce();
+			expect(clientMock.request).toHaveBeenCalledWith("/company/174/alternative_names", { company_id: 174 });
+		});
 
-		expect(company.id).toBe(companyId);
-		expect(Array.isArray(company.logos)).toBe(true);
-		if (company.logos.length > 0) {
-			expect(company.logos[0].file_path).toBeDefined();
-		}
+		it("should return the result from client.request", async () => {
+			const fakeResponse = { id: 174, results: [] };
+			(clientMock.request as ReturnType<typeof vi.fn>).mockResolvedValue(fakeResponse);
+			const result = await companiesAPI.alternative_names({ company_id: 174 });
+			expect(result).toEqual(fakeResponse);
+		});
+	});
+
+	describe("images", () => {
+		it("should call client.request with the correct endpoint and params", async () => {
+			await companiesAPI.images({ company_id: 174, language: "en-US" });
+			expect(clientMock.request).toHaveBeenCalledOnce();
+			expect(clientMock.request).toHaveBeenCalledWith("/company/174/images", {
+				company_id: 174,
+				language: "en-US",
+			});
+		});
+
+		it("should apply defaultOptions.language when no language is specified", async () => {
+			companiesAPI = new CompaniesAPI(clientMock, { language: "de-DE" });
+			await companiesAPI.images({ company_id: 174 });
+			expect(clientMock.request).toHaveBeenCalledWith("/company/174/images", {
+				company_id: 174,
+				language: "de-DE",
+			});
+		});
 	});
 });
