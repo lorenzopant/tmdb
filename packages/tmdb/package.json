@@ -22,7 +22,7 @@
 		"typecheck": "tsc --noEmit",
 		"test": "vitest",
 		"test:unit": "vitest run --exclude '**/*.integration.test.ts'",
-		"test:integration": "vitest run '**/*.integration.test.ts'",
+		"test:integration": "vitest run integration",
 		"test:ui": "vitest --ui",
 		"test:coverage": "vitest --coverage",
 		"prepare": "husky",
