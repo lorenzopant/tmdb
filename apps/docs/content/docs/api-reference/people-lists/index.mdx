@@ -1,0 +1,18 @@
+---
+title: People Lists
+description: Access curated lists of people, including the most popular people on TMDB.
+---
+
+The `PeopleListsAPI` provides access to TMDB's curated people lists. Results are paginated
+and support language filtering.
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const popular = await tmdb.people_lists.popular();
+```
+
+## Methods
+
+- [`popular()`](/docs/api-reference/people-lists/popular) — Get a list of people ordered by popularity.
