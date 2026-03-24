@@ -38,6 +38,7 @@ jobs:
         if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
         env:
             TMDB_BEARER_TOKEN: ${{ secrets.TMDB_BEARER_TOKEN }}
+            TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
 
         steps:
             - name: Checkout code
@@ -56,8 +57,9 @@ jobs:
 
             - name: Create Env file
               run: |
-                  touch .env
-                  echo TMDB_BEARER_TOKEN=${{ env.TMDB_BEARER_TOKEN }} >> .env
+                  touch packages/tmdb/.env
+                  echo TMDB_BEARER_TOKEN=${{ env.TMDB_BEARER_TOKEN }} >> packages/tmdb/.env
+                  echo TMDB_API_KEY=${{ env.TMDB_API_KEY }} >> packages/tmdb/.env
 
             - name: Install dependencies
               run: pnpm install
