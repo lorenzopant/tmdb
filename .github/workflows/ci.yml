@@ -55,12 +55,6 @@ jobs:
                   node-version: 20
                   cache: pnpm
 
-            - name: Create Env file
-              run: |
-                  touch packages/tmdb/.env
-                  echo TMDB_BEARER_TOKEN=${{ env.TMDB_BEARER_TOKEN }} >> packages/tmdb/.env
-                  echo TMDB_API_KEY=${{ env.TMDB_API_KEY }} >> packages/tmdb/.env
-
             - name: Install dependencies
               run: pnpm install
 
