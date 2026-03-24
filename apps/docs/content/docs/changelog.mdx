@@ -4,6 +4,23 @@ description: Latest updates and announcements
 icon: History
 ---
 
+## 🚀 1.16.1 - 24 March 2026
+
+#### ✨ New
+
+- [Authentication guide](/docs/getting-started/authentication) — new documentation covering Bearer token vs v3 API key usage, detection logic, and environment variable setup
+
+#### 🔐 Auth
+
+- The client now supports both **Bearer tokens** (JWT Read Access Tokens) and **v3 API keys** — the correct auth method is detected automatically based on the token structure
+- JWT tokens continue to be sent as `Authorization: Bearer <token>`
+- Plain v3 API keys are now correctly appended as `?api_key=<key>` query parameter instead of being sent (incorrectly) as a Bearer header
+
+#### 🐞 Bug Fixes
+
+- Fixed `isJwt()` incorrectly returning `false` for expired tokens, which would have caused a valid JWT to be silently sent as an `api_key` query parameter (leaking it in URLs) instead of as a Bearer header
+- Unit tests no longer throw at startup when `TMDB_BEARER_TOKEN` is not set in the environment — they use a hardcoded mock JWT since `fetch` is fully mocked
+
 ## 🚀 1.16.0 - 23 March 2026
 
 #### ✨ New
