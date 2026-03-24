@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 
 import { TMDB } from "../../tmdb";
 
-const token = process.env.TMDB_ACCESS_TOKEN;
-if (!token) throw new Error("TMDB_ACCESS_TOKEN is not set, please set it in your environment variables.");
+const token = process.env.TMDB_BEARER_TOKEN;
+if (!token) throw new Error("TMDB_BEARER_TOKEN is not set, please set it in your environment variables.");
 
 const tmdb = new TMDB(token);
 

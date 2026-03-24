@@ -16,6 +16,9 @@ const makeHeaders = (values: Record<string, string | null>) => ({
 	get: (key: string) => values[key.toLowerCase()] ?? values[key] ?? null,
 });
 
+const token = process.env.TMDB_BEARER_TOKEN;
+if (!token) throw new Error("TMDB_BEARER_TOKEN is not set, please set it in your enviroment variables.");
+
 describe("ApiClient logger", () => {
 	const originalFetch = globalThis.fetch;
 
@@ -30,7 +33,7 @@ describe("ApiClient logger", () => {
 
 	it("should emit request and response logs for successful calls", async () => {
 		const logger = vi.fn();
-		const client = new ApiClient("valid_access_token", { logger });
+		const client = new ApiClient(token, { logger });
 
 		const response: MockResponse = {
 			ok: true,
@@ -69,7 +72,7 @@ describe("ApiClient logger", () => {
 	});
 
 	it("should sanitize a primitive JSON response", async () => {
-		const client = new ApiClient("valid_access_token");
+		const client = new ApiClient(token);
 
 		const response: MockResponse = {
 			ok: true,
@@ -86,7 +89,7 @@ describe("ApiClient logger", () => {
 	});
 
 	it("should sanitize a null JSON response to undefined", async () => {
-		const client = new ApiClient("valid_access_token");
+		const client = new ApiClient(token);
 
 		const response: MockResponse = {
 			ok: true,
@@ -104,7 +107,7 @@ describe("ApiClient logger", () => {
 
 	it("should emit error log and rethrow when fetch throws a network error", async () => {
 		const logger = vi.fn();
-		const client = new ApiClient("valid_access_token", { logger });
+		const client = new ApiClient(token, { logger });
 
 		const networkError = new Error("Network failure");
 		(globalThis.fetch as ReturnType<typeof vi.fn>).mockRejectedValue(networkError);
@@ -122,7 +125,7 @@ describe("ApiClient logger", () => {
 
 	it("should stringify non-Error thrown values in the network error log", async () => {
 		const logger = vi.fn();
-		const client = new ApiClient("valid_access_token", { logger });
+		const client = new ApiClient(token, { logger });
 
 		(globalThis.fetch as ReturnType<typeof vi.fn>).mockRejectedValue("plain string error");
 
@@ -138,7 +141,7 @@ describe("ApiClient logger", () => {
 
 	it("should fall back to statusText when error response body is not valid JSON", async () => {
 		const logger = vi.fn();
-		const client = new ApiClient("valid_access_token", { logger });
+		const client = new ApiClient(token, { logger });
 		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
 		const response: MockResponse = {
@@ -167,7 +170,7 @@ describe("ApiClient logger", () => {
 	});
 
 	it("should skip undefined param values when building the URL", async () => {
-		const client = new ApiClient("valid_access_token");
+		const client = new ApiClient(token);
 
 		const response: MockResponse = {
 			ok: true,
@@ -188,7 +191,7 @@ describe("ApiClient logger", () => {
 	});
 
 	it("should fall back to statusText when error body is a non-object JSON value", async () => {
-		const client = new ApiClient("valid_access_token");
+		const client = new ApiClient(token);
 
 		const response: MockResponse = {
 			ok: false,
@@ -207,7 +210,7 @@ describe("ApiClient logger", () => {
 	});
 
 	it("should fall back to statusText and -1 when error body has no status_message or status_code", async () => {
-		const client = new ApiClient("valid_access_token");
+		const client = new ApiClient(token);
 
 		const response: MockResponse = {
 			ok: false,

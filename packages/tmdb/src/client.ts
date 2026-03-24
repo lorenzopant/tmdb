@@ -1,5 +1,6 @@
 import { TMDBAPIErrorResponse, TMDBError } from "./errors/tmdb";
 import { TMDBLogger, TMDBLoggerFn } from "./utils/logger";
+import { isJwt } from "./utils";
 
 export class ApiClient {
 	private accessToken: string;
@@ -13,9 +14,15 @@ export class ApiClient {
 
 	async request<T>(endpoint: string, params: Record<string, unknown | undefined> = {}): Promise<T> {
 		const url = new URL(`${this.baseUrl}${endpoint}`);
+		const jwt = isJwt(this.accessToken);
+
 		for (const [key, value] of Object.entries(params)) {
 			if (value === undefined) continue;
 			url.searchParams.append(key, String(value));
+		}
+
+		if (!jwt) {
+			url.searchParams.append("api_key", this.accessToken);
 		}
 
 		const startedAt = Date.now();
@@ -28,10 +35,14 @@ export class ApiClient {
 		let res: Response;
 		try {
 			res = await fetch(url.toString(), {
-				headers: {
-					Authorization: `Bearer ${this.accessToken}`,
-					"Content-Type": "application/json;charset=utf-8",
-				},
+				headers: jwt
+					? {
+						Authorization: `Bearer ${this.accessToken}`,
+						"Content-Type": "application/json;charset=utf-8",
+					}
+					: {
+						"Content-Type": "application/json;charset=utf-8",
+					},
 			});
 		} catch (error) {
 			this.logger?.log({

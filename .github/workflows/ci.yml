@@ -10,7 +10,7 @@ jobs:
     tests:
         runs-on: ubuntu-latest
         env:
-            TMDB_ACCESS_TOKEN: ${{ secrets.TMDB_ACCESS_TOKEN }}
+            TMDB_BEARER_TOKEN: ${{ secrets.TMDB_BEARER_TOKEN }}
 
         steps:
             - name: Checkout code
@@ -30,7 +30,7 @@ jobs:
             - name: Create Env file
               run: |
                   touch .env
-                  echo TMDB_ACCESS_TOKEN=${{ env.TMDB_ACCESS_TOKEN }} >> .env
+                  echo TMDB_BEARER_TOKEN=${{ env.TMDB_BEARER_TOKEN }} >> .env
 
             - name: Install dependencies
               run: pnpm install

@@ -281,8 +281,8 @@ describe("NewNamespaceAPI", () => {
 import { describe, expect, it } from "vitest";
 import { TMDB } from "../../tmdb";
 
-const token = process.env.TMDB_ACCESS_TOKEN;
-if (!token) throw new Error("TMDB_ACCESS_TOKEN environment variable is required for integration tests");
+const token = process.env.TMDB_BEARER_TOKEN;
+if (!token) throw new Error("TMDB_BEARER_TOKEN environment variable is required for integration tests");
 
 const tmdb = new TMDB(token);
 
