@@ -16,8 +16,8 @@ const makeHeaders = (values: Record<string, string | null>) => ({
 	get: (key: string) => values[key.toLowerCase()] ?? values[key] ?? null,
 });
 
-const token = process.env.TMDB_BEARER_TOKEN;
-if (!token) throw new Error("TMDB_BEARER_TOKEN is not set, please set it in your enviroment variables.");
+// Hardcoded mock JWT — fetch is fully mocked, so a real token is not needed
+const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0IiwiaWF0IjoxNjAwMDAwMDAwfQ.signature";
 
 describe("ApiClient logger", () => {
 	const originalFetch = globalThis.fetch;
