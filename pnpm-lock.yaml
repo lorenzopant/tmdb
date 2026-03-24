@@ -106,7 +106,7 @@ importers:
         specifier: ^9.30.0
         version: 9.39.3
       '@types/node':
-        specifier: ^22.15.2
+        specifier: ^22.19.11
         version: 22.19.11
       '@typescript-eslint/eslint-plugin':
         specifier: ^8.35.0
