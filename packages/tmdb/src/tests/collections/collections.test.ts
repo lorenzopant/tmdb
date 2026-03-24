@@ -3,6 +3,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ApiClient } from "../../client";
 import { CollectionsAPI } from "../../endpoints/collections";
 
+const token = process.env.TMDB_BEARER_TOKEN;
+if (!token) throw new Error("TMDB_BEARER_TOKEN is not set, please set it in your enviroment variables.");
 describe("CollectionsAPI", () => {
 	let clientMock: ApiClient;
 	let collectionsAPI: CollectionsAPI;

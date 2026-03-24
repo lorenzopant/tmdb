@@ -37,7 +37,7 @@ jobs:
         # Secrets are not available on fork PRs — only run when they are accessible
         if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
         env:
-            TMDB_ACCESS_TOKEN: ${{ secrets.TMDB_ACCESS_TOKEN }}
+            TMDB_BEARER_TOKEN: ${{ secrets.TMDB_BEARER_TOKEN }}
 
         steps:
             - name: Checkout code
@@ -53,6 +53,11 @@ jobs:
               with:
                   node-version: 20
                   cache: pnpm
+
+            - name: Create Env file
+              run: |
+                  touch .env
+                  echo TMDB_BEARER_TOKEN=${{ env.TMDB_BEARER_TOKEN }} >> .env
 
             - name: Install dependencies
               run: pnpm install

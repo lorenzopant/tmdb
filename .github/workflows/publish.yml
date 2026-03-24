@@ -113,7 +113,7 @@ jobs:
             id-token: write
         env:
             PACKAGE_NAME: "@lorenzopant/tmdb"
-            TMDB_ACCESS_TOKEN: ${{ secrets.TMDB_ACCESS_TOKEN }}
+            TMDB_BEARER_TOKEN: ${{ secrets.TMDB_BEARER_TOKEN }}
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
         steps:
