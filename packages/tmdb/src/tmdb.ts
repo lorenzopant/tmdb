@@ -26,6 +26,7 @@ import { TVEpisodeGroupsAPI } from "./endpoints/tv_episode_groups";
 import { TVSeasonsAPI } from "./endpoints/tv_seasons";
 import { TrendingAPI } from "./endpoints/trending";
 import { ReviewsAPI } from "./endpoints/reviews";
+import { PeopleListsAPI } from "./endpoints/people_lists";
 
 export class TMDB {
 	private client: ApiClient;
@@ -53,6 +54,7 @@ export class TMDB {
 	public tv_seasons: TVSeasonsAPI;
 	public trending: TrendingAPI;
 	public reviews: ReviewsAPI;
+	public people_lists: PeopleListsAPI;
 	// etc...
 
 	/**
@@ -87,5 +89,6 @@ export class TMDB {
 		this.tv_seasons = new TVSeasonsAPI(this.client, this.options);
 		this.trending = new TrendingAPI(this.client, this.options);
 		this.reviews = new ReviewsAPI(this.client, this.options);
+		this.people_lists = new PeopleListsAPI(this.client, this.options);
 	}
 }

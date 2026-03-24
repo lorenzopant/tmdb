@@ -24,11 +24,12 @@ export abstract class TMDBAPIBase {
 	/**
 	 * Ensures params contains a language: prefer explicit param, fallback to defaultOptions.language.
 	 * If neither is present, returns the original params unmodified.
+	 * When params is undefined but a default language is set, returns { language: defaultLang }.
 	 */
 	protected withLanguage<T extends { language?: Language }>(params?: T): T | undefined {
-		if (!params) return undefined; // Handle undefined params
-		if (params.language !== undefined) return params;
 		const defaultLang = this.defaultOptions?.language;
+		if (!params) return defaultLang !== undefined ? ({ language: defaultLang } as T) : undefined;
+		if (params.language !== undefined) return params;
 		if (defaultLang === undefined) return params;
 		return { ...params, language: defaultLang } as T;
 	}

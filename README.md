@@ -141,10 +141,9 @@ The following features are planned to improve developer experience and extend th
 ### 🧪 Testing Support
 
 - [ ] **Mock mode** — A `{ mock: true }` client option that returns fixture data without hitting the real API
-- [ ] **Dry-run mode** — Log what *would* be requested without making actual HTTP calls
+- [ ] **Dry-run mode** — Log what _would_ be requested without making actual HTTP calls
 
 > 💡 Have a feature request? Open an issue or submit a PR!
-
 
 ## 🗺️ Roadmap
 
@@ -174,7 +173,7 @@ Planned features and improvements include:
 | Movie Lists       | ✅     |
 | Movies            | ✅     |
 | Networks          | ✅     |
-| People Lists      | ❌     |
+| People Lists      | ✅     |
 | People            | ❌     |
 | Reviews           | ✅     |
 | Search            | ✅     |

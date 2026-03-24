@@ -1,0 +1,31 @@
+---
+title: People Lists
+description: Type definitions for the People Lists API.
+---
+
+import { TypeTable } from "fumadocs-ui/components/type-table";
+
+These types represent the People Lists domain.
+
+## `PeopleListParams`
+
+Query parameters for the [`people_lists.popular()`](/docs/api-reference/people-lists/popular) endpoint.
+
+<TypeTable
+	type={{
+		language: { type: "Language", description: "Language for localized results. Defaults to `en-US`." },
+		page: { type: "number", description: "Page number for paginated results. Defaults to `1`." },
+	}}
+/>
+
+---
+
+## `PersonResultItem`
+
+A single person returned in the results array of [`people_lists.popular()`](/docs/api-reference/people-lists/popular).
+
+<AutoTypeTable path="search.ts" name="PersonResultItem" />
+
+### Related Types
+
+- [`KnownForItem`](/docs/types/common#knownforitem) — discriminated union (`KnownForMovie | KnownForTV`) representing the notable works listed under a person

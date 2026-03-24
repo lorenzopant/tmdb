@@ -7,8 +7,35 @@ on:
         branches: [main, develop]
 
 jobs:
-    tests:
+    unit-tests:
         runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Setup action
+              uses: pnpm/action-setup@v2
+              with:
+                  version: 9.15.9
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: pnpm
+
+            - name: Install dependencies
+              run: pnpm install
+
+            - name: Run unit tests
+              working-directory: packages/tmdb
+              run: pnpm run test:unit
+
+    integration-tests:
+        runs-on: ubuntu-latest
+        # Secrets are not available on fork PRs — only run when they are accessible
+        if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
         env:
             TMDB_BEARER_TOKEN: ${{ secrets.TMDB_BEARER_TOKEN }}
 
@@ -35,5 +62,6 @@ jobs:
             - name: Install dependencies
               run: pnpm install
 
-            - name: Run tests
-              run: pnpm run test
+            - name: Run integration tests
+              working-directory: packages/tmdb
+              run: pnpm run test:integration

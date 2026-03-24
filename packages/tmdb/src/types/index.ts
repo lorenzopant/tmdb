@@ -17,3 +17,4 @@ export * from "./watch-providers";
 export * from "./keywords";
 export * from "./credits";
 export * from "./reviews";
+export * from "./people-lists";

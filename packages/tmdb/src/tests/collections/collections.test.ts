@@ -1,42 +1,89 @@
-/// <reference types="node" />
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { TMDB } from "../../tmdb";
+import { ApiClient } from "../../client";
+import { CollectionsAPI } from "../../endpoints/collections";
 
 const token = process.env.TMDB_BEARER_TOKEN;
 if (!token) throw new Error("TMDB_BEARER_TOKEN is not set, please set it in your enviroment variables.");
+describe("CollectionsAPI", () => {
+	let clientMock: ApiClient;
+	let collectionsAPI: CollectionsAPI;
 
-const tmdb = new TMDB(token, { language: "es", region: "ES" });
-
-describe("Collections API", () => {
-	it("(DETAILS) should fetch collection details", async () => {
-		const collection = await tmdb.collections.details({ collection_id: 10 });
-		expect(collection.id).toBe(10);
-		expect(collection.parts).toBeDefined();
-		expect(Array.isArray(collection.parts)).toBe(true);
+	beforeEach(() => {
+		clientMock = new ApiClient("valid_access_token");
+		clientMock.request = vi.fn();
+		collectionsAPI = new CollectionsAPI(clientMock);
 	});
 
-	it("(DETAILS) should fetch collection details with language", async () => {
-		const collection = await tmdb.collections.details({ collection_id: 10, language: "en" });
-		expect(collection.id).toBe(10);
-		expect(collection.name).toBe("Star Wars Collection");
-		expect(collection.parts).toBeDefined();
-		expect(Array.isArray(collection.parts)).toBe(true);
+	describe("details", () => {
+		it("should call client.request with correct endpoint and params", async () => {
+			await collectionsAPI.details({ collection_id: 10, language: "en-US" });
+			expect(clientMock.request).toHaveBeenCalledOnce();
+			expect(clientMock.request).toHaveBeenCalledWith("/collection/10", {
+				collection_id: 10,
+				language: "en-US",
+			});
+		});
+
+		it("should work without optional language param", async () => {
+			await collectionsAPI.details({ collection_id: 10 });
+			expect(clientMock.request).toHaveBeenCalledWith("/collection/10", {
+				collection_id: 10,
+				language: undefined,
+			});
+		});
+
+		it("should use defaultOptions.language when no language param is provided", async () => {
+			collectionsAPI = new CollectionsAPI(clientMock, { language: "fr-FR" });
+			await collectionsAPI.details({ collection_id: 10 });
+			expect(clientMock.request).toHaveBeenCalledWith("/collection/10", {
+				collection_id: 10,
+				language: "fr-FR",
+			});
+		});
+
+		it("should return the result from client.request", async () => {
+			const fakeResponse = { id: 10, name: "Star Wars Collection", parts: [] };
+			(clientMock.request as ReturnType<typeof vi.fn>).mockResolvedValue(fakeResponse);
+			const result = await collectionsAPI.details({ collection_id: 10 });
+			expect(result).toEqual(fakeResponse);
+		});
 	});
 
-	it("(IMAGES) should fetch collection images", async () => {
-		const collection = await tmdb.collections.images({ collection_id: 10, language: "en" });
-		expect(collection.id).toBe(10);
-		expect(collection.posters).toBeDefined();
-		expect(collection.backdrops).toBeDefined();
-		expect(collection.posters[0].iso_639_1).toBe("en");
+	describe("images", () => {
+		it("should call client.request with correct endpoint and params", async () => {
+			await collectionsAPI.images({ collection_id: 10, language: "en-US" });
+			expect(clientMock.request).toHaveBeenCalledOnce();
+			expect(clientMock.request).toHaveBeenCalledWith("/collection/10/images", {
+				collection_id: 10,
+				language: "en-US",
+			});
+		});
+
+		it("should apply defaultOptions.language when no language is specified", async () => {
+			collectionsAPI = new CollectionsAPI(clientMock, { language: "it-IT" });
+			await collectionsAPI.images({ collection_id: 10 });
+			expect(clientMock.request).toHaveBeenCalledWith("/collection/10/images", {
+				collection_id: 10,
+				language: "it-IT",
+			});
+		});
 	});
 
-	it("(TRANSLATIONS) should fetch collection translations", async () => {
-		const collection = await tmdb.collections.translations({ collection_id: 10 });
-		expect(collection.id).toBe(10);
-		expect(collection.translations).toBeDefined();
-		expect(collection.translations[0].iso_3166_1).toBeDefined();
-		expect(collection.translations[0].data).toBeDefined();
+	describe("translations", () => {
+		it("should call client.request with correct endpoint and params", async () => {
+			await collectionsAPI.translations({ collection_id: 10 });
+			expect(clientMock.request).toHaveBeenCalledOnce();
+			expect(clientMock.request).toHaveBeenCalledWith("/collection/10/translations", {
+				collection_id: 10,
+			});
+		});
+
+		it("should return the result from client.request", async () => {
+			const fakeResponse = { id: 10, translations: [] };
+			(clientMock.request as ReturnType<typeof vi.fn>).mockResolvedValue(fakeResponse);
+			const result = await collectionsAPI.translations({ collection_id: 10 });
+			expect(result).toEqual(fakeResponse);
+		});
 	});
 });
