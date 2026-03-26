@@ -1,0 +1,35 @@
+---
+title: Images
+description: Query the profile images associated with a person.
+---
+
+This endpoint returns the profile images for a person. Unlike some movie and TV image endpoints,
+the official TMDB OpenAPI contract does not expose language filtering for person images.
+
+```ts
+async images(params: PersonImagesParams): Promise<PersonImages>
+```
+
+> **TMDB Reference:** [Person Images](https://developer.themoviedb.org/reference/person-images)
+
+## Parameters
+
+| Name        | Type     | Required | Description              |
+| ----------- | -------- | -------- | ------------------------ |
+| `person_id` | `number` | ✅       | TMDB person identifier.  |
+
+## Returns
+
+A [`PersonImages`](/docs/types/people#personimages) object containing the person's profile images.
+
+## Example
+
+```ts
+const images = await tmdb.people.images({ person_id: 31 });
+console.log(images.profiles.length);
+```
+
+## Related Types
+
+- [`PersonImages`](/docs/types/people#personimages)
+- [`PersonImagesParams`](/docs/types/people#personimagesparams)

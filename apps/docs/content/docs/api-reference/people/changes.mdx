@@ -1,0 +1,40 @@
+---
+title: Changes
+description: Query the change history for a specific person.
+---
+
+Returns the changes made to a person record. By default, TMDB returns the last 24 hours of changes.
+
+```ts
+async changes(params: PersonChangesParams): Promise<PersonChanges>
+```
+
+> **TMDB Reference:** [Person Changes](https://developer.themoviedb.org/reference/person-changes)
+
+## Parameters
+
+| Name         | Type     | Required | Description                                             |
+| ------------ | -------- | -------- | ------------------------------------------------------- |
+| `person_id`  | `number` | ✅       | TMDB person identifier.                                 |
+| `page`       | `number` | ❌       | Page number for paginated change results.               |
+| `start_date` | `string` | ❌       | Start date in `YYYY-MM-DD` format.                      |
+| `end_date`   | `string` | ❌       | End date in `YYYY-MM-DD` format.                        |
+
+## Returns
+
+A [`PersonChanges`](/docs/types/people#personchanges) object containing grouped changes.
+
+## Example
+
+```ts
+const changes = await tmdb.people.changes({
+	person_id: 31,
+	start_date: "2024-01-01",
+	end_date: "2024-01-14",
+});
+```
+
+## Related Types
+
+- [`PersonChanges`](/docs/types/people#personchanges)
+- [`PersonChangesParams`](/docs/types/people#personchangesparams)

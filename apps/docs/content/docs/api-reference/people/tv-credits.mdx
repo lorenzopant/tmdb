@@ -1,0 +1,33 @@
+---
+title: TV Credits
+description: Query the TV cast and crew credits for a person.
+---
+
+```ts
+async tv_credits(params: PersonCreditsParams): Promise<PersonTVCredits>
+```
+
+> **TMDB Reference:** [Person TV Credits](https://developer.themoviedb.org/reference/person-tv-credits)
+
+## Parameters
+
+| Name        | Type                                                | Required | Description                                          |
+| ----------- | --------------------------------------------------- | -------- | ---------------------------------------------------- |
+| `person_id` | `number`                                            | ✅       | TMDB person identifier.                              |
+| `language`  | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized results. Defaults to `en-US`. |
+
+## Returns
+
+A [`PersonTVCredits`](/docs/types/people#persontvcredits) object containing cast and crew credits.
+
+## Example
+
+```ts
+const credits = await tmdb.people.tv_credits({ person_id: 31 });
+console.log(credits.cast.length, credits.crew.length);
+```
+
+## Related Types
+
+- [`PersonTVCredits`](/docs/types/people#persontvcredits)
+- [`PersonCreditsParams`](/docs/types/people#personcreditsparams)

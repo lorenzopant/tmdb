@@ -1,0 +1,21 @@
+---
+title: Latest
+description: Get the most recently added person on TMDB.
+---
+
+```ts
+async latest(): Promise<PersonDetails>
+```
+
+> **TMDB Reference:** [Person Latest ID](https://developer.themoviedb.org/reference/person-latest-id)
+
+## Returns
+
+A [`PersonDetails`](/docs/types/people#persondetails) object for the most recently added person.
+
+## Example
+
+```ts
+const latest = await tmdb.people.latest();
+console.log(latest.id, latest.name);
+```

@@ -1,0 +1,30 @@
+---
+title: People
+description: Retrieve person details, credits, images, translations, and external IDs from TMDB.
+---
+
+The `PeopleAPI` provides access to person-specific TMDB resources such as top-level details,
+credits, images, translations, and tagged images.
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const person = await tmdb.people.details({ person_id: 31 });
+```
+
+For curated person lists, use [`tmdb.people_lists`](/docs/api-reference/people-lists).
+For global person changes, use [`tmdb.changes.people_list()`](/docs/api-reference/changes/people-list).
+
+## Methods
+
+- [`details()`](/docs/api-reference/people/details) — Get the top-level details of a person by ID. Supports `append_to_response`.
+- [`changes()`](/docs/api-reference/people/changes) — Get the change history for a person.
+- [`combined_credits()`](/docs/api-reference/people/combined-credits) — Get movie and TV cast/crew credits in one response.
+- [`external_ids()`](/docs/api-reference/people/external-ids) — Get external platform identifiers for a person.
+- [`images()`](/docs/api-reference/people/images) — Get profile images for a person.
+- [`latest()`](/docs/api-reference/people/latest) — Get the most recently added person on TMDB.
+- [`movie_credits()`](/docs/api-reference/people/movie-credits) — Get movie cast and crew credits for a person.
+- [`tagged_images()`](/docs/api-reference/people/tagged-images) — Get paginated tagged images for a person.
+- [`translations()`](/docs/api-reference/people/translations) — Get the translated names and biographies available for a person.
+- [`tv_credits()`](/docs/api-reference/people/tv-credits) — Get TV cast and crew credits for a person.

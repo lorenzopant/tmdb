@@ -1,0 +1,32 @@
+---
+title: Translations
+description: Query the translated names and biographies available for a person.
+---
+
+```ts
+async translations(params: PersonTranslationsParams): Promise<PersonTranslations>
+```
+
+> **TMDB Reference:** [Person Translations](https://developer.themoviedb.org/reference/person-translations)
+
+## Parameters
+
+| Name        | Type     | Required | Description              |
+| ----------- | -------- | -------- | ------------------------ |
+| `person_id` | `number` | ✅       | TMDB person identifier.  |
+
+## Returns
+
+A [`PersonTranslations`](/docs/types/people#persontranslations) object containing all available translations.
+
+## Example
+
+```ts
+const translations = await tmdb.people.translations({ person_id: 31 });
+console.log(translations.translations.length);
+```
+
+## Related Types
+
+- [`PersonTranslations`](/docs/types/people#persontranslations)
+- [`PersonTranslationsParams`](/docs/types/people#persontranslationsparams)

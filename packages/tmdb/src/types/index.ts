@@ -18,3 +18,4 @@ export * from "./keywords";
 export * from "./credits";
 export * from "./reviews";
 export * from "./people-lists";
+export * from "./people";

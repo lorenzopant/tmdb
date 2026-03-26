@@ -68,6 +68,18 @@ export const ENDPOINTS = {
 		ALTERNATIVE_NAMES: "/alternative_names",
 		IMAGES: "/images",
 	},
+	PEOPLE: {
+		DETAILS: "/person",
+		CHANGES: "/changes",
+		COMBINED_CREDITS: "/combined_credits",
+		EXTERNAL_IDS: "/external_ids",
+		IMAGES: "/images",
+		LATEST: "/latest",
+		MOVIE_CREDITS: "/movie_credits",
+		TAGGED_IMAGES: "/tagged_images",
+		TRANSLATIONS: "/translations",
+		TV_CREDITS: "/tv_credits",
+	},
 	SEARCH: {
 		MOVIE: "/search/movie",
 		COLLECTION: "/search/collection",

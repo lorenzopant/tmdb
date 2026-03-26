@@ -1,0 +1,113 @@
+---
+title: People
+description: Types related to the People namespace.
+---
+
+Types related to the [PeopleAPI](/docs/api-reference/people) namespace.
+
+import { TypeTable } from "fumadocs-ui/components/type-table";
+
+## `PersonDetails`
+
+<AutoTypeTable path="people.ts" name="PersonDetails" />
+
+## `PersonExternalIDs`
+
+<AutoTypeTable path="people.ts" name="PersonExternalIDs" />
+
+## `PersonImages`
+
+<AutoTypeTable path="people.ts" name="PersonImages" />
+
+## `PersonMovieCredits`
+
+<AutoTypeTable path="people.ts" name="PersonMovieCredits" />
+
+## `PersonTVCredits`
+
+<AutoTypeTable path="people.ts" name="PersonTVCredits" />
+
+## `PersonCombinedCredits`
+
+<AutoTypeTable path="people.ts" name="PersonCombinedCredits" />
+
+## `PersonTaggedImages`
+
+<AutoTypeTable path="people.ts" name="PersonTaggedImages" />
+
+## `PersonTranslations`
+
+<AutoTypeTable path="people.ts" name="PersonTranslations" />
+
+## `PersonBaseParam`
+
+<AutoTypeTable path="people.ts" name="PersonBaseParam" />
+
+## `PersonDetailsParams`
+
+<TypeTable
+	type={{
+		person_id: { type: "number", required: true, description: "TMDB person identifier." },
+		append_to_response: {
+			type: "PersonAppendToResponseNamespace | PersonAppendToResponseNamespace[]",
+			description: "Subresources to append to the person details response.",
+		},
+		language: { type: "Language", description: "Language for localized results.", default: "en-US" },
+	}}
+/>
+
+Supported `append_to_response` values:
+`"changes"`, `"combined_credits"`, `"external_ids"`, `"images"`, `"movie_credits"`, `"tagged_images"`, `"translations"`, `"tv_credits"`.
+
+## `PersonChangesParams`
+
+<TypeTable
+	type={{
+		person_id: { type: "number", required: true, description: "TMDB person identifier." },
+		page: { type: "number", description: "Page number for paginated change results." },
+		start_date: { type: "string", description: "Start date in YYYY-MM-DD format." },
+		end_date: { type: "string", description: "End date in YYYY-MM-DD format." },
+	}}
+/>
+
+## `PersonCreditsParams`
+
+<TypeTable
+	type={{
+		person_id: { type: "number", required: true, description: "TMDB person identifier." },
+		language: { type: "Language", description: "Language for localized results.", default: "en-US" },
+	}}
+/>
+
+## `PersonExternalIDsParams`
+
+<TypeTable
+	type={{
+		person_id: { type: "number", required: true, description: "TMDB person identifier." },
+	}}
+/>
+
+## `PersonImagesParams`
+
+<TypeTable
+	type={{
+		person_id: { type: "number", required: true, description: "TMDB person identifier." },
+	}}
+/>
+
+## `PersonTranslationsParams`
+
+<TypeTable
+	type={{
+		person_id: { type: "number", required: true, description: "TMDB person identifier." },
+	}}
+/>
+
+## `PersonTaggedImagesParams`
+
+<TypeTable
+	type={{
+		person_id: { type: "number", required: true, description: "TMDB person identifier." },
+		page: { type: "number", description: "Page number for paginated tagged images." },
+	}}
+/>
