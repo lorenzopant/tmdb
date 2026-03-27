@@ -4,10 +4,11 @@ description: Latest updates and announcements
 icon: History
 ---
 
-## 🚀 1.16.1 - 24 March 2026
+## 🚀 1.17.0 - 27 March 2026
 
 #### ✨ New
 
+- [People API](/docs/api-reference/people) — full first-class support for TMDB person-specific endpoints via `tmdb.people` (details, credits, images, translations, external IDs, and more)
 - [Authentication guide](/docs/getting-started/authentication) — new documentation covering Bearer token vs v3 API key usage, detection logic, and environment variable setup
 
 #### 🔐 Auth
@@ -18,6 +19,7 @@ icon: History
 
 #### 🐞 Bug Fixes
 
+- Fixed broken links in [TV Series Lists](/docs/api-reference/tv-series-lists) API docs and related type pages (404s caused by incorrect route paths)
 - Fixed `isJwt()` incorrectly returning `false` for expired tokens, which would have caused a valid JWT to be silently sent as an `api_key` query parameter (leaking it in URLs) instead of as a Bearer header
 - Unit tests no longer throw at startup when `TMDB_BEARER_TOKEN` is not set in the environment — they use a hardcoded mock JWT since `fetch` is fully mocked
 
