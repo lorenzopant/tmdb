@@ -1,0 +1,43 @@
+---
+title: Details
+description: Query the top-level details of a person.
+---
+
+```ts
+async details(params: PersonDetailsParams): Promise<PersonDetails>
+```
+
+> **TMDB Reference:** [Person Details](https://developer.themoviedb.org/reference/person-details)
+
+## Parameters
+
+| Name                 | Type                                                                 | Required | Description                                                                 |
+| -------------------- | -------------------------------------------------------------------- | -------- | --------------------------------------------------------------------------- |
+| `person_id`          | `number`                                                             | ✅       | TMDB person identifier.                                                     |
+| `language`           | [`Language`](/docs/types/options/language#language)                  | ❌       | Language for localized results. Defaults to `en-US`.                       |
+| `append_to_response` | `PersonAppendToResponseNamespace \| PersonAppendToResponseNamespace[]` | ❌       | Subresources to append to the main person details response.                 |
+
+## Returns
+
+A [`PersonDetails`](/docs/types/people#persondetails) object containing the person's profile.
+When `append_to_response` is used, the response also includes the appended subresource payloads.
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+
+const person = await tmdb.people.details({ person_id: 31 });
+
+const withExtras = await tmdb.people.details({
+	person_id: 31,
+	append_to_response: ["images", "external_ids", "movie_credits"],
+});
+```
+
+## Related Types
+
+- [`PersonDetails`](/docs/types/people#persondetails)
+- [`PersonDetailsParams`](/docs/types/people#persondetailsparams)

@@ -1,0 +1,32 @@
+---
+title: External IDs
+description: Query the external platform identifiers associated with a person.
+---
+
+```ts
+async external_ids(params: PersonExternalIDsParams): Promise<PersonExternalIDs>
+```
+
+> **TMDB Reference:** [Person External IDs](https://developer.themoviedb.org/reference/person-external-ids)
+
+## Parameters
+
+| Name        | Type     | Required | Description              |
+| ----------- | -------- | -------- | ------------------------ |
+| `person_id` | `number` | ✅       | TMDB person identifier.  |
+
+## Returns
+
+A [`PersonExternalIDs`](/docs/types/people#personexternalids) object containing linked platform identifiers.
+
+## Example
+
+```ts
+const ids = await tmdb.people.external_ids({ person_id: 31 });
+console.log(ids.imdb_id);
+```
+
+## Related Types
+
+- [`PersonExternalIDs`](/docs/types/people#personexternalids)
+- [`PersonExternalIDsParams`](/docs/types/people#personexternalidsparams)

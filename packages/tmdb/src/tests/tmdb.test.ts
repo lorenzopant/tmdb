@@ -38,4 +38,9 @@ describe("TMDB API Client", () => {
 		const tmdb = new TMDB("valid_access_token");
 		expect(tmdb.networks).toBeDefined();
 	});
+
+	it("should expose the people api", () => {
+		const tmdb = new TMDB("valid_access_token");
+		expect(tmdb.people).toBeDefined();
+	});
 });

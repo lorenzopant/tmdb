@@ -72,6 +72,7 @@ The SDK is organized into modular namespaces that mirror TMDB's API structure. E
 You can instantiate single API modules or use the full client for all features. Available namespaces include:
 
 - `tmdb.movies` - Movie-related endpoints (details, credits, images, etc.)
+- `tmdb.people` - Person-related endpoints (details, credits, images, translations, and external IDs)
 - `tmdb.tv_series` - TV series endpoints (details, credits, episode groups, etc.)
 - `tmdb.search` - Search endpoints for movies, TV shows, people, etc.
 - `tmdb.lists` - User-created lists and TMDB-curated lists.
@@ -174,7 +175,7 @@ Planned features and improvements include:
 | Movies            | ✅     |
 | Networks          | ✅     |
 | People Lists      | ✅     |
-| People            | ❌     |
+| People            | ✅     |
 | Reviews           | ✅     |
 | Search            | ✅     |
 | Trending          | ✅     |

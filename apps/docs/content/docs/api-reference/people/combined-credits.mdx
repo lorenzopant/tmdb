@@ -1,0 +1,33 @@
+---
+title: Combined Credits
+description: Query both movie and TV cast and crew credits for a person.
+---
+
+```ts
+async combined_credits(params: PersonCreditsParams): Promise<PersonCombinedCredits>
+```
+
+> **TMDB Reference:** [Person Combined Credits](https://developer.themoviedb.org/reference/person-combined-credits)
+
+## Parameters
+
+| Name        | Type                                                | Required | Description                                          |
+| ----------- | --------------------------------------------------- | -------- | ---------------------------------------------------- |
+| `person_id` | `number`                                            | ✅       | TMDB person identifier.                              |
+| `language`  | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized results. Defaults to `en-US`. |
+
+## Returns
+
+A [`PersonCombinedCredits`](/docs/types/people#personcombinedcredits) object containing both movie and TV credits.
+
+## Example
+
+```ts
+const credits = await tmdb.people.combined_credits({ person_id: 31 });
+console.log(credits.cast.length, credits.crew.length);
+```
+
+## Related Types
+
+- [`PersonCombinedCredits`](/docs/types/people#personcombinedcredits)
+- [`PersonCreditsParams`](/docs/types/people#personcreditsparams)

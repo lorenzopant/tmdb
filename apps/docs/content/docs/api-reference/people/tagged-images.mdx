@@ -1,0 +1,35 @@
+---
+title: Tagged Images
+description: Query the paginated tagged images for a person.
+---
+
+Returns images where the person has been tagged, along with the tagged movie or TV media payload.
+
+```ts
+async tagged_images(params: PersonTaggedImagesParams): Promise<PersonTaggedImages>
+```
+
+> **TMDB Reference:** [Person Tagged Images](https://developer.themoviedb.org/reference/person-tagged-images)
+
+## Parameters
+
+| Name        | Type     | Required | Description                            |
+| ----------- | -------- | -------- | -------------------------------------- |
+| `person_id` | `number` | ✅       | TMDB person identifier.                |
+| `page`      | `number` | ❌       | Page number for paginated image tags.  |
+
+## Returns
+
+A [`PersonTaggedImages`](/docs/types/people#persontaggedimages) object containing paginated tagged images.
+
+## Example
+
+```ts
+const tagged = await tmdb.people.tagged_images({ person_id: 31, page: 1 });
+console.log(tagged.results.length);
+```
+
+## Related Types
+
+- [`PersonTaggedImages`](/docs/types/people#persontaggedimages)
+- [`PersonTaggedImagesParams`](/docs/types/people#persontaggedimagesparams)
