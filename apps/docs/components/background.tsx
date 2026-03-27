@@ -14,7 +14,7 @@ function shuffle<T>(items: T[]) {
 }
 
 const getPosterColumns = cache(async () => {
-	const token = process.env.TMDB_KEY;
+	const token = process.env.TMDB_BEARER_TOKEN;
 
 	if (!token) return [] as string[][];
 
