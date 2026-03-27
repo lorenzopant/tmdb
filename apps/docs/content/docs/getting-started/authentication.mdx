@@ -1,0 +1,77 @@
+---
+title: Authentication
+description: Learn how to authenticate with the TMDB API using a Bearer token or a v3 API key.
+icon: KeyRound
+---
+
+The `TMDB` client accepts two types of credentials. Pass either one as the first argument to the constructor.
+
+## Bearer Token (Recommended)
+
+TMDB's **Read Access Token** is a signed JWT. This is the recommended way to authenticate because credentials are sent in the `Authorization` header and never appear in URLs or server logs.
+
+You can find your Read Access Token in the TMDB dashboard under **Settings → API → API Read Access Token**.
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("eyJhbGciOiJIUzI1NiJ9...");
+```
+
+When a JWT is detected, the client automatically sends:
+
+```
+Authorization: Bearer <token>
+```
+
+## v3 API Key
+
+If you have a legacy v3 API key (a plain string without dots), the client appends it as an `api_key` query parameter on every request.
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your_v3_api_key");
+```
+
+When a v3 key is detected, the client sends requests like:
+
+```
+GET https://api.themoviedb.org/3/movie/550?api_key=your_v3_api_key
+```
+
+<Callout type="warn">
+	v3 API keys appear in URLs and may be captured in server logs, proxy logs, and browser history. Prefer the Bearer token where possible.
+</Callout>
+
+## How Detection Works
+
+The client inspects the token you pass and checks whether it is a structurally valid JWT (three Base64URL-encoded segments separated by dots with a valid header and payload). No network call is made — the check is purely local.
+
+| Token type | Sent as                                |
+| ---------- | -------------------------------------- |
+| JWT        | `Authorization: Bearer <token>` header |
+| API key    | `?api_key=<key>` query parameter       |
+
+## Environment Variables
+
+Store credentials in environment variables — never hard-code them.
+
+```bash title=".env"
+# Bearer token (JWT) — recommended
+TMDB_BEARER_TOKEN=eyJhbGciOiJIUzI1NiJ9...
+
+# v3 API key — legacy fallback
+TMDB_API_KEY=your_v3_api_key
+```
+
+```ts title="tmdb.ts"
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB(process.env.TMDB_BEARER_TOKEN!);
+```
+
+## Getting Your Credentials
+
+- [TMDB API settings](https://www.themoviedb.org/settings/api) — find both your v3 API key and your Read Access Token here.
+- [TMDB Getting Started](https://developer.themoviedb.org/docs/getting-started) — official guide.

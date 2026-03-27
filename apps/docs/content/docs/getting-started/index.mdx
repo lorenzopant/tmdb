@@ -4,14 +4,14 @@ description: This section provides an overview of how to quickly get started usi
 icon: Rocket
 ---
 
-<Card title="API KEY">
-	We assume you already have a valid api key for using the TMDB api. If not, Go to the TMDB portal and get your own api key. For more
-	information follow the steps in the TMDB website
-</Card>
+<Callout>
+	You need a TMDB credential to use this library. The client supports both a **Bearer token** (JWT Read Access Token, recommended) and a
+	legacy **v3 API key**. See the [Authentication guide](/docs/getting-started/authentication) for details.
+</Callout>
 
 References:
 
-- https://www.themoviedb.org/settings/api - Request API Key from your profile
+- https://www.themoviedb.org/settings/api - Your API key and Bearer token
 - https://developer.themoviedb.org/docs/getting-started - Getting Started Guide
 
 ### Install
@@ -22,8 +22,14 @@ npm install @lorenzopant/tmdb
 
 ### Create TMDB object
 
+Pass your Bearer token or v3 API key as the first argument:
+
 ```ts title=tmdb.ts
-export const tmdb = new TMDB("<your-tmdb-apikey>");
+// With a Bearer token (recommended)
+export const tmdb = new TMDB(process.env.TMDB_BEARER_TOKEN!);
+
+// With a v3 API key
+export const tmdb = new TMDB(process.env.TMDB_API_KEY!);
 ```
 
 ### Use TMDB methods
@@ -40,12 +46,13 @@ You’ll get a paginated response with a list of matching movies, including thei
 ### What's Next?
 
 <Cards>
-	<Card title="SSR" href="/docs/getting-started/ssr">
-		Learn how to setup @lorenzopant/tmdb with SSR frameworks
-	</Card>
-	<Card title="API Reference" href="/docs/api-reference">
-		Discover all available methods
-	</Card>
+        <Card title="Authentication" href="/docs/getting-started/authentication">
+                Learn about Bearer tokens vs v3 API keys
+        </Card>
+    <Card title="API Reference" href="/docs/api-reference">
+    	Discover all available methods
+    </Card>
+
 </Cards>
 
 For the full reference, visit the [TMDB Developer Documentation](https://developer.themoviedb.org/docs) and check out each endpoint.
