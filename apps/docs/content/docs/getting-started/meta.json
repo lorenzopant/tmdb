@@ -1,0 +1,3 @@
+{
+	"pages": ["index", "authentication", "features", "options", "ssr"]
+}

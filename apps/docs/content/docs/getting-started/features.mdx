@@ -1,0 +1,168 @@
+---
+title: Features
+description: An overview of all built-in features of the @lorenzopant/tmdb client.
+icon: Layers
+---
+
+`@lorenzopant/tmdb` is more than a thin TMDB HTTP wrapper. The client ships several built-in
+features designed to improve performance, developer ergonomics, and reliability out of the box —
+no extra configuration needed for the defaults.
+
+---
+
+## Authentication
+
+The client accepts both modern and legacy TMDB credentials and automatically selects the correct
+transport for each.
+
+| Credential              | Sent as                                |
+| ----------------------- | -------------------------------------- |
+| JWT (Read Access Token) | `Authorization: Bearer <token>` header |
+| v3 API key              | `?api_key=<key>` query parameter       |
+
+Detection is purely local — no network call is made. See the [Authentication guide](/docs/getting-started/authentication) for details.
+
+---
+
+## Request Deduplication
+
+When multiple identical requests are fired at the same time — for example, two components rendering
+simultaneously and both calling `tmdb.movies.details(550)` — the client issues **only one HTTP
+request** and resolves all callers from the same `Promise`.
+
+```ts
+// Both calls share a single fetch — no duplicate network request
+const [movie1, movie2] = await Promise.all([
+	tmdb.movies.details({ movie_id: 550, language: "en-US" }),
+	tmdb.movies.details({ movie_id: 550, language: "en-US" }),
+]);
+```
+
+**How it works:**
+
+- Each request is identified by a stable key derived from the endpoint URL + serialised parameters.
+- Parameter key order is normalised (sorted), so `{ language, page }` and `{ page, language }` are
+  treated as the same request.
+- Once the in-flight promise settles (success **or** error), it is evicted from the map so the next
+  call always triggers a fresh fetch.
+
+<Callout>
+	Deduplication is **automatic and zero-config**. It is applied to every method in the client. Only concurrent requests benefit —
+	sequential calls always produce independent fetches.
+</Callout>
+
+---
+
+## Null Sanitisation
+
+TMDB responses frequently contain `null` values for optional fields. The client recursively converts
+every `null` in the response body to `undefined`, so TypeScript optional types (`field?: string`)
+model the data accurately and you never need to guard against `null` at the call site.
+
+```ts
+const movie = await tmdb.movies.details({ movie_id: 550 });
+
+// tagline is typed as `string | undefined` — never `null`
+if (movie.tagline) {
+	console.log(movie.tagline);
+}
+```
+
+Sanitisation is applied deeply — including nested objects and array elements — before the response
+reaches your code.
+
+---
+
+## Default Options
+
+Pass a `TMDBOptions` object to the constructor to set global defaults that are merged into every
+request automatically. Individual call-site params always take precedence over defaults.
+
+```ts
+const tmdb = new TMDB(apiKey, {
+	language: "it-IT",
+	region: "IT",
+	timezone: "Europe/Rome",
+});
+
+// language and region are merged automatically
+const popular = await tmdb.movie_lists.popular();
+```
+
+| Option     | Effect                                                     |
+| ---------- | ---------------------------------------------------------- |
+| `language` | Localises titles, overviews, and taglines                  |
+| `region`   | Filters release dates, certifications, and watch providers |
+| `timezone` | Scopes TV airing-time calculations                         |
+
+See the [Options guide](/docs/getting-started/options) for the full reference.
+
+---
+
+## Image URL Builder
+
+`tmdb.images` is a pure URL builder — no HTTP request, no async. Pass a file path returned by any
+API response and get back a ready-to-use image URL.
+
+```ts
+const movie = await tmdb.movies.details({ movie_id: 550 });
+
+const posterUrl = tmdb.images.poster(movie.poster_path, "w500");
+// → "https://image.tmdb.org/t/p/w500/e1mjopzAS2KNsvpbpahQ1a6SkSn.jpg"
+```
+
+Default sizes can be configured once in `TMDBOptions.images` and are applied automatically when no
+size is specified at call time. See the [Images option](/docs/getting-started/options/images) for the full reference.
+
+---
+
+## Error Handling
+
+All HTTP and API errors are thrown as a `TMDBError` instance, which extends the built-in `Error`
+class with three additional properties:
+
+```ts
+import { TMDBError } from "@lorenzopant/tmdb";
+
+try {
+	const movie = await tmdb.movies.details({ movie_id: 0 });
+} catch (err) {
+	if (err instanceof TMDBError) {
+		console.log(err.message); // TMDB status message
+		console.log(err.http_status_code); // e.g. 404
+		console.log(err.tmdb_status_code); // e.g. 34 (resource not found)
+	}
+}
+```
+
+| Property           | Type     | Description                                        |
+| ------------------ | -------- | -------------------------------------------------- |
+| `message`          | `string` | Human-readable message from the TMDB error payload |
+| `http_status_code` | `number` | HTTP status code of the response                   |
+| `tmdb_status_code` | `number` | TMDB-specific status code; `-1` for library errors |
+
+Network errors (connection refused, DNS failures, etc.) are re-thrown as-is and are **not** wrapped
+in `TMDBError` — catch `Error` for those.
+
+---
+
+## Logging
+
+The client includes a built-in structured logger. Enable it with `logger: true` or supply a custom
+function to integrate with any logging library.
+
+```ts
+// Built-in console logger
+const tmdb = new TMDB(apiKey, { logger: true });
+
+// Custom logger (e.g. pino, winston)
+const tmdb = new TMDB(apiKey, {
+	logger: (entry) => {
+		if (entry.type === "error") logger.error(entry);
+		else logger.info(entry);
+	},
+});
+```
+
+Log entries cover three lifecycle stages: `request`, `response`, and `error`. See the
+[Logging guide](/docs/getting-started/options/logging) for the full reference.
