@@ -4,6 +4,18 @@ description: Latest updates and announcements
 icon: History
 ---
 
+## 🚀 1.17.1 - 28 March 2026
+
+#### ⚡ Performance
+
+- **Request deduplication** — concurrent identical requests (same endpoint + parameters) now share a single in-flight fetch. All callers resolve from the same `Promise` with zero extra network round-trips. Opt out globally with `deduplication: false` in `TMDBOptions`.
+
+#### 📖 Docs
+
+- New [Features](/docs/getting-started/features) page — one-stop overview of all built-in client capabilities: authentication, request deduplication, null sanitisation, default options, image URL builder, error handling, and logging.
+
+---
+
 ## 🚀 1.17.0 - 27 March 2026
 
 #### ✨ New

@@ -26,13 +26,14 @@ const tmdb = new TMDB("your-api-key", {
 
 ## Available Options
 
-| Option     | Type                      | Description                                                                  |
-| ---------- | ------------------------- | ---------------------------------------------------------------------------- |
-| `language` | `Language`                | Default language for all responses (ISO 639-1 or primary translation code).  |
-| `region`   | `CountryISO3166_1`        | Default region for localized content like release dates and watch providers. |
-| `images`   | `ImagesConfig`            | Configuration for image base URLs and default image sizes.                   |
-| `timezone` | `Timezone`                | Default timezone for TV series airing time calculations.                     |
-| `logger`   | `boolean \| TMDBLoggerFn` | Enable the built-in console logger or supply a custom logging function.      |
+| Option          | Type                      | Description                                                                  |
+| --------------- | ------------------------- | ---------------------------------------------------------------------------- |
+| `language`      | `Language`                | Default language for all responses (ISO 639-1 or primary translation code).  |
+| `region`        | `CountryISO3166_1`        | Default region for localized content like release dates and watch providers. |
+| `images`        | `ImagesConfig`            | Configuration for image base URLs and default image sizes.                   |
+| `timezone`      | `Timezone`                | Default timezone for TV series airing time calculations.                     |
+| `logger`        | `boolean \| TMDBLoggerFn` | Enable the built-in console logger or supply a custom logging function.      |
+| `deduplication` | `boolean`                 | Deduplicate concurrent identical requests. Defaults to `true`.               |
 
 ---
 
@@ -143,3 +144,30 @@ const tmdb = new TMDB(apiKey, {
 ```
 
 See the [Logging guide](/docs/getting-started/options/logging) for more examples and integration patterns.
+
+---
+
+### `deduplication`
+
+**Type:** `boolean` · **Default:** `true`
+
+When `true`, concurrent calls with the same endpoint and parameters share a single in-flight fetch.
+All callers resolve from the same `Promise` — no duplicate network requests are made.
+
+```ts
+// Default behaviour — one fetch for all three concurrent calls
+const [a, b, c] = await Promise.all([
+	tmdb.movies.details({ movie_id: 550 }),
+	tmdb.movies.details({ movie_id: 550 }),
+	tmdb.movies.details({ movie_id: 550 }),
+]);
+```
+
+Set to `false` to make every call trigger its own fetch regardless of concurrency.
+Useful for polling loops, force-refreshes after mutations, or independent SSR data loaders.
+
+```ts
+const tmdb = new TMDB(apiKey, { deduplication: false });
+```
+
+See the [Features guide](/docs/getting-started/features#request-deduplication) for a full explanation.
