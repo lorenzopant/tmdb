@@ -77,9 +77,7 @@ describe("ApiClient deduplication", () => {
 			json: async () => ({ id }),
 		});
 
-		(globalThis.fetch as ReturnType<typeof vi.fn>)
-			.mockResolvedValueOnce(makeResponse(550))
-			.mockResolvedValueOnce(makeResponse(551));
+		(globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce(makeResponse(550)).mockResolvedValueOnce(makeResponse(551));
 
 		const [r1, r2] = await Promise.all([
 			client.request("/movie/550", { language: "en-US" }),
@@ -161,9 +159,7 @@ describe("ApiClient deduplication", () => {
 			json: async () => ({ id: 550 }),
 		});
 
-		(globalThis.fetch as ReturnType<typeof vi.fn>)
-			.mockResolvedValueOnce(makeResponse())
-			.mockResolvedValueOnce(makeResponse());
+		(globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce(makeResponse()).mockResolvedValueOnce(makeResponse());
 
 		await client.request("/movie/550", { language: "en-US" });
 		await client.request("/movie/550", { language: "en-US" });
@@ -222,13 +218,86 @@ describe("ApiClient deduplication", () => {
 			json: async () => ({ id: 550 }),
 		};
 
-		(globalThis.fetch as ReturnType<typeof vi.fn>)
-			.mockResolvedValueOnce(failResponse)
-			.mockResolvedValueOnce(successResponse);
+		(globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce(failResponse).mockResolvedValueOnce(successResponse);
 
 		await expect(client.request("/movie/550")).rejects.toThrow();
 		const result = await client.request("/movie/550");
 		expect(result).toEqual({ id: 550 });
 		expect(globalThis.fetch).toHaveBeenCalledTimes(2);
+	});
+});
+
+describe("ApiClient deduplication disabled", () => {
+	const originalFetch = globalThis.fetch;
+
+	beforeEach(() => {
+		globalThis.fetch = vi.fn();
+	});
+
+	afterEach(() => {
+		globalThis.fetch = originalFetch;
+		vi.restoreAllMocks();
+	});
+
+	it("makes one fetch per call even when requests are concurrent", async () => {
+		const client = new ApiClient(token, { deduplication: false });
+
+		const makeResponse = (): MockResponse => ({
+			ok: true,
+			status: 200,
+			statusText: "OK",
+			url: "https://api.themoviedb.org/3/movie/550",
+			headers: makeHeaders({}),
+			json: async () => ({ id: 550 }),
+		});
+
+		(globalThis.fetch as ReturnType<typeof vi.fn>)
+			.mockResolvedValueOnce(makeResponse())
+			.mockResolvedValueOnce(makeResponse())
+			.mockResolvedValueOnce(makeResponse());
+
+		const [r1, r2, r3] = await Promise.all([
+			client.request("/movie/550", { language: "en-US" }),
+			client.request("/movie/550", { language: "en-US" }),
+			client.request("/movie/550", { language: "en-US" }),
+		]);
+
+		expect(globalThis.fetch).toHaveBeenCalledTimes(3);
+		expect(r1).toEqual({ id: 550 });
+		expect(r2).toEqual({ id: 550 });
+		expect(r3).toEqual({ id: 550 });
+	});
+
+	it("is enabled by default when option is omitted", async () => {
+		const client = new ApiClient(token);
+
+		let resolveJson!: (value: unknown) => void;
+		const jsonPromise = new Promise((resolve) => {
+			resolveJson = resolve;
+		});
+
+		const response: MockResponse = {
+			ok: true,
+			status: 200,
+			statusText: "OK",
+			url: "https://api.themoviedb.org/3/movie/550",
+			headers: makeHeaders({}),
+			json: () => jsonPromise,
+		};
+
+		(globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(response);
+
+		const [r1, r2] = await Promise.all([
+			client.request("/movie/550"),
+			client.request("/movie/550"),
+			(async () => {
+				resolveJson({ id: 550 });
+			})(),
+		]).then(([a, b]) => [a, b]);
+
+		// Default is on — only one fetch
+		expect(globalThis.fetch).toHaveBeenCalledTimes(1);
+		expect(r1).toEqual({ id: 550 });
+		expect(r2).toEqual({ id: 550 });
 	});
 });

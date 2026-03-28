@@ -47,9 +47,26 @@ const [movie1, movie2] = await Promise.all([
   call always triggers a fresh fetch.
 
 <Callout>
-	Deduplication is **automatic and zero-config**. It is applied to every method in the client. Only concurrent requests benefit —
-	sequential calls always produce independent fetches.
+	Deduplication is **on by default** and applied to every method in the client. Only concurrent requests benefit — sequential calls always
+	produce independent fetches.
 </Callout>
+
+### Disabling deduplication
+
+Set `deduplication: false` in `TMDBOptions` to make every call trigger its own fetch regardless of
+concurrent siblings.
+
+```ts
+const tmdb = new TMDB(apiKey, { deduplication: false });
+```
+
+Useful when you need guaranteed-fresh data:
+
+| Scenario                           | Why deduplication can be a problem                                                      |
+| ---------------------------------- | --------------------------------------------------------------------------------------- |
+| **Polling loops**                  | Two overlapping polls would collapse into one, hiding the newer response                |
+| **Force-refresh after a mutation** | Concurrent callers would receive the pre-mutation cached promise                        |
+| **Independent SSR data loaders**   | Two route handlers that coincidentally request the same resource should not share state |
 
 ---
 

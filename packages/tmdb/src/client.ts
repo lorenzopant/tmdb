@@ -13,10 +13,12 @@ export class ApiClient {
 	 * Entries are removed via `.finally()` so the map never holds settled promises.
 	 */
 	private inflightRequests: Map<string, Promise<unknown>> = new Map();
+	private deduplication: boolean;
 
-	constructor(accessToken: string, options: { logger?: boolean | TMDBLoggerFn } = {}) {
+	constructor(accessToken: string, options: { logger?: boolean | TMDBLoggerFn; deduplication?: boolean } = {}) {
 		this.accessToken = accessToken;
 		this.logger = TMDBLogger.from(options.logger);
+		this.deduplication = options.deduplication !== false;
 	}
 
 	/**
@@ -38,12 +40,16 @@ export class ApiClient {
 	 * Makes an authenticated GET request to the TMDB API, returning the parsed and
 	 * null-sanitised response.
 	 *
-	 * **Deduplication:** concurrent calls with the same `endpoint` + `params` share a
-	 * single in-flight fetch. The second (and any subsequent) caller receives the same
-	 * `Promise` — no extra network request is made. Once the promise settles (success
-	 * or error) it is evicted from the map so the next call triggers a fresh fetch.
+	 * **Deduplication:** when enabled (the default), concurrent calls with the same
+	 * `endpoint` + `params` share a single in-flight fetch. The second (and any
+	 * subsequent) caller receives the same `Promise` — no extra network request is made.
+	 * Once the promise settles (success or error) it is evicted from the map so the next
+	 * call triggers a fresh fetch. Deduplication can be disabled globally via
+	 * `TMDBOptions.deduplication = false`.
 	 */
 	async request<T>(endpoint: string, params: Record<string, unknown | undefined> = {}): Promise<T> {
+		if (!this.deduplication) return this.doRequest<T>(endpoint, params);
+
 		const key = this.buildRequestKey(endpoint, params);
 		const existing = this.inflightRequests.get(key);
 		if (existing) return existing as Promise<T>;
