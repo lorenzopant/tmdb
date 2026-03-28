@@ -45,7 +45,7 @@ export type TVSeasonEpisode = TVEpisodeItem & {
  */
 export type TVSeason = {
 	/** ISO 8601 date when the season first aired */
-	air_date?: string | null;
+	air_date?: string;
 	/** Array of episodes in this season */
 	episodes: TVSeasonEpisode[];
 	/** Unique TMDB identifier for the season */
@@ -137,8 +137,8 @@ export type TVSeasonImages = ImagesResult<ImageItem, "posters">;
 
 /** Translation data for a TV season. */
 export type TVSeasonTranslationData = {
-	name?: string | null;
-	overview?: string | null;
+	name?: string;
+	overview?: string;
 };
 
 /** Collection of all available translations for a TV season. */

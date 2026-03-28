@@ -64,7 +64,7 @@ export type CreditDetailsTVEpisode = {
 	/** Indicates whether the episode is marked for adult content. */
 	adult: boolean;
 	/** Episode air date in ISO 8601 format, if available. */
-	air_date?: string | null;
+	air_date?: string;
 	/** Episode number within the season. */
 	episode_number: number;
 	/** Episode type reported by TMDB. */
@@ -94,7 +94,7 @@ export type CreditDetailsTVEpisode = {
  */
 export type CreditDetailsTVSeason = {
 	/** Season air date in ISO 8601 format, if available. */
-	air_date?: string | null;
+	air_date?: string;
 	/** Total number of episodes in the season. */
 	episode_count: number;
 	/** Unique season identifier. */

@@ -26,7 +26,7 @@ export type ProductionCompany = {
 	// ** The unique identifier for the production company
 	id: number;
 	// ** The path to the logo of the production company, or null if not available
-	logo_path: string | null;
+	logo_path?: string;
 	// ** The name of the production company
 	name: string;
 	// ** The country where the production company is based, represented by its ISO 3166-1 code
@@ -76,7 +76,7 @@ export type Credit = {
 	// ** Indicates whether the cast member is marked for adult content
 	adult: boolean;
 	// ** The gender of the cast member, or null if not specified (1 = female, 2 = male)
-	gender: number | null;
+	gender?: number;
 	// ** The unique identifier for the crew/cast member
 	id: number;
 	// ** The department the cast member is known for
@@ -207,11 +207,11 @@ export type WatchMonetizationType = "flatrate" | "free" | "ads" | "rent" | "buy"
  */
 type BaseKnownForItem = {
 	adult: boolean;
-	backdrop_path: string | null;
+	backdrop_path?: string;
 	id: number;
 	original_language: string;
 	overview: string;
-	poster_path: string | null;
+	poster_path?: string;
 	genre_ids: number[];
 	popularity: number;
 	vote_average: number;

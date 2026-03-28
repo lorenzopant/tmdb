@@ -24,7 +24,7 @@ export type TVEpisode = {
 	/** Unique TMDB identifier for this episode */
 	id: number;
 	/** Production code assigned by the production company, if available */
-	production_code?: string | null;
+	production_code?: string;
 	/** Runtime of the episode in minutes */
 	runtime: number;
 	/** Season number this episode belongs to (1-based) */
@@ -76,8 +76,8 @@ export type TVEpisodeImages = ImagesResult<ImageItem, "stills">;
 export type TVEpisodeTranslations = TranslationResults<TVEpisodeTranslationData>;
 
 export type TVEpisodeTranslationData = {
-	name?: string | null;
-	overview?: string | null;
+	name?: string;
+	overview?: string;
 };
 
 export type TVEpisodeVideos = VideoResults;

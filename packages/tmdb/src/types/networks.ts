@@ -33,9 +33,9 @@ export type NetworkImages = ImagesResult<OrganizationImage, "logos">;
  */
 export type Network = NetworkItem & {
 	/** The city or location of the network's headquarters, if available. */
-	headquarters?: string | null;
+	headquarters?: string;
 	/** The URL of the network's official homepage, if available. */
-	homepage?: string | null;
+	homepage?: string;
 };
 
 /**

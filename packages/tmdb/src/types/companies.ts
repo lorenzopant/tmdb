@@ -26,9 +26,9 @@ export type Company = CompanySummary & {
 	/** Company headquarters location */
 	headquarters: string;
 	/** Official company homepage */
-	homepage: string | null;
+	homepage?: string;
 	/** Parent company, if TMDB links one */
-	parent_company?: CompanySummary | null;
+	parent_company?: CompanySummary;
 };
 
 /**

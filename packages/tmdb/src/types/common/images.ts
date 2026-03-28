@@ -14,7 +14,7 @@ export type ImageItem = {
 	/** Image height in pixels */
 	height: number;
 	/** ISO 639-1 language code if image contains text, null otherwise */
-	iso_639_1?: string | null;
+	iso_639_1?: string;
 	/** Relative path to the image file (append to base URL) */
 	file_path: string;
 	/** Average user rating for this image */
