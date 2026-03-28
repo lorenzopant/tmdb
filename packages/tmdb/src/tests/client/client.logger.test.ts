@@ -190,6 +190,30 @@ describe("ApiClient logger", () => {
 		expect(calledUrl).not.toContain("skipped");
 	});
 
+	it("should serialize array param values consistently in the URL", async () => {
+		const client = new ApiClient(token);
+
+		const response: MockResponse = {
+			ok: true,
+			status: 200,
+			statusText: "OK",
+			url: "https://api.themoviedb.org/3/test",
+			headers: makeHeaders({}),
+			json: async () => ({}),
+		};
+
+		(globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(response);
+
+		await client.request("/test", {
+			language: "en-US",
+			include_image_language: ["en", "null"],
+		});
+
+		const calledUrl = new URL((globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls[0][0] as string);
+		expect(calledUrl.searchParams.get("language")).toBe("en-US");
+		expect(calledUrl.searchParams.get("include_image_language")).toBe("en,null");
+	});
+
 	it("should fall back to statusText when error body is a non-object JSON value", async () => {
 		const client = new ApiClient(token);
 

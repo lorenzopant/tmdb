@@ -29,11 +29,21 @@ export class ApiClient {
 	 * `{ language, page }` and `{ page, language }` produce the same key.
 	 */
 	private buildRequestKey(endpoint: string, params: Record<string, unknown>): string {
-		const definedEntries = Object.entries(params)
-			.filter(([, v]) => v !== undefined)
+		const definedEntries = this.serializeParams(params)
 			.sort(([a], [b]) => a.localeCompare(b))
-			.map(([k, v]) => `${k}=${String(v)}`);
+			.map(([key, value]) => `${key}=${value}`);
 		return definedEntries.length > 0 ? `${endpoint}?${definedEntries.join("&")}` : endpoint;
+	}
+
+	/**
+	 * Serializes request params once so URL construction and deduplication keys stay aligned.
+	 * `undefined` values are intentionally skipped because they are not sent to TMDB.
+	 */
+	private serializeParams(params: Record<string, unknown | undefined>): Array<[string, string]> {
+		return Object.entries(params).flatMap(([key, value]) => {
+			if (value === undefined) return [];
+			return [[key, String(value)]];
+		});
 	}
 
 	/**
@@ -70,9 +80,8 @@ export class ApiClient {
 		const url = new URL(`${this.baseUrl}${endpoint}`);
 		const jwt = isJwt(this.accessToken);
 
-		for (const [key, value] of Object.entries(params)) {
-			if (value === undefined) continue;
-			url.searchParams.append(key, String(value));
+		for (const [key, value] of this.serializeParams(params)) {
+			url.searchParams.append(key, value);
 		}
 
 		if (!jwt) {
