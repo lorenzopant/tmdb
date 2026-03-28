@@ -1,6 +1,7 @@
 {
 	"name": "@lorenzopant/tmdb",
 	"version": "1.17.1",
+	"type": "module",
 	"description": "A completely type-safe The Movie Database (TMDB) API wrapper for typescript applications.",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -17,8 +18,8 @@
 		"url": "https://github.com/lorenzopant/tmdb/issues"
 	},
 	"scripts": {
-		"build": "rm -rf dist && tsc",
-		"dev": "tsc --watch",
+		"build": "tsup",
+		"dev": "tsup --watch",
 		"typecheck": "tsc --noEmit",
 		"test": "vitest",
 		"test:unit": "vitest run --exclude '**/*.integration.test.ts'",
@@ -58,6 +59,7 @@
 		"release-it": "^19.0.3",
 		"release-it-pnpm": "^4.6.6",
 		"ts-morph": "^27.0.2",
+		"tsup": "^8.5.1",
 		"tsx": "^4.21.0",
 		"typescript": "^5.8.3",
 		"typescript-eslint": "^8.35.0",
@@ -75,8 +77,8 @@
 			"types": "./dist/index.d.ts"
 		},
 		"./types": {
-			"types": "./dist/types/index.d.ts",
-			"default": "./dist/types/index.js"
+			"import": "./dist/index.js",
+			"types": "./dist/index.d.ts"
 		}
 	}
 }
