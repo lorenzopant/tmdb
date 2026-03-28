@@ -57,7 +57,7 @@ export type TVSeason = {
 	/** Season overview/description */
 	overview: string;
 	/** Relative path to the season poster */
-	poster_path?: string | null;
+	poster_path?: string;
 	/** Season number within the TV show */
 	season_number: number;
 	/** Average user rating (0–10) */

@@ -10,7 +10,7 @@ export type CompanySummary = {
 	/** Unique company identifier */
 	id: number;
 	/** Relative path to the company logo */
-	logo_path?: string | null;
+	logo_path?: string;
 	/** Company display name */
 	name: string;
 };

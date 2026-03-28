@@ -30,7 +30,7 @@ export type TVEpisode = {
 	/** Season number this episode belongs to (1-based) */
 	season_number: number;
 	/** Relative path to the episode still/image (e.g. `"/abc123.jpg"`), or null if none */
-	still_path?: string | null;
+	still_path?: string;
 	/** Average user rating of the episode (0-10 scale) */
 	vote_average: number;
 	/** Total number of user votes for the episode */

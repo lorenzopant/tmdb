@@ -64,9 +64,9 @@ export type MovieCollection = {
 	// ** The name of the collection
 	name: string;
 	// ** The path to the poster image of the collection, if present (sanitized nulls may surface as undefined)
-	poster_path?: string | null;
+	poster_path?: string;
 	// ** The path to the backdrop image of the collection, if present (sanitized nulls may surface as undefined)
-	backdrop_path?: string | null;
+	backdrop_path?: string;
 };
 
 /**
@@ -88,7 +88,7 @@ export type Credit = {
 	// ** The popularity score of the cast member
 	popularity: number;
 	// ** The path to the profile image of the cast member, or null if not available
-	profile_path?: string | null;
+	profile_path?: string;
 	// ** The unique identifier for the credit
 	credit_id: string;
 };

@@ -20,7 +20,7 @@ type CreditDetailsMediaBase = {
 	/** Indicates whether the title is marked for adult content. */
 	adult: boolean;
 	/** Relative path to the backdrop image, if available. */
-	backdrop_path?: string | null;
+	backdrop_path?: string;
 	/** Character name when the credit belongs to cast. */
 	character?: string;
 	/** Genre identifiers attached to the media item. */
@@ -32,7 +32,7 @@ type CreditDetailsMediaBase = {
 	/** Plot summary. */
 	overview: string;
 	/** Relative path to the poster image, if available. */
-	poster_path?: string | null;
+	poster_path?: string;
 	/** Popularity score. */
 	popularity: number;
 	/** Average vote score. */
@@ -78,11 +78,11 @@ export type CreditDetailsTVEpisode = {
 	/** Production code if available. */
 	production_code: string;
 	/** Runtime in minutes, if available. */
-	runtime?: number | null;
+	runtime?: number;
 	/** Season number for the episode. */
 	season_number: number;
 	/** Episode still image path, if available. */
-	still_path?: string | null;
+	still_path?: string;
 	/** Average vote score. */
 	vote_average: number;
 	/** Total vote count. */
@@ -104,7 +104,7 @@ export type CreditDetailsTVSeason = {
 	/** Plot summary. */
 	overview: string;
 	/** Relative path to the season poster, if available. */
-	poster_path?: string | null;
+	poster_path?: string;
 	/** Season number within the series. */
 	season_number: number;
 	/** Average vote score. */
