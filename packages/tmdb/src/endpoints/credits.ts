@@ -19,7 +19,7 @@ export class CreditsAPI extends TMDBAPIBase {
 	 */
 	async details(params: CreditDetailsParams): Promise<CreditDetails> {
 		const endpoint = this.creditPath(params.credit_id);
-		const requestParams = this.withLanguage(params) ?? params;
+		const requestParams = this.withLanguage(params);
 		return this.client.request<CreditDetails>(endpoint, requestParams);
 	}
 }
