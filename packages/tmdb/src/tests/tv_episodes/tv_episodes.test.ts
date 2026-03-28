@@ -54,7 +54,7 @@ describe("TVEpisodesAPI", () => {
 		it("should call client.request with the correct endpoint and params", async () => {
 			await tvEpisodesAPI.changes({ episode_id: 62085 });
 			expect(clientMock.request).toHaveBeenCalledOnce();
-			expect(clientMock.request).toHaveBeenCalledWith("/tv//episode/62085//changes", { episode_id: 62085 });
+			expect(clientMock.request).toHaveBeenCalledWith("/tv/episode/62085/changes");
 		});
 	});
 

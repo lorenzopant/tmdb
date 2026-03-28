@@ -21,7 +21,6 @@ describe("CreditsAPI", () => {
 
 		expect(clientMock.request).toHaveBeenCalledOnce();
 		expect(clientMock.request).toHaveBeenCalledWith(`/credit/${credit_id}`, {
-			credit_id,
 			language,
 		});
 	});
@@ -33,7 +32,6 @@ describe("CreditsAPI", () => {
 
 		expect(clientMock.request).toHaveBeenCalledOnce();
 		expect(clientMock.request).toHaveBeenCalledWith(`/credit/${credit_id}`, {
-			credit_id,
 			language: "en-US",
 		});
 	});

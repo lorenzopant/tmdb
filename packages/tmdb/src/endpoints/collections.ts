@@ -25,8 +25,8 @@ export class CollectionsAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/collection-details
 	 */
 	async details(params: CollectionDetailsParams): Promise<Collection> {
-		const { language = this.defaultOptions.language, ...rest } = params;
-		const endpoint = this.collectionPath(params.collection_id);
+		const { language = this.defaultOptions.language, collection_id, ...rest } = params;
+		const endpoint = this.collectionPath(collection_id);
 		return this.client.request<Collection>(endpoint, { language, ...rest });
 	}
 
@@ -43,8 +43,9 @@ export class CollectionsAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/collection-images
 	 */
 	async images(params: CollectionImagesParams): Promise<CollectionImages> {
-		const endpoint = `${this.collectionPath(params.collection_id)}${ENDPOINTS.COLLECTIONS.IMAGES}`;
-		const requestParams = this.withLanguage(params) ?? params;
+		const { collection_id, ...rest } = params;
+		const endpoint = `${this.collectionPath(collection_id)}${ENDPOINTS.COLLECTIONS.IMAGES}`;
+		const requestParams = this.withLanguage(rest) ?? rest;
 		return this.client.request<CollectionImages>(endpoint, requestParams);
 	}
 
@@ -59,6 +60,6 @@ export class CollectionsAPI extends TMDBAPIBase {
 	 */
 	async translations(params: CollectionBaseParam): Promise<CollectionTranslations> {
 		const endpoint = `${this.collectionPath(params.collection_id)}${ENDPOINTS.COLLECTIONS.TRANSLATIONS}`;
-		return this.client.request<CollectionTranslations>(endpoint, params);
+		return this.client.request<CollectionTranslations>(endpoint);
 	}
 }

@@ -25,7 +25,7 @@ export class CompaniesAPI extends TMDBAPIBase {
 	 */
 	async details(params: CompanyDetailsParams): Promise<Company> {
 		const endpoint = this.companyPath(params.company_id);
-		return this.client.request<Company>(endpoint, params);
+		return this.client.request<Company>(endpoint);
 	}
 
 	/**
@@ -39,7 +39,7 @@ export class CompaniesAPI extends TMDBAPIBase {
 	 */
 	async alternative_names(params: CompanyAlternativeNamesParams): Promise<CompanyAlternativeNames> {
 		const endpoint = `${this.companyPath(params.company_id)}${ENDPOINTS.COMPANIES.ALTERNATIVE_NAMES}`;
-		return this.client.request<CompanyAlternativeNames>(endpoint, params);
+		return this.client.request<CompanyAlternativeNames>(endpoint);
 	}
 
 	/**
@@ -54,8 +54,9 @@ export class CompaniesAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/company-images
 	 */
 	async images(params: CompanyImagesParams): Promise<CompanyImages> {
-		const endpoint = `${this.companyPath(params.company_id)}${ENDPOINTS.COMPANIES.IMAGES}`;
-		const requestParams = this.withLanguage(params) ?? params;
+		const { company_id, ...rest } = params;
+		const endpoint = `${this.companyPath(company_id)}${ENDPOINTS.COMPANIES.IMAGES}`;
+		const requestParams = this.withLanguage(rest) ?? rest;
 		return this.client.request<CompanyImages>(endpoint, requestParams);
 	}
 }

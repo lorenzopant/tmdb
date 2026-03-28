@@ -18,7 +18,6 @@ describe("CollectionsAPI", () => {
 			await collectionsAPI.details({ collection_id: 10, language: "en-US" });
 			expect(clientMock.request).toHaveBeenCalledOnce();
 			expect(clientMock.request).toHaveBeenCalledWith("/collection/10", {
-				collection_id: 10,
 				language: "en-US",
 			});
 		});
@@ -26,7 +25,6 @@ describe("CollectionsAPI", () => {
 		it("should work without optional language param", async () => {
 			await collectionsAPI.details({ collection_id: 10 });
 			expect(clientMock.request).toHaveBeenCalledWith("/collection/10", {
-				collection_id: 10,
 				language: undefined,
 			});
 		});
@@ -35,7 +33,6 @@ describe("CollectionsAPI", () => {
 			collectionsAPI = new CollectionsAPI(clientMock, { language: "fr-FR" });
 			await collectionsAPI.details({ collection_id: 10 });
 			expect(clientMock.request).toHaveBeenCalledWith("/collection/10", {
-				collection_id: 10,
 				language: "fr-FR",
 			});
 		});
@@ -53,7 +50,6 @@ describe("CollectionsAPI", () => {
 			await collectionsAPI.images({ collection_id: 10, language: "en-US" });
 			expect(clientMock.request).toHaveBeenCalledOnce();
 			expect(clientMock.request).toHaveBeenCalledWith("/collection/10/images", {
-				collection_id: 10,
 				language: "en-US",
 			});
 		});
@@ -62,7 +58,6 @@ describe("CollectionsAPI", () => {
 			collectionsAPI = new CollectionsAPI(clientMock, { language: "it-IT" });
 			await collectionsAPI.images({ collection_id: 10 });
 			expect(clientMock.request).toHaveBeenCalledWith("/collection/10/images", {
-				collection_id: 10,
 				language: "it-IT",
 			});
 		});
@@ -72,9 +67,7 @@ describe("CollectionsAPI", () => {
 		it("should call client.request with correct endpoint and params", async () => {
 			await collectionsAPI.translations({ collection_id: 10 });
 			expect(clientMock.request).toHaveBeenCalledOnce();
-			expect(clientMock.request).toHaveBeenCalledWith("/collection/10/translations", {
-				collection_id: 10,
-			});
+			expect(clientMock.request).toHaveBeenCalledWith("/collection/10/translations");
 		});
 
 		it("should return the result from client.request", async () => {

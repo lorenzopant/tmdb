@@ -58,8 +58,8 @@ export class MoviesAPI extends TMDBAPIBase {
 	async details<T extends readonly MovieAppendToResponseNamespace[] = []>(
 		params: MovieDetailsParams & { append_to_response?: T[number] | T },
 	): Promise<T extends [] ? MovieDetails : MovieDetailsWithAppends<T>> {
-		const { language = this.defaultOptions.language, ...rest } = params;
-		const endpoint = this.moviePath(params.movie_id);
+		const { language = this.defaultOptions.language, movie_id, ...rest } = params;
+		const endpoint = this.moviePath(movie_id);
 		return this.client.request(endpoint, { language, ...rest });
 	}
 
@@ -74,8 +74,9 @@ export class MoviesAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/movie-alternative-titles
 	 */
 	async alternative_titles(params: MovieAlternativeTitlesParams): Promise<MovieAlternativeTitles> {
-		const endpoint = this.movieSubPath(params.movie_id, ENDPOINTS.MOVIES.ALTERNATIVE_TITLES);
-		return this.client.request<MovieAlternativeTitles>(endpoint, params);
+		const { movie_id, ...rest } = params;
+		const endpoint = this.movieSubPath(movie_id, ENDPOINTS.MOVIES.ALTERNATIVE_TITLES);
+		return this.client.request<MovieAlternativeTitles>(endpoint, rest);
 	}
 
 	/**
@@ -140,8 +141,9 @@ export class MoviesAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/movie-changes
 	 */
 	async changes(params: MovieChangesParams): Promise<MovieChanges> {
-		const endpoint = this.movieSubPath(params.movie_id, ENDPOINTS.MOVIES.CHANGES);
-		return this.client.request<MovieChanges>(endpoint, params);
+		const { movie_id, ...rest } = params;
+		const endpoint = this.movieSubPath(movie_id, ENDPOINTS.MOVIES.CHANGES);
+		return this.client.request<MovieChanges>(endpoint, rest);
 	}
 
 	/**

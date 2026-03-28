@@ -22,7 +22,6 @@ describe("MoviesAPI", () => {
 		await moviesAPI.details({ movie_id, language, append_to_response });
 		expect(clientMock.request).toHaveBeenCalledOnce();
 		expect(clientMock.request).toHaveBeenCalledWith("/movie/550", {
-			movie_id,
 			append_to_response,
 			language,
 		});
@@ -33,7 +32,6 @@ describe("MoviesAPI", () => {
 		await moviesAPI.details({ movie_id });
 		expect(clientMock.request).toHaveBeenCalledOnce();
 		expect(clientMock.request).toHaveBeenCalledWith("/movie/550", {
-			movie_id,
 			append_to_response: undefined,
 			language: undefined,
 		});
@@ -44,5 +42,37 @@ describe("MoviesAPI", () => {
 		(clientMock.request as ReturnType<typeof vi.fn>).mockResolvedValue(fakeResponse);
 		const result = await moviesAPI.details({ movie_id: 550 });
 		expect(result).toEqual(fakeResponse);
+	});
+
+	describe("alternative_titles", () => {
+		it("should call client.request without movie_id in query params", async () => {
+			await moviesAPI.alternative_titles({ movie_id: 550 });
+			expect(clientMock.request).toHaveBeenCalledOnce();
+			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/alternative_titles", {});
+		});
+
+		it("should forward the country query param", async () => {
+			await moviesAPI.alternative_titles({ movie_id: 550, country: "US" });
+			expect(clientMock.request).toHaveBeenCalledOnce();
+			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/alternative_titles", { country: "US" });
+		});
+	});
+
+	describe("changes", () => {
+		it("should call client.request without movie_id in query params", async () => {
+			await moviesAPI.changes({ movie_id: 550 });
+			expect(clientMock.request).toHaveBeenCalledOnce();
+			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/changes", {});
+		});
+
+		it("should forward date range and page query params", async () => {
+			await moviesAPI.changes({ movie_id: 550, start_date: "2024-01-01", end_date: "2024-01-14", page: 2 });
+			expect(clientMock.request).toHaveBeenCalledOnce();
+			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/changes", {
+				start_date: "2024-01-01",
+				end_date: "2024-01-14",
+				page: 2,
+			});
+		});
 	});
 });
