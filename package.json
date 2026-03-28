@@ -13,5 +13,10 @@
 	},
 	"devDependencies": {
 		"turbo": "latest"
+	},
+	"pnpm": {
+		"overrides": {
+			"basic-ftp": "5.2.0"
+		}
 	}
 }
