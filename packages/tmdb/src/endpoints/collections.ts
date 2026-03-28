@@ -44,7 +44,7 @@ export class CollectionsAPI extends TMDBAPIBase {
 	 */
 	async images(params: CollectionImagesParams): Promise<CollectionImages> {
 		const endpoint = `${this.collectionPath(params.collection_id)}${ENDPOINTS.COLLECTIONS.IMAGES}`;
-		const requestParams = this.withLanguage(params) ?? params;
+		const requestParams = this.withLanguage(params);
 		return this.client.request<CollectionImages>(endpoint, requestParams);
 	}
 
