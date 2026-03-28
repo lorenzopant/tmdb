@@ -6,13 +6,67 @@ export class ApiClient {
 	private accessToken: string;
 	private baseUrl: string = "https://api.themoviedb.org/3";
 	private logger?: TMDBLogger;
+	/**
+	 * Tracks in-flight requests keyed by a deterministic string derived from the endpoint
+	 * and its parameters. When two identical requests are fired concurrently, the second
+	 * caller receives the same Promise as the first — only one fetch is made.
+	 * Entries are removed via `.finally()` so the map never holds settled promises.
+	 */
+	private inflightRequests: Map<string, Promise<unknown>> = new Map();
+	private deduplication: boolean;
 
-	constructor(accessToken: string, options: { logger?: boolean | TMDBLoggerFn } = {}) {
+	constructor(accessToken: string, options: { logger?: boolean | TMDBLoggerFn; deduplication?: boolean } = {}) {
 		this.accessToken = accessToken;
 		this.logger = TMDBLogger.from(options.logger);
+		this.deduplication = options.deduplication !== false;
 	}
 
+	/**
+	 * Builds a stable, order-independent cache key for a request.
+	 *
+	 * `undefined` values are excluded (they are never serialised into the URL),
+	 * and the remaining entries are sorted alphabetically before joining so that
+	 * `{ language, page }` and `{ page, language }` produce the same key.
+	 */
+	private buildRequestKey(endpoint: string, params: Record<string, unknown>): string {
+		const definedEntries = Object.entries(params)
+			.filter(([, v]) => v !== undefined)
+			.sort(([a], [b]) => a.localeCompare(b))
+			.map(([k, v]) => `${k}=${String(v)}`);
+		return definedEntries.length > 0 ? `${endpoint}?${definedEntries.join("&")}` : endpoint;
+	}
+
+	/**
+	 * Makes an authenticated GET request to the TMDB API, returning the parsed and
+	 * null-sanitised response.
+	 *
+	 * **Deduplication:** when enabled (the default), concurrent calls with the same
+	 * `endpoint` + `params` share a single in-flight fetch. The second (and any
+	 * subsequent) caller receives the same `Promise` — no extra network request is made.
+	 * Once the promise settles (success or error) it is evicted from the map so the next
+	 * call triggers a fresh fetch. Deduplication can be disabled globally via
+	 * `TMDBOptions.deduplication = false`.
+	 */
 	async request<T>(endpoint: string, params: Record<string, unknown | undefined> = {}): Promise<T> {
+		if (!this.deduplication) return this.doRequest<T>(endpoint, params);
+
+		const key = this.buildRequestKey(endpoint, params);
+		const existing = this.inflightRequests.get(key);
+		if (existing) return existing as Promise<T>;
+
+		const promise = this.doRequest<T>(endpoint, params).finally(() => {
+			this.inflightRequests.delete(key);
+		});
+		this.inflightRequests.set(key, promise);
+		return promise;
+	}
+
+	/**
+	 * The actual fetch + response-parsing pipeline. Called by `request()` only when no
+	 * matching in-flight promise exists. Handles URL construction, auth headers, logging,
+	 * error mapping, and null sanitisation.
+	 */
+	private async doRequest<T>(endpoint: string, params: Record<string, unknown | undefined>): Promise<T> {
 		const url = new URL(`${this.baseUrl}${endpoint}`);
 		const jwt = isJwt(this.accessToken);
 
@@ -37,12 +91,12 @@ export class ApiClient {
 			res = await fetch(url.toString(), {
 				headers: jwt
 					? {
-						Authorization: `Bearer ${this.accessToken}`,
-						"Content-Type": "application/json;charset=utf-8",
-					}
+							Authorization: `Bearer ${this.accessToken}`,
+							"Content-Type": "application/json;charset=utf-8",
+						}
 					: {
-						"Content-Type": "application/json;charset=utf-8",
-					},
+							"Content-Type": "application/json;charset=utf-8",
+						},
 			});
 		} catch (error) {
 			this.logger?.log({

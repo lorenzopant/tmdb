@@ -34,4 +34,14 @@ export type TMDBOptions = {
 	 * - Pass a function to customize logging output.
 	 */
 	logger?: boolean | TMDBLoggerFn;
+	/**
+	 * Controls whether concurrent identical requests are deduplicated.
+	 * When `true` (default), multiple in-flight calls with the same endpoint and
+	 * parameters share a single fetch and resolve from the same Promise.
+	 * Set to `false` to disable deduplication — every call always triggers its
+	 * own fetch. Useful for polling loops, force-refreshes after mutations, or
+	 * any scenario where stale in-flight data must not be reused.
+	 * @default true
+	 */
+	deduplication?: boolean;
 };
