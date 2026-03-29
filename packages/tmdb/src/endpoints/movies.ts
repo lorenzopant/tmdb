@@ -58,9 +58,9 @@ export class MoviesAPI extends TMDBAPIBase {
 	async details<T extends readonly MovieAppendToResponseNamespace[] = []>(
 		params: MovieDetailsParams & { append_to_response?: T[number] | T },
 	): Promise<T extends [] ? MovieDetails : MovieDetailsWithAppends<T>> {
-		const { language = this.defaultOptions.language, movie_id, ...rest } = params;
+		const { language = this.defaultOptions.language, movie_id, append_to_response } = params;
 		const endpoint = this.moviePath(movie_id);
-		return this.client.request(endpoint, { language, ...rest });
+		return this.client.request(endpoint, { language, append_to_response });
 	}
 
 	/**
