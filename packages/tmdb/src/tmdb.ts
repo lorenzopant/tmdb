@@ -28,6 +28,7 @@ import { TrendingAPI } from "./endpoints/trending";
 import { ReviewsAPI } from "./endpoints/reviews";
 import { PeopleListsAPI } from "./endpoints/people_lists";
 import { PeopleAPI } from "./endpoints/people";
+import { AccountAPI } from "./endpoints/account";
 
 export class TMDB {
 	private client: ApiClient;
@@ -57,6 +58,7 @@ export class TMDB {
 	public reviews: ReviewsAPI;
 	public people_lists: PeopleListsAPI;
 	public people: PeopleAPI;
+	public account: AccountAPI;
 	// etc...
 
 	/**
@@ -93,5 +95,6 @@ export class TMDB {
 		this.reviews = new ReviewsAPI(this.client, this.options);
 		this.people_lists = new PeopleListsAPI(this.client, this.options);
 		this.people = new PeopleAPI(this.client, this.options);
+		this.account = new AccountAPI(this.client, this.options);
 	}
 }
