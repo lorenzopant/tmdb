@@ -1,0 +1,15 @@
+{
+	"ignorePatterns": [
+		".turbo",
+		"coverage",
+		"dist",
+		"apps/docs/.next",
+		"apps/docs/.source",
+		"apps/docs/out",
+		"apps/docs/build",
+		"apps/docs/next-env.d.ts"
+	],
+	"printWidth": 140,
+	"tabWidth": 4,
+	"useTabs": true
+}

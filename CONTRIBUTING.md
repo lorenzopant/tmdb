@@ -9,16 +9,16 @@ Thank you for considering contributing to **@lorenzopant/tmdb**! Whether it's bu
 1. Fork the repository and clone it locally.
 2. Install dependencies:
 
-   ```bash
-   pnpm install
-   ```
+    ```bash
+    pnpm install
+    ```
 
 3. Run the development server and test suite:
 
-   ```bash
-   pnpm dev
-   pnpm test
-   ```
+    ```bash
+    pnpm dev
+    pnpm test
+    ```
 
 ---
 

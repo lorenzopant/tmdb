@@ -151,16 +151,12 @@ export type PersonTVCredits = {
 /**
  * Combined movie/TV cast credit for a person.
  */
-export type PersonCombinedCastCredit =
-	| (PersonMovieCastCredit & { media_type: "movie" })
-	| (PersonTVCastCredit & { media_type: "tv" });
+export type PersonCombinedCastCredit = (PersonMovieCastCredit & { media_type: "movie" }) | (PersonTVCastCredit & { media_type: "tv" });
 
 /**
  * Combined movie/TV crew credit for a person.
  */
-export type PersonCombinedCrewCredit =
-	| (PersonMovieCrewCredit & { media_type: "movie" })
-	| (PersonTVCrewCredit & { media_type: "tv" });
+export type PersonCombinedCrewCredit = (PersonMovieCrewCredit & { media_type: "movie" }) | (PersonTVCrewCredit & { media_type: "tv" });
 
 /**
  * Combined credits for a person.
@@ -174,9 +170,7 @@ export type PersonCombinedCredits = {
 /**
  * Tagged image media payload associated with a person image tag.
  */
-export type PersonTaggedImageMedia =
-	| (MovieResultItem & { media_type: "movie" })
-	| (TVSeriesResultItem & { media_type: "tv" });
+export type PersonTaggedImageMedia = (MovieResultItem & { media_type: "movie" }) | (TVSeriesResultItem & { media_type: "tv" });
 
 /**
  * A single tagged image entry for a person.

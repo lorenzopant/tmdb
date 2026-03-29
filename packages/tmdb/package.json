@@ -3,74 +3,29 @@
 	"version": "1.17.3",
 	"type": "module",
 	"description": "A completely type-safe The Movie Database (TMDB) API wrapper for typescript applications.",
-	"main": "dist/index.js",
-	"types": "dist/index.d.ts",
-	"files": [
-		"dist",
-		"README.md"
+	"keywords": [
+		"api",
+		"movies",
+		"tmdb",
+		"typescript"
 	],
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/lorenzopant/tmdb"
-	},
 	"homepage": "https://lorenzopant-tmdb-docs.vercel.app",
 	"bugs": {
 		"url": "https://github.com/lorenzopant/tmdb/issues"
 	},
-	"scripts": {
-		"build": "tsup",
-		"dev": "tsup --watch",
-		"typecheck": "tsc --noEmit",
-		"test": "vitest",
-		"test:unit": "vitest run --exclude '**/*.integration.test.ts'",
-		"test:integration": "vitest run integration",
-		"test:ui": "vitest --ui",
-		"test:coverage": "vitest --coverage",
-		"prepare": "husky",
-		"lint": "eslint .",
-		"release": "pnpm release:patch",
-		"release:patch": "pnpm version patch --git-tag-version && git push --follow-tags",
-		"release:minor": "pnpm version minor --git-tag-version && git push --follow-tags",
-		"release:major": "pnpm version major --git-tag-version && git push --follow-tags"
-	},
-	"author": "Lorenzo Pantano",
 	"license": "MIT",
-	"keywords": [
-		"tmdb",
-		"typescript",
-		"api",
-		"movies"
+	"author": "Lorenzo Pantano",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/lorenzopant/tmdb"
+	},
+	"files": [
+		"dist",
+		"README.md"
 	],
-	"packageManager": "pnpm@8.8.0",
-	"devDependencies": {
-		"@eslint/compat": "^2.0.0",
-		"@eslint/eslintrc": "^3.3.1",
-		"@eslint/js": "^9.30.0",
-		"@types/node": "^22.19.11",
-		"@typescript-eslint/eslint-plugin": "^8.35.0",
-		"@typescript-eslint/parser": "^8.35.0",
-		"@vitest/coverage-v8": "^4.0.9",
-		"@vitest/ui": "^4.0.10",
-		"dotenv": "^16.5.0",
-		"eslint": "^9.30.0",
-		"eslint-config-prettier": "^10.1.5",
-		"eslint-plugin-import": "^2.32.0",
-		"husky": "^9.1.7",
-		"release-it": "^19.0.3",
-		"release-it-pnpm": "^4.6.6",
-		"ts-morph": "^27.0.2",
-		"tsup": "^8.5.1",
-		"tsx": "^4.21.0",
-		"typescript": "^5.8.3",
-		"typescript-eslint": "^8.35.0",
-		"vite": "^7.0.0",
-		"vitest": "^4.0.9"
-	},
-	"pnpm": {
-		"overrides": {
-			"basic-ftp": "5.2.0"
-		}
-	},
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
 	"exports": {
 		".": {
 			"import": "./dist/index.js",
@@ -79,6 +34,45 @@
 		"./types": {
 			"import": "./dist/index.js",
 			"types": "./dist/index.d.ts"
+		}
+	},
+	"scripts": {
+		"build": "tsup",
+		"dev": "tsup --watch",
+		"format": "oxfmt .",
+		"typecheck": "tsc --noEmit",
+		"test": "vitest",
+		"test:unit": "vitest run --exclude '**/*.integration.test.ts'",
+		"test:integration": "vitest run integration",
+		"test:ui": "vitest --ui",
+		"test:coverage": "vitest --coverage",
+		"prepare": "husky",
+		"lint": "oxlint .",
+		"lint:check": "oxlint --type-aware --type-check .",
+		"release": "pnpm release:patch",
+		"release:patch": "pnpm version patch --git-tag-version && git push --follow-tags",
+		"release:minor": "pnpm version minor --git-tag-version && git push --follow-tags",
+		"release:major": "pnpm version major --git-tag-version && git push --follow-tags"
+	},
+	"devDependencies": {
+		"@types/node": "^22.19.11",
+		"@vitest/coverage-v8": "^4.0.9",
+		"@vitest/ui": "^4.0.10",
+		"dotenv": "^16.5.0",
+		"husky": "^9.1.7",
+		"release-it": "^19.0.3",
+		"release-it-pnpm": "^4.6.6",
+		"ts-morph": "^27.0.2",
+		"tsup": "^8.5.1",
+		"tsx": "^4.21.0",
+		"typescript": "^5.8.3",
+		"vite": "^7.0.0",
+		"vitest": "^4.0.9"
+	},
+	"packageManager": "pnpm@8.8.0",
+	"pnpm": {
+		"overrides": {
+			"basic-ftp": "5.2.0"
 		}
 	}
 }

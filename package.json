@@ -1,19 +1,24 @@
 {
 	"name": "tmdb-monorepo",
 	"private": true,
-	"packageManager": "pnpm@9.15.9",
 	"scripts": {
 		"build": "turbo run build",
 		"dev": "turbo run dev",
 		"lint": "turbo run lint",
+		"lint:check": "turbo run lint:check",
+		"format": "turbo run format",
 		"typecheck": "turbo run typecheck",
 		"test": "turbo run test",
 		"clean:turbo": "rm -rf .turbo",
 		"clean": "rm -rf .turbo dist coverage"
 	},
 	"devDependencies": {
+		"oxfmt": "^0.42.0",
+		"oxlint": "^1.57.0",
+		"oxlint-tsgolint": "^0.18.1",
 		"turbo": "latest"
 	},
+	"packageManager": "pnpm@9.15.9",
 	"pnpm": {
 		"overrides": {
 			"basic-ftp": "5.2.0"

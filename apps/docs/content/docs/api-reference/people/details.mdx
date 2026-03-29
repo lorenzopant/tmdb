@@ -11,11 +11,11 @@ async details(params: PersonDetailsParams): Promise<PersonDetails>
 
 ## Parameters
 
-| Name                 | Type                                                                 | Required | Description                                                                 |
-| -------------------- | -------------------------------------------------------------------- | -------- | --------------------------------------------------------------------------- |
-| `person_id`          | `number`                                                             | ✅       | TMDB person identifier.                                                     |
-| `language`           | [`Language`](/docs/types/options/language#language)                  | ❌       | Language for localized results. Defaults to `en-US`.                       |
-| `append_to_response` | `PersonAppendToResponseNamespace \| PersonAppendToResponseNamespace[]` | ❌       | Subresources to append to the main person details response.                 |
+| Name                 | Type                                                                   | Required | Description                                                 |
+| -------------------- | ---------------------------------------------------------------------- | -------- | ----------------------------------------------------------- |
+| `person_id`          | `number`                                                               | ✅       | TMDB person identifier.                                     |
+| `language`           | [`Language`](/docs/types/options/language#language)                    | ❌       | Language for localized results. Defaults to `en-US`.        |
+| `append_to_response` | `PersonAppendToResponseNamespace \| PersonAppendToResponseNamespace[]` | ❌       | Subresources to append to the main person details response. |
 
 ## Returns
 

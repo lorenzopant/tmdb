@@ -1,0 +1,15 @@
+{
+	"$schema": "../../node_modules/oxlint/configuration_schema.json",
+	"extends": ["../../.oxlintrc.json"],
+	"plugins": ["eslint", "import", "node", "oxc", "promise", "typescript", "unicorn"],
+	"env": {
+		"node": true
+	},
+	"ignorePatterns": ["node_modules/**", "dist/**", "coverage/**"],
+	"overrides": [
+		{
+			"files": ["src/tests/**/*.test.ts", "src/tests/**/*.integration.test.ts"],
+			"plugins": ["eslint", "import", "node", "oxc", "promise", "typescript", "unicorn", "vitest"]
+		}
+	]
+}
