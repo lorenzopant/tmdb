@@ -7,7 +7,7 @@ export default defineConfig({
 		coverage: {
 			enabled: true,
 			reporter: ["text", "json", "html", "clover"],
-			exclude: ["src/types/**", "dist/**", "vitest.config.mts", "eslint.config.mjs", ".eslintrc.js", "src/index.ts"],
+			exclude: ["src/types/**", "dist/**", "vitest.config.mts", "src/index.ts"],
 		},
 		setupFiles: ["dotenv/config"],
 	},

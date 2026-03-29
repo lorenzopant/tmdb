@@ -1,8 +1,7 @@
 export type Timezone = TimezoneTuple[number];
 type TimezoneTuple = (typeof TIMEZONE_DATA)[number]["zones"];
 
-// No need to export this variable, only used for internal type generation from .json values
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// No need to export this variable, only used for internal type generation from .json values.
 const TIMEZONE_DATA = [
 	{
 		iso_3166_1: "AD",
