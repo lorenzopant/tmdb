@@ -13,11 +13,11 @@ async credits(params: TVEpisodeCreditsParams): Promise<TVEpisodeCredits>
 
 ## Parameters
 
-| Name             | Type                                           | Required | Description                                          |
-| ---------------- | ---------------------------------------------- | -------- | ---------------------------------------------------- |
-| `series_id`      | `number`                                       | ✅       | TMDB TV series identifier.                           |
-| `season_number`  | `number`                                       | ✅       | Season number within the TV series.                  |
-| `episode_number` | `number`                                       | ✅       | Episode number within the season.                    |
+| Name             | Type                                                | Required | Description                                          |
+| ---------------- | --------------------------------------------------- | -------- | ---------------------------------------------------- |
+| `series_id`      | `number`                                            | ✅       | TMDB TV series identifier.                           |
+| `season_number`  | `number`                                            | ✅       | Season number within the TV series.                  |
+| `episode_number` | `number`                                            | ✅       | Episode number within the season.                    |
 | `language`       | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized results. Defaults to `en-US`. |
 
 ## Returns

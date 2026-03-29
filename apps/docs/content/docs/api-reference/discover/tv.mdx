@@ -18,39 +18,39 @@ async tv(params?: DiscoverTVParams): Promise<PaginatedResponse<DiscoverTVResultI
 
 ## Parameters
 
-| Name | Type | Required | Description |
-| ---- | ---- | -------- | ----------- |
-| `include_adult` | `boolean` | ❌ | Include adult titles in results. |
-| `language` | [`Language`](/docs/types/options/language#language) | ❌ | Language used for localized result fields. |
-| `page` | `number` | ❌ | Page number for paginated results. |
-| `sort_by` | [`DiscoverTVSortBy`](/docs/types/discover#discovertvsortby) | ❌ | Sort order for TV discover results. |
-| `timezone` | `string` | ❌ | Timezone used for date-based TV filters. |
-| `air_date.gte` | `string` | ❌ | Minimum air date in `YYYY-MM-DD` format. |
-| `air_date.lte` | `string` | ❌ | Maximum air date in `YYYY-MM-DD` format. |
-| `first_air_date.gte` | `string` | ❌ | Minimum first air date in `YYYY-MM-DD` format. |
-| `first_air_date.lte` | `string` | ❌ | Maximum first air date in `YYYY-MM-DD` format. |
-| `first_air_date_year` | `number` | ❌ | Filter by first air year. |
-| `include_null_first_air_dates` | `boolean` | ❌ | Include results with null first air dates. |
-| `screened_theatrically` | `boolean` | ❌ | Filter to TV series that screened theatrically. |
-| `with_networks` | `string` | ❌ | Filter by network IDs. |
-| `with_status` | `string` | ❌ | Filter by TMDB TV status codes. Accepts comma or pipe-separated values. |
-| `with_type` | `string` | ❌ | Filter by TMDB TV type codes. Accepts comma or pipe-separated values. |
-| `with_genres` | `string` | ❌ | Filter by genre IDs. |
-| `without_genres` | `string` | ❌ | Exclude genre IDs. |
-| `with_keywords` | `string` | ❌ | Filter by keyword IDs. |
-| `without_keywords` | `string` | ❌ | Exclude keyword IDs. |
-| `with_companies` | `string` | ❌ | Filter by production company IDs. |
-| `without_companies` | `string` | ❌ | Exclude production company IDs. |
-| `with_origin_country` | [`CountryISO3166_1`](/docs/types/options/region#countryiso31661) | ❌ | Filter by origin country. |
-| `with_original_language` | [`LanguageISO6391`](/docs/types/options/language#languageiso6391) | ❌ | Filter by original language. |
-| `vote_average.gte` | `number` | ❌ | Minimum average vote. |
-| `vote_average.lte` | `number` | ❌ | Maximum average vote. |
-| `vote_count.gte` | `number` | ❌ | Minimum vote count. |
-| `vote_count.lte` | `number` | ❌ | Maximum vote count. |
-| `with_watch_providers` | `string` | ❌ | Filter by watch provider IDs. |
-| `without_watch_providers` | `string` | ❌ | Exclude watch provider IDs. |
-| `with_watch_monetization_types` | `string` | ❌ | Filter by watch monetization types such as `flatrate`, `rent`, or `buy`. |
-| `watch_region` | [`CountryISO3166_1`](/docs/types/options/region#countryiso31661) | ❌ | Region used for watch provider filtering. |
+| Name                            | Type                                                              | Required | Description                                                              |
+| ------------------------------- | ----------------------------------------------------------------- | -------- | ------------------------------------------------------------------------ |
+| `include_adult`                 | `boolean`                                                         | ❌       | Include adult titles in results.                                         |
+| `language`                      | [`Language`](/docs/types/options/language#language)               | ❌       | Language used for localized result fields.                               |
+| `page`                          | `number`                                                          | ❌       | Page number for paginated results.                                       |
+| `sort_by`                       | [`DiscoverTVSortBy`](/docs/types/discover#discovertvsortby)       | ❌       | Sort order for TV discover results.                                      |
+| `timezone`                      | `string`                                                          | ❌       | Timezone used for date-based TV filters.                                 |
+| `air_date.gte`                  | `string`                                                          | ❌       | Minimum air date in `YYYY-MM-DD` format.                                 |
+| `air_date.lte`                  | `string`                                                          | ❌       | Maximum air date in `YYYY-MM-DD` format.                                 |
+| `first_air_date.gte`            | `string`                                                          | ❌       | Minimum first air date in `YYYY-MM-DD` format.                           |
+| `first_air_date.lte`            | `string`                                                          | ❌       | Maximum first air date in `YYYY-MM-DD` format.                           |
+| `first_air_date_year`           | `number`                                                          | ❌       | Filter by first air year.                                                |
+| `include_null_first_air_dates`  | `boolean`                                                         | ❌       | Include results with null first air dates.                               |
+| `screened_theatrically`         | `boolean`                                                         | ❌       | Filter to TV series that screened theatrically.                          |
+| `with_networks`                 | `string`                                                          | ❌       | Filter by network IDs.                                                   |
+| `with_status`                   | `string`                                                          | ❌       | Filter by TMDB TV status codes. Accepts comma or pipe-separated values.  |
+| `with_type`                     | `string`                                                          | ❌       | Filter by TMDB TV type codes. Accepts comma or pipe-separated values.    |
+| `with_genres`                   | `string`                                                          | ❌       | Filter by genre IDs.                                                     |
+| `without_genres`                | `string`                                                          | ❌       | Exclude genre IDs.                                                       |
+| `with_keywords`                 | `string`                                                          | ❌       | Filter by keyword IDs.                                                   |
+| `without_keywords`              | `string`                                                          | ❌       | Exclude keyword IDs.                                                     |
+| `with_companies`                | `string`                                                          | ❌       | Filter by production company IDs.                                        |
+| `without_companies`             | `string`                                                          | ❌       | Exclude production company IDs.                                          |
+| `with_origin_country`           | [`CountryISO3166_1`](/docs/types/options/region#countryiso31661)  | ❌       | Filter by origin country.                                                |
+| `with_original_language`        | [`LanguageISO6391`](/docs/types/options/language#languageiso6391) | ❌       | Filter by original language.                                             |
+| `vote_average.gte`              | `number`                                                          | ❌       | Minimum average vote.                                                    |
+| `vote_average.lte`              | `number`                                                          | ❌       | Maximum average vote.                                                    |
+| `vote_count.gte`                | `number`                                                          | ❌       | Minimum vote count.                                                      |
+| `vote_count.lte`                | `number`                                                          | ❌       | Maximum vote count.                                                      |
+| `with_watch_providers`          | `string`                                                          | ❌       | Filter by watch provider IDs.                                            |
+| `without_watch_providers`       | `string`                                                          | ❌       | Exclude watch provider IDs.                                              |
+| `with_watch_monetization_types` | `string`                                                          | ❌       | Filter by watch monetization types such as `flatrate`, `rent`, or `buy`. |
+| `watch_region`                  | [`CountryISO3166_1`](/docs/types/options/region#countryiso31661)  | ❌       | Region used for watch provider filtering.                                |
 
 ## Returns
 
@@ -63,9 +63,9 @@ const series = await tmdb.discover.tv({
 	sort_by: "first_air_date.desc",
 	timezone: "Europe/Rome",
 	"first_air_date.gte": "2024-01-01",
-	"with_networks": "213",
-	"with_status": "0|2",
-	"with_type": "2,4",
+	with_networks: "213",
+	with_status: "0|2",
+	with_type: "2,4",
 });
 
 console.log(series.results[0]?.name);

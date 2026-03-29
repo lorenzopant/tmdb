@@ -1,25 +1,44 @@
 {
 	"name": "@lorenzopant/tmdb",
 	"version": "1.17.2",
-	"type": "module",
 	"description": "A completely type-safe The Movie Database (TMDB) API wrapper for typescript applications.",
-	"main": "dist/index.js",
-	"types": "dist/index.d.ts",
-	"files": [
-		"dist",
-		"README.md"
+	"keywords": [
+		"api",
+		"movies",
+		"tmdb",
+		"typescript"
 	],
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/lorenzopant/tmdb"
-	},
 	"homepage": "https://lorenzopant-tmdb-docs.vercel.app",
 	"bugs": {
 		"url": "https://github.com/lorenzopant/tmdb/issues"
 	},
+	"license": "MIT",
+	"author": "Lorenzo Pantano",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/lorenzopant/tmdb"
+	},
+	"files": [
+		"dist",
+		"README.md"
+	],
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"types": "./dist/index.d.ts"
+		},
+		"./types": {
+			"import": "./dist/index.js",
+			"types": "./dist/index.d.ts"
+		}
+	},
 	"scripts": {
 		"build": "tsup",
 		"dev": "tsup --watch",
+		"format": "oxfmt .",
 		"typecheck": "tsc --noEmit",
 		"test": "vitest",
 		"test:unit": "vitest run --exclude '**/*.integration.test.ts'",
@@ -33,15 +52,6 @@
 		"release:minor": "pnpm version minor --git-tag-version && git push --follow-tags",
 		"release:major": "pnpm version major --git-tag-version && git push --follow-tags"
 	},
-	"author": "Lorenzo Pantano",
-	"license": "MIT",
-	"keywords": [
-		"tmdb",
-		"typescript",
-		"api",
-		"movies"
-	],
-	"packageManager": "pnpm@8.8.0",
 	"devDependencies": {
 		"@eslint/compat": "^2.0.0",
 		"@eslint/eslintrc": "^3.3.1",
@@ -66,19 +76,10 @@
 		"vite": "^7.0.0",
 		"vitest": "^4.0.9"
 	},
+	"packageManager": "pnpm@8.8.0",
 	"pnpm": {
 		"overrides": {
 			"basic-ftp": "5.2.0"
-		}
-	},
-	"exports": {
-		".": {
-			"import": "./dist/index.js",
-			"types": "./dist/index.d.ts"
-		},
-		"./types": {
-			"import": "./dist/index.js",
-			"types": "./dist/index.d.ts"
 		}
 	}
 }

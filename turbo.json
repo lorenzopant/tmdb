@@ -14,6 +14,10 @@
 			"dependsOn": ["^lint"],
 			"cache": false
 		},
+		"format": {
+			"dependsOn": ["^format"],
+			"cache": false
+		},
 		"test": {
 			"dependsOn": ["^test"],
 			"cache": false

@@ -19,24 +19,24 @@ async by_id(params: FindByIDParams): Promise<FindResults>
 
 ### Supported external sources
 
-| Source | Movies | TV Shows | TV Seasons | TV Episodes | People |
-| ------ | ------ | -------- | ---------- | ----------- | ------ |
-| IMDb | ✅ | ✅ | ✅ | ✅ | ❌ |
-| Facebook | ✅ | ✅ | ❌ | ❌ | ✅ |
-| Instagram | ✅ | ✅ | ❌ | ❌ | ✅ |
-| TheTVDB | ❌ | ✅ | ✅ | ✅ | ❌ |
-| TikTok | ✅ | ✅ | ❌ | ❌ | ✅ |
-| Twitter | ✅ | ✅ | ❌ | ❌ | ✅ |
-| Wikidata | ✅ | ✅ | ✅ | ✅ | ✅ |
-| YouTube | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Source    | Movies | TV Shows | TV Seasons | TV Episodes | People |
+| --------- | ------ | -------- | ---------- | ----------- | ------ |
+| IMDb      | ✅     | ✅       | ✅         | ✅          | ❌     |
+| Facebook  | ✅     | ✅       | ❌         | ❌          | ✅     |
+| Instagram | ✅     | ✅       | ❌         | ❌          | ✅     |
+| TheTVDB   | ❌     | ✅       | ✅         | ✅          | ❌     |
+| TikTok    | ✅     | ✅       | ❌         | ❌          | ✅     |
+| Twitter   | ✅     | ✅       | ❌         | ❌          | ✅     |
+| Wikidata  | ✅     | ✅       | ✅         | ✅          | ✅     |
+| YouTube   | ✅     | ✅       | ❌         | ❌          | ✅     |
 
 ## Parameters
 
-| Name | Type | Required | Description |
-| ---- | ---- | -------- | ----------- |
-| `external_id` | `string` | ✅ | External identifier to look up, such as an IMDb ID. |
-| `external_source` | [`FindExternalSource`](/docs/types/find#findexternalsource) | ✅ | Source namespace the external ID belongs to. |
-| `language` | [`Language`](/docs/types/options/language#language) | ❌ | Language used for localized result fields. |
+| Name              | Type                                                        | Required | Description                                         |
+| ----------------- | ----------------------------------------------------------- | -------- | --------------------------------------------------- |
+| `external_id`     | `string`                                                    | ✅       | External identifier to look up, such as an IMDb ID. |
+| `external_source` | [`FindExternalSource`](/docs/types/find#findexternalsource) | ✅       | Source namespace the external ID belongs to.        |
+| `language`        | [`Language`](/docs/types/options/language#language)         | ❌       | Language used for localized result fields.          |
 
 ## Returns
 

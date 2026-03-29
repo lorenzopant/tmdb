@@ -28,23 +28,23 @@ yard add @lorenzopant/tmdb
 ## Usage
 
 ```typescript
-import { TMDB } from '@lorenzopant/tmdb';
+import { TMDB } from "@lorenzopant/tmdb";
 
-const tmdb = new TMDB('your_access_token');
+const tmdb = new TMDB("your_access_token");
 
 async function searchMovies() {
-  try {
-    const movies = await tmdb.search.movies({ query: 'Fight Club' });
-    console.log(movies);
-  } catch (error) {
-    if (error instanceof TMDBError) {
-      console.error('TMDB Error:', error.message);
-      console.error('HTTP Status:', error.http_status_code);
-      console.error('TMDB Status Code:', error.tmdb_status_code);
-    } else {
-      console.error('Unknown error:', error);
-    }
-  }
+	try {
+		const movies = await tmdb.search.movies({ query: "Fight Club" });
+		console.log(movies);
+	} catch (error) {
+		if (error instanceof TMDBError) {
+			console.error("TMDB Error:", error.message);
+			console.error("HTTP Status:", error.http_status_code);
+			console.error("TMDB Status Code:", error.tmdb_status_code);
+		} else {
+			console.error("Unknown error:", error);
+		}
+	}
 }
 
 searchMovies();
@@ -77,11 +77,11 @@ Custom logger:
 
 ```typescript
 const tmdb = new TMDB("your_access_token", {
-  logger: (entry) => {
-    if (entry.type === "response") {
-      console.log("TMDB:", entry.endpoint, entry.status, entry.durationMs);
-    }
-  },
+	logger: (entry) => {
+		if (entry.type === "response") {
+			console.log("TMDB:", entry.endpoint, entry.status, entry.durationMs);
+		}
+	},
 });
 ```
 
