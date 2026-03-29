@@ -147,6 +147,38 @@ describe("ApiClient deduplication", () => {
 		expect(r2).toEqual({ id: 550 });
 	});
 
+	it("treats array-valued params with different key order as the same request", async () => {
+		const client = new ApiClient(token);
+
+		let resolveJson!: (value: unknown) => void;
+		const jsonPromise = new Promise((resolve) => {
+			resolveJson = resolve;
+		});
+
+		const response: MockResponse = {
+			ok: true,
+			status: 200,
+			statusText: "OK",
+			url: "https://api.themoviedb.org/3/movie/550/images",
+			headers: makeHeaders({}),
+			json: () => jsonPromise,
+		};
+
+		(globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(response);
+
+		const [r1, r2] = await Promise.all([
+			client.request("/movie/550/images", { language: "en-US", include_image_language: ["en", "null"] }),
+			client.request("/movie/550/images", { include_image_language: ["en", "null"], language: "en-US" }),
+			(async () => {
+				resolveJson({ id: 550 });
+			})(),
+		]).then(([a, b]) => [a, b]);
+
+		expect(globalThis.fetch).toHaveBeenCalledTimes(1);
+		expect(r1).toEqual({ id: 550 });
+		expect(r2).toEqual({ id: 550 });
+	});
+
 	it("allows a second request after the first one completes", async () => {
 		const client = new ApiClient(token);
 
