@@ -1,0 +1,44 @@
+---
+title: Rated Movies
+description: Get the paginated list of movies rated by an account.
+---
+
+Get the list of movies an account has rated, with optional sorting and pagination.
+
+```ts
+async rated_movies(params: AccountMediaListParams): Promise<AccountRatedMoviesResponse>
+```
+
+> **TMDB Reference:** [Rated Movies](https://developer.themoviedb.org/reference/account-rated-movies)
+
+## Parameters
+
+| Name         | Type                                                | Required | Description                                            |
+| ------------ | --------------------------------------------------- | -------- | ------------------------------------------------------ |
+| `account_id` | `number`                                            | ✅       | The TMDB account ID.                                   |
+| `session_id` | `string`                                            | ❌       | Session ID for v3 session-based authentication.        |
+| `language`   | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized results. Defaults to `en-US`.   |
+| `sort_by`    | `AccountSortBy`                                     | ❌       | Sort order: `"created_at.asc"` or `"created_at.desc"`. |
+| `page`       | `number`                                            | ❌       | Page number to return.                                 |
+
+## Returns
+
+A [`PaginatedResponse<AccountRatedMovieItem>`](/docs/types/common#paginatedresponset) containing an array of [`AccountRatedMovieItem`](/docs/types/account#accountratedmovieitem) objects. Each item includes a `rating` field with the user's score (0.5–10).
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-access-token");
+const rated = await tmdb.account.rated_movies({ account_id: 123 });
+
+console.log(rated.results[0].title);
+console.log(rated.results[0].rating); // 8.5
+```
+
+## Related Types
+
+- [`AccountMediaListParams`](/docs/types/account#accountmedialistparams)
+- [`AccountRatedMovieItem`](/docs/types/account#accountratedmovieitem)
+- [`AccountSortBy`](/docs/types/account#accountsortby)

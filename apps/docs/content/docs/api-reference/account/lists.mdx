@@ -1,0 +1,41 @@
+---
+title: Lists
+description: Get all custom lists created by an account.
+---
+
+Get the paginated list of custom lists created by a TMDB account.
+
+```ts
+async lists(params: AccountListsParams): Promise<PaginatedResponse<AccountListItem>>
+```
+
+> **TMDB Reference:** [Account Lists](https://developer.themoviedb.org/reference/account-lists)
+
+## Parameters
+
+| Name         | Type     | Required | Description                                     |
+| ------------ | -------- | -------- | ----------------------------------------------- |
+| `account_id` | `number` | ✅       | The TMDB account ID.                            |
+| `session_id` | `string` | ❌       | Session ID for v3 session-based authentication. |
+| `page`       | `number` | ❌       | Page number to return.                          |
+
+## Returns
+
+A [`PaginatedResponse<AccountListItem>`](/docs/types/common#paginatedresponset) containing an array of [`AccountListItem`](/docs/types/account#accountlistitem) objects.
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-access-token");
+const lists = await tmdb.account.lists({ account_id: 123 });
+
+console.log(lists.results[0].name); // "My Watchlist"
+console.log(lists.results[0].item_count); // 42
+```
+
+## Related Types
+
+- [`AccountListsParams`](/docs/types/account#accountlistsparams)
+- [`AccountListItem`](/docs/types/account#accountlistitem)

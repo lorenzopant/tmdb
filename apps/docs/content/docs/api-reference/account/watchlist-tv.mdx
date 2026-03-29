@@ -1,0 +1,46 @@
+---
+title: Watchlist TV
+description: Get the paginated list of TV shows in an account's watchlist.
+---
+
+Get the list of TV shows an account has added to their watchlist, with optional sorting and pagination.
+
+```ts
+async watchlist_tv(params: AccountMediaListParams): Promise<AccountTVListResponse>
+```
+
+> **TMDB Reference:** [Watchlist TV](https://developer.themoviedb.org/reference/account-watchlist-tv)
+
+## Parameters
+
+| Name         | Type                                                | Required | Description                                            |
+| ------------ | --------------------------------------------------- | -------- | ------------------------------------------------------ |
+| `account_id` | `number`                                            | ✅       | The TMDB account ID.                                   |
+| `session_id` | `string`                                            | ❌       | Session ID for v3 session-based authentication.        |
+| `language`   | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized results. Defaults to `en-US`.   |
+| `sort_by`    | `AccountSortBy`                                     | ❌       | Sort order: `"created_at.asc"` or `"created_at.desc"`. |
+| `page`       | `number`                                            | ❌       | Page number to return.                                 |
+
+## Returns
+
+A [`PaginatedResponse<AccountTVItem>`](/docs/types/common#paginatedresponset) containing an array of [`AccountTVItem`](/docs/types/account#accounttvitem) objects.
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-access-token");
+const watchlist = await tmdb.account.watchlist_tv({
+	account_id: 123,
+	sort_by: "created_at.asc",
+});
+
+console.log(watchlist.results[0].name);
+```
+
+## Related Types
+
+- [`AccountMediaListParams`](/docs/types/account#accountmedialistparams)
+- [`AccountTVItem`](/docs/types/account#accounttvitem)
+- [`AccountSortBy`](/docs/types/account#accountsortby)

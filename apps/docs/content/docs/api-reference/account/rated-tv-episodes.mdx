@@ -1,0 +1,45 @@
+---
+title: Rated TV Episodes
+description: Get the paginated list of TV episodes rated by an account.
+---
+
+Get the list of individual TV episodes an account has rated, with optional sorting and pagination.
+
+```ts
+async rated_tv_episodes(params: AccountMediaListParams): Promise<AccountRatedEpisodesResponse>
+```
+
+> **TMDB Reference:** [Rated TV Episodes](https://developer.themoviedb.org/reference/account-rated-tv-episodes)
+
+## Parameters
+
+| Name         | Type                                                | Required | Description                                            |
+| ------------ | --------------------------------------------------- | -------- | ------------------------------------------------------ |
+| `account_id` | `number`                                            | ✅       | The TMDB account ID.                                   |
+| `session_id` | `string`                                            | ❌       | Session ID for v3 session-based authentication.        |
+| `language`   | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized results. Defaults to `en-US`.   |
+| `sort_by`    | `AccountSortBy`                                     | ❌       | Sort order: `"created_at.asc"` or `"created_at.desc"`. |
+| `page`       | `number`                                            | ❌       | Page number to return.                                 |
+
+## Returns
+
+A [`PaginatedResponse<AccountRatedEpisodeItem>`](/docs/types/common#paginatedresponset) containing an array of [`AccountRatedEpisodeItem`](/docs/types/account#accountratedepisodeitem) objects. Each item includes a `rating` field with the user's score (0.5–10).
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-access-token");
+const rated = await tmdb.account.rated_tv_episodes({ account_id: 123 });
+
+console.log(rated.results[0].name); // "Pilot"
+console.log(rated.results[0].show_id); // parent TV show ID
+console.log(rated.results[0].rating); // 9.5
+```
+
+## Related Types
+
+- [`AccountMediaListParams`](/docs/types/account#accountmedialistparams)
+- [`AccountRatedEpisodeItem`](/docs/types/account#accountratedepisodeitem)
+- [`AccountSortBy`](/docs/types/account#accountsortby)

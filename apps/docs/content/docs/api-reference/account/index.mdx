@@ -1,0 +1,28 @@
+---
+title: Account
+description: Manage account favorites, watchlists, ratings, and lists on TMDB.
+---
+
+The `AccountAPI` provides access to user account data on TMDB — favorites, watchlists, ratings, and custom lists.
+All endpoints require a valid `account_id`. Session-based v3 auth also requires a `session_id`.
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-access-token");
+const details = await tmdb.account.details({ account_id: 123 });
+```
+
+## Methods
+
+- [`details()`](/docs/api-reference/account/details) — Get the public profile of an account.
+- [`add_favorite()`](/docs/api-reference/account/add-favorite) — Mark a movie or TV show as a favourite (or remove it).
+- [`add_to_watchlist()`](/docs/api-reference/account/add-to-watchlist) — Add a movie or TV show to the watchlist (or remove it).
+- [`favorite_movies()`](/docs/api-reference/account/favorite-movies) — Get the paginated list of favorite movies for an account.
+- [`favorite_tv()`](/docs/api-reference/account/favorite-tv) — Get the paginated list of favorite TV shows for an account.
+- [`watchlist_movies()`](/docs/api-reference/account/watchlist-movies) — Get the paginated list of movies in an account's watchlist.
+- [`watchlist_tv()`](/docs/api-reference/account/watchlist-tv) — Get the paginated list of TV shows in an account's watchlist.
+- [`rated_movies()`](/docs/api-reference/account/rated-movies) — Get the paginated list of movies rated by an account.
+- [`rated_tv()`](/docs/api-reference/account/rated-tv) — Get the paginated list of TV shows rated by an account.
+- [`rated_tv_episodes()`](/docs/api-reference/account/rated-tv-episodes) — Get the paginated list of TV episodes rated by an account.
+- [`lists()`](/docs/api-reference/account/lists) — Get all custom lists created by an account.

@@ -1,0 +1,44 @@
+---
+title: Rated TV
+description: Get the paginated list of TV shows rated by an account.
+---
+
+Get the list of TV shows an account has rated, with optional sorting and pagination.
+
+```ts
+async rated_tv(params: AccountMediaListParams): Promise<AccountRatedTVResponse>
+```
+
+> **TMDB Reference:** [Rated TV](https://developer.themoviedb.org/reference/account-rated-tv)
+
+## Parameters
+
+| Name         | Type                                                | Required | Description                                            |
+| ------------ | --------------------------------------------------- | -------- | ------------------------------------------------------ |
+| `account_id` | `number`                                            | ✅       | The TMDB account ID.                                   |
+| `session_id` | `string`                                            | ❌       | Session ID for v3 session-based authentication.        |
+| `language`   | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized results. Defaults to `en-US`.   |
+| `sort_by`    | `AccountSortBy`                                     | ❌       | Sort order: `"created_at.asc"` or `"created_at.desc"`. |
+| `page`       | `number`                                            | ❌       | Page number to return.                                 |
+
+## Returns
+
+A [`PaginatedResponse<AccountRatedTVItem>`](/docs/types/common#paginatedresponset) containing an array of [`AccountRatedTVItem`](/docs/types/account#accountratedtvitem) objects. Each item includes a `rating` field with the user's score (0.5–10).
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-access-token");
+const rated = await tmdb.account.rated_tv({ account_id: 123 });
+
+console.log(rated.results[0].name);
+console.log(rated.results[0].rating); // 9
+```
+
+## Related Types
+
+- [`AccountMediaListParams`](/docs/types/account#accountmedialistparams)
+- [`AccountRatedTVItem`](/docs/types/account#accountratedtvitem)
+- [`AccountSortBy`](/docs/types/account#accountsortby)
