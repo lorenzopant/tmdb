@@ -31,6 +31,14 @@ describe("WatchProvidersAPI", () => {
 		});
 	});
 
+	it("should pass undefined params to movie providers when no language defaults exist", async () => {
+		watchProvidersAPI = new WatchProvidersAPI(clientMock);
+		await watchProvidersAPI.movie_providers();
+
+		expect(clientMock.request).toHaveBeenCalledOnce();
+		expect(clientMock.request).toHaveBeenCalledWith("/watch/providers/movie", undefined);
+	});
+
 	it("should call client.request with the correct tv providers parameters", async () => {
 		await watchProvidersAPI.tv_providers({ language: "it-IT" });
 
@@ -40,6 +48,14 @@ describe("WatchProvidersAPI", () => {
 		});
 	});
 
+	it("should pass undefined params to tv providers when no language defaults exist", async () => {
+		watchProvidersAPI = new WatchProvidersAPI(clientMock);
+		await watchProvidersAPI.tv_providers();
+
+		expect(clientMock.request).toHaveBeenCalledOnce();
+		expect(clientMock.request).toHaveBeenCalledWith("/watch/providers/tv", undefined);
+	});
+
 	it("should call client.request with the correct available regions parameters", async () => {
 		await watchProvidersAPI.available_regions({ language: "it-IT" });
 
@@ -47,6 +63,14 @@ describe("WatchProvidersAPI", () => {
 		expect(clientMock.request).toHaveBeenCalledWith("/watch/providers/regions", {
 			language: "it-IT",
 		});
+	});
+
+	it("should pass undefined params to available regions when no language defaults exist", async () => {
+		watchProvidersAPI = new WatchProvidersAPI(clientMock);
+		await watchProvidersAPI.available_regions();
+
+		expect(clientMock.request).toHaveBeenCalledOnce();
+		expect(clientMock.request).toHaveBeenCalledWith("/watch/providers/regions", undefined);
 	});
 
 	it("should return the result from client.request", async () => {
