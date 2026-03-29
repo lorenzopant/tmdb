@@ -1,0 +1,75 @@
+---
+title: Utility
+description: Type guards and utility types exported by the package.
+---
+
+import { TypeTable } from "fumadocs-ui/components/type-table";
+
+These are utility functions and types exported from `@lorenzopant/tmdb` for working with TMDB API responses.
+
+---
+
+## Type Guards — Image Paths
+
+These type guards check whether an unknown object contains a specific image-path property with a non-null `string` value. They are useful when working with multi-media result types that may or may not carry a particular image field.
+
+```ts
+import { hasPosterPath, hasBackdropPath, hasProfilePath, hasStillPath, hasLogoPath } from "@lorenzopant/tmdb";
+```
+
+### `hasPosterPath`
+
+```ts
+function hasPosterPath(data: unknown): data is { poster_path: string };
+```
+
+Returns `true` when `data` is an object with a `string` `poster_path` property.
+
+```ts
+if (hasPosterPath(result)) {
+	// result.poster_path is a string here
+	const url = tmdb.images.poster(result.poster_path);
+}
+```
+
+---
+
+### `hasBackdropPath`
+
+```ts
+function hasBackdropPath(data: unknown): data is { backdrop_path: string };
+```
+
+Returns `true` when `data` is an object with a `string` `backdrop_path` property.
+
+---
+
+### `hasProfilePath`
+
+```ts
+function hasProfilePath(data: unknown): data is { profile_path: string };
+```
+
+Returns `true` when `data` is an object with a `string` `profile_path` property.
+
+---
+
+### `hasStillPath`
+
+```ts
+function hasStillPath(data: unknown): data is { still_path: string };
+```
+
+Returns `true` when `data` is an object with a `string` `still_path` property.
+
+---
+
+### `hasLogoPath`
+
+```ts
+function hasLogoPath(data: unknown): data is { logo_path: string };
+```
+
+Returns `true` when `data` is an object with a `string` `logo_path` property.
+
+---

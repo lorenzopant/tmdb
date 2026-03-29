@@ -4,6 +4,25 @@ description: Latest updates and announcements
 icon: History
 ---
 
+## 🚀 1.17.3 - 29 March 2026
+
+#### 🐞 Bug Fixes
+
+- **Path params leaking into query strings** - path parameters (e.g. `movie_id`, `season_number`, etc.) were mistakenly being included in the query string of requests instead of being injected into the URL path. This has been fixed by centralizing all parameter serialization logic in the `ApiClient`, ensuring that path params are correctly placed in the URL and not duplicated in the query string.
+- **Malformed route in `tv_episodes.changes()`** — the generated path contained double slashes (`/tv//episode/{id}//changes`). Now correctly builds `/tv/episode/{episode_id}/changes`.
+- **`| null` removed from image path types** — `poster_path`, `backdrop_path`, `still_path`, `logo_path`, `profile_path`, and `runtime` fields no longer include `| null` in their types. The client's `sanitizeNulls` already converts `null` → `undefined` at runtime, so the static types now match the actual runtime behaviour.
+
+#### ✨ New
+
+- **Image path type guards** — five new exported helpers for narrowing image-path fields on unknown objects: [`hasPosterPath`](/docs/types/utility#hasposterpath), [`hasBackdropPath`](/docs/types/utility#hasbackdroppath), [`hasProfilePath`](/docs/types/utility#hasprofilepath), [`hasStillPath`](/docs/types/utility#hasstillpath), [`hasLogoPath`](/docs/types/utility#haslogopath).
+- New [Utility](/docs/types/utility) types page documenting the type guards and other utility types exported by the package.
+
+#### 🧪 Tests
+
+- Closed remaining coverage gaps across the SDK; added regression tests for array-valued params to guard deduplication key stability and query serialization alignment.
+
+---
+
 ## 🚀 1.17.2 - 28 March 2026
 
 #### 📦 Package
