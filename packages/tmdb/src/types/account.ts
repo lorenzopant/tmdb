@@ -1,4 +1,4 @@
-import { PaginatedResponse, WithLanguage, WithPage } from "./common";
+import { MediaType, PaginatedResponse, WithLanguage, WithPage } from "./common";
 import { Language } from "./config";
 import { MovieResultItem, TVSeriesResultItem } from "./search";
 
@@ -79,7 +79,7 @@ export type AccountDetailsParams = {
 /** Request body for add_favorite. */
 export type AccountAddFavoriteBody = {
 	/** Media type to mark as favourite. */
-	media_type: "movie" | "tv";
+	media_type: MediaType;
 	/** TMDB ID of the media item. */
 	media_id: number;
 	/** Pass `true` to add, `false` to remove. */
@@ -97,7 +97,7 @@ export type AccountMutationParams = {
 /** Request body for add_to_watchlist. */
 export type AccountAddToWatchlistBody = {
 	/** Media type to add or remove. */
-	media_type: "movie" | "tv";
+	media_type: MediaType;
 	/** TMDB ID of the media item. */
 	media_id: number;
 	/** Pass `true` to add, `false` to remove. */

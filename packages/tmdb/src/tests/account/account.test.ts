@@ -2,6 +2,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiClient } from "../../client";
 import { AccountAPI } from "../../endpoints/account";
+import { TMDBError } from "../../errors/tmdb";
+import type { AccountMutationResponse } from "../../types/account";
 
 describe("AccountAPI", () => {
 	let clientMock: ApiClient;
@@ -10,7 +12,250 @@ describe("AccountAPI", () => {
 	beforeEach(() => {
 		clientMock = new ApiClient("valid_access_token");
 		clientMock.request = vi.fn();
+		clientMock.mutate = vi.fn();
 		api = new AccountAPI(clientMock);
+	});
+
+	describe("add_favorite", () => {
+		it("should call client.mutate with correct endpoint and body when adding", async () => {
+			await api.add_favorite(
+				{ account_id: 123 },
+				{ media_type: "movie", media_id: 550, favorite: true },
+			);
+			expect(clientMock.mutate).toHaveBeenCalledOnce();
+			expect(clientMock.mutate).toHaveBeenCalledWith(
+				"POST",
+				"/account/123/favorite",
+				{
+					media_type: "movie",
+					media_id: 550,
+					favorite: true,
+				},
+				{},
+			);
+		});
+
+		it("should call client.mutate with correct endpoint and body when removing", async () => {
+			await api.add_favorite(
+				{ account_id: 123 },
+				{ media_type: "movie", media_id: 550, favorite: false },
+			);
+			expect(clientMock.mutate).toHaveBeenCalledWith(
+				"POST",
+				"/account/123/favorite",
+				{
+					media_type: "movie",
+					media_id: 550,
+					favorite: false,
+				},
+				{},
+			);
+		});
+
+		it("should pass session_id as a query param", async () => {
+			await api.add_favorite(
+				{ account_id: 123, session_id: "sess123" },
+				{ media_type: "tv", media_id: 1396, favorite: true },
+			);
+			expect(clientMock.mutate).toHaveBeenCalledWith(
+				"POST",
+				"/account/123/favorite",
+				{
+					media_type: "tv",
+					media_id: 1396,
+					favorite: true,
+				},
+				{ session_id: "sess123" },
+			);
+		});
+
+		it("should return the result from client.mutate", async () => {
+			const mockResponse: AccountMutationResponse = { status_code: 1, status_message: "Success." };
+			(clientMock.mutate as ReturnType<typeof vi.fn>).mockResolvedValue(mockResponse);
+			const result = await api.add_favorite(
+				{ account_id: 123 },
+				{ media_type: "movie", media_id: 550, favorite: true },
+			);
+			expect(result).toEqual(mockResponse);
+		});
+
+		it("should support tv media_type", async () => {
+			await api.add_favorite(
+				{ account_id: 456 },
+				{ media_type: "tv", media_id: 1396, favorite: true },
+			);
+			expect(clientMock.mutate).toHaveBeenCalledWith(
+				"POST",
+				"/account/456/favorite",
+				{
+					media_type: "tv",
+					media_id: 1396,
+					favorite: true,
+				},
+				{},
+			);
+		});
+
+		describe("error cases", () => {
+			it("should propagate TMDBError on 401 (invalid credentials)", async () => {
+				const error = new TMDBError("Authentication failed.", 401, 3);
+				(clientMock.mutate as ReturnType<typeof vi.fn>).mockRejectedValue(error);
+
+				await expect(
+					api.add_favorite(
+						{ account_id: 123 },
+						{ media_type: "movie", media_id: 550, favorite: true },
+					),
+				).rejects.toThrow(TMDBError);
+
+				await expect(
+					api.add_favorite(
+						{ account_id: 123 },
+						{ media_type: "movie", media_id: 550, favorite: true },
+					),
+				).rejects.toMatchObject({ http_status_code: 401, tmdb_status_code: 3 });
+			});
+
+			it("should propagate TMDBError on 401 (invalid session_id)", async () => {
+				const error = new TMDBError("Session not found.", 401, 7);
+				(clientMock.mutate as ReturnType<typeof vi.fn>).mockRejectedValue(error);
+
+				await expect(
+					api.add_favorite(
+						{ account_id: 123, session_id: "invalid-session" },
+						{ media_type: "movie", media_id: 550, favorite: true },
+					),
+				).rejects.toMatchObject({ http_status_code: 401, tmdb_status_code: 7 });
+			});
+
+			it("should propagate TMDBError on 404 (invalid account_id)", async () => {
+				const error = new TMDBError("The resource you requested could not be found.", 404, 34);
+				(clientMock.mutate as ReturnType<typeof vi.fn>).mockRejectedValue(error);
+
+				await expect(
+					api.add_favorite(
+						{ account_id: 99999 },
+						{ media_type: "movie", media_id: 550, favorite: true },
+					),
+				).rejects.toMatchObject({ http_status_code: 404, tmdb_status_code: 34 });
+			});
+
+			it("should propagate TMDBError on 422 (malformed/invalid request body, TMDB code 47)", async () => {
+				// TMDB returns HTTP 422 + status_code 47 when the body is syntactically invalid
+				// or structurally wrong (e.g. a stringified JSON body sent as a raw string,
+				// a typo like `fale` instead of `false`, or a missing required field).
+				const error = new TMDBError("The input is not valid.", 422, 47);
+				(clientMock.mutate as ReturnType<typeof vi.fn>).mockRejectedValue(error);
+
+				await expect(
+					api.add_favorite(
+						{ account_id: 123 },
+						{ media_type: "movie", media_id: 550, favorite: true },
+					),
+				).rejects.toMatchObject({ http_status_code: 422, tmdb_status_code: 47 });
+			});
+
+			it("should propagate generic network errors", async () => {
+				const error = new TypeError("Failed to fetch");
+				(clientMock.mutate as ReturnType<typeof vi.fn>).mockRejectedValue(error);
+
+				await expect(
+					api.add_favorite(
+						{ account_id: 123 },
+						{ media_type: "movie", media_id: 550, favorite: true },
+					),
+				).rejects.toThrow("Failed to fetch");
+			});
+		});
+	});
+
+	describe("add_to_watchlist", () => {
+		it("should call client.mutate with correct endpoint and body when adding", async () => {
+			await api.add_to_watchlist(
+				{ account_id: 123 },
+				{ media_type: "movie", media_id: 550, watchlist: true },
+			);
+			expect(clientMock.mutate).toHaveBeenCalledOnce();
+			expect(clientMock.mutate).toHaveBeenCalledWith(
+				"POST",
+				"/account/123/watchlist",
+				{ media_type: "movie", media_id: 550, watchlist: true },
+				{},
+			);
+		});
+
+		it("should call client.mutate with correct endpoint and body when removing", async () => {
+			await api.add_to_watchlist(
+				{ account_id: 123 },
+				{ media_type: "movie", media_id: 550, watchlist: false },
+			);
+			expect(clientMock.mutate).toHaveBeenCalledWith(
+				"POST",
+				"/account/123/watchlist",
+				{ media_type: "movie", media_id: 550, watchlist: false },
+				{},
+			);
+		});
+
+		it("should pass session_id as a query param", async () => {
+			await api.add_to_watchlist(
+				{ account_id: 123, session_id: "sess123" },
+				{ media_type: "tv", media_id: 1396, watchlist: true },
+			);
+			expect(clientMock.mutate).toHaveBeenCalledWith(
+				"POST",
+				"/account/123/watchlist",
+				{ media_type: "tv", media_id: 1396, watchlist: true },
+				{ session_id: "sess123" },
+			);
+		});
+
+		it("should return the result from client.mutate", async () => {
+			const mockResponse: AccountMutationResponse = { status_code: 1, status_message: "Success." };
+			(clientMock.mutate as ReturnType<typeof vi.fn>).mockResolvedValue(mockResponse);
+			const result = await api.add_to_watchlist(
+				{ account_id: 123 },
+				{ media_type: "movie", media_id: 550, watchlist: true },
+			);
+			expect(result).toEqual(mockResponse);
+		});
+
+		it("should support tv media_type", async () => {
+			await api.add_to_watchlist(
+				{ account_id: 456 },
+				{ media_type: "tv", media_id: 1396, watchlist: true },
+			);
+			expect(clientMock.mutate).toHaveBeenCalledWith(
+				"POST",
+				"/account/456/watchlist",
+				{ media_type: "tv", media_id: 1396, watchlist: true },
+				{},
+			);
+		});
+
+		describe("error cases", () => {
+			it("should propagate TMDBError on 401 (invalid credentials)", async () => {
+				const error = new TMDBError("Authentication failed.", 401, 3);
+				(clientMock.mutate as ReturnType<typeof vi.fn>).mockRejectedValue(error);
+				await expect(
+					api.add_to_watchlist(
+						{ account_id: 123 },
+						{ media_type: "movie", media_id: 550, watchlist: true },
+					),
+				).rejects.toMatchObject({ http_status_code: 401, tmdb_status_code: 3 });
+			});
+
+			it("should propagate TMDBError on 422 (malformed request body, TMDB code 47)", async () => {
+				const error = new TMDBError("The input is not valid.", 422, 47);
+				(clientMock.mutate as ReturnType<typeof vi.fn>).mockRejectedValue(error);
+				await expect(
+					api.add_to_watchlist(
+						{ account_id: 123 },
+						{ media_type: "movie", media_id: 550, watchlist: true },
+					),
+				).rejects.toMatchObject({ http_status_code: 422, tmdb_status_code: 47 });
+			});
+		});
 	});
 
 	describe("details", () => {

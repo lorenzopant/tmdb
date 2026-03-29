@@ -1,12 +1,16 @@
 import { ENDPOINTS } from "../routes";
 import { TMDBAPIBase } from "./base";
 import type {
+	AccountAddFavoriteBody,
+	AccountAddToWatchlistBody,
 	AccountDetails,
 	AccountDetailsParams,
 	AccountListItem,
 	AccountListsParams,
 	AccountMediaListParams,
 	AccountMovieListResponse,
+	AccountMutationParams,
+	AccountMutationResponse,
 	AccountRatedEpisodesResponse,
 	AccountRatedMoviesResponse,
 	AccountRatedTVResponse,
@@ -35,6 +39,50 @@ export class AccountAPI extends TMDBAPIBase {
 	async details(params: AccountDetailsParams): Promise<AccountDetails> {
 		const { account_id, ...rest } = params;
 		return this.client.request<AccountDetails>(this.accountPath(account_id), rest);
+	}
+
+	/**
+	 * Add Favorite
+	 * POST - https://api.themoviedb.org/3/account/{account_id}/favorite
+	 *
+	 * Mark a movie or TV show as a favourite. Pass `favorite: false` to remove it.
+	 * @param params Account ID and optional session_id.
+	 * @param body media_type, media_id, and favorite flag.
+	 * @reference https://developer.themoviedb.org/reference/account-add-favorite
+	 */
+	async add_favorite(
+		params: AccountMutationParams,
+		body: AccountAddFavoriteBody,
+	): Promise<AccountMutationResponse> {
+		const { account_id, ...queryParams } = params;
+		return this.client.mutate<AccountMutationResponse>(
+			"POST",
+			this.accountSubPath(account_id, ENDPOINTS.ACCOUNT.ADD_FAVORITE),
+			body,
+			queryParams,
+		);
+	}
+
+	/**
+	 * Add to Watchlist
+	 * POST - https://api.themoviedb.org/3/account/{account_id}/watchlist
+	 *
+	 * Add a movie or TV show to your watchlist. Pass `watchlist: false` to remove it.
+	 * @param params Account ID and optional session_id.
+	 * @param body media_type, media_id, and watchlist flag.
+	 * @reference https://developer.themoviedb.org/reference/account-add-to-watchlist
+	 */
+	async add_to_watchlist(
+		params: AccountMutationParams,
+		body: AccountAddToWatchlistBody,
+	): Promise<AccountMutationResponse> {
+		const { account_id, ...queryParams } = params;
+		return this.client.mutate<AccountMutationResponse>(
+			"POST",
+			this.accountSubPath(account_id, ENDPOINTS.ACCOUNT.ADD_TO_WATCHLIST),
+			body,
+			queryParams,
+		);
 	}
 
 	/**
