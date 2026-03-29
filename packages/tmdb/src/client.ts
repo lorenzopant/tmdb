@@ -15,7 +15,10 @@ export class ApiClient {
 	private inflightRequests: Map<string, Promise<unknown>> = new Map();
 	private deduplication: boolean;
 
-	constructor(accessToken: string, options: { logger?: boolean | TMDBLoggerFn; deduplication?: boolean } = {}) {
+	constructor(
+		accessToken: string,
+		options: { logger?: boolean | TMDBLoggerFn; deduplication?: boolean } = {},
+	) {
 		this.accessToken = accessToken;
 		this.logger = TMDBLogger.from(options.logger);
 		this.deduplication = options.deduplication !== false;
@@ -58,79 +61,17 @@ export class ApiClient {
 	 * `TMDBOptions.deduplication = false`.
 	 */
 	async request<T>(endpoint: string, params: Record<string, unknown | undefined> = {}): Promise<T> {
-		if (!this.deduplication) return this.doRequest<T>(endpoint, params);
+		if (!this.deduplication) return this.execute<T>("GET", endpoint, params);
 
 		const key = this.buildRequestKey(endpoint, params);
 		const existing = this.inflightRequests.get(key);
 		if (existing) return existing as Promise<T>;
 
-		const promise = this.doRequest<T>(endpoint, params).finally(() => {
+		const promise = this.execute<T>("GET", endpoint, params).finally(() => {
 			this.inflightRequests.delete(key);
 		});
 		this.inflightRequests.set(key, promise);
 		return promise;
-	}
-
-	/**
-	 * The actual fetch + response-parsing pipeline. Called by `request()` only when no
-	 * matching in-flight promise exists. Handles URL construction, auth headers, logging,
-	 * error mapping, and null sanitisation.
-	 */
-	private async doRequest<T>(endpoint: string, params: Record<string, unknown | undefined>): Promise<T> {
-		const url = new URL(`${this.baseUrl}${endpoint}`);
-		const jwt = isJwt(this.accessToken);
-
-		for (const [key, value] of this.serializeParams(params)) {
-			url.searchParams.append(key, value);
-		}
-
-		if (!jwt) {
-			url.searchParams.append("api_key", this.accessToken);
-		}
-
-		const startedAt = Date.now();
-		this.logger?.log({
-			type: "request",
-			method: "GET",
-			endpoint,
-		});
-
-		let res: Response;
-		try {
-			res = await fetch(url.toString(), {
-				headers: jwt
-					? {
-							Authorization: `Bearer ${this.accessToken}`,
-							"Content-Type": "application/json;charset=utf-8",
-						}
-					: {
-							"Content-Type": "application/json;charset=utf-8",
-						},
-			});
-		} catch (error) {
-			this.logger?.log({
-				type: "error",
-				method: "GET",
-				endpoint,
-				errorMessage: error instanceof Error ? error.message : String(error),
-				durationMs: Date.now() - startedAt,
-			});
-			throw error;
-		}
-
-		if (!res.ok) await this.handleError(res, endpoint);
-
-		this.logger?.log({
-			type: "response",
-			method: "GET",
-			endpoint,
-			status: res.status,
-			statusText: res.statusText,
-			durationMs: Date.now() - startedAt,
-		});
-
-		const data = await res.json();
-		return this.sanitizeNulls<T>(data);
 	}
 
 	/**
@@ -159,7 +100,11 @@ export class ApiClient {
 		return sanitized as T;
 	}
 
-	private async handleError(res: Response, endpoint: string): Promise<never> {
+	private async handleError(
+		res: Response,
+		endpoint: string,
+		method: "GET" | "POST" | "PUT" | "DELETE",
+	): Promise<never> {
 		let errorMessage = res.statusText;
 		let tmdbStatusCode: number = -1;
 
@@ -177,7 +122,7 @@ export class ApiClient {
 
 		this.logger?.log({
 			type: "error",
-			method: "GET",
+			method,
 			endpoint,
 			status: res.status,
 			statusText: res.statusText,
@@ -187,5 +132,86 @@ export class ApiClient {
 
 		const error = new TMDBError(errorMessage, res.status, tmdbStatusCode);
 		throw error;
+	}
+
+	/**
+	 * Makes an authenticated mutation request (POST, PUT, or DELETE) to the TMDB API.
+	 * Unlike `request()`, mutations are never deduplicated since they change server state.
+	 *
+	 * @param method - HTTP method to use
+	 * @param endpoint - API path (e.g. "/account/123/favorite")
+	 * @param body - JSON body to send (omit for DELETE requests without a body)
+	 * @param params - Optional query string parameters (e.g. session_id)
+	 */
+	async mutate<T>(
+		method: "POST" | "PUT" | "DELETE",
+		endpoint: string,
+		body?: Record<string, unknown>,
+		params: Record<string, unknown | undefined> = {},
+	): Promise<T> {
+		return this.execute<T>(method, endpoint, params, body);
+	}
+
+	/**
+	 * Shared fetch + response-parsing pipeline used by both `request` and `mutate`.
+	 * Handles URL construction, auth, logging, error mapping, and null sanitisation.
+	 */
+	private async execute<T>(
+		method: "GET" | "POST" | "PUT" | "DELETE",
+		endpoint: string,
+		params: Record<string, unknown | undefined>,
+		body?: Record<string, unknown>,
+	): Promise<T> {
+		const url = new URL(`${this.baseUrl}${endpoint}`);
+		const jwt = isJwt(this.accessToken);
+
+		for (const [key, value] of this.serializeParams(params)) {
+			url.searchParams.append(key, value);
+		}
+		if (!jwt) {
+			url.searchParams.append("api_key", this.accessToken);
+		}
+
+		const startedAt = Date.now();
+		this.logger?.log({ type: "request", method, endpoint });
+
+		let res: Response;
+		try {
+			res = await fetch(url.toString(), {
+				method,
+				headers: jwt
+					? {
+							Authorization: `Bearer ${this.accessToken}`,
+							"Content-Type": "application/json;charset=utf-8",
+						}
+					: {
+							"Content-Type": "application/json;charset=utf-8",
+						},
+				...(body !== undefined ? { body: JSON.stringify(body) } : {}),
+			});
+		} catch (error) {
+			this.logger?.log({
+				type: "error",
+				method,
+				endpoint,
+				errorMessage: error instanceof Error ? error.message : String(error),
+				durationMs: Date.now() - startedAt,
+			});
+			throw error;
+		}
+
+		if (!res.ok) await this.handleError(res, endpoint, method);
+
+		this.logger?.log({
+			type: "response",
+			method,
+			endpoint,
+			status: res.status,
+			statusText: res.statusText,
+			durationMs: Date.now() - startedAt,
+		});
+
+		const data = await res.json();
+		return this.sanitizeNulls<T>(data);
 	}
 }

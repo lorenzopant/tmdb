@@ -1,6 +1,6 @@
 export type TMDBLoggerEntry = {
 	type: "request" | "response" | "error";
-	method: "GET";
+	method: "GET" | "POST" | "PUT" | "DELETE";
 	endpoint: string;
 	status?: number;
 	statusText?: string;
@@ -51,8 +51,11 @@ export class TMDBLogger {
 			return;
 		}
 
-		const statusPart = entry.status != null ? `${entry.status} ${entry.statusText}` : "NETWORK ERROR";
+		const statusPart =
+			entry.status != null ? `${entry.status} ${entry.statusText}` : "NETWORK ERROR";
 		const tmdbPart = entry.tmdbStatusCode != null ? ` (tmdb: ${entry.tmdbStatusCode})` : "";
-		console.log(`${prefix} ${timestamp} ❌ ${entry.method} ${statusPart} ${entry.endpoint} - ${entry.errorMessage}${tmdbPart}\n`);
+		console.log(
+			`${prefix} ${timestamp} ❌ ${entry.method} ${statusPart} ${entry.endpoint} - ${entry.errorMessage}${tmdbPart}\n`,
+		);
 	}
 }
