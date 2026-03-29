@@ -17,7 +17,7 @@ describe("NetworksAPI", () => {
 		it("should call client.request with the correct endpoint", async () => {
 			await networksAPI.details({ network_id: 1 });
 			expect(clientMock.request).toHaveBeenCalledOnce();
-			expect(clientMock.request).toHaveBeenCalledWith("/network/1", { network_id: 1 });
+			expect(clientMock.request).toHaveBeenCalledWith("/network/1");
 		});
 
 		it("should return the result from client.request", async () => {
@@ -32,7 +32,7 @@ describe("NetworksAPI", () => {
 		it("should call client.request with the correct endpoint", async () => {
 			await networksAPI.alternative_names({ network_id: 1 });
 			expect(clientMock.request).toHaveBeenCalledOnce();
-			expect(clientMock.request).toHaveBeenCalledWith("/network/1/alternative_names", { network_id: 1 });
+			expect(clientMock.request).toHaveBeenCalledWith("/network/1/alternative_names");
 		});
 
 		it("should return the result from client.request", async () => {

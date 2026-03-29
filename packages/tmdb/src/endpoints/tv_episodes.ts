@@ -68,8 +68,8 @@ export class TVEpisodesAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/tv-episode-changes-by-id
 	 */
 	async changes(params: TVEpisodeId): Promise<Changes> {
-		const endpoint = `${ENDPOINTS.TV_SERIES.DETAILS}/${ENDPOINTS.TV_EPISODES.DETAILS}/${params.episode_id}/${ENDPOINTS.TV_EPISODES.CHANGES}`;
-		return this.client.request(endpoint, { ...params });
+		const endpoint = `${ENDPOINTS.TV_SERIES.DETAILS}${ENDPOINTS.TV_EPISODES.DETAILS}/${params.episode_id}${ENDPOINTS.TV_EPISODES.CHANGES}`;
+		return this.client.request(endpoint);
 	}
 
 	/**

@@ -18,8 +18,8 @@ export class CreditsAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/credit-details
 	 */
 	async details(params: CreditDetailsParams): Promise<CreditDetails> {
-		const endpoint = this.creditPath(params.credit_id);
-		const requestParams = this.withLanguage(params);
-		return this.client.request<CreditDetails>(endpoint, requestParams);
+		const { credit_id, ...rest } = params;
+		const endpoint = this.creditPath(credit_id);
+		return this.client.request<CreditDetails>(endpoint, this.withLanguage(rest));
 	}
 }
