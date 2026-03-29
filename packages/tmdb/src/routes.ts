@@ -1,4 +1,17 @@
 export const ENDPOINTS = {
+	ACCOUNT: {
+		DETAILS: "/account",
+		ADD_FAVORITE: "/favorite",
+		ADD_TO_WATCHLIST: "/watchlist",
+		FAVORITE_MOVIES: "/favorite/movies",
+		FAVORITE_TV: "/favorite/tv",
+		WATCHLIST_MOVIES: "/watchlist/movies",
+		WATCHLIST_TV: "/watchlist/tv",
+		RATED_MOVIES: "/rated/movies",
+		RATED_TV: "/rated/tv",
+		RATED_TV_EPISODES: "/rated/tv/episodes",
+		LISTS: "/lists",
+	},
 	CONFIGURATION: {
 		DETAILS: "/configuration",
 		COUNTRIES: "/configuration/countries",
