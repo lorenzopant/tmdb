@@ -72,7 +72,7 @@ export enum DiscoverTVType {
  * A TV result item as returned by discover endpoints.
  */
 export type DiscoverTVResultItem = {
-	backdrop_path: string | null;
+	backdrop_path?: string;
 	first_air_date: string;
 	genre_ids: number[];
 	id: number;
@@ -82,7 +82,7 @@ export type DiscoverTVResultItem = {
 	original_name: string;
 	overview: string;
 	popularity: number;
-	poster_path: string | null;
+	poster_path?: string;
 	vote_average: number;
 	vote_count: number;
 };

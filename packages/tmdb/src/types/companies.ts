@@ -10,7 +10,7 @@ export type CompanySummary = {
 	/** Unique company identifier */
 	id: number;
 	/** Relative path to the company logo */
-	logo_path?: string | null;
+	logo_path?: string;
 	/** Company display name */
 	name: string;
 };
@@ -26,9 +26,9 @@ export type Company = CompanySummary & {
 	/** Company headquarters location */
 	headquarters: string;
 	/** Official company homepage */
-	homepage: string | null;
+	homepage?: string;
 	/** Parent company, if TMDB links one */
-	parent_company?: CompanySummary | null;
+	parent_company?: CompanySummary;
 };
 
 /**
