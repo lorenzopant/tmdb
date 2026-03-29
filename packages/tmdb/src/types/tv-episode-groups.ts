@@ -44,9 +44,9 @@ export type TVEpisodeGroupDetailsItem = {
  */
 export type TVEpisodeGroupEpisode = Omit<TVEpisode, "guest_stars" | "runtime"> & {
 	/** Production code for the episode, if available */
-	production_code?: string | null;
+	production_code?: string;
 	/** Path to the episode still image, if available */
-	still_path?: string | null;
+	still_path?: string;
 };
 
 /**

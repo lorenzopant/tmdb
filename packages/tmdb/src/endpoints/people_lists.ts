@@ -15,9 +15,6 @@ export class PeopleListsAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/person-popular-list
 	 */
 	async popular(params: PeopleListParams = {}): Promise<PaginatedResponse<PersonResultItem>> {
-		return this.client.request<PaginatedResponse<PersonResultItem>>(
-			ENDPOINTS.PEOPLE_LISTS.POPULAR,
-			this.withLanguage(params) ?? params,
-		);
+		return this.client.request<PaginatedResponse<PersonResultItem>>(ENDPOINTS.PEOPLE_LISTS.POPULAR, this.withLanguage(params));
 	}
 }

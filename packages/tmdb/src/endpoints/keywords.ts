@@ -18,7 +18,7 @@ export class KeywordsAPI extends TMDBAPIBase {
 	 */
 	async details(params: KeywordDetailsParams): Promise<Keyword> {
 		const endpoint = this.keywordPath(params.keyword_id);
-		return this.client.request<Keyword>(endpoint, params);
+		return this.client.request<Keyword>(endpoint);
 	}
 
 	/**
@@ -35,8 +35,9 @@ export class KeywordsAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/keyword-movies
 	 */
 	async movies(params: KeywordMoviesParams): Promise<PaginatedResponse<MovieResultItem>> {
-		const endpoint = `${this.keywordPath(params.keyword_id)}${ENDPOINTS.KEYWORDS.MOVIES}`;
-		const requestParams = this.withLanguage(params);
+		const { keyword_id, ...rest } = params;
+		const endpoint = `${this.keywordPath(keyword_id)}${ENDPOINTS.KEYWORDS.MOVIES}`;
+		const requestParams = this.withLanguage(rest);
 		return this.client.request<PaginatedResponse<MovieResultItem>>(endpoint, requestParams);
 	}
 }

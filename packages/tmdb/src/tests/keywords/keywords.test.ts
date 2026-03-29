@@ -17,9 +17,7 @@ describe("KeywordsAPI", () => {
 		await keywordsAPI.details({ keyword_id: 4379 });
 
 		expect(clientMock.request).toHaveBeenCalledOnce();
-		expect(clientMock.request).toHaveBeenCalledWith("/keyword/4379", {
-			keyword_id: 4379,
-		});
+		expect(clientMock.request).toHaveBeenCalledWith("/keyword/4379");
 	});
 
 	it("should call client.request with the correct movies parameters", async () => {
@@ -32,7 +30,6 @@ describe("KeywordsAPI", () => {
 
 		expect(clientMock.request).toHaveBeenCalledOnce();
 		expect(clientMock.request).toHaveBeenCalledWith("/keyword/4379/movies", {
-			keyword_id: 4379,
 			language: "it-IT",
 			page: 2,
 			include_adult: false,
@@ -44,7 +41,6 @@ describe("KeywordsAPI", () => {
 
 		expect(clientMock.request).toHaveBeenCalledOnce();
 		expect(clientMock.request).toHaveBeenCalledWith("/keyword/4379/movies", {
-			keyword_id: 4379,
 			language: "en-US",
 		});
 	});
@@ -58,7 +54,6 @@ describe("KeywordsAPI", () => {
 
 		expect(clientMock.request).toHaveBeenCalledOnce();
 		expect(clientMock.request).toHaveBeenCalledWith("/keyword/4379/movies", {
-			keyword_id: 4379,
 			language: "en-US",
 			page: 3,
 		});

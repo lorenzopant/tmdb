@@ -32,19 +32,19 @@ export type MovieDetails = {
 	/** Whether the movie is marked as adult content */
 	adult: boolean;
 	/** Path to backdrop image, null if not available */
-	backdrop_path: string | null;
+	backdrop_path?: string;
 	/** Collection the movie belongs to (e.g., "The Lord of the Rings Collection"), null if standalone */
-	belongs_to_collection: MovieCollection | null;
+	belongs_to_collection?: MovieCollection;
 	/** Production budget in US dollars */
 	budget: number;
 	/** Array of genres associated with the movie */
 	genres: Genre[];
 	/** Official homepage URL, null if not available */
-	homepage: string | null;
+	homepage?: string;
 	/** Unique movie identifier in TMDB */
 	id: number;
 	/** IMDb identifier (e.g., "tt0133093"), null if not linked */
-	imdb_id: string | null;
+	imdb_id?: string;
 	/** Array of origin country codes (ISO 3166-1) */
 	origin_country: string[];
 	/** Original language of the movie (ISO 639-1 code) */
@@ -52,11 +52,11 @@ export type MovieDetails = {
 	/** Original title in the original language */
 	original_title: string;
 	/** Plot synopsis/overview, null if not available */
-	overview: string | null;
+	overview?: string;
 	/** Popularity score calculated by TMDB */
 	popularity: number;
 	/** Path to poster image, null if not available */
-	poster_path: string | null;
+	poster_path?: string;
 	/** Array of companies that produced the movie */
 	production_companies: ProductionCompany[];
 	/** Array of countries where the movie was produced */
@@ -66,13 +66,13 @@ export type MovieDetails = {
 	/** Box office revenue in US dollars */
 	revenue: number;
 	/** Runtime in minutes, null if not set */
-	runtime: number | null;
+	runtime?: number;
 	/** Array of languages spoken in the movie */
 	spoken_languages: SpokenLanguage[];
 	/** Release status (e.g., "Released", "Post Production", "In Production") */
 	status: string;
 	/** Movie tagline/slogan, null if not available */
-	tagline: string | null;
+	tagline?: string;
 	/** Movie title (localized if language parameter was provided) */
 	title: string;
 	/** Whether a video is available on TMDB */
@@ -172,13 +172,13 @@ export type MovieExternalIDs = {
 	/** Movie identifier in TMDB */
 	id: number;
 	/** IMDb identifier (e.g., "tt0133093"), null if not available */
-	imdb_id?: string | null;
+	imdb_id?: string;
 	/** Facebook page identifier, null if not available */
-	facebook_id?: string | null;
+	facebook_id?: string;
 	/** Twitter/X handle, null if not available */
-	twitter_id?: string | null;
+	twitter_id?: string;
 	/** Instagram handle, null if not available */
-	instagram_id?: string | null;
+	instagram_id?: string;
 };
 
 // MARK: Images

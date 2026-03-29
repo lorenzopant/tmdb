@@ -22,11 +22,11 @@ export type FindByIDParams = {
 
 type FindMediaResultBase = {
 	adult: boolean;
-	backdrop_path: string | null;
+	backdrop_path?: string;
 	id: number;
 	original_language: string;
 	overview: string;
-	poster_path: string | null;
+	poster_path?: string;
 	popularity: number;
 	vote_average: number;
 	vote_count: number;
@@ -48,14 +48,14 @@ export type FindMovieResultItem = FindMediaResultBase & {
  */
 export type FindPersonResultItem = {
 	adult: boolean;
-	gender: number | null;
+	gender?: number;
 	id: number;
 	known_for_department: string;
 	media_type: "person";
 	name: string;
 	original_name: string;
 	popularity: number;
-	profile_path: string | null;
+	profile_path?: string;
 };
 
 /**
@@ -82,7 +82,7 @@ export type FindTVEpisodeResultItem = {
 	production_code: string;
 	season_number: number;
 	show_id: number;
-	still_path: string | null;
+	still_path?: string;
 	vote_average: number;
 	vote_count: number;
 };
@@ -97,7 +97,7 @@ export type FindTVSeasonResultItem = {
 	media_type: "tv_season";
 	name: string;
 	overview: string;
-	poster_path: string | null;
+	poster_path?: string;
 	season_number: number;
 };
 

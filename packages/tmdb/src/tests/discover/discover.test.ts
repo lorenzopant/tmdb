@@ -47,6 +47,11 @@ describe("DiscoverAPI", () => {
 		});
 	});
 
+	it("should return undefined from withMovieDefaults when no params or defaults exist", () => {
+		discoverAPI = new DiscoverAPI(clientMock);
+		expect((discoverAPI as unknown as { withMovieDefaults: (params?: unknown) => unknown }).withMovieDefaults(undefined)).toBeUndefined();
+	});
+
 	it("should keep movie defaults when language and region are explicitly undefined", async () => {
 		await discoverAPI.movie({
 			language: undefined,
@@ -90,6 +95,11 @@ describe("DiscoverAPI", () => {
 			language: "en-US",
 			timezone: "Europe/Rome",
 		});
+	});
+
+	it("should return undefined from withTVDefaults when no params or defaults exist", () => {
+		discoverAPI = new DiscoverAPI(clientMock);
+		expect((discoverAPI as unknown as { withTVDefaults: (params?: unknown) => unknown }).withTVDefaults(undefined)).toBeUndefined();
 	});
 
 	it("should keep tv defaults when language and timezone are explicitly undefined", async () => {

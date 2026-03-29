@@ -19,7 +19,7 @@ export type Collection = {
 	/** Short description or synopsis of the collection */
 	overview: string;
 	/** Relative path to the collection's poster image on TMDB, if available (sanitized nulls become undefined) */
-	poster_path?: string | null;
+	poster_path?: string;
 	/** Relative path to the collection's backdrop image on TMDB, if available (sanitized nulls become undefined) */
 	backdrop_path?: string | null;
 	/** Ordered list of media items that make up the collection */

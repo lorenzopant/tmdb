@@ -19,7 +19,7 @@ export class NetworksAPI extends TMDBAPIBase {
 	 */
 	async details(params: NetworkBaseParams): Promise<Network> {
 		const endpoint = this.networkPath(params.network_id);
-		return this.client.request<Network>(endpoint, params);
+		return this.client.request<Network>(endpoint);
 	}
 
 	/**
@@ -33,7 +33,7 @@ export class NetworksAPI extends TMDBAPIBase {
 	 */
 	async alternative_names(params: NetworkBaseParams): Promise<AlternativeNamesResult> {
 		const endpoint = `${this.networkPath(params.network_id)}${ENDPOINTS.NETWORKS.ALTERNATIVE_NAMES}`;
-		return this.client.request<AlternativeNamesResult>(endpoint, params);
+		return this.client.request<AlternativeNamesResult>(endpoint);
 	}
 
 	/**

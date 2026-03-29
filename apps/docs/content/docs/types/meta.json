@@ -23,6 +23,7 @@
 		"search.mdx",
 		"trending.mdx",
 		"reviews.mdx",
-		"enums.mdx"
+		"enums.mdx",
+		"utility.mdx"
 	]
 }

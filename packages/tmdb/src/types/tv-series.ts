@@ -34,7 +34,7 @@ import { Prettify } from "./utility";
  */
 export type TVSeriesDetails = {
 	/** The path to the backdrop image, or null if not available */
-	backdrop_path: string | null;
+	backdrop_path?: string;
 	/** Array of creators who developed the TV show */
 	created_by: Pick<Credit, "id" | "credit_id" | "gender" | "name" | "profile_path">[];
 	/** Array of typical episode runtimes in minutes */
@@ -44,7 +44,7 @@ export type TVSeriesDetails = {
 	/** Array of genres associated with the TV show */
 	genres: Genre[];
 	/** The official homepage URL for the TV show, or null if not available */
-	homepage: string | null;
+	homepage?: string;
 	/** The unique identifier for the TV show */
 	id: number;
 	/** Indicates whether the TV show is currently in production */
@@ -54,7 +54,7 @@ export type TVSeriesDetails = {
 	/** The date the most recent episode aired */
 	last_air_date: string;
 	/** Details of the last episode that aired, if available */
-	last_episode_to_air?: TVEpisodeItem | null;
+	last_episode_to_air?: TVEpisodeItem;
 	/** The title of the TV show */
 	name: string;
 	/** Details of the next episode to air, if available */
@@ -72,11 +72,11 @@ export type TVSeriesDetails = {
 	/** The original title of the TV show */
 	original_name: string;
 	/** A brief description or summary of the TV show, or null if not available */
-	overview: string | null;
+	overview?: string;
 	/** The popularity score of the TV show */
 	popularity: number;
 	/** The path to the poster image, or null if not available */
-	poster_path: string | null;
+	poster_path?: string;
 	/** Array of companies that produced the TV show */
 	production_companies?: ProductionCompany[];
 	/** Array of countries where the TV show was produced */
@@ -107,19 +107,19 @@ export type TVEpisodeItem = {
 	/** The total number of votes received for the episode */
 	vote_count: number;
 	/** The date the episode first aired */
-	air_date?: string | null;
+	air_date?: string;
 	/** The episode number within its season */
 	episode_number: number;
 	/** The production code used internally during filming */
-	production_code?: string | null;
+	production_code?: string;
 	/** The runtime of the episode in minutes */
-	runtime?: number | null;
+	runtime?: number;
 	/** The season number this episode belongs to */
 	season_number: number;
 	/** The unique identifier of the TV show this episode belongs to */
 	show_id: number;
 	/** The path to the episode's still image (screenshot) */
-	still_path?: string | null;
+	still_path?: string;
 };
 
 export type TVSeasonItem = {
@@ -316,23 +316,23 @@ export type TVExternalIDs = {
 	/** TV series identifier in TMDB */
 	id: number;
 	/** IMDb identifier (e.g., "tt0944947"), null if not available */
-	imdb_id?: string | null;
+	imdb_id?: string;
 	/** Freebase MID identifier (deprecated), null if not available */
-	freebase_mid?: string | null;
+	freebase_mid?: string;
 	/** Freebase ID (deprecated), null if not available */
-	freebase_id?: string | null;
+	freebase_id?: string;
 	/** TheTVDB identifier, null if not available */
-	tvdb_id?: number | null;
+	tvdb_id?: number;
 	/** TVRage identifier (service discontinued), null if not available */
-	tvrage_id?: number | null;
+	tvrage_id?: number;
 	/** Wikidata identifier (e.g., "Q23572"), null if not available */
-	wikidata_id?: string | null;
+	wikidata_id?: string;
 	/** Facebook page identifier, null if not available */
-	facebook_id?: string | null;
+	facebook_id?: string;
 	/** Instagram handle, null if not available */
-	instagram_id?: string | null;
+	instagram_id?: string;
 	/** Twitter/X handle, null if not available */
-	twitter_id?: string | null;
+	twitter_id?: string;
 };
 
 // MARK: Images
