@@ -1,6 +1,12 @@
 import { TMDBAPIErrorResponse, TMDBError } from "./errors/tmdb";
 import { TMDBLogger, TMDBLoggerFn } from "./utils/logger";
 import { isJwt } from "./utils";
+import type {
+	RequestInterceptor,
+	RequestInterceptorContext,
+	ResponseSuccessInterceptor,
+	ResponseErrorInterceptor,
+} from "./types/config/options";
 
 export class ApiClient {
 	private accessToken: string;
@@ -14,11 +20,28 @@ export class ApiClient {
 	 */
 	private inflightRequests: Map<string, Promise<unknown>> = new Map();
 	private deduplication: boolean;
+	private requestInterceptors: RequestInterceptor[];
+	private onSuccessInterceptor?: ResponseSuccessInterceptor;
+	private onErrorInterceptor?: ResponseErrorInterceptor;
 
-	constructor(accessToken: string, options: { logger?: boolean | TMDBLoggerFn; deduplication?: boolean } = {}) {
+	constructor(
+		accessToken: string,
+		options: {
+			logger?: boolean | TMDBLoggerFn;
+			deduplication?: boolean;
+			interceptors?: {
+				request?: RequestInterceptor | RequestInterceptor[];
+				response?: { onSuccess?: ResponseSuccessInterceptor; onError?: ResponseErrorInterceptor };
+			};
+		} = {},
+	) {
 		this.accessToken = accessToken;
 		this.logger = TMDBLogger.from(options.logger);
 		this.deduplication = options.deduplication !== false;
+		const raw = options.interceptors?.request;
+		this.requestInterceptors = raw == null ? [] : Array.isArray(raw) ? raw : [raw];
+		this.onSuccessInterceptor = options.interceptors?.response?.onSuccess;
+		this.onErrorInterceptor = options.interceptors?.response?.onError;
 	}
 
 	/**
@@ -72,11 +95,33 @@ export class ApiClient {
 	}
 
 	/**
+	 * Runs all registered request interceptors in order, threading the context through each one.
+	 * If an interceptor returns a new context, it replaces the current context for the next interceptor.
+	 */
+	private async runRequestInterceptors(
+		context: RequestInterceptorContext,
+	): Promise<RequestInterceptorContext> {
+		let current = context;
+		for (const interceptor of this.requestInterceptors) {
+			const result = await interceptor(current);
+			if (result != null) current = result;
+		}
+		return current;
+	}
+
+	/**
 	 * The actual fetch + response-parsing pipeline. Called by `request()` only when no
 	 * matching in-flight promise exists. Handles URL construction, auth headers, logging,
 	 * error mapping, and null sanitisation.
 	 */
-	private async doRequest<T>(endpoint: string, params: Record<string, unknown | undefined>): Promise<T> {
+	private async doRequest<T>(
+		endpoint: string,
+		params: Record<string, unknown | undefined>,
+	): Promise<T> {
+		const ctx = await this.runRequestInterceptors({ endpoint, params, method: "GET" });
+		endpoint = ctx.endpoint;
+		params = ctx.params;
+
 		const url = new URL(`${this.baseUrl}${endpoint}`);
 		const jwt = isJwt(this.accessToken);
 
@@ -118,7 +163,12 @@ export class ApiClient {
 			throw error;
 		}
 
-		if (!res.ok) await this.handleError(res, endpoint);
+		if (!res.ok) {
+			await this.handleError(res, endpoint).catch(async (err: TMDBError) => {
+				if (this.onErrorInterceptor) await this.onErrorInterceptor(err);
+				throw err;
+			});
+		}
 
 		this.logger?.log({
 			type: "response",
@@ -130,7 +180,12 @@ export class ApiClient {
 		});
 
 		const data = await res.json();
-		return this.sanitizeNulls<T>(data);
+		const sanitized = this.sanitizeNulls<T>(data);
+		if (this.onSuccessInterceptor) {
+			const result = await this.onSuccessInterceptor(sanitized as unknown);
+			return (result !== undefined ? result : sanitized) as T;
+		}
+		return sanitized;
 	}
 
 	/**

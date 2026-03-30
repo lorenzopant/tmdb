@@ -1,0 +1,86 @@
+---
+title: Interceptors
+description: Type definitions for request and response interceptors.
+---
+
+import { TypeTable } from "fumadocs-ui/components/type-table";
+
+These types are used when configuring `interceptors` in [`TMDBOptions`](/docs/getting-started/options).
+
+---
+
+## `RequestInterceptorContext`
+
+The context object passed to every [`RequestInterceptor`](#requestinterceptor) before a request is made.
+
+<TypeTable
+	type={{
+		endpoint: {
+			type: "string",
+			description: 'The API path being requested, e.g. "/movie/550".',
+			required: true,
+		},
+		params: {
+			type: "Record<string, unknown>",
+			description: "Query parameters that will be appended to the URL.",
+			required: true,
+		},
+		method: {
+			type: '"GET"',
+			description: 'The HTTP method. Currently always "GET".',
+			required: true,
+		},
+	}}
+/>
+
+---
+
+## `RequestInterceptor`
+
+A function that runs before each TMDB API request.
+
+```ts
+type RequestInterceptor = (
+	context: RequestInterceptorContext,
+) => RequestInterceptorContext | void | Promise<RequestInterceptorContext | void>;
+```
+
+- Return **`void`** (or `undefined`) to leave the request unchanged.
+- Return a **new `RequestInterceptorContext`** to override `endpoint` and/or `params`.
+- Async interceptors are fully supported — the client awaits each one in order.
+
+See the [Interceptors guide](/docs/getting-started/options/interceptors) for usage examples.
+
+---
+
+## `ResponseSuccessInterceptor`
+
+Called after every successful response, before the data is returned to the caller.
+**Designed for side effects only** — logging, caching, monitoring.
+
+```ts
+type ResponseSuccessInterceptor = (data: unknown) => void | Promise<void>;
+```
+
+- Receives the parsed, null-sanitised response as `unknown`.
+- Return `void` — the original data is always forwarded to the caller unchanged.
+- This hook is **not** intended for data transformation or field augmentation.
+- Async interceptors are supported.
+- Does **not** run when the response is an error.
+
+---
+
+## `ResponseErrorInterceptor`
+
+Called after an error response has been normalised into a [`TMDBError`](/docs/types/errors).
+
+```ts
+type ResponseErrorInterceptor = (error: TMDBError) => void | Promise<void>;
+```
+
+- Receives a fully typed `TMDBError` — never raw `unknown`.
+- Return type is always `void` — this hook is for side effects only.
+- The `TMDBError` is **always re-thrown** after the interceptor runs; it cannot be suppressed.
+- Does **not** run on successful responses.
+
+See the [Interceptors guide](/docs/getting-started/options/interceptors#onerror) for usage examples.
