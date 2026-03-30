@@ -1,0 +1,52 @@
+---
+title: Interceptors
+description: Type definitions for request interceptors.
+---
+
+import { TypeTable } from "fumadocs-ui/components/type-table";
+
+These types are used when configuring `interceptors` in [`TMDBOptions`](/docs/getting-started/options).
+
+---
+
+## `RequestInterceptorContext`
+
+The context object passed to every [`RequestInterceptor`](#requestinterceptor) before a request is made.
+
+<TypeTable
+	type={{
+		endpoint: {
+			type: "string",
+			description: 'The API path being requested, e.g. "/movie/550".',
+			required: true,
+		},
+		params: {
+			type: "Record<string, unknown>",
+			description: "Query parameters that will be appended to the URL.",
+			required: true,
+		},
+		method: {
+			type: '"GET"',
+			description: 'The HTTP method. Currently always "GET".',
+			required: true,
+		},
+	}}
+/>
+
+---
+
+## `RequestInterceptor`
+
+A function that runs before each TMDB API request.
+
+```ts
+type RequestInterceptor = (
+	context: RequestInterceptorContext,
+) => RequestInterceptorContext | void | Promise<RequestInterceptorContext | void>;
+```
+
+- Return **`void`** (or `undefined`) to leave the request unchanged.
+- Return a **new `RequestInterceptorContext`** to override `endpoint` and/or `params`.
+- Async interceptors are fully supported — the client awaits each one in order.
+
+See the [Interceptors guide](/docs/getting-started/options/interceptors) for usage examples.

@@ -4,6 +4,42 @@ import { ImagesConfig } from "./images";
 import { Language } from "./languages";
 import { Timezone } from "./timezones";
 
+/**
+ * Context object passed to every request interceptor before a TMDB API call is made.
+ * Interceptors may return a modified copy of this object to override the endpoint or params,
+ * or return `void` / `undefined` to leave the request unchanged.
+ */
+export type RequestInterceptorContext = {
+	/** The API path being requested, e.g. `"/movie/550"`. */
+	endpoint: string;
+	/** Query parameters that will be appended to the URL. Mutating this object has no effect — return a new context instead. */
+	params: Record<string, unknown>;
+	/** The HTTP method. Currently always `"GET"`. */
+	method: "GET";
+};
+
+/**
+ * A function that runs before each TMDB API request.
+ *
+ * - Return `void` / `undefined` to leave the request unchanged.
+ * - Return a (partial) {@link RequestInterceptorContext} to override `endpoint` and/or `params`.
+ * - Async interceptors are awaited in order.
+ *
+ * @example
+ * ```ts
+ * const tmdb = new TMDB(token, {
+ *   interceptors: {
+ *     request: (ctx) => {
+ *       console.log(`[TMDB] ${ctx.method} ${ctx.endpoint}`, ctx.params);
+ *     },
+ *   },
+ * });
+ * ```
+ */
+export type RequestInterceptor = (
+	context: RequestInterceptorContext,
+) => RequestInterceptorContext | void | Promise<RequestInterceptorContext | void>;
+
 export type TMDBOptions = {
 	/**
 	 * The language to use for requests (ISO 639-1 code)
@@ -44,4 +80,26 @@ export type TMDBOptions = {
 	 * @default true
 	 */
 	deduplication?: boolean;
+	/**
+	 * Interceptors that run at specific points in the request lifecycle.
+	 *
+	 * `request` interceptors are called **before** every API request, in the order
+	 * they are provided. Each interceptor receives a {@link RequestInterceptorContext}
+	 * and may optionally return a modified context to change the endpoint or params.
+	 *
+	 * @example
+	 * ```ts
+	 * const tmdb = new TMDB(token, {
+	 *   interceptors: {
+	 *     request: [
+	 *       (ctx) => console.log(`→ ${ctx.endpoint}`),
+	 *       (ctx) => ({ ...ctx, params: { ...ctx.params, include_adult: false } }),
+	 *     ],
+	 *   },
+	 * });
+	 * ```
+	 */
+	interceptors?: {
+		request?: RequestInterceptor | RequestInterceptor[];
+	};
 };

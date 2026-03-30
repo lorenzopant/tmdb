@@ -1,0 +1,104 @@
+---
+title: Interceptors
+description: Run custom logic before every TMDB API request using request interceptors.
+---
+
+Request interceptors let you hook into the request lifecycle to observe, modify, or enrich every
+call made by the TMDB client — before it hits the network.
+
+---
+
+## Enabling interceptors
+
+Pass an `interceptors.request` function (or array of functions) when creating the client:
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key", {
+	interceptors: {
+		request: (ctx) => {
+			console.log(`[TMDB] ${ctx.method} ${ctx.endpoint}`, ctx.params);
+		},
+	},
+});
+```
+
+---
+
+## Interceptor context
+
+Each interceptor receives a [`RequestInterceptorContext`](/docs/types/options/interceptors#requestinterceptorcontext) object:
+
+| Field      | Type                      | Description                                 |
+| ---------- | ------------------------- | ------------------------------------------- |
+| `endpoint` | `string`                  | The API path, e.g. `"/movie/550"`.          |
+| `params`   | `Record<string, unknown>` | Query parameters that will be sent to TMDB. |
+| `method`   | `"GET"`                   | The HTTP method (currently always `"GET"`). |
+
+---
+
+## Modifying a request
+
+An interceptor can return a new (or partially updated) context object to change the `endpoint`
+or `params` used for the actual fetch. Return `void` to leave the request unchanged.
+
+```ts
+const tmdb = new TMDB("your-api-key", {
+	interceptors: {
+		// Force every request to be in French, regardless of per-call params
+		request: (ctx) => ({
+			...ctx,
+			params: { ...ctx.params, language: "fr-FR" },
+		}),
+	},
+});
+```
+
+---
+
+## Multiple interceptors
+
+Pass an array to chain interceptors. They run **in order**, and each one receives the context
+(possibly modified) returned by the previous interceptor.
+
+```ts
+const tmdb = new TMDB("your-api-key", {
+	interceptors: {
+		request: [
+			(ctx) => {
+				console.log(`→ ${ctx.endpoint}`);
+			},
+			(ctx) => ({
+				...ctx,
+				params: { ...ctx.params, include_adult: false },
+			}),
+		],
+	},
+});
+```
+
+---
+
+## Async interceptors
+
+Interceptors can be `async` — the client awaits each one before proceeding.
+
+```ts
+const tmdb = new TMDB("your-api-key", {
+	interceptors: {
+		request: async (ctx) => {
+			const token = await getAccessToken();
+			// You could log, trace, or mutate params here
+			console.log(`[${token}] ${ctx.endpoint}`);
+		},
+	},
+});
+```
+
+---
+
+## Related types
+
+- [`RequestInterceptor`](/docs/types/options/interceptors#requestinterceptor)
+- [`RequestInterceptorContext`](/docs/types/options/interceptors#requestinterceptorcontext)

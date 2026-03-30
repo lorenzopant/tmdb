@@ -26,14 +26,15 @@ const tmdb = new TMDB("your-api-key", {
 
 ## Available Options
 
-| Option          | Type                      | Description                                                                  |
-| --------------- | ------------------------- | ---------------------------------------------------------------------------- |
-| `language`      | `Language`                | Default language for all responses (ISO 639-1 or primary translation code).  |
-| `region`        | `CountryISO3166_1`        | Default region for localized content like release dates and watch providers. |
-| `images`        | `ImagesConfig`            | Configuration for image base URLs and default image sizes.                   |
-| `timezone`      | `Timezone`                | Default timezone for TV series airing time calculations.                     |
-| `logger`        | `boolean \| TMDBLoggerFn` | Enable the built-in console logger or supply a custom logging function.      |
-| `deduplication` | `boolean`                 | Deduplicate concurrent identical requests. Defaults to `true`.               |
+| Option          | Type                                                       | Description                                                                  |
+| --------------- | ---------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `language`      | `Language`                                                 | Default language for all responses (ISO 639-1 or primary translation code).  |
+| `region`        | `CountryISO3166_1`                                         | Default region for localized content like release dates and watch providers. |
+| `images`        | `ImagesConfig`                                             | Configuration for image base URLs and default image sizes.                   |
+| `timezone`      | `Timezone`                                                 | Default timezone for TV series airing time calculations.                     |
+| `logger`        | `boolean \| TMDBLoggerFn`                                  | Enable the built-in console logger or supply a custom logging function.      |
+| `deduplication` | `boolean`                                                  | Deduplicate concurrent identical requests. Defaults to `true`.               |
+| `interceptors`  | `{ request?: RequestInterceptor \| RequestInterceptor[] }` | Hook into the request lifecycle before each API call.                        |
 
 ---
 
@@ -171,3 +172,25 @@ const tmdb = new TMDB(apiKey, { deduplication: false });
 ```
 
 See the [Features guide](/docs/getting-started/features#request-deduplication) for a full explanation.
+
+---
+
+### `interceptors`
+
+**Type:** `{ request?: RequestInterceptor | RequestInterceptor[] }` · **Optional**
+
+Registers one or more functions that run **before** every TMDB API call. Each interceptor receives
+a [`RequestInterceptorContext`](/docs/types/options/interceptors#requestinterceptorcontext) containing the
+`endpoint`, `params`, and `method`, and can optionally return a modified context to change those values.
+
+```ts
+const tmdb = new TMDB(apiKey, {
+	interceptors: {
+		request: (ctx) => {
+			console.log(`[TMDB] ${ctx.method} ${ctx.endpoint}`, ctx.params);
+		},
+	},
+});
+```
+
+See the [Interceptors guide](/docs/getting-started/options/interceptors) for full details and examples.
