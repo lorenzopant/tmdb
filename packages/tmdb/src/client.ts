@@ -1,7 +1,12 @@
 import { TMDBAPIErrorResponse, TMDBError } from "./errors/tmdb";
 import { TMDBLogger, TMDBLoggerFn } from "./utils/logger";
 import { isJwt } from "./utils";
-import type { RequestInterceptor, RequestInterceptorContext } from "./types/config/options";
+import type {
+	RequestInterceptor,
+	RequestInterceptorContext,
+	ResponseSuccessInterceptor,
+	ResponseErrorInterceptor,
+} from "./types/config/options";
 
 export class ApiClient {
 	private accessToken: string;
@@ -16,13 +21,18 @@ export class ApiClient {
 	private inflightRequests: Map<string, Promise<unknown>> = new Map();
 	private deduplication: boolean;
 	private requestInterceptors: RequestInterceptor[];
+	private onSuccessInterceptor?: ResponseSuccessInterceptor;
+	private onErrorInterceptor?: ResponseErrorInterceptor;
 
 	constructor(
 		accessToken: string,
 		options: {
 			logger?: boolean | TMDBLoggerFn;
 			deduplication?: boolean;
-			interceptors?: { request?: RequestInterceptor | RequestInterceptor[] };
+			interceptors?: {
+				request?: RequestInterceptor | RequestInterceptor[];
+				response?: { onSuccess?: ResponseSuccessInterceptor; onError?: ResponseErrorInterceptor };
+			};
 		} = {},
 	) {
 		this.accessToken = accessToken;
@@ -30,6 +40,8 @@ export class ApiClient {
 		this.deduplication = options.deduplication !== false;
 		const raw = options.interceptors?.request;
 		this.requestInterceptors = raw == null ? [] : Array.isArray(raw) ? raw : [raw];
+		this.onSuccessInterceptor = options.interceptors?.response?.onSuccess;
+		this.onErrorInterceptor = options.interceptors?.response?.onError;
 	}
 
 	/**
@@ -151,7 +163,12 @@ export class ApiClient {
 			throw error;
 		}
 
-		if (!res.ok) await this.handleError(res, endpoint);
+		if (!res.ok) {
+			await this.handleError(res, endpoint).catch(async (err: TMDBError) => {
+				if (this.onErrorInterceptor) await this.onErrorInterceptor(err);
+				throw err;
+			});
+		}
 
 		this.logger?.log({
 			type: "response",
@@ -163,7 +180,12 @@ export class ApiClient {
 		});
 
 		const data = await res.json();
-		return this.sanitizeNulls<T>(data);
+		const sanitized = this.sanitizeNulls<T>(data);
+		if (this.onSuccessInterceptor) {
+			const result = await this.onSuccessInterceptor(sanitized as unknown);
+			return (result !== undefined ? result : sanitized) as T;
+		}
+		return sanitized;
 	}
 
 	/**

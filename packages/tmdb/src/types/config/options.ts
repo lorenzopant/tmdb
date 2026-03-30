@@ -1,3 +1,4 @@
+import { TMDBError } from "../../errors/tmdb";
 import type { TMDBLoggerFn } from "../../utils/logger";
 import { CountryISO3166_1 } from "./countries";
 import { ImagesConfig } from "./images";
@@ -39,6 +40,53 @@ export type RequestInterceptorContext = {
 export type RequestInterceptor = (
 	context: RequestInterceptorContext,
 ) => RequestInterceptorContext | void | Promise<RequestInterceptorContext | void>;
+
+/**
+ * Called after every successful TMDB API response, before data is returned to the caller.
+ *
+ * - Receives the parsed response as `unknown` (the interceptor is not aware of the specific type).
+ * - Return the data (same shape) to pass it through — or return `void` to fall back to the original.
+ * - Designed for side effects: logging, caching, image URL enrichment.
+ * - Must **not** change the shape of the returned data.
+ *
+ * @example
+ * ```ts
+ * const tmdb = new TMDB(token, {
+ *   interceptors: {
+ *     response: {
+ *       onSuccess: (data) => {
+ *         myCache.set(data);
+ *       },
+ *     },
+ *   },
+ * });
+ * ```
+ */
+export type ResponseSuccessInterceptor = (
+	data: unknown,
+) => unknown | void | Promise<unknown | void>;
+
+/**
+ * Called after a TMDB API error has been normalised into a {@link TMDBError}.
+ *
+ * - Receives a typed `TMDBError` — never raw `unknown`.
+ * - Return `void` — this hook is for side effects only (logging, toast notifications, Sentry).
+ * - The `TMDBError` is **always re-thrown** after the interceptor runs; you cannot suppress it.
+ *
+ * @example
+ * ```ts
+ * const tmdb = new TMDB(token, {
+ *   interceptors: {
+ *     response: {
+ *       onError: (error) => {
+ *         Sentry.captureException(error);
+ *       },
+ *     },
+ *   },
+ * });
+ * ```
+ */
+export type ResponseErrorInterceptor = (error: TMDBError) => void | Promise<void>;
 
 export type TMDBOptions = {
 	/**
@@ -101,5 +149,15 @@ export type TMDBOptions = {
 	 */
 	interceptors?: {
 		request?: RequestInterceptor | RequestInterceptor[];
+		/**
+		 * Response lifecycle hooks.
+		 *
+		 * - `onSuccess` — runs after every successful response, before data is returned.
+		 * - `onError` — runs after a {@link TMDBError} is created; always re-throws after.
+		 */
+		response?: {
+			onSuccess?: ResponseSuccessInterceptor;
+			onError?: ResponseErrorInterceptor;
+		};
 	};
 };
