@@ -1,6 +1,12 @@
 import { TMDBAPIErrorResponse, TMDBError } from "./errors/tmdb";
 import { TMDBLogger, TMDBLoggerFn } from "./utils/logger";
 import { isJwt } from "./utils";
+import type {
+	RequestInterceptor,
+	RequestInterceptorContext,
+	ResponseSuccessInterceptor,
+	ResponseErrorInterceptor,
+} from "./types/config/options";
 
 export class ApiClient {
 	private accessToken: string;
@@ -14,14 +20,28 @@ export class ApiClient {
 	 */
 	private inflightRequests: Map<string, Promise<unknown>> = new Map();
 	private deduplication: boolean;
+	private requestInterceptors: RequestInterceptor[];
+	private onSuccessInterceptor?: ResponseSuccessInterceptor;
+	private onErrorInterceptor?: ResponseErrorInterceptor;
 
 	constructor(
 		accessToken: string,
-		options: { logger?: boolean | TMDBLoggerFn; deduplication?: boolean } = {},
+		options: {
+			logger?: boolean | TMDBLoggerFn;
+			deduplication?: boolean;
+			interceptors?: {
+				request?: RequestInterceptor | RequestInterceptor[];
+				response?: { onSuccess?: ResponseSuccessInterceptor; onError?: ResponseErrorInterceptor };
+			};
+		} = {},
 	) {
 		this.accessToken = accessToken;
 		this.logger = TMDBLogger.from(options.logger);
 		this.deduplication = options.deduplication !== false;
+		const raw = options.interceptors?.request;
+		this.requestInterceptors = raw == null ? [] : Array.isArray(raw) ? raw : [raw];
+		this.onSuccessInterceptor = options.interceptors?.response?.onSuccess;
+		this.onErrorInterceptor = options.interceptors?.response?.onError;
 	}
 
 	/**
@@ -72,6 +92,21 @@ export class ApiClient {
 		});
 		this.inflightRequests.set(key, promise);
 		return promise;
+	}
+
+	/**
+	 * Runs all registered request interceptors in order, threading the context through each one.
+	 * If an interceptor returns a new context, it replaces the current context for the next interceptor.
+	 */
+	private async runRequestInterceptors(
+		context: RequestInterceptorContext,
+	): Promise<RequestInterceptorContext> {
+		let current = context;
+		for (const interceptor of this.requestInterceptors) {
+			const result = await interceptor(current);
+			if (result != null) current = result;
+		}
+		return current;
 	}
 
 	/**
@@ -131,6 +166,9 @@ export class ApiClient {
 		});
 
 		const error = new TMDBError(errorMessage, res.status, tmdbStatusCode);
+		if (this.onErrorInterceptor) {
+			await this.onErrorInterceptor(error);
+		}
 		throw error;
 	}
 
@@ -162,10 +200,18 @@ export class ApiClient {
 		params: Record<string, unknown | undefined>,
 		body?: Record<string, unknown>,
 	): Promise<T> {
-		const url = new URL(`${this.baseUrl}${endpoint}`);
+		const ctx = await this.runRequestInterceptors({
+			endpoint,
+			params: params as Record<string, unknown>,
+			method,
+		});
+		const effectiveEndpoint = ctx.endpoint;
+		const effectiveParams = ctx.params;
+
+		const url = new URL(`${this.baseUrl}${effectiveEndpoint}`);
 		const jwt = isJwt(this.accessToken);
 
-		for (const [key, value] of this.serializeParams(params)) {
+		for (const [key, value] of this.serializeParams(effectiveParams)) {
 			url.searchParams.append(key, value);
 		}
 		if (!jwt) {
@@ -212,6 +258,13 @@ export class ApiClient {
 		});
 
 		const data = await res.json();
-		return this.sanitizeNulls<T>(data);
+		const sanitized = this.sanitizeNulls<T>(data);
+
+		if (this.onSuccessInterceptor) {
+			const result = await this.onSuccessInterceptor(sanitized);
+			return result != null ? (result as T) : sanitized;
+		}
+
+		return sanitized;
 	}
 }

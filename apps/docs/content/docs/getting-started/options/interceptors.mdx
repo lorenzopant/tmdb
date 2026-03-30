@@ -1,0 +1,162 @@
+---
+title: Interceptors
+description: Run custom logic before and after every TMDB API request using interceptors.
+---
+
+Interceptors let you hook into the request lifecycle — before a request is sent, after a
+successful response arrives, or when an error occurs.
+
+---
+
+## Enabling interceptors
+
+Pass an `interceptors.request` function (or array of functions) when creating the client:
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key", {
+	interceptors: {
+		request: (ctx) => {
+			console.log(`[TMDB] ${ctx.method} ${ctx.endpoint}`, ctx.params);
+		},
+	},
+});
+```
+
+---
+
+## Interceptor context
+
+Each interceptor receives a [`RequestInterceptorContext`](/docs/types/options/interceptors#requestinterceptorcontext) object:
+
+| Field      | Type                                   | Description                                 |
+| ---------- | -------------------------------------- | ------------------------------------------- |
+| `endpoint` | `string`                               | The API path, e.g. `"/movie/550"`.          |
+| `params`   | `Record<string, unknown>`              | Query parameters that will be sent to TMDB. |
+| `method`   | `"GET" \| "POST" \| "PUT" \| "DELETE"` | The HTTP method.                            |
+
+---
+
+## Modifying a request
+
+An interceptor can return a new (or partially updated) context object to change the `endpoint`
+or `params` used for the actual fetch. Return `void` to leave the request unchanged.
+
+```ts
+const tmdb = new TMDB("your-api-key", {
+	interceptors: {
+		// Force every request to be in French, regardless of per-call params
+		request: (ctx) => ({
+			...ctx,
+			params: { ...ctx.params, language: "fr-FR" },
+		}),
+	},
+});
+```
+
+---
+
+## Multiple interceptors
+
+Pass an array to chain interceptors. They run **in order**, and each one receives the context
+(possibly modified) returned by the previous interceptor.
+
+```ts
+const tmdb = new TMDB("your-api-key", {
+	interceptors: {
+		request: [
+			(ctx) => {
+				console.log(`→ ${ctx.endpoint}`);
+			},
+			(ctx) => ({
+				...ctx,
+				params: { ...ctx.params, include_adult: false },
+			}),
+		],
+	},
+});
+```
+
+---
+
+## Async interceptors
+
+Interceptors can be `async` — the client awaits each one before proceeding.
+
+```ts
+const tmdb = new TMDB("your-api-key", {
+	interceptors: {
+		request: async (ctx) => {
+			const token = await getAccessToken();
+			// You could log, trace, or mutate params here
+			console.log(`[${token}] ${ctx.endpoint}`);
+		},
+	},
+});
+```
+
+---
+
+## Response interceptors
+
+`interceptors.response` exposes two optional hooks: `onSuccess` and `onError`.
+
+### `onSuccess`
+
+Called after every successful response, before the data is returned to the caller.
+Designed for **side effects only** — logging, caching, monitoring, etc.
+Receives the parsed, null-sanitised data as `unknown`.
+
+Return `void` (or nothing) — the original data is always forwarded to the caller unchanged.
+This hook is **not** intended for data transformation or field augmentation; the type contract
+of every API method stays intact regardless of what the interceptor does.
+
+```ts
+const tmdb = new TMDB("your-api-key", {
+	interceptors: {
+		response: {
+			onSuccess: (data) => {
+				myCache.store(data);
+			},
+		},
+	},
+});
+```
+
+> **Note:** `onSuccess` does not run when a response is an error.
+
+---
+
+### `onError`
+
+Called after an error response is normalised into a [`TMDBError`](/docs/types/errors).
+Designed for side effects only — the error is **always re-thrown** after this hook runs;
+you cannot suppress it or return a fallback value.
+
+```ts
+import Sentry from "@sentry/node";
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key", {
+	interceptors: {
+		response: {
+			onError: (error) => {
+				Sentry.captureException(error);
+			},
+		},
+	},
+});
+```
+
+The `error` argument is a fully typed [`TMDBError`](/docs/types/errors) with `message`,
+`http_status_code`, and `tmdb_status_code` fields.
+
+---
+
+## Related types
+
+- [`RequestInterceptor`](/docs/types/options/interceptors#requestinterceptor)
+- [`RequestInterceptorContext`](/docs/types/options/interceptors#requestinterceptorcontext)
+- [`ResponseSuccessInterceptor`](/docs/types/options/interceptors#responsesuccessinterceptor)
+- [`ResponseErrorInterceptor`](/docs/types/options/interceptors#responseerrorinterceptor)
