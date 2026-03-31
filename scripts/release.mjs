@@ -21,6 +21,7 @@ import { fileURLToPath } from "node:url";
 
 const VALID_TYPES = ["patch", "minor", "major", "prepatch", "preminor", "premajor"];
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const packageDir = resolve(root, "packages/tmdb");
 
 const bumpType = process.argv[2];
 const dryRun = process.argv.includes("--dry-run");
@@ -33,12 +34,12 @@ if (!bumpType || !VALID_TYPES.includes(bumpType)) {
 
 if (dryRun) console.log("[dry-run] No commands will be executed.\n");
 
-const run = (cmd) => {
+const run = (cmd, cwd = root) => {
 	if (dryRun) {
 		console.log(`[dry-run] ${cmd}`);
 		return;
 	}
-	execSync(cmd, { stdio: "inherit", cwd: root });
+	execSync(cmd, { stdio: "inherit", cwd });
 };
 const capture = (cmd) => execSync(cmd, { cwd: root }).toString().trim();
 
@@ -59,13 +60,9 @@ if (branch !== "main") {
 // Pull latest changes
 run("git pull --rebase origin main");
 
-// Bump version in the package (no git tag — we do that manually below)
+// Bump version in packages/tmdb only (no git tag — we do that manually below)
 const versionArgs = bumpType.startsWith("pre") ? "--preid=beta" : "";
-if (!dryRun) {
-	run(`npm version ${bumpType} ${versionArgs} --no-git-tag-version`.trim().replace(/\s+/g, " "));
-} else {
-	console.log(`[dry-run] npm version ${bumpType} ${versionArgs} --no-git-tag-version`.trim().replace(/\s+/g, " "));
-}
+run(`npm version ${bumpType} ${versionArgs} --no-git-tag-version`.trim().replace(/\s+/g, " "), packageDir);
 
 const { version } = JSON.parse(readFileSync(resolve(root, "packages/tmdb/package.json"), "utf-8"));
 const tag = `v${version}`;
