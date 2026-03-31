@@ -26,6 +26,18 @@
 			"dependsOn": ["^test"],
 			"cache": false
 		},
+		"test:unit": {
+			"dependsOn": ["^test:unit"],
+			"cache": false
+		},
+		"test:integration": {
+			"dependsOn": ["^test:integration"],
+			"cache": false
+		},
+		"test:coverage": {
+			"dependsOn": ["^test:coverage"],
+			"cache": false
+		},
 		"typecheck": {
 			"dependsOn": ["^typecheck"],
 			"cache": false

@@ -6,3 +6,5 @@ coverage/
 .desktop.ini
 .turbo
 .vscode/
+lefthook-local.yml
+lefthook-local.yaml

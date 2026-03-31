@@ -7,14 +7,18 @@
 		"lint": "turbo run lint",
 		"lint:check": "turbo run lint:check",
 		"format": "turbo run format",
-		"typecheck": "turbo run typecheck",
-		"test": "turbo run test",
-		"clean:turbo": "rm -rf .turbo",
-		"clean": "rm -rf .turbo dist coverage"
+		"test": "pnpm run test:unit",
+		"test:unit": "turbo run test:unit",
+		"test:integration": "turbo run test:integration",
+		"test:coverage": "turbo run test:coverage",
+		"test:watch": "pnpm --filter @lorenzopant/tmdb run test:watch",
+		"test:ui": "pnpm --filter @lorenzopant/tmdb run test:ui",
+		"typecheck": "turbo run typecheck"
 	},
 	"devDependencies": {
-		"oxfmt": "^0.42.0",
-		"oxlint": "^1.57.0",
+		"lefthook": "2.1.4",
+		"oxfmt": "^0.43.0",
+		"oxlint": "^1.58.0",
 		"oxlint-tsgolint": "^0.18.1",
 		"turbo": "2.8.21"
 	},
