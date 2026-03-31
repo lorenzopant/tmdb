@@ -219,7 +219,11 @@ export class ApiClient {
 		}
 
 		const startedAt = Date.now();
-		this.logger?.log({ type: "request", method, endpoint });
+		this.logger?.log({
+			type: "request",
+			method,
+			endpoint: effectiveEndpoint,
+		});
 
 		let res: Response;
 		try {
@@ -239,19 +243,19 @@ export class ApiClient {
 			this.logger?.log({
 				type: "error",
 				method,
-				endpoint,
+				endpoint: effectiveEndpoint,
 				errorMessage: error instanceof Error ? error.message : String(error),
 				durationMs: Date.now() - startedAt,
 			});
 			throw error;
 		}
 
-		if (!res.ok) await this.handleError(res, endpoint, method);
+		if (!res.ok) await this.handleError(res, effectiveEndpoint, method);
 
 		this.logger?.log({
 			type: "response",
 			method,
-			endpoint,
+			endpoint: effectiveEndpoint,
 			status: res.status,
 			statusText: res.statusText,
 			durationMs: Date.now() - startedAt,

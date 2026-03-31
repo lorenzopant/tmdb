@@ -7,6 +7,7 @@ import type {
 	AccountDetailsParams,
 	AccountListItem,
 	AccountListsParams,
+	AccountListsResponse,
 	AccountMediaListParams,
 	AccountMovieListResponse,
 	AccountMutationParams,
@@ -205,9 +206,9 @@ export class AccountAPI extends TMDBAPIBase {
 	 * @param account_id The TMDB account ID.
 	 * @reference https://developer.themoviedb.org/reference/account-lists
 	 */
-	async lists(params: AccountListsParams): Promise<PaginatedResponse<AccountListItem>> {
+	async lists(params: AccountListsParams): Promise<AccountListsResponse> {
 		const { account_id, ...rest } = params;
-		return this.client.request<PaginatedResponse<AccountListItem>>(
+		return this.client.request<AccountListsResponse>(
 			this.accountSubPath(account_id, ENDPOINTS.ACCOUNT.LISTS),
 			rest,
 		);

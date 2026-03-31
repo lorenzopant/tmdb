@@ -174,14 +174,6 @@ export type AccountRatedEpisodeItem = {
 
 // MARK: Lists
 
-/** Params for constructing account sub-paths (used internally). */
-export type AccountPathParams = {
-	/** TMDB account ID. */
-	account_id: number;
-	/** Optional language override (ISO 639-1). */
-	language?: Language;
-};
-
 /** A custom list summary as returned by the account lists endpoint. */
 export type AccountListItem = {
 	/** List description. */

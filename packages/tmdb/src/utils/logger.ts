@@ -40,7 +40,7 @@ export class TMDBLogger {
 		const timestamp = new Date().toISOString();
 
 		if (entry.type === "request") {
-			console.log(`${prefix} ${timestamp} 🛰️ REQUEST ${entry.method} ${entry.endpoint}\n`);
+			console.log(`${prefix} ${timestamp} 🛰️ REQUEST ${entry.method} ${entry.endpoint} \n`);
 			return;
 		}
 
