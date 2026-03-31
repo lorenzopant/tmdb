@@ -13,6 +13,13 @@ Thank you for considering contributing to **@lorenzopant/tmdb**! Whether it's bu
     pnpm install
     ```
 
+    Git hooks are installed from the repo root via Lefthook during install.
+    If you need to reinstall them manually, run:
+
+    ```bash
+    pnpm exec lefthook install
+    ```
+
 3. Run the development server and test suite:
 
     ```bash
@@ -26,16 +33,37 @@ Thank you for considering contributing to **@lorenzopant/tmdb**! Whether it's bu
 
 We use [Vitest](https://vitest.dev/) for testing.
 
-To run tests:
+Recommended root-level test commands:
 
 ```bash
 pnpm test
+pnpm test:unit
+pnpm test:watch
+pnpm test:ui
+pnpm test:coverage
 ```
 
-To generate a coverage report:
+What each command does:
+
+- `pnpm test` runs the default unit test suite
+- `pnpm test:unit` runs all unit tests across the workspace
+- `pnpm test:watch` starts Vitest in watch mode for `packages/tmdb`
+- `pnpm test:ui` starts the Vitest UI for `packages/tmdb`
+- `pnpm test:coverage` runs the unit suite with coverage reporting
+
+Integration tests require TMDB credentials and can be run separately with:
 
 ```bash
-pnpm test --coverage
+pnpm test:integration
+```
+
+If you want to run the package tests directly instead of using the root shortcuts:
+
+```bash
+cd packages/tmdb
+pnpm run test
+pnpm run test:watch
+pnpm run test:ui
 ```
 
 ---
@@ -46,6 +74,11 @@ pnpm test --coverage
 - Use **named exports** where possible
 - Follow the established file structure (`src/`, `types/`, `tests/`, etc.)
 - Use `pnpm lint` and `pnpm format` before submitting a PR
+- Use `pnpm check` before pushing changes when you want the same core validation locally
+- Pre-commit hooks format and lint staged files before the commit is created
+- Pre-push hooks run lint, typecheck, build, and unit tests across the repo
+- If `TMDB_BEARER_TOKEN` is set locally, pre-push also runs integration tests
+- You can override hooks locally with `lefthook-local.yml` or `lefthook-local.yaml`
 
 ---
 
