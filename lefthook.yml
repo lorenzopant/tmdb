@@ -1,0 +1,31 @@
+min_version: 2.1.4
+
+pre-commit:
+    parallel: true
+    commands:
+        format:
+            glob: "*.{js,jsx,ts,tsx,mjs,cjs,mts,cts,json,md,mdx,css,yml,yaml}"
+            run: pnpm exec oxfmt {staged_files}
+            stage_fixed: true
+        lint:
+            glob: "*.{js,jsx,ts,tsx,mjs,cjs,mts,cts}"
+            run: pnpm exec oxlint --quiet {staged_files}
+
+pre-push:
+    piped: true
+    commands:
+        lint:
+            run: pnpm run lint
+        typecheck:
+            run: pnpm run typecheck
+        build:
+            run: pnpm run build
+        test:
+            run: pnpm run test:unit
+        integration:
+            run: |
+                if [ -n "${TMDB_BEARER_TOKEN:-}" ]; then
+                  pnpm run test:integration
+                else
+                  echo "Skipping integration tests: TMDB_BEARER_TOKEN is not set."
+                fi
