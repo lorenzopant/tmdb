@@ -62,9 +62,18 @@ run("git pull --rebase origin main");
 
 // Bump version in packages/tmdb only (no git tag — we do that manually below)
 const versionArgs = bumpType.startsWith("pre") ? "--preid=beta" : "";
-run(`npm version ${bumpType} ${versionArgs} --no-git-tag-version`.trim().replace(/\s+/g, " "), packageDir);
+const versionCmd = `npm version ${bumpType} ${versionArgs} --no-git-tag-version`.trim().replace(/\s+/g, " ");
 
-const { version } = JSON.parse(readFileSync(resolve(root, "packages/tmdb/package.json"), "utf-8"));
+let version;
+if (dryRun) {
+	// --dry-run prints the would-be version without modifying the file
+	const output = execSync(`${versionCmd} --dry-run`, { cwd: packageDir }).toString().trim();
+	version = output.replace(/^v/, "");
+	console.log(`[dry-run] ${versionCmd}  →  would bump to v${version}`);
+} else {
+	run(versionCmd, packageDir);
+	version = JSON.parse(readFileSync(resolve(root, "packages/tmdb/package.json"), "utf-8")).version;
+}
 const tag = `v${version}`;
 
 console.log(`\nReleasing ${tag}...`);
