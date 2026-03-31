@@ -3,6 +3,8 @@
 	"private": true,
 	"scripts": {
 		"build": "turbo run build",
+		"check": "pnpm run lint && pnpm run typecheck && pnpm run test:unit",
+		"clean": "turbo run clean && rm -rf .turbo",
 		"dev": "turbo run dev",
 		"lint": "turbo run lint",
 		"lint:check": "turbo run lint:check",
@@ -20,12 +22,7 @@
 		"oxfmt": "^0.43.0",
 		"oxlint": "^1.58.0",
 		"oxlint-tsgolint": "^0.18.1",
-		"turbo": "2.8.21"
+		"turbo": "2.9.1"
 	},
-	"packageManager": "pnpm@9.15.9",
-	"pnpm": {
-		"overrides": {
-			"basic-ftp": "5.2.0"
-		}
-	}
+	"packageManager": "pnpm@9.15.9"
 }
