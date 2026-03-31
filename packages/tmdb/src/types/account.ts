@@ -1,5 +1,4 @@
 import { MediaType, PaginatedResponse, WithLanguage, WithPage } from "./common";
-import { Language } from "./config";
 import { MovieResultItem, TVSeriesResultItem } from "./search";
 
 // MARK: Shared
