@@ -12,17 +12,18 @@ on:
                     - patch
                     - minor
                     - major
-            is_beta:
-                description: "Prepare as beta release?"
-                required: true
-                type: boolean
-                default: true
+                    - prepatch
+                    - preminor
+                    - premajor
     push:
-        branches:
-            - main
+        tags:
+            - "v[0-9]*.[0-9]*.[0-9]*"
 
 jobs:
-    prepare_release_branch:
+    # Triggered from the GitHub Actions UI — mirrors what `pnpm release:*` does
+    # locally: bumps the version, commits to main, and pushes the tag so that
+    # the publish_release job below takes over.
+    trigger_release:
         if: github.event_name == 'workflow_dispatch'
         runs-on: ubuntu-latest
         permissions:
@@ -56,14 +57,8 @@ jobs:
               working-directory: packages/tmdb
               run: |
                   RELEASE_TYPE="${{ github.event.inputs.release_type }}"
-
-                  if [ "${{ github.event.inputs.is_beta }}" = "true" ]; then
-                    case "$RELEASE_TYPE" in
-                      patch) npm version prepatch --preid=beta --no-git-tag-version ;;
-                      minor) npm version preminor --preid=beta --no-git-tag-version ;;
-                      major) npm version premajor --preid=beta --no-git-tag-version ;;
-                      *) echo "Unsupported release type: $RELEASE_TYPE" && exit 1 ;;
-                    esac
+                  if echo "$RELEASE_TYPE" | grep -q "^pre"; then
+                    npm version "$RELEASE_TYPE" --preid=beta --no-git-tag-version
                   else
                     npm version "$RELEASE_TYPE" --no-git-tag-version
                   fi
@@ -72,37 +67,22 @@ jobs:
               id: version
               run: echo "version=$(node -p "require('./packages/tmdb/package.json').version")" >> "$GITHUB_OUTPUT"
 
-            - name: Create and push release branch
-              id: branch
+            - name: Commit, tag, and push
               run: |
-                  VERSION="${{ steps.version.outputs.version }}"
-                  BRANCH="release/v${VERSION}-${{ github.run_id }}"
-
-                  git checkout -b "$BRANCH"
+                  TAG="v${{ steps.version.outputs.version }}"
                   git add packages/tmdb/package.json
-                  git commit -m "chore: release v${VERSION}"
-                  git push -u origin "$BRANCH"
+                  git commit -m "chore: release $TAG"
+                  git push origin main
+                  git tag "$TAG"
+                  git push origin "$TAG"
 
-                  echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
-                  echo "compare_url=https://github.com/${{ github.repository }}/compare/main...${BRANCH}?expand=1" >> "$GITHUB_OUTPUT"
-
-            - name: Release instructions
+            - name: Summary
               run: |
-                  echo "Release branch created: ${{ steps.branch.outputs.branch }}"
-                  echo "Open this URL to create the PR:"
-                  echo "${{ steps.branch.outputs.compare_url }}"
-
                   {
-                    echo "## Release branch ready"
+                    echo "## Release triggered"
                     echo
-                    echo "- Branch: \`${{ steps.branch.outputs.branch }}\`"
-                    echo "- Open this URL to create the PR manually:"
-                    echo "- ${{ steps.branch.outputs.compare_url }}"
-                    echo
-                    echo "After the PR is merged into \`main\`, the publish job will:"
-                    echo "- publish to npm only if this version is not already published"
-                    echo "- create and push the git tag if it does not exist"
-                    echo "- create the GitHub release if it does not exist"
+                    echo "- Version: \`${{ steps.version.outputs.version }}\`"
+                    echo "- Tag pushed — the **publish_release** job will build and publish to npm."
                   } >> "$GITHUB_STEP_SUMMARY"
 
     publish_release:
@@ -135,11 +115,6 @@ jobs:
             - name: Update npm for OIDC publishing compatibility
               run: npm install -g npm@11.5.1
 
-            - name: Configure git identity
-              run: |
-                  git config --global user.name "github-actions[bot]"
-                  git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
             - name: Read package version
               id: version
               run: |
@@ -147,29 +122,7 @@ jobs:
                   echo "version=$VERSION" >> "$GITHUB_OUTPUT"
                   echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
 
-            - name: Check if tag already exists
-              id: tag_check
-              run: |
-                  if git rev-parse "${{ steps.version.outputs.tag }}" >/dev/null 2>&1; then
-                    echo "exists=true" >> "$GITHUB_OUTPUT"
-                  else
-                    echo "exists=false" >> "$GITHUB_OUTPUT"
-                  fi
-
-            - name: Stop when this version is already tagged
-              if: steps.tag_check.outputs.exists == 'true'
-              run: echo "Tag ${{ steps.version.outputs.tag }} already exists; nothing to publish."
-
-            - name: Install dependencies
-              if: steps.tag_check.outputs.exists != 'true'
-              run: pnpm install --frozen-lockfile
-
-            - name: Build package
-              if: steps.tag_check.outputs.exists != 'true'
-              run: pnpm --filter=@lorenzopant/tmdb run build
-
             - name: Check whether version already exists on npm
-              if: steps.tag_check.outputs.exists != 'true'
               id: npm_check
               run: |
                   if npm view "${PACKAGE_NAME}@${{ steps.version.outputs.version }}" version >/dev/null 2>&1; then
@@ -178,26 +131,27 @@ jobs:
                     echo "published=false" >> "$GITHUB_OUTPUT"
                   fi
 
+            - name: Install dependencies
+              if: steps.npm_check.outputs.published != 'true'
+              run: pnpm install --frozen-lockfile
+
+            - name: Build package
+              if: steps.npm_check.outputs.published != 'true'
+              run: pnpm --filter=@lorenzopant/tmdb run build
+
             - name: Publish package to npm
-              if: steps.tag_check.outputs.exists != 'true' && steps.npm_check.outputs.published != 'true'
+              if: steps.npm_check.outputs.published != 'true'
               working-directory: packages/tmdb
               run: |
                   VERSION="${{ steps.version.outputs.version }}"
 
-                  if echo "$VERSION" | grep -q -- "-beta\\."; then
+                  if echo "$VERSION" | grep -q -- "-beta\."; then
                     npm publish --provenance --tag beta --access public
                   else
                     npm publish --provenance --access public
                   fi
 
-            - name: Create and push git tag
-              if: steps.tag_check.outputs.exists != 'true'
-              run: |
-                  git tag "${{ steps.version.outputs.tag }}"
-                  git push origin "${{ steps.version.outputs.tag }}"
-
             - name: Create GitHub release
-              if: steps.tag_check.outputs.exists != 'true'
               run: |
                   gh release view "${{ steps.version.outputs.tag }}" >/dev/null 2>&1 || \
                   gh release create "${{ steps.version.outputs.tag }}" --generate-notes --title "${{ steps.version.outputs.tag }}"

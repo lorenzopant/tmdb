@@ -15,7 +15,13 @@
 		"test:coverage": "turbo run test:coverage",
 		"test:watch": "pnpm --filter @lorenzopant/tmdb run test:watch",
 		"test:ui": "pnpm --filter @lorenzopant/tmdb run test:ui",
-		"typecheck": "turbo run typecheck"
+		"typecheck": "turbo run typecheck",
+		"release:patch": "node scripts/release.mjs patch",
+		"release:minor": "node scripts/release.mjs minor",
+		"release:major": "node scripts/release.mjs major",
+		"release:beta-patch": "node scripts/release.mjs prepatch",
+		"release:beta-minor": "node scripts/release.mjs preminor",
+		"release:beta-major": "node scripts/release.mjs premajor"
 	},
 	"devDependencies": {
 		"lefthook": "2.1.4",
