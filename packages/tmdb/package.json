@@ -23,22 +23,22 @@
 		"README.md"
 	],
 	"type": "module",
-	"main": "dist/index.js",
-	"types": "dist/index.d.ts",
+	"main": "dist/index.mjs",
+	"types": "dist/index.d.mts",
 	"exports": {
 		".": {
-			"import": "./dist/index.js",
-			"types": "./dist/index.d.ts"
+			"import": "./dist/index.mjs",
+			"types": "./dist/index.d.mts"
 		},
 		"./types": {
-			"import": "./dist/index.js",
-			"types": "./dist/index.d.ts"
+			"import": "./dist/index.mjs",
+			"types": "./dist/index.d.mts"
 		}
 	},
 	"scripts": {
-		"build": "tsup",
+		"build": "tsdown",
 		"clean": "rm -rf dist coverage",
-		"dev": "tsup --watch",
+		"dev": "tsdown --watch",
 		"format": "oxfmt .",
 		"lint": "oxlint .",
 		"lint:check": "oxlint --type-aware --type-check .",
@@ -58,7 +58,7 @@
 		"release-it": "^19.0.3",
 		"release-it-pnpm": "^4.6.6",
 		"ts-morph": "^27.0.2",
-		"tsup": "^8.5.1",
+		"tsdown": "^0.21.7",
 		"tsx": "^4.21.0",
 		"typescript": "^5.8.3",
 		"vite": "^7.0.0",
