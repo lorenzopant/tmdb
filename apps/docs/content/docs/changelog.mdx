@@ -4,6 +4,23 @@ description: Latest updates and announcements
 icon: History
 ---
 
+## 🚀 1.18.0 - 1 April 2026
+
+#### ✨ New
+
+- [Authentication API](/docs/api-reference/authentication) — access TMDB authentication endpoints via `tmdb.authentication`
+- [Account API](/docs/api-reference/account) — manage account details, favourites, watchlists, and rated items via `tmdb.account`
+
+#### 🐞 Bug Fixes
+
+- **Standalone classes now work as documented** — `MoviesAPI`, `SearchAPI`, `GenresAPI`, and all other endpoint classes can now be instantiated directly with an access token (e.g. `new MoviesAPI("your_token")`). Previously the constructor required an internal `ApiClient` instance, causing a runtime error. All endpoint classes are also now correctly exported from the package root.
+
+#### 🧪 Tests
+
+- Improved test coverage across the SDK
+
+---
+
 ## 🚀 1.17.6 - 31 March 2026
 
 #### 🔧 Internal

@@ -2,6 +2,8 @@
 export { TMDB } from "./tmdb";
 export { TMDBError } from "./errors/tmdb";
 
+export { AuthenticationAPI } from "./endpoints/authentication";
+export { AccountAPI } from "./endpoints/account";
 export { CertificationsAPI } from "./endpoints/certifications";
 export { ChangesAPI } from "./endpoints/changes";
 export { CollectionsAPI } from "./endpoints/collections";
