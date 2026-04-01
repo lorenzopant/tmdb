@@ -1,4 +1,12 @@
 export const ENDPOINTS = {
+	AUTHENTICATION: {
+		VALIDATE: "/authentication",
+		GUEST_SESSION: "/authentication/guest_session/new",
+		REQUEST_TOKEN: "/authentication/token/new",
+		CREATE_SESSION: "/authentication/session/new",
+		CREATE_SESSION_WITH_LOGIN: "/authentication/token/validate_with_login",
+		DELETE_SESSION: "/authentication/session",
+	},
 	ACCOUNT: {
 		DETAILS: "/account",
 		ADD_FAVORITE: "/favorite",
