@@ -55,8 +55,6 @@
 		"@vitest/coverage-v8": "^4.1.2",
 		"@vitest/ui": "^4.1.2",
 		"dotenv": "^16.5.0",
-		"release-it": "^19.0.3",
-		"release-it-pnpm": "^4.6.6",
 		"ts-morph": "^27.0.2",
 		"tsdown": "^0.21.7",
 		"tsx": "^4.21.0",
