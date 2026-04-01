@@ -90,8 +90,8 @@ export class MoviesAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/movie-credits
 	 */
 	async credits(params: MovieCreditsParams): Promise<MovieCredits> {
-		const endpoint = this.movieSubPath(params.movie_id, ENDPOINTS.MOVIES.CREDITS);
-		const { language = this.defaultOptions.language, ...rest } = params;
+		const { movie_id, language = this.defaultOptions.language, ...rest } = params;
+		const endpoint = this.movieSubPath(movie_id, ENDPOINTS.MOVIES.CREDITS);
 		return this.client.request<MovieCredits>(endpoint, { language, ...rest });
 	}
 
@@ -162,8 +162,8 @@ export class MoviesAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/movie-images
 	 */
 	async images(params: MovieImagesParams): Promise<MovieImages> {
-		const { language = this.defaultOptions.language, ...rest } = params;
-		const endpoint = this.movieSubPath(params.movie_id, ENDPOINTS.MOVIES.IMAGES);
+		const { movie_id, language = this.defaultOptions.language, ...rest } = params;
+		const endpoint = this.movieSubPath(movie_id, ENDPOINTS.MOVIES.IMAGES);
 		return this.client.request<MovieImages>(endpoint, { language, ...rest });
 	}
 
@@ -194,8 +194,8 @@ export class MoviesAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/movie-recommendations
 	 */
 	async recommendations(params: MovieRecommendationsParams): Promise<MovieRecommendations> {
-		const { language = this.defaultOptions.language, ...rest } = params;
-		const endpoint = this.movieSubPath(params.movie_id, ENDPOINTS.MOVIES.RECOMMENDATIONS);
+		const { movie_id, language = this.defaultOptions.language, ...rest } = params;
+		const endpoint = this.movieSubPath(movie_id, ENDPOINTS.MOVIES.RECOMMENDATIONS);
 		return this.client.request<MovieRecommendations>(endpoint, { language, ...rest });
 	}
 
@@ -232,8 +232,8 @@ export class MoviesAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/movie-reviews
 	 */
 	async reviews(params: MovieReviewsParams): Promise<MovieReviews> {
-		const { language = this.defaultOptions.language, ...rest } = params;
-		const endpoint = this.movieSubPath(params.movie_id, ENDPOINTS.MOVIES.REVIEWS);
+		const { movie_id, language = this.defaultOptions.language, ...rest } = params;
+		const endpoint = this.movieSubPath(movie_id, ENDPOINTS.MOVIES.REVIEWS);
 		return this.client.request<MovieReviews>(endpoint, { language, ...rest });
 	}
 
@@ -251,8 +251,8 @@ export class MoviesAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/movie-similar
 	 */
 	async similar(params: MovieSimilarParams): Promise<MovieSimilar> {
-		const { language = this.defaultOptions.language, ...rest } = params;
-		const endpoint = this.movieSubPath(params.movie_id, ENDPOINTS.MOVIES.SIMILAR);
+		const { movie_id, language = this.defaultOptions.language, ...rest } = params;
+		const endpoint = this.movieSubPath(movie_id, ENDPOINTS.MOVIES.SIMILAR);
 		return this.client.request<MovieSimilar>(endpoint, { language, ...rest });
 	}
 
@@ -282,8 +282,8 @@ export class MoviesAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/movie-videos
 	 */
 	async videos(params: MovieVideosParams): Promise<MovieVideos> {
-		const { language = this.defaultOptions.language, ...rest } = params;
-		const endpoint = this.movieSubPath(params.movie_id, ENDPOINTS.MOVIES.VIDEOS);
+		const { movie_id, language = this.defaultOptions.language, ...rest } = params;
+		const endpoint = this.movieSubPath(movie_id, ENDPOINTS.MOVIES.VIDEOS);
 		return this.client.request<MovieVideos>(endpoint, { language, ...rest });
 	}
 

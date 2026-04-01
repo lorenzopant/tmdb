@@ -54,7 +54,9 @@ describe("MoviesAPI", () => {
 		it("should forward the country query param", async () => {
 			await moviesAPI.alternative_titles({ movie_id: 550, country: "US" });
 			expect(clientMock.request).toHaveBeenCalledOnce();
-			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/alternative_titles", { country: "US" });
+			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/alternative_titles", {
+				country: "US",
+			});
 		});
 	});
 
@@ -66,13 +68,242 @@ describe("MoviesAPI", () => {
 		});
 
 		it("should forward date range and page query params", async () => {
-			await moviesAPI.changes({ movie_id: 550, start_date: "2024-01-01", end_date: "2024-01-14", page: 2 });
+			await moviesAPI.changes({
+				movie_id: 550,
+				start_date: "2024-01-01",
+				end_date: "2024-01-14",
+				page: 2,
+			});
 			expect(clientMock.request).toHaveBeenCalledOnce();
 			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/changes", {
 				start_date: "2024-01-01",
 				end_date: "2024-01-14",
 				page: 2,
 			});
+		});
+	});
+
+	describe("credits", () => {
+		it("should call client.request with the correct endpoint", async () => {
+			await moviesAPI.credits({ movie_id: 550 });
+			expect(clientMock.request).toHaveBeenCalledOnce();
+			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/credits", {
+				language: undefined,
+			});
+		});
+
+		it("should not include movie_id in query params", async () => {
+			await moviesAPI.credits({ movie_id: 550 });
+			const [, params] = (clientMock.request as ReturnType<typeof vi.fn>).mock.calls[0];
+			expect(params).not.toHaveProperty("movie_id");
+		});
+
+		it("should forward language param", async () => {
+			await moviesAPI.credits({ movie_id: 550, language: "fr-FR" });
+			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/credits", { language: "fr-FR" });
+		});
+
+		it("should fall back to defaultOptions.language", async () => {
+			const api = new MoviesAPI(clientMock, { language: "de-DE" });
+			await api.credits({ movie_id: 550 });
+			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/credits", { language: "de-DE" });
+		});
+	});
+
+	describe("external_ids", () => {
+		it("should call client.request with the correct endpoint", async () => {
+			await moviesAPI.external_ids({ movie_id: 550 });
+			expect(clientMock.request).toHaveBeenCalledOnce();
+			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/external_ids");
+		});
+	});
+
+	describe("keywords", () => {
+		it("should call client.request with the correct endpoint", async () => {
+			await moviesAPI.keywords({ movie_id: 550 });
+			expect(clientMock.request).toHaveBeenCalledOnce();
+			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/keywords");
+		});
+	});
+
+	describe("images", () => {
+		it("should call client.request with the correct endpoint", async () => {
+			await moviesAPI.images({ movie_id: 550 });
+			expect(clientMock.request).toHaveBeenCalledOnce();
+			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/images", { language: undefined });
+		});
+
+		it("should not include movie_id in query params", async () => {
+			await moviesAPI.images({ movie_id: 550 });
+			const [, params] = (clientMock.request as ReturnType<typeof vi.fn>).mock.calls[0];
+			expect(params).not.toHaveProperty("movie_id");
+		});
+
+		it("should forward language and include_image_language params", async () => {
+			await moviesAPI.images({
+				movie_id: 550,
+				language: "en-US",
+				include_image_language: ["fr", "null"],
+			});
+			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/images", {
+				language: "en-US",
+				include_image_language: ["fr", "null"],
+			});
+		});
+
+		it("should fall back to defaultOptions.language", async () => {
+			const api = new MoviesAPI(clientMock, { language: "it-IT" });
+			await api.images({ movie_id: 550 });
+			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/images", { language: "it-IT" });
+		});
+	});
+
+	describe("latest", () => {
+		it("should call client.request with the correct endpoint", async () => {
+			await moviesAPI.latest();
+			expect(clientMock.request).toHaveBeenCalledOnce();
+			expect(clientMock.request).toHaveBeenCalledWith("/movie/latest");
+		});
+	});
+
+	describe("recommendations", () => {
+		it("should call client.request with the correct endpoint", async () => {
+			await moviesAPI.recommendations({ movie_id: 550 });
+			expect(clientMock.request).toHaveBeenCalledOnce();
+			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/recommendations", {
+				language: undefined,
+			});
+		});
+
+		it("should not include movie_id in query params", async () => {
+			await moviesAPI.recommendations({ movie_id: 550 });
+			const [, params] = (clientMock.request as ReturnType<typeof vi.fn>).mock.calls[0];
+			expect(params).not.toHaveProperty("movie_id");
+		});
+
+		it("should forward language and page params", async () => {
+			await moviesAPI.recommendations({ movie_id: 550, language: "en-US", page: 2 });
+			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/recommendations", {
+				language: "en-US",
+				page: 2,
+			});
+		});
+
+		it("should fall back to defaultOptions.language", async () => {
+			const api = new MoviesAPI(clientMock, { language: "ja-JP" });
+			await api.recommendations({ movie_id: 550 });
+			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/recommendations", {
+				language: "ja-JP",
+			});
+		});
+	});
+
+	describe("release_dates", () => {
+		it("should call client.request with the correct endpoint", async () => {
+			await moviesAPI.release_dates({ movie_id: 550 });
+			expect(clientMock.request).toHaveBeenCalledOnce();
+			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/release_dates");
+		});
+	});
+
+	describe("reviews", () => {
+		it("should call client.request with the correct endpoint", async () => {
+			await moviesAPI.reviews({ movie_id: 550 });
+			expect(clientMock.request).toHaveBeenCalledOnce();
+			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/reviews", {
+				language: undefined,
+			});
+		});
+
+		it("should not include movie_id in query params", async () => {
+			await moviesAPI.reviews({ movie_id: 550 });
+			const [, params] = (clientMock.request as ReturnType<typeof vi.fn>).mock.calls[0];
+			expect(params).not.toHaveProperty("movie_id");
+		});
+
+		it("should forward language and page params", async () => {
+			await moviesAPI.reviews({ movie_id: 550, language: "en-US", page: 3 });
+			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/reviews", {
+				language: "en-US",
+				page: 3,
+			});
+		});
+
+		it("should fall back to defaultOptions.language", async () => {
+			const api = new MoviesAPI(clientMock, { language: "es-ES" });
+			await api.reviews({ movie_id: 550 });
+			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/reviews", { language: "es-ES" });
+		});
+	});
+
+	describe("similar", () => {
+		it("should call client.request with the correct endpoint", async () => {
+			await moviesAPI.similar({ movie_id: 550 });
+			expect(clientMock.request).toHaveBeenCalledOnce();
+			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/similar", {
+				language: undefined,
+			});
+		});
+
+		it("should not include movie_id in query params", async () => {
+			await moviesAPI.similar({ movie_id: 550 });
+			const [, params] = (clientMock.request as ReturnType<typeof vi.fn>).mock.calls[0];
+			expect(params).not.toHaveProperty("movie_id");
+		});
+
+		it("should forward language and page params", async () => {
+			await moviesAPI.similar({ movie_id: 550, language: "en-US", page: 2 });
+			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/similar", {
+				language: "en-US",
+				page: 2,
+			});
+		});
+
+		it("should fall back to defaultOptions.language", async () => {
+			const api = new MoviesAPI(clientMock, { language: "pt-BR" });
+			await api.similar({ movie_id: 550 });
+			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/similar", { language: "pt-BR" });
+		});
+	});
+
+	describe("translations", () => {
+		it("should call client.request with the correct endpoint", async () => {
+			await moviesAPI.translations({ movie_id: 550 });
+			expect(clientMock.request).toHaveBeenCalledOnce();
+			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/translations");
+		});
+	});
+
+	describe("videos", () => {
+		it("should call client.request with the correct endpoint", async () => {
+			await moviesAPI.videos({ movie_id: 550 });
+			expect(clientMock.request).toHaveBeenCalledOnce();
+			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/videos", { language: undefined });
+		});
+
+		it("should not include movie_id in query params", async () => {
+			await moviesAPI.videos({ movie_id: 550 });
+			const [, params] = (clientMock.request as ReturnType<typeof vi.fn>).mock.calls[0];
+			expect(params).not.toHaveProperty("movie_id");
+		});
+
+		it("should forward language param", async () => {
+			await moviesAPI.videos({ movie_id: 550, language: "en-US" });
+			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/videos", { language: "en-US" });
+		});
+
+		it("should fall back to defaultOptions.language", async () => {
+			const api = new MoviesAPI(clientMock, { language: "ko-KR" });
+			await api.videos({ movie_id: 550 });
+			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/videos", { language: "ko-KR" });
+		});
+	});
+
+	describe("watch_providers", () => {
+		it("should call client.request with the correct endpoint", async () => {
+			await moviesAPI.watch_providers({ movie_id: 550 });
+			expect(clientMock.request).toHaveBeenCalledOnce();
+			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/watch/providers");
 		});
 	});
 });
