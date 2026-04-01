@@ -98,9 +98,7 @@ export class ApiClient {
 	 * Runs all registered request interceptors in order, threading the context through each one.
 	 * If an interceptor returns a new context, it replaces the current context for the next interceptor.
 	 */
-	private async runRequestInterceptors(
-		context: RequestInterceptorContext,
-	): Promise<RequestInterceptorContext> {
+	private async runRequestInterceptors(context: RequestInterceptorContext): Promise<RequestInterceptorContext> {
 		let current = context;
 		for (const interceptor of this.requestInterceptors) {
 			const result = await interceptor(current);
@@ -135,11 +133,7 @@ export class ApiClient {
 		return sanitized as T;
 	}
 
-	private async handleError(
-		res: Response,
-		endpoint: string,
-		method: "GET" | "POST" | "PUT" | "DELETE",
-	): Promise<never> {
+	private async handleError(res: Response, endpoint: string, method: "GET" | "POST" | "PUT" | "DELETE"): Promise<never> {
 		let errorMessage = res.statusText;
 		let tmdbStatusCode: number = -1;
 
@@ -266,7 +260,7 @@ export class ApiClient {
 
 		if (this.onSuccessInterceptor) {
 			const result = await this.onSuccessInterceptor(sanitized);
-			return result != null ? (result as T) : sanitized;
+			return result !== undefined ? (result as T) : sanitized;
 		}
 
 		return sanitized;

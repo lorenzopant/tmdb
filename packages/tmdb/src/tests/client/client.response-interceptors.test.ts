@@ -38,8 +38,7 @@ const makeErrorResponse = (
 });
 
 // Hardcoded mock JWT — fetch is fully mocked, so a real token is not needed
-const token =
-	"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0IiwiaWF0IjoxNjAwMDAwMDAwfQ.signature";
+const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0IiwiaWF0IjoxNjAwMDAwMDAwfQ.signature";
 
 describe("ApiClient response interceptors — onSuccess", () => {
 	const originalFetch = globalThis.fetch;
@@ -108,6 +107,20 @@ describe("ApiClient response interceptors — onSuccess", () => {
 		expect(result).toEqual({ id: 42, name: "Fight Club" });
 	});
 
+	it("returns null when onSuccess explicitly returns null", async () => {
+		const client = new ApiClient(token, {
+			interceptors: {
+				response: {
+					onSuccess: (_data) => null,
+				},
+			},
+		});
+
+		const result = await client.request("/movie/42");
+
+		expect(result).toBeNull();
+	});
+
 	it("awaits an async onSuccess interceptor", async () => {
 		const onSuccess = vi.fn().mockResolvedValue(undefined);
 		const client = new ApiClient(token, { interceptors: { response: { onSuccess } } });
@@ -131,15 +144,13 @@ describe("ApiClient response interceptors — onError", () => {
 	const originalFetch = globalThis.fetch;
 
 	beforeEach(() => {
-		globalThis.fetch = vi
-			.fn()
-			.mockResolvedValue(
-				makeErrorResponse(401, {
-					success: false,
-					status_code: 7,
-					status_message: "Invalid API key.",
-				}),
-			);
+		globalThis.fetch = vi.fn().mockResolvedValue(
+			makeErrorResponse(401, {
+				success: false,
+				status_code: 7,
+				status_message: "Invalid API key.",
+			}),
+		);
 	});
 
 	afterEach(() => {
