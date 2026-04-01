@@ -15,8 +15,10 @@ export abstract class TMDBAPIBase {
 				deduplication: defaultOptions.deduplication,
 				interceptors: defaultOptions.interceptors,
 			});
-		} else {
+		} else if (accessTokenOrClient instanceof ApiClient) {
 			this.client = accessTokenOrClient;
+		} else {
+			throw new Error(accessTokenOrClient == null ? Errors.NO_ACCESS_TOKEN : Errors.INVALID_CLIENT);
 		}
 		this.defaultOptions = defaultOptions;
 	}
