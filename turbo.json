@@ -4,7 +4,10 @@
 	"tasks": {
 		"build": {
 			"dependsOn": ["^build"],
-			"outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+			"outputs": ["dist/**"]
+		},
+		"clean": {
+			"cache": false
 		},
 		"dev": {
 			"cache": false,
@@ -15,7 +18,7 @@
 			"cache": false
 		},
 		"lint:check": {
-			"dependsOn": ["^build", "^lint:check"],
+			"dependsOn": ["^lint:check"],
 			"cache": false
 		},
 		"format": {
@@ -24,6 +27,18 @@
 		},
 		"test": {
 			"dependsOn": ["^test"],
+			"cache": false
+		},
+		"test:unit": {
+			"dependsOn": ["^test:unit"],
+			"cache": false
+		},
+		"test:integration": {
+			"dependsOn": ["^test:integration"],
+			"cache": false
+		},
+		"test:coverage": {
+			"dependsOn": ["^test:coverage"],
 			"cache": false
 		},
 		"typecheck": {

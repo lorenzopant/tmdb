@@ -1,7 +1,6 @@
 {
 	"name": "@lorenzopant/tmdb",
-	"version": "1.17.4",
-	"type": "module",
+	"version": "1.17.5",
 	"description": "A completely type-safe The Movie Database (TMDB) API wrapper for typescript applications.",
 	"keywords": [
 		"api",
@@ -23,55 +22,46 @@
 		"dist",
 		"README.md"
 	],
-	"main": "dist/index.js",
-	"types": "dist/index.d.ts",
+	"type": "module",
+	"main": "dist/index.mjs",
+	"types": "dist/index.d.mts",
 	"exports": {
 		".": {
-			"import": "./dist/index.js",
-			"types": "./dist/index.d.ts"
+			"import": "./dist/index.mjs",
+			"types": "./dist/index.d.mts"
 		},
 		"./types": {
-			"import": "./dist/index.js",
-			"types": "./dist/index.d.ts"
+			"import": "./dist/index.mjs",
+			"types": "./dist/index.d.mts"
 		}
 	},
 	"scripts": {
-		"build": "tsup",
-		"dev": "tsup --watch",
+		"build": "tsdown",
+		"clean": "rm -rf dist coverage",
+		"dev": "tsdown --watch",
 		"format": "oxfmt .",
-		"typecheck": "tsc --noEmit",
-		"test": "vitest",
-		"test:unit": "vitest run --exclude '**/*.integration.test.ts'",
-		"test:integration": "vitest run integration",
-		"test:ui": "vitest --ui",
-		"test:coverage": "vitest --coverage",
-		"prepare": "husky",
 		"lint": "oxlint .",
 		"lint:check": "oxlint --type-aware --type-check .",
-		"release": "pnpm release:patch",
-		"release:patch": "pnpm version patch --git-tag-version && git push --follow-tags",
-		"release:minor": "pnpm version minor --git-tag-version && git push --follow-tags",
-		"release:major": "pnpm version major --git-tag-version && git push --follow-tags"
+		"test": "pnpm run test:unit",
+		"test:unit": "vitest run --exclude '**/*.integration.test.ts'",
+		"test:integration": "vitest run integration",
+		"test:watch": "vitest",
+		"test:ui": "vitest --ui",
+		"test:coverage": "vitest --coverage",
+		"typecheck": "tsc --noEmit"
 	},
 	"devDependencies": {
 		"@types/node": "^22.19.11",
 		"@vitest/coverage-v8": "^4.0.9",
 		"@vitest/ui": "^4.0.10",
 		"dotenv": "^16.5.0",
-		"husky": "^9.1.7",
 		"release-it": "^19.0.3",
 		"release-it-pnpm": "^4.6.6",
 		"ts-morph": "^27.0.2",
-		"tsup": "^8.5.1",
+		"tsdown": "^0.21.7",
 		"tsx": "^4.21.0",
 		"typescript": "^5.8.3",
 		"vite": "^7.0.0",
 		"vitest": "^4.0.9"
-	},
-	"packageManager": "pnpm@8.8.0",
-	"pnpm": {
-		"overrides": {
-			"basic-ftp": "5.2.0"
-		}
 	}
 }
