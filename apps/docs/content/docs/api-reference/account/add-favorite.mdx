@@ -1,0 +1,68 @@
+---
+title: Add Favorite
+description: Mark a movie or TV show as a favourite, or remove it.
+---
+
+Mark a movie or TV show as a favourite for a given account. Pass `favorite: false` to remove an existing favourite.
+
+```ts
+async add_favorite(params: AccountMutationParams, body: AccountAddFavoriteBody): Promise<AccountMutationResponse>
+```
+
+> **TMDB Reference:** [Add Favorite](https://developer.themoviedb.org/reference/account-add-favorite)
+
+## Parameters
+
+| Name         | Type     | Required | Description                                     |
+| ------------ | -------- | -------- | ----------------------------------------------- |
+| `account_id` | `number` | ✅       | The TMDB account ID.                            |
+| `session_id` | `string` | ❌       | Session ID for v3 session-based authentication. |
+
+## Request Body
+
+| Name         | Type              | Required | Description                          |
+| ------------ | ----------------- | -------- | ------------------------------------ |
+| `media_type` | `"movie" \| "tv"` | ✅       | The type of media to favourite.      |
+| `media_id`   | `number`          | ✅       | The TMDB ID of the movie or TV show. |
+| `favorite`   | `boolean`         | ✅       | `true` to add, `false` to remove.    |
+
+## Returns
+
+[`AccountMutationResponse`](/docs/types/account#accountmutationresponse)
+
+## Errors
+
+Errors are thrown as [`TMDBError`](/docs/types/logger#tmdberror) and are never part of the return type:
+
+| HTTP | TMDB code | Cause                                                    |
+| ---- | --------- | -------------------------------------------------------- |
+| 401  | 3         | Invalid or missing access token.                         |
+| 401  | 7         | Invalid `session_id`.                                    |
+| 404  | 34        | Account or media item not found.                         |
+| 422  | 47        | Malformed request body (e.g. invalid JSON, wrong types). |
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-access-token");
+
+// Add to favourites
+await tmdb.account.add_favorite(
+	{ account_id: 123 },
+	{ media_type: "movie", media_id: 550, favorite: true },
+);
+
+// Remove from favourites
+await tmdb.account.add_favorite(
+	{ account_id: 123 },
+	{ media_type: "movie", media_id: 550, favorite: false },
+);
+```
+
+## Related Types
+
+- [`AccountMutationParams`](/docs/types/account#accountmutationparams)
+- [`AccountAddFavoriteBody`](/docs/types/account#accountaddfavoritebody)
+- [`AccountMutationResponse`](/docs/types/account#accountmutationresponse)

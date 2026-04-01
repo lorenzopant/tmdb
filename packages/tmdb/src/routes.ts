@@ -1,4 +1,25 @@
 export const ENDPOINTS = {
+	AUTHENTICATION: {
+		VALIDATE: "/authentication",
+		GUEST_SESSION: "/authentication/guest_session/new",
+		REQUEST_TOKEN: "/authentication/token/new",
+		CREATE_SESSION: "/authentication/session/new",
+		CREATE_SESSION_WITH_LOGIN: "/authentication/token/validate_with_login",
+		DELETE_SESSION: "/authentication/session",
+	},
+	ACCOUNT: {
+		DETAILS: "/account",
+		ADD_FAVORITE: "/favorite",
+		ADD_TO_WATCHLIST: "/watchlist",
+		FAVORITE_MOVIES: "/favorite/movies",
+		FAVORITE_TV: "/favorite/tv",
+		WATCHLIST_MOVIES: "/watchlist/movies",
+		WATCHLIST_TV: "/watchlist/tv",
+		RATED_MOVIES: "/rated/movies",
+		RATED_TV: "/rated/tv",
+		RATED_TV_EPISODES: "/rated/tv/episodes",
+		LISTS: "/lists",
+	},
 	CONFIGURATION: {
 		DETAILS: "/configuration",
 		COUNTRIES: "/configuration/countries",

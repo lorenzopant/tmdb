@@ -1,14 +1,20 @@
 /**
  * Represents the structure of an error response returned by the TMDB API.
  *
- * @property success - Indicates whether the API request was successful. This will typically be `false` for error responses.
- * @property status_code - The numeric code representing the type of error encountered.
+ * @property success - Always `false` for error responses.
+ * @property failure - Present and `true` on some error responses (e.g. malformed body).
+ * @property status_code - The numeric TMDB status code describing the error.
  * @property status_message - A descriptive message providing details about the error.
+ * @property error - Optional internal error detail returned by TMDB (e.g. for malformed input).
  */
 export type TMDBAPIErrorResponse = {
 	success: boolean;
+	/** Present and `true` when TMDB explicitly signals a failure (e.g. invalid body, status_code 47). */
+	failure?: boolean;
 	status_code: number;
 	status_message: string;
+	/** Internal TMDB error detail, present on some 4xx responses (e.g. TMDB status_code 47). */
+	error?: string;
 };
 
 /**

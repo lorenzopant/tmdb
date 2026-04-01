@@ -26,8 +26,8 @@ The context object passed to every [`RequestInterceptor`](#requestinterceptor) b
 			required: true,
 		},
 		method: {
-			type: '"GET"',
-			description: 'The HTTP method. Currently always "GET".',
+			type: '"GET" | "POST" | "PUT" | "DELETE"',
+			description: "The HTTP method.",
 			required: true,
 		},
 	}}

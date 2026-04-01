@@ -1,0 +1,68 @@
+---
+title: Add to Watchlist
+description: Add a movie or TV show to the watchlist, or remove it.
+---
+
+Add a movie or TV show to an account's watchlist. Pass `watchlist: false` to remove an existing entry.
+
+```ts
+async add_to_watchlist(params: AccountMutationParams, body: AccountAddToWatchlistBody): Promise<AccountMutationResponse>
+```
+
+> **TMDB Reference:** [Add to Watchlist](https://developer.themoviedb.org/reference/account-add-to-watchlist)
+
+## Parameters
+
+| Name         | Type     | Required | Description                                     |
+| ------------ | -------- | -------- | ----------------------------------------------- |
+| `account_id` | `number` | ✅       | The TMDB account ID.                            |
+| `session_id` | `string` | ❌       | Session ID for v3 session-based authentication. |
+
+## Request Body
+
+| Name         | Type              | Required | Description                                |
+| ------------ | ----------------- | -------- | ------------------------------------------ |
+| `media_type` | `"movie" \| "tv"` | ✅       | The type of media to add to the watchlist. |
+| `media_id`   | `number`          | ✅       | The TMDB ID of the movie or TV show.       |
+| `watchlist`  | `boolean`         | ✅       | `true` to add, `false` to remove.          |
+
+## Returns
+
+[`AccountMutationResponse`](/docs/types/account#accountmutationresponse)
+
+## Errors
+
+Errors are thrown as [`TMDBError`](/docs/types/logger#tmdberror) and are never part of the return type:
+
+| HTTP | TMDB code | Cause                                                    |
+| ---- | --------- | -------------------------------------------------------- |
+| 401  | 3         | Invalid or missing access token.                         |
+| 401  | 7         | Invalid `session_id`.                                    |
+| 404  | 34        | Account or media item not found.                         |
+| 422  | 47        | Malformed request body (e.g. invalid JSON, wrong types). |
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-access-token");
+
+// Add to watchlist
+await tmdb.account.add_to_watchlist(
+	{ account_id: 123 },
+	{ media_type: "tv", media_id: 1396, watchlist: true },
+);
+
+// Remove from watchlist
+await tmdb.account.add_to_watchlist(
+	{ account_id: 123 },
+	{ media_type: "tv", media_id: 1396, watchlist: false },
+);
+```
+
+## Related Types
+
+- [`AccountMutationParams`](/docs/types/account#accountmutationparams)
+- [`AccountAddToWatchlistBody`](/docs/types/account#accountaddtowatchlistbody)
+- [`AccountMutationResponse`](/docs/types/account#accountmutationresponse)

@@ -4,6 +4,8 @@
 		"options",
 		"logger.mdx",
 		"images.mdx",
+		"account.mdx",
+		"authentication.mdx",
 		"configuration.mdx",
 		"discover.mdx",
 		"find.mdx",

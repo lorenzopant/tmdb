@@ -65,29 +65,31 @@ const airingToday = await tvApi.airingToday();
 
 ## Available APIs
 
-| API                                                        | Unified client accessor  | Standalone class     | Description                                                                        |
-| ---------------------------------------------------------- | ------------------------ | -------------------- | ---------------------------------------------------------------------------------- |
-| [Discover](/docs/api-reference/discover)                   | `tmdb.discover`          | `DiscoverAPI`        | Discover movies and TV series with advanced TMDB filters, sorting, and pagination. |
-| [Find](/docs/api-reference/find)                           | `tmdb.find`              | `FindAPI`            | Find movies, TV shows, seasons, episodes, and people by external IDs.              |
-| [Watch Providers](/docs/api-reference/watch-providers)     | `tmdb.watch_providers`   | `WatchProvidersAPI`  | Retrieve movie/TV provider catalogs and supported watch-provider regions.          |
-| [Keywords](/docs/api-reference/keywords)                   | `tmdb.keywords`          | `KeywordsAPI`        | Retrieve keyword details and the associated movie list by TMDB keyword ID.         |
-| [Companies](/docs/api-reference/companies)                 | `tmdb.companies`         | `CompaniesAPI`       | Get company details, alternative names, and logos for production companies.        |
-| [Credits](/docs/api-reference/credits)                     | `tmdb.credits`           | `CreditsAPI`         | Get credit details for a movie or tv show.                                         |
-| [Networks](/docs/api-reference/networks)                   | `tmdb.networks`          | `NetworksAPI`        | Get TV network details, alternative names, and logos by TMDB network ID.           |
-| [Configuration](/docs/api-reference/configuration)         | `tmdb.configuration`     | `ConfigurationAPI`   | Retrieve system-level configuration such as image base URLs and languages.         |
-| [Genres](/docs/api-reference/genres)                       | `tmdb.genres`            | `GenresAPI`          | Fetch the list of official movie and TV series genres.                             |
-| [Movie Lists](/docs/api-reference/movie-lists)             | `tmdb.movieLists`        | `MovieListsAPI`      | Access curated movie lists: popular, top rated, now playing, and upcoming.         |
-| [Movies](/docs/api-reference/movies)                       | `tmdb.movies`            | `MoviesAPI`          | Get movie details, credits, images, videos, recommendations, and more.             |
-| [People](/docs/api-reference/people)                       | `tmdb.people`            | `PeopleAPI`          | Get person details, credits, images, translations, and external IDs.               |
-| [People Lists](/docs/api-reference/people-lists)           | `tmdb.people_lists`      | `PeopleListsAPI`     | Get curated lists of people ordered by popularity.                                 |
-| [Search](/docs/api-reference/search)                       | `tmdb.search`            | `SearchAPI`          | Search for movies, TV series, people, and keywords across the TMDB catalog.        |
-| [Trending](/docs/api-reference/trending)                   | `tmdb.trending`          | `TrendingAPI`        | Get trending movies, TV series, and people on TMDB.                                |
-| [Reviews](/docs/api-reference/reviews)                     | `tmdb.reviews`           | `ReviewsAPI`         | Get the full details of a single TMDB review by its review ID.                     |
-| [TV Series](/docs/api-reference/tv-series)                 | `tmdb.tv_series`         | `TVSeriesAPI`        | Get TV series details, episodes, seasons, credits, and recommendations.            |
-| [TV Episode Groups](/docs/api-reference/tv-episode-groups) | `tmdb.tv_episode_groups` | `TVEpisodeGroupsAPI` | Get episode group details by group ID.                                             |
-| [TV Episodes](/docs/api-reference/tv-episodes)             | `tmdb.tv_episodes`       | `TVEpisodesAPI`      | Get TV episode details, credits, images, translations, and videos.                 |
-| [TV Seasons](/docs/api-reference/tv-seasons)               | `tmdb.tv_seasons`        | `TVSeasonsAPI`       | Get TV season details, credits, images, videos, translations, and watch providers. |
-| [TV Series Lists](/docs/api-reference/tv-series-lists)     | `tmdb.tv_series_lists`   | `TVSeriesListsAPI`   | Access curated TV series lists: popular, top rated, airing today, and on the air.  |
+| API                                                        | Unified client accessor  | Standalone class     | Description                                                                                        |
+| ---------------------------------------------------------- | ------------------------ | -------------------- | -------------------------------------------------------------------------------------------------- |
+| [Authentication](/docs/api-reference/authentication)       | `tmdb.authentication`    | `AuthenticationAPI`  | Manage v3 user sessions — create request tokens, exchange them for session IDs, and log users out. |
+| [Account](/docs/api-reference/account)                     | `tmdb.account`           | `AccountAPI`         | Manage account favorites, watchlists, ratings, and custom lists.                                   |
+| [Discover](/docs/api-reference/discover)                   | `tmdb.discover`          | `DiscoverAPI`        | Discover movies and TV series with advanced TMDB filters, sorting, and pagination.                 |
+| [Find](/docs/api-reference/find)                           | `tmdb.find`              | `FindAPI`            | Find movies, TV shows, seasons, episodes, and people by external IDs.                              |
+| [Watch Providers](/docs/api-reference/watch-providers)     | `tmdb.watch_providers`   | `WatchProvidersAPI`  | Retrieve movie/TV provider catalogs and supported watch-provider regions.                          |
+| [Keywords](/docs/api-reference/keywords)                   | `tmdb.keywords`          | `KeywordsAPI`        | Retrieve keyword details and the associated movie list by TMDB keyword ID.                         |
+| [Companies](/docs/api-reference/companies)                 | `tmdb.companies`         | `CompaniesAPI`       | Get company details, alternative names, and logos for production companies.                        |
+| [Credits](/docs/api-reference/credits)                     | `tmdb.credits`           | `CreditsAPI`         | Get credit details for a movie or tv show.                                                         |
+| [Networks](/docs/api-reference/networks)                   | `tmdb.networks`          | `NetworksAPI`        | Get TV network details, alternative names, and logos by TMDB network ID.                           |
+| [Configuration](/docs/api-reference/configuration)         | `tmdb.configuration`     | `ConfigurationAPI`   | Retrieve system-level configuration such as image base URLs and languages.                         |
+| [Genres](/docs/api-reference/genres)                       | `tmdb.genres`            | `GenresAPI`          | Fetch the list of official movie and TV series genres.                                             |
+| [Movie Lists](/docs/api-reference/movie-lists)             | `tmdb.movieLists`        | `MovieListsAPI`      | Access curated movie lists: popular, top rated, now playing, and upcoming.                         |
+| [Movies](/docs/api-reference/movies)                       | `tmdb.movies`            | `MoviesAPI`          | Get movie details, credits, images, videos, recommendations, and more.                             |
+| [People](/docs/api-reference/people)                       | `tmdb.people`            | `PeopleAPI`          | Get person details, credits, images, translations, and external IDs.                               |
+| [People Lists](/docs/api-reference/people-lists)           | `tmdb.people_lists`      | `PeopleListsAPI`     | Get curated lists of people ordered by popularity.                                                 |
+| [Search](/docs/api-reference/search)                       | `tmdb.search`            | `SearchAPI`          | Search for movies, TV series, people, and keywords across the TMDB catalog.                        |
+| [Trending](/docs/api-reference/trending)                   | `tmdb.trending`          | `TrendingAPI`        | Get trending movies, TV series, and people on TMDB.                                                |
+| [Reviews](/docs/api-reference/reviews)                     | `tmdb.reviews`           | `ReviewsAPI`         | Get the full details of a single TMDB review by its review ID.                                     |
+| [TV Series](/docs/api-reference/tv-series)                 | `tmdb.tv_series`         | `TVSeriesAPI`        | Get TV series details, episodes, seasons, credits, and recommendations.                            |
+| [TV Episode Groups](/docs/api-reference/tv-episode-groups) | `tmdb.tv_episode_groups` | `TVEpisodeGroupsAPI` | Get episode group details by group ID.                                                             |
+| [TV Episodes](/docs/api-reference/tv-episodes)             | `tmdb.tv_episodes`       | `TVEpisodesAPI`      | Get TV episode details, credits, images, translations, and videos.                                 |
+| [TV Seasons](/docs/api-reference/tv-seasons)               | `tmdb.tv_seasons`        | `TVSeasonsAPI`       | Get TV season details, credits, images, videos, translations, and watch providers.                 |
+| [TV Series Lists](/docs/api-reference/tv-series-lists)     | `tmdb.tv_series_lists`   | `TVSeriesListsAPI`   | Access curated TV series lists: popular, top rated, airing today, and on the air.                  |
 
 ---
 

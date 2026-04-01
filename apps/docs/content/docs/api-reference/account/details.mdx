@@ -1,0 +1,41 @@
+---
+title: Details
+description: Get the public profile of a TMDB account.
+---
+
+Retrieve the public profile of a TMDB account, including display name, avatar sources, and language/country preferences.
+
+```ts
+async details(params: AccountDetailsParams): Promise<AccountDetails>
+```
+
+> **TMDB Reference:** [Account Details](https://developer.themoviedb.org/reference/account-details)
+
+## Parameters
+
+| Name         | Type     | Required | Description                                     |
+| ------------ | -------- | -------- | ----------------------------------------------- |
+| `account_id` | `number` | ✅       | The TMDB account ID.                            |
+| `session_id` | `string` | ❌       | Session ID for v3 session-based authentication. |
+
+## Returns
+
+[`AccountDetails`](/docs/types/account#accountdetails)
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-access-token");
+const profile = await tmdb.account.details({ account_id: 123 });
+
+console.log(profile.username); // "johndoe"
+console.log(profile.name); // "John Doe"
+```
+
+## Related Types
+
+- [`AccountDetailsParams`](/docs/types/account#accountdetailsparams)
+- [`AccountDetails`](/docs/types/account#accountdetails)
+- [`AccountAvatar`](/docs/types/account#accountavatar)

@@ -1,0 +1,42 @@
+---
+title: Create Guest Session
+description: Create a limited temporary session for rating content without a TMDB account.
+---
+
+Creates a guest session that gives limited account functionality (rating movies, TV shows, and episodes) without requiring a registered TMDB account. Guest sessions automatically expire after 60 minutes of inactivity.
+
+```ts
+async create_guest_session(): Promise<AuthGuestSessionResponse>
+```
+
+> **TMDB Reference:** [Create Guest Session](https://developer.themoviedb.org/reference/authentication-create-guest-session)
+
+## Parameters
+
+None.
+
+## Returns
+
+[`AuthGuestSessionResponse`](/docs/types/authentication#authguestsessionresponse)
+
+## Errors
+
+| HTTP | TMDB code | Cause                            |
+| ---- | --------- | -------------------------------- |
+| 401  | 3         | Invalid or missing access token. |
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-access-token");
+const { guest_session_id, expires_at } = await tmdb.authentication.create_guest_session();
+
+console.log(guest_session_id); // "1ce82ec1223641636ad4a60b07de3581"
+console.log(expires_at); // "2016-08-27 16:26:40 UTC"
+```
+
+## Related Types
+
+- [`AuthGuestSessionResponse`](/docs/types/authentication#authguestsessionresponse)

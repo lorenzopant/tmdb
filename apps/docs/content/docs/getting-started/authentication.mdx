@@ -71,7 +71,85 @@ import { TMDB } from "@lorenzopant/tmdb";
 const tmdb = new TMDB(process.env.TMDB_BEARER_TOKEN!);
 ```
 
+## User-Level Authentication (Session IDs)
+
+<Callout>
+	For a deeper explanation of the session flow, see the official TMDB guide: [How do I generate a session
+	ID?](https://developer.themoviedb.org/reference/authentication-how-do-i-generate-a-session-id)
+</Callout>
+
+The credentials above identify **your application** to the TMDB API. To act on behalf of a specific user — managing their favorites, watchlists, and ratings — you also need a user-level `session_id`.
+
+Session IDs are obtained through [the `AuthenticationAPI`](/docs/api-reference/authentication) and passed as a parameter to account-level endpoints.
+
+### v3 Session Flow
+
+This is the standard browser-based flow:
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-access-token");
+
+// Step 1 — generate a short-lived request token (expires in 60 minutes)
+const { request_token } = await tmdb.authentication.create_request_token();
+
+// Step 2 — redirect the user to approve the token on TMDB
+// (this is a browser redirect, not an API call)
+const approvalUrl = `https://www.themoviedb.org/authenticate/${request_token}`;
+// redirect(approvalUrl); — handle in your app's router
+
+// Step 3 — after approval, exchange the token for a permanent session ID
+const { session_id } = await tmdb.authentication.create_session({ request_token });
+
+// Use the session_id with account endpoints
+await tmdb.account.add_favorite({ account_id: 123, session_id }, { media_type: "movie", media_id: 550, favorite: true });
+```
+
+### Server-Side Flow (no browser redirect)
+
+For server-side apps or environments without a web view, you can skip the redirect step and validate the token directly with the user's credentials:
+
+```ts
+// Step 1 — create a request token
+const { request_token } = await tmdb.authentication.create_request_token();
+
+// Step 2 (server-side) — validate with username and password
+const validated = await tmdb.authentication.create_session_with_login({
+	username: "johndoe",
+	password: "secret",
+	request_token,
+});
+
+// Step 3 — exchange for a session ID
+const { session_id } = await tmdb.authentication.create_session({
+	request_token: validated.request_token,
+});
+```
+
+<Callout type="warn">
+	Only use `create_session_with_login` over HTTPS. Prefer the browser-redirect flow when possible to avoid handling user credentials
+	yourself.
+</Callout>
+
+### Logging Out
+
+To invalidate a session when the user logs out:
+
+```ts
+await tmdb.authentication.delete_session({ session_id });
+```
+
+### Guest Sessions
+
+If you only need rating functionality without a registered account, use a [guest session](/docs/api-reference/authentication/create-guest-session). Guest sessions expire after 60 minutes of inactivity and provide limited capabilities (ratings only — no favorites or watchlists).
+
+```ts
+const { guest_session_id } = await tmdb.authentication.create_guest_session();
+```
+
 ## Getting Your Credentials
 
 - [TMDB API settings](https://www.themoviedb.org/settings/api) — find both your v3 API key and your Read Access Token here.
 - [TMDB Getting Started](https://developer.themoviedb.org/docs/getting-started) — official guide.
+- [Authentication API reference](/docs/api-reference/authentication) — full method documentation.

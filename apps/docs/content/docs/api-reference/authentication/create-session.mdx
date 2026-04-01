@@ -1,0 +1,56 @@
+---
+title: Create Session
+description: Exchange an approved request token for a permanent session ID — step 3 of the v3 session flow.
+---
+
+Exchanges a user-approved request token for a permanent session ID. This is **step 3** of the v3 session flow.
+
+The request token must have been approved by the user either by visiting the TMDB authentication URL (from [`create_request_token()`](/docs/api-reference/authentication/create-request-token)) or by validating it directly via [`create_session_with_login()`](/docs/api-reference/authentication/create-session-with-login).
+
+The returned `session_id` is valid indefinitely until explicitly invalidated via [`delete_session()`](/docs/api-reference/authentication/delete-session).
+
+```ts
+async create_session(body: AuthCreateSessionBody): Promise<AuthCreateSessionResponse>
+```
+
+> **TMDB Reference:** [Create Session](https://developer.themoviedb.org/reference/authentication-create-session)
+
+## Parameters
+
+| Name            | Type     | Required | Description                                            |
+| --------------- | -------- | -------- | ------------------------------------------------------ |
+| `request_token` | `string` | ✅       | An approved request token from `create_request_token`. |
+
+## Returns
+
+[`AuthCreateSessionResponse`](/docs/types/authentication#authcreatesessionresponse)
+
+## Errors
+
+| HTTP | TMDB code | Cause                                |
+| ---- | --------- | ------------------------------------ |
+| 401  | 3         | Invalid or missing access token.     |
+| 401  | 33        | Invalid or unapproved request token. |
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-access-token");
+
+// After the user has approved the request token:
+const { session_id } = await tmdb.authentication.create_session({
+	request_token: "ff5c7eeb5a8870efe3cd7fc5c282cffd26800ecd",
+});
+
+console.log(session_id); // "79191836ddaa0da3df76a5ffef6f07ad6ab0c641"
+
+// Use the session_id with account endpoints:
+const profile = await tmdb.account.details({ account_id: 123, session_id });
+```
+
+## Related Types
+
+- [`AuthCreateSessionBody`](/docs/types/authentication#authcreatesessionbody)
+- [`AuthCreateSessionResponse`](/docs/types/authentication#authcreatesessionresponse)

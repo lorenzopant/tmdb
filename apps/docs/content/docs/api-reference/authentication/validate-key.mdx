@@ -1,0 +1,42 @@
+---
+title: Validate Key
+description: Test your API key or Bearer token to confirm it is valid.
+---
+
+Sends a request to `GET /authentication` to verify that the access token used to initialise the client is valid. Useful as a quick sanity check at startup or after credential rotation.
+
+```ts
+async validate_key(): Promise<AuthValidateKeyResponse>
+```
+
+> **TMDB Reference:** [Validate Key](https://developer.themoviedb.org/reference/authentication-validate-key)
+
+## Parameters
+
+None.
+
+## Returns
+
+[`AuthValidateKeyResponse`](/docs/types/authentication#authvalidatekeyresponse)
+
+## Errors
+
+| HTTP | TMDB code | Cause                                      |
+| ---- | --------- | ------------------------------------------ |
+| 401  | 7         | Invalid or expired API key / Bearer token. |
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-access-token");
+const result = await tmdb.authentication.validate_key();
+
+console.log(result.success); // true
+console.log(result.status_message); // "Success."
+```
+
+## Related Types
+
+- [`AuthValidateKeyResponse`](/docs/types/authentication#authvalidatekeyresponse)

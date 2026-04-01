@@ -1,0 +1,46 @@
+---
+title: Watchlist Movies
+description: Get the paginated list of movies in an account's watchlist.
+---
+
+Get the list of movies an account has added to their watchlist, with optional sorting and pagination.
+
+```ts
+async watchlist_movies(params: AccountMediaListParams): Promise<AccountMovieListResponse>
+```
+
+> **TMDB Reference:** [Watchlist Movies](https://developer.themoviedb.org/reference/account-watchlist-movies)
+
+## Parameters
+
+| Name         | Type                                                | Required | Description                                            |
+| ------------ | --------------------------------------------------- | -------- | ------------------------------------------------------ |
+| `account_id` | `number`                                            | ✅       | The TMDB account ID.                                   |
+| `session_id` | `string`                                            | ❌       | Session ID for v3 session-based authentication.        |
+| `language`   | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized results. Defaults to `en-US`.   |
+| `sort_by`    | `AccountSortBy`                                     | ❌       | Sort order: `"created_at.asc"` or `"created_at.desc"`. |
+| `page`       | `number`                                            | ❌       | Page number to return.                                 |
+
+## Returns
+
+A [`PaginatedResponse<AccountMovieItem>`](/docs/types/common#paginatedresponset) containing an array of [`AccountMovieItem`](/docs/types/account#accountmovieitem) objects.
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-access-token");
+const watchlist = await tmdb.account.watchlist_movies({
+	account_id: 123,
+	page: 1,
+});
+
+console.log(watchlist.total_results);
+```
+
+## Related Types
+
+- [`AccountMediaListParams`](/docs/types/account#accountmedialistparams)
+- [`AccountMovieItem`](/docs/types/account#accountmovieitem)
+- [`AccountSortBy`](/docs/types/account#accountsortby)

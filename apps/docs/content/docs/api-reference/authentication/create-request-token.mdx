@@ -1,0 +1,57 @@
+---
+title: Create Request Token
+description: Generate a short-lived request token — step 1 of the v3 session flow.
+---
+
+Generates a temporary request token that must be approved by the user before it can be exchanged for a session ID. This is **step 1** of the v3 session flow.
+
+The token expires after 60 minutes if not used. After receiving it, redirect the user to:
+
+```
+https://www.themoviedb.org/authenticate/{request_token}
+```
+
+Or with a redirect back to your app:
+
+```
+https://www.themoviedb.org/authenticate/{request_token}?redirect_to=https://yourapp.com/callback
+```
+
+Once the user approves, pass the token to [`create_session()`](/docs/api-reference/authentication/create-session).
+
+```ts
+async create_request_token(): Promise<AuthRequestTokenResponse>
+```
+
+> **TMDB Reference:** [Create Request Token](https://developer.themoviedb.org/reference/authentication-create-request-token)
+
+## Parameters
+
+None.
+
+## Returns
+
+[`AuthRequestTokenResponse`](/docs/types/authentication#authrequesttokenresponse)
+
+## Errors
+
+| HTTP | TMDB code | Cause                            |
+| ---- | --------- | -------------------------------- |
+| 401  | 3         | Invalid or missing access token. |
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-access-token");
+const { request_token, expires_at } = await tmdb.authentication.create_request_token();
+
+// Redirect the user to approve the token
+const approvalUrl = `https://www.themoviedb.org/authenticate/${request_token}`;
+console.log(approvalUrl);
+```
+
+## Related Types
+
+- [`AuthRequestTokenResponse`](/docs/types/authentication#authrequesttokenresponse)

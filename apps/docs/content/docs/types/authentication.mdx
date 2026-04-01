@@ -1,0 +1,78 @@
+---
+title: Authentication
+description: Type definitions for the Authentication API.
+---
+
+Types related to the [AuthenticationAPI](/docs/api-reference/authentication) namespace.
+
+import { TypeTable } from "fumadocs-ui/components/type-table";
+
+## `AuthValidateKeyResponse`
+
+Returned by [`authentication.validate_key()`](/docs/api-reference/authentication/validate-key).
+
+<AutoTypeTable path="authentication.ts" name="AuthValidateKeyResponse" />
+
+## `AuthGuestSessionResponse`
+
+Returned by [`authentication.create_guest_session()`](/docs/api-reference/authentication/create-guest-session).
+
+<AutoTypeTable path="authentication.ts" name="AuthGuestSessionResponse" />
+
+## `AuthRequestTokenResponse`
+
+Returned by both [`authentication.create_request_token()`](/docs/api-reference/authentication/create-request-token) and [`authentication.create_session_with_login()`](/docs/api-reference/authentication/create-session-with-login).
+
+<AutoTypeTable path="authentication.ts" name="AuthRequestTokenResponse" />
+
+## `AuthCreateSessionBody`
+
+Request body for [`authentication.create_session()`](/docs/api-reference/authentication/create-session).
+
+<TypeTable
+	type={{
+		request_token: {
+			type: "string",
+			required: true,
+			description: "An approved request token from `create_request_token` (after the user has authorized it on TMDB).",
+		},
+	}}
+/>
+
+## `AuthCreateSessionResponse`
+
+Returned by [`authentication.create_session()`](/docs/api-reference/authentication/create-session).
+
+<AutoTypeTable path="authentication.ts" name="AuthCreateSessionResponse" />
+
+## `AuthCreateSessionWithLoginBody`
+
+Request body for [`authentication.create_session_with_login()`](/docs/api-reference/authentication/create-session-with-login).
+
+<TypeTable
+	type={{
+		username: { type: "string", required: true, description: "The TMDB account username." },
+		password: { type: "string", required: true, description: "The TMDB account password." },
+		request_token: {
+			type: "string",
+			required: true,
+			description: "The request token obtained from `create_request_token`.",
+		},
+	}}
+/>
+
+## `AuthDeleteSessionBody`
+
+Request body for [`authentication.delete_session()`](/docs/api-reference/authentication/delete-session).
+
+<TypeTable
+	type={{
+		session_id: { type: "string", required: true, description: "The session ID to invalidate." },
+	}}
+/>
+
+## `AuthDeleteSessionResponse`
+
+Returned by [`authentication.delete_session()`](/docs/api-reference/authentication/delete-session).
+
+<AutoTypeTable path="authentication.ts" name="AuthDeleteSessionResponse" />

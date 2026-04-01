@@ -30,11 +30,11 @@ const tmdb = new TMDB("your-api-key", {
 
 Each interceptor receives a [`RequestInterceptorContext`](/docs/types/options/interceptors#requestinterceptorcontext) object:
 
-| Field      | Type                      | Description                                 |
-| ---------- | ------------------------- | ------------------------------------------- |
-| `endpoint` | `string`                  | The API path, e.g. `"/movie/550"`.          |
-| `params`   | `Record<string, unknown>` | Query parameters that will be sent to TMDB. |
-| `method`   | `"GET"`                   | The HTTP method (currently always `"GET"`). |
+| Field      | Type                                   | Description                                 |
+| ---------- | -------------------------------------- | ------------------------------------------- |
+| `endpoint` | `string`                               | The API path, e.g. `"/movie/550"`.          |
+| `params`   | `Record<string, unknown>`              | Query parameters that will be sent to TMDB. |
+| `method`   | `"GET" \| "POST" \| "PUT" \| "DELETE"` | The HTTP method.                            |
 
 ---
 

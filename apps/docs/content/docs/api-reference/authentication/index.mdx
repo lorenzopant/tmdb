@@ -1,0 +1,34 @@
+---
+title: Authentication
+description: Manage TMDB v3 user sessions — create request tokens, exchange them for session IDs, and log users out.
+---
+
+The `AuthenticationAPI` provides the full v3 session management flow: validating your API key, creating guest sessions, generating request tokens, exchanging them for session IDs, and deleting sessions when a user logs out.
+
+A session ID is required to use account-level write endpoints such as [`add_favorite`](/docs/api-reference/account/add-favorite) and [`add_to_watchlist`](/docs/api-reference/account/add-to-watchlist).
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-access-token");
+
+// Step 1 — get a short-lived request token
+const { request_token } = await tmdb.authentication.create_request_token();
+
+// Step 2 — redirect user to approve it:
+// https://www.themoviedb.org/authenticate/{request_token}
+
+// Step 3 — exchange the approved token for a session ID
+const { session_id } = await tmdb.authentication.create_session({ request_token });
+```
+
+> **Note on `create_session_from_v4_token`:** The TMDB API also exposes `POST /3/authentication/session/convert/4`, which converts a v4 user access token into a v3 `session_id`. This method is intentionally not implemented here because its prerequisite — a v4 user access token — requires the v4 OAuth flow (`/4/auth/...`), which is outside the scope of this library. If you already hold a v4 user access token from an external source, you can pass it directly as the Bearer token when constructing `TMDB` — TMDB will recognise it as a user-scoped token and account mutations will work without a `session_id`.
+
+## Methods
+
+- [`validate_key()`](/docs/api-reference/authentication/validate-key) — Confirm your API key or Bearer token is valid.
+- [`create_guest_session()`](/docs/api-reference/authentication/create-guest-session) — Create a limited session for rating without a TMDB account.
+- [`create_request_token()`](/docs/api-reference/authentication/create-request-token) — Generate a short-lived token for the user to approve (step 1 of the session flow).
+- [`create_session()`](/docs/api-reference/authentication/create-session) — Exchange an approved request token for a permanent session ID (step 3 of the session flow).
+- [`create_session_with_login()`](/docs/api-reference/authentication/create-session-with-login) — Validate a request token directly with username and password (alternative step 2 for server-side apps).
+- [`delete_session()`](/docs/api-reference/authentication/delete-session) — Invalidate a session ID to log a user out.

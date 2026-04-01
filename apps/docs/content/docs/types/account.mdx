@@ -1,0 +1,164 @@
+---
+title: Account
+description: Types related to the Account namespace.
+---
+
+Types related to the [AccountAPI](/docs/api-reference/account) namespace.
+
+import { TypeTable } from "fumadocs-ui/components/type-table";
+
+## `AccountDetails`
+
+The public profile of a TMDB account as returned by [`account.details()`](/docs/api-reference/account/details).
+
+<AutoTypeTable path="account.ts" name="AccountDetails" />
+
+## `AccountAvatar`
+
+<AutoTypeTable path="account.ts" name="AccountAvatar" />
+
+## `AccountDetailsParams`
+
+<TypeTable
+	type={{
+		account_id: { type: "number", required: true, description: "The TMDB account ID." },
+		session_id: { type: "string", description: "Session ID for v3 session-based authentication." },
+	}}
+/>
+
+## `AccountMediaListParams`
+
+Shared params for all paginated favorites, watchlist, and rated list endpoints.
+
+<TypeTable
+	type={{
+		account_id: { type: "number", required: true, description: "The TMDB account ID." },
+		session_id: { type: "string", description: "Session ID for v3 session-based authentication." },
+		language: {
+			type: "Language",
+			description: "Language for localized results.",
+			default: "en-US",
+		},
+		sort_by: {
+			type: "AccountSortBy",
+			description: 'Sort direction. One of `"created_at.asc"` or `"created_at.desc"`.',
+		},
+		page: { type: "number", description: "Page number to return." },
+	}}
+/>
+
+## `AccountListsParams`
+
+Params for the [`lists()`](/docs/api-reference/account/lists) endpoint (no language param).
+
+<TypeTable
+	type={{
+		account_id: { type: "number", required: true, description: "The TMDB account ID." },
+		session_id: { type: "string", description: "Session ID for v3 session-based authentication." },
+		page: { type: "number", description: "Page number to return." },
+	}}
+/>
+
+## `AccountSortBy`
+
+Sort order for paginated account lists.
+
+```ts
+type AccountSortBy = "created_at.asc" | "created_at.desc";
+```
+
+## `AccountMutationParams`
+
+Shared params for mutation endpoints (`add_favorite`, `add_to_watchlist`).
+
+<TypeTable
+	type={{
+		account_id: { type: "number", required: true, description: "The TMDB account ID." },
+		session_id: { type: "string", description: "Session ID for v3 session-based authentication." },
+	}}
+/>
+
+## `AccountAddFavoriteBody`
+
+Request body for [`add_favorite()`](/docs/api-reference/account/add-favorite).
+
+<TypeTable
+	type={{
+		media_type: {
+			type: '"movie" | "tv"',
+			required: true,
+			description: "The type of media to favourite.",
+		},
+		media_id: {
+			type: "number",
+			required: true,
+			description: "The TMDB ID of the movie or TV show.",
+		},
+		favorite: { type: "boolean", required: true, description: "`true` to add, `false` to remove." },
+	}}
+/>
+
+## `AccountAddToWatchlistBody`
+
+Request body for [`add_to_watchlist()`](/docs/api-reference/account/add-to-watchlist).
+
+<TypeTable
+	type={{
+		media_type: {
+			type: '"movie" | "tv"',
+			required: true,
+			description: "The type of media to add to the watchlist.",
+		},
+		media_id: {
+			type: "number",
+			required: true,
+			description: "The TMDB ID of the movie or TV show.",
+		},
+		watchlist: {
+			type: "boolean",
+			required: true,
+			description: "`true` to add, `false` to remove.",
+		},
+	}}
+/>
+
+## `AccountMutationResponse`
+
+Response returned by [`add_favorite()`](/docs/api-reference/account/add-favorite) and [`add_to_watchlist()`](/docs/api-reference/account/add-to-watchlist) on success (HTTP 2xx).
+Errors (4xx/5xx) are always thrown as `TMDBError` and never appear here.
+
+<AutoTypeTable path="account.ts" name="AccountMutationResponse" />
+
+## `AccountMovieItem`
+
+A movie entry in an account's favorites or watchlist list. Extends [`MovieResultItem`](/docs/types/search#movieresultitem) with `adult` always present.
+
+<AutoTypeTable path="account.ts" name="AccountMovieItem" />
+
+## `AccountTVItem`
+
+A TV show entry in an account's favorites or watchlist list. Equivalent to [`TVSeriesResultItem`](/docs/types/search#tvseriesresultitem).
+
+## `AccountRatedMovieItem`
+
+A movie from the rated movies list. Extends [`AccountMovieItem`](/docs/types/account#accountmovieitem) with a user `rating` field.
+
+<AutoTypeTable path="account.ts" name="AccountRatedMovieItem" />
+
+## `AccountRatedTVItem`
+
+A TV show from the rated TV list. Extends [`AccountTVItem`](/docs/types/account#accounttvitem) with a user `rating` field.
+
+<AutoTypeTable path="account.ts" name="AccountRatedTVItem" />
+
+## `AccountRatedEpisodeItem`
+
+A single TV episode from the rated episodes list.
+
+<AutoTypeTable path="account.ts" name="AccountRatedEpisodeItem" />
+
+## `AccountListItem`
+
+A custom list summary as returned by [`lists()`](/docs/api-reference/account/lists).
+
+<AutoTypeTable path="account.ts" name="AccountListItem" />

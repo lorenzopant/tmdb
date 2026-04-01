@@ -15,8 +15,8 @@ export type RequestInterceptorContext = {
 	endpoint: string;
 	/** Query parameters that will be appended to the URL. Mutating this object has no effect — return a new context instead. */
 	params: Record<string, unknown>;
-	/** The HTTP method. Currently always `"GET"`. */
-	method: "GET";
+	/** The HTTP method. */
+	method: "GET" | "POST" | "PUT" | "DELETE";
 };
 
 /**
