@@ -1,0 +1,48 @@
+---
+title: Delete Session
+description: Invalidate a session ID to log a user out.
+---
+
+Invalidates an existing session ID, effectively logging the user out. After this call, the session ID can no longer be used for account operations.
+
+```ts
+async delete_session(body: AuthDeleteSessionBody): Promise<AuthDeleteSessionResponse>
+```
+
+> **TMDB Reference:** [Delete Session](https://developer.themoviedb.org/reference/authentication-delete-session)
+
+## Parameters
+
+| Name         | Type     | Required | Description                   |
+| ------------ | -------- | -------- | ----------------------------- |
+| `session_id` | `string` | ✅       | The session ID to invalidate. |
+
+## Returns
+
+[`AuthDeleteSessionResponse`](/docs/types/authentication#authdeletesessionresponse)
+
+## Errors
+
+| HTTP | TMDB code | Cause                                  |
+| ---- | --------- | -------------------------------------- |
+| 401  | 3         | Invalid or missing access token.       |
+| 401  | 7         | Invalid or already-deleted session ID. |
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-access-token");
+
+const { success } = await tmdb.authentication.delete_session({
+	session_id: "79191836ddaa0da3df76a5ffef6f07ad6ab0c641",
+});
+
+console.log(success); // true
+```
+
+## Related Types
+
+- [`AuthDeleteSessionBody`](/docs/types/authentication#authdeletesessionbody)
+- [`AuthDeleteSessionResponse`](/docs/types/authentication#authdeletesessionresponse)
