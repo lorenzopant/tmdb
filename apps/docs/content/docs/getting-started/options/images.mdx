@@ -7,6 +7,99 @@ The `images` option controls how the client builds image URLs.
 You can toggle HTTPS and set default sizes for each image category so they are applied
 automatically across all responses without needing to specify a size on every call.
 
+## Using `tmdb.images`
+
+`tmdb.images` is a synchronous URL builder — no HTTP request, no async. It exposes one method per
+TMDB image category. Each method accepts a file path (returned by any API response) and an optional
+size. When the size is omitted the configured default for that category is used.
+
+### `poster(path, size?)`
+
+Builds a URL for a poster image (`poster_path` field on movies, TV series, collections, and seasons).
+
+```ts
+const movie = await tmdb.movies.details({ movie_id: 550 });
+
+const url = tmdb.images.poster(movie.poster_path, "w500");
+// → "https://image.tmdb.org/t/p/w500/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg"
+
+// Omit size to use the configured default (w500)
+const url = tmdb.images.poster(movie.poster_path);
+```
+
+**Size options (`PosterSize`):** `w92` · `w154` · `w185` · `w342` · `w500` · `w780` · `original`
+
+---
+
+### `backdrop(path, size?)`
+
+Builds a URL for a backdrop image (`backdrop_path` field on movies and TV series).
+
+```ts
+const tv = await tmdb.tv_series.details({ series_id: 1396 });
+
+const url = tmdb.images.backdrop(tv.backdrop_path, "w1280");
+// → "https://image.tmdb.org/t/p/w1280/tsRy63Mu5cu8etL1X7ZLyf7UP1M.jpg"
+```
+
+**Size options (`BackdropSize`):** `w300` · `w780` · `w1280` · `original`
+
+---
+
+### `logo(path, size?)`
+
+Builds a URL for a logo image (`logo_path` field on companies and networks).
+
+```ts
+const network = await tmdb.networks.details({ network_id: 213 });
+
+const url = tmdb.images.logo(network.logo_path, "w185");
+// → "https://image.tmdb.org/t/p/w185/alqLicR1ZMHMaZGP3xRQxn9sq7p.png"
+```
+
+**Size options (`LogoSize`):** `w45` · `w92` · `w154` · `w185` · `w300` · `w500` · `original`
+
+---
+
+### `profile(path, size?)`
+
+Builds a URL for a profile image (`profile_path` field on people).
+
+```ts
+const person = await tmdb.people.details({ person_id: 31 });
+
+const url = tmdb.images.profile(person.profile_path, "w185");
+// → "https://image.tmdb.org/t/p/w185/r7WLn4Kbnqb6oJ8TmSI0e3GKEAO.jpg"
+```
+
+**Size options (`ProfileSize`):** `w45` · `w185` · `h632` · `original`
+
+---
+
+### `still(path, size?)`
+
+Builds a URL for a TV episode still image (`still_path` field on TV episodes).
+
+```ts
+const episode = await tmdb.tv_episodes.details({
+	series_id: 1396,
+	season_number: 1,
+	episode_number: 1,
+});
+
+const url = tmdb.images.still(episode.still_path, "w300");
+// → "https://image.tmdb.org/t/p/w300/ydlY3iPfeOAvu8gVqrxPoMvzNCn.jpg"
+```
+
+**Size options (`StillSize`):** `w92` · `w185` · `w300` · `original`
+
+---
+
+## Configuring Default Sizes
+
+Pass the `images` option to the `TMDB` constructor to configure HTTPS mode and set per-category
+default sizes. These defaults apply whenever a size is not passed explicitly at call time.
+
 ```ts
 const tmdb = new TMDB(apiKey, {
 	images: {
