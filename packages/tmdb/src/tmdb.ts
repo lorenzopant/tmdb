@@ -74,6 +74,7 @@ export class TMDB {
 		this.client = new ApiClient(accessToken, {
 			logger: options.logger,
 			deduplication: options.deduplication,
+			images: options.images,
 			interceptors: options.interceptors,
 		});
 		this.movies = new MoviesAPI(this.client, this.options);
