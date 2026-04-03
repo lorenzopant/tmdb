@@ -12,10 +12,18 @@ All image URLs are composed of a base URL, a size, and a file path.
 
 Top-level image configuration passed to the constructor via the [`images`](/options#images) option.
 
-| Property              | Type                                                           | Default | Description                                                                                            |
-| --------------------- | -------------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------ |
-| `secure_images_url`   | `boolean`                                                      | `true`  | When `true`, uses the HTTPS base URL. Set to `false` only if HTTPS is unavailable in your environment. |
-| `default_image_sizes` | [`Partial<DefaultImageSizesConfig>`](#defaultimagesizesconfig) | —       | Default sizes for each image category. Applied automatically when no size is specified at call time.   |
+| Property              | Type                                                           | Default | Description                                                                                                         |
+| --------------------- | -------------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------- |
+| `secure_images_url`   | `boolean`                                                      | `true`  | When `true`, uses the HTTPS base URL. Set to `false` only if HTTPS is unavailable in your environment.              |
+| `autocomplete_paths`  | `boolean`                                                      | `false` | When `true`, expands supported relative image paths in API responses to full URLs using the configured image sizes. |
+| `default_image_sizes` | [`Partial<DefaultImageSizesConfig>`](#defaultimagesizesconfig) | —       | Default sizes for each image category. Applied automatically when no size is specified at call time.                |
+
+`autocomplete_paths` is opt-in to avoid changing the default TMDB response shape semantics.
+When enabled, known image fields such as `poster_path`, `backdrop_path`, `profile_path`,
+`logo_path`, `still_path`, and image collection `file_path` values are converted to final URLs.
+
+If a category does not have an explicit value in `default_image_sizes`, the built-in method
+defaults are used: posters `w500`, backdrops `w780`, logos `w185`, profiles `w185`, stills `w300`.
 
 ---
 

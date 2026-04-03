@@ -6,11 +6,13 @@ description: Configure image URL generation, HTTPS, and default sizes for all im
 The `images` option controls how the client builds image URLs.
 You can toggle HTTPS and set default sizes for each image category so they are applied
 automatically across all responses without needing to specify a size on every call.
+It can also opt in to expanding relative TMDB image paths returned by the API into full URLs.
 
 ```ts
 const tmdb = new TMDB(apiKey, {
 	images: {
 		secure_images_url: true,
+		autocomplete_paths: true,
 		default_image_sizes: {
 			posters: "w500",
 			backdrops: "w1280",
@@ -33,6 +35,48 @@ When `false`, the HTTP base URL is used (`http://image.tmdb.org/t/p/`).
 
 Set this to `false` only in environments where HTTPS is not available.
 For all standard use cases, leave it as `true`.
+
+---
+
+### `autocomplete_paths`
+
+**Type:** `boolean` · **Default:** `false`
+
+When enabled, the client automatically rewrites supported image path fields in API responses into
+full image URLs using the current image configuration.
+
+This affects relative TMDB paths such as `poster_path`, `backdrop_path`, `profile_path`,
+`logo_path`, `still_path`, and `file_path` values inside image collections like `posters` or
+`backdrops`.
+
+```ts
+const tmdb = new TMDB(apiKey, {
+	images: {
+		autocomplete_paths: true,
+		default_image_sizes: {
+			posters: "original",
+		},
+	},
+});
+
+const movie = await tmdb.movies.details({ movie_id: 550 });
+
+console.log(movie.poster_path);
+// "https://image.tmdb.org/t/p/original/e1mjopzAS2KNsvpbpahQ1a6SkSn.jpg"
+```
+
+If `default_image_sizes` is not configured, the built-in per-type defaults are used instead:
+
+| Image Type      | Default Size |
+| --------------- | ------------ |
+| `poster_path`   | `w500`       |
+| `backdrop_path` | `w780`       |
+| `logo_path`     | `w185`       |
+| `profile_path`  | `w185`       |
+| `still_path`    | `w300`       |
+
+This option is disabled by default to preserve the original TMDB response semantics, where image
+fields contain relative paths that can be passed to `tmdb.images.*` manually.
 
 ---
 
@@ -72,6 +116,9 @@ https://image.tmdb.org/t/p/w500/abc123.jpg
 
 > Prefer `original` only when you need the full-resolution asset and are willing to accept
 > larger file sizes. For UI thumbnails, sized variants like `w500` or `w780` are recommended.
+
+When `autocomplete_paths` is enabled, these defaults are also used to expand image fields returned
+by API responses.
 
 ### Useful Links
 
