@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { hasBackdropPath, hasLogoPath, hasPosterPath, hasProfilePath, hasStillPath, isRecord } from "../../utils/types";
+import { hasBackdropPath, hasLogoPath, hasPosterPath, hasProfilePath, hasStillPath, isPlainObject, isRecord } from "../../utils/types";
 
 describe("isRecord", () => {
 	it("returns true for plain objects", () => {
@@ -19,6 +19,22 @@ describe("isRecord", () => {
 		expect(isRecord(123)).toBe(false);
 		expect(isRecord(false)).toBe(false);
 		expect(isRecord(undefined)).toBe(false);
+	});
+});
+
+describe("isPlainObject", () => {
+	it("returns true for plain objects and null-prototype objects", () => {
+		expect(isPlainObject({})).toBe(true);
+		expect(isPlainObject({ id: 1 })).toBe(true);
+		expect(isPlainObject(Object.create(null))).toBe(true);
+	});
+
+	it("returns false for non-plain object instances and non-objects", () => {
+		expect(isPlainObject(new Date())).toBe(false);
+		expect(isPlainObject(new Map())).toBe(false);
+		expect(isPlainObject([])).toBe(false);
+		expect(isPlainObject(null)).toBe(false);
+		expect(isPlainObject("hello")).toBe(false);
 	});
 });
 

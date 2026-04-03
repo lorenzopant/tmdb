@@ -9,6 +9,16 @@ export function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
+/**
+ * Typeguard that checks whether a value is a plain object.
+ * Plain objects are objects whose prototype is `Object.prototype` or `null`.
+ */
+export function isPlainObject(value: unknown): value is Record<string, unknown> {
+	if (!isRecord(value)) return false;
+	const prototype = Object.getPrototypeOf(value);
+	return prototype === Object.prototype || prototype === null;
+}
+
 // MARK: Images
 
 /** Utility type guard to check if an object has a poster_path property */

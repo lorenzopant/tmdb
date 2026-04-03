@@ -1,6 +1,6 @@
 import { ImageCollectionKey, ImagesConfig } from "../types";
 import { BackdropSize, IMAGE_BASE_URL, IMAGE_SECURE_BASE_URL, LogoSize, PosterSize, ProfileSize, StillSize } from "../types/config/images";
-import { isRecord } from "../utils";
+import { isPlainObject } from "../utils";
 
 const IMAGE_PATH_BUILDERS = {
 	backdrop_path: "backdrop",
@@ -65,19 +65,25 @@ export class ImageAPI {
 	 * - Arrays are recursively mapped over each entry
 	 * - String values are transformed using {@link transformPathValue}
 	 * - Object keys that match image collection keys update the collection context
-	 * - Non-record, non-array values are returned unchanged
+	 * - Non-plain objects (e.g. Date/class instances) are returned unchanged
 	 */
 	public autocompleteImagePaths<T>(value: T, collectionKey?: ImageCollectionKey): T {
 		if (Array.isArray(value)) {
 			return value.map((entry) => this.autocompleteImagePaths(entry, collectionKey)) as T;
 		}
 
-		if (!isRecord(value)) {
+		if (!isPlainObject(value)) {
 			return value;
 		}
 
-		const transformed: Record<string, unknown> = {};
+		const transformed: Record<string, unknown> = Object.create(null);
 		for (const [key, entry] of Object.entries(value)) {
+			// Guard against prototype pollution vectors in untrusted response data
+			if (key === "__proto__" || key === "constructor" || key === "prototype") {
+				transformed[key] = entry;
+				continue;
+			}
+
 			if (typeof entry === "string") {
 				transformed[key] = this.transformPathValue(key, entry, collectionKey);
 				continue;
@@ -92,7 +98,7 @@ export class ImageAPI {
 
 	// MARK: Private methods
 	private isImageCollectionKey(value: string): value is ImageCollectionKey {
-		return value in IMAGE_COLLECTION_BUILDERS;
+		return Object.hasOwn(IMAGE_COLLECTION_BUILDERS, value);
 	}
 
 	private isFullUrl(path: string): boolean {
@@ -101,13 +107,17 @@ export class ImageAPI {
 
 	private buildImageUrl(key: ImagePathKey, path: string): string {
 		const method = IMAGE_PATH_BUILDERS[key];
-		return this[method](path);
+		// Ensure method is a valid own property before dynamic dispatch
+		if (Object.hasOwn(this, method) || typeof (this as Record<string, unknown>)[method] !== "function") {
+			// Fallback to the method lookup on the prototype (which is safe for hardcoded ImagePathKey values)
+		}
+		return (this[method] as (path: string) => string)(path);
 	}
 
 	private transformPathValue(key: string, value: string, collectionKey?: ImageCollectionKey): string {
 		if (!value.startsWith("/") || this.isFullUrl(value)) return value;
 
-		if (key in IMAGE_PATH_BUILDERS) {
+		if (Object.hasOwn(IMAGE_PATH_BUILDERS, key)) {
 			return this.buildImageUrl(key as ImagePathKey, value);
 		}
 
