@@ -190,6 +190,30 @@ if (movie.poster_path) {
 Default sizes can be overridden globally once in `TMDBOptions.images` and are applied automatically
 across all calls. See the [Images option](/docs/getting-started/options/images) for the full reference.
 
+### Autocomplete Image Paths
+
+If you prefer API responses to already contain full image URLs, enable `images.autocomplete_paths`.
+This opt-in transformation rewrites supported relative image fields such as `poster_path` and
+`backdrop_path` using your configured image defaults.
+
+```ts
+const tmdb = new TMDB(apiKey, {
+	images: {
+		autocomplete_paths: true,
+		default_image_sizes: {
+			posters: "w500",
+		},
+	},
+});
+
+const movie = await tmdb.movies.details({ movie_id: 550 });
+
+console.log(movie.poster_path);
+// → "https://image.tmdb.org/t/p/w500/e1mjopzAS2KNsvpbpahQ1a6SkSn.jpg"
+```
+
+This is disabled by default so existing consumers still receive the original TMDB relative paths.
+
 ---
 
 ## Error Handling

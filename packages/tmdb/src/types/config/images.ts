@@ -62,4 +62,12 @@ export type ImagesConfig = {
 	 * Provide default image size configuration for each type of images.
 	 */
 	default_image_sizes?: Partial<DefaultImageSizesConfig>;
+	/**
+	 * Automatically expand TMDB image paths found in API responses into full URLs
+	 * using the configured default image sizes.
+	 *
+	 * This is disabled by default to preserve the existing response shape semantics,
+	 * where fields like `poster_path` contain the original relative TMDB path.
+	 */
+	autocomplete_paths?: boolean;
 };

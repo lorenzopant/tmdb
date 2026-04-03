@@ -16,6 +16,7 @@ const tmdb = new TMDB("your-api-key", {
 	timezone: "Europe/Rome",
 	images: {
 		secure_images_url: true,
+		autocomplete_paths: true,
 		default_image_sizes: {
 			posters: "w500",
 			backdrops: "w1280",
@@ -26,15 +27,15 @@ const tmdb = new TMDB("your-api-key", {
 
 ## Available Options
 
-| Option          | Type                                                     | Description                                                                  |
-| --------------- | -------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| `language`      | `Language`                                               | Default language for all responses (ISO 639-1 or primary translation code).  |
-| `region`        | `CountryISO3166_1`                                       | Default region for localized content like release dates and watch providers. |
-| `images`        | `ImagesConfig`                                           | Configuration for image base URLs and default image sizes.                   |
-| `timezone`      | `Timezone`                                               | Default timezone for TV series airing time calculations.                     |
-| `logger`        | `boolean \| TMDBLoggerFn`                                | Enable the built-in console logger or supply a custom logging function.      |
-| `deduplication` | `boolean`                                                | Deduplicate concurrent identical requests. Defaults to `true`.               |
-| `interceptors`  | `{ request?: ..., response?: { onSuccess?, onError? } }` | Hook into the request/response lifecycle before or after each API call.      |
+| Option          | Type                                                     | Description                                                                                        |
+| --------------- | -------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `language`      | `Language`                                               | Default language for all responses (ISO 639-1 or primary translation code).                        |
+| `region`        | `CountryISO3166_1`                                       | Default region for localized content like release dates and watch providers.                       |
+| `images`        | `ImagesConfig`                                           | Configuration for image base URLs, default image sizes, and optional response path autocompletion. |
+| `timezone`      | `Timezone`                                               | Default timezone for TV series airing time calculations.                                           |
+| `logger`        | `boolean \| TMDBLoggerFn`                                | Enable the built-in console logger or supply a custom logging function.                            |
+| `deduplication` | `boolean`                                                | Deduplicate concurrent identical requests. Defaults to `true`.                                     |
+| `interceptors`  | `{ request?: ..., response?: { onSuccess?, onError? } }` | Hook into the request/response lifecycle before or after each API call.                            |
 
 ---
 
@@ -83,11 +84,13 @@ See the [Region reference](/docs/getting-started/options/region) for all support
 
 Configures how image URLs are generated. Includes options to toggle HTTPS and set default sizes
 for each image category so you don't need to pass sizes on every individual request.
+It can also opt in to rewriting relative image paths in API responses to full URLs.
 
 ```ts
 const tmdb = new TMDB(apiKey, {
 	images: {
 		secure_images_url: true,
+		autocomplete_paths: true,
 		default_image_sizes: {
 			posters: "w500",
 			backdrops: "w1280",
@@ -96,6 +99,10 @@ const tmdb = new TMDB(apiKey, {
 	},
 });
 ```
+
+With `autocomplete_paths: true`, fields like `poster_path` are returned as complete URLs instead
+of TMDB-relative paths. See the [Images configuration reference](/docs/getting-started/options/images)
+for supported fields, defaults, and examples.
 
 See the [Images configuration reference](/docs/getting-started/options/images) for all available size options per category.
 

@@ -1,4 +1,6 @@
 import { TMDBAPIErrorResponse, TMDBError } from "./errors/tmdb";
+import { ImageAPI } from "./images/images";
+import type { ImagesConfig } from "./types/config/images";
 import { TMDBLogger, TMDBLoggerFn } from "./utils/logger";
 import { isJwt } from "./utils";
 import type {
@@ -23,12 +25,14 @@ export class ApiClient {
 	private requestInterceptors: RequestInterceptor[];
 	private onSuccessInterceptor?: ResponseSuccessInterceptor;
 	private onErrorInterceptor?: ResponseErrorInterceptor;
+	private imageApi?: ImageAPI;
 
 	constructor(
 		accessToken: string,
 		options: {
 			logger?: boolean | TMDBLoggerFn;
 			deduplication?: boolean;
+			images?: ImagesConfig;
 			interceptors?: {
 				request?: RequestInterceptor | RequestInterceptor[];
 				response?: { onSuccess?: ResponseSuccessInterceptor; onError?: ResponseErrorInterceptor };
@@ -42,6 +46,7 @@ export class ApiClient {
 		this.requestInterceptors = raw == null ? [] : Array.isArray(raw) ? raw : [raw];
 		this.onSuccessInterceptor = options.interceptors?.response?.onSuccess;
 		this.onErrorInterceptor = options.interceptors?.response?.onError;
+		this.imageApi = options.images?.autocomplete_paths ? new ImageAPI(options.images) : undefined;
 	}
 
 	/**
@@ -257,12 +262,13 @@ export class ApiClient {
 
 		const data = await res.json();
 		const sanitized = this.sanitizeNulls<T>(data);
+		const transformed = this.imageApi ? this.imageApi.autocompleteImagePaths(sanitized) : sanitized;
 
 		if (this.onSuccessInterceptor) {
-			const result = await this.onSuccessInterceptor(sanitized);
-			return result !== undefined ? (result as T) : sanitized;
+			const result = await this.onSuccessInterceptor(transformed);
+			return result !== undefined ? (result as T) : transformed;
 		}
 
-		return sanitized;
+		return transformed;
 	}
 }
