@@ -131,6 +131,11 @@ The builder exposes five methods, one per TMDB image category:
 | `profile()`  | `profile_path`   | `w185`       | [`ProfileSize`](/docs/types/options/images#profilesize)   |
 | `still()`    | `still_path`     | `w300`       | [`StillSize`](/docs/types/options/images#stillsize)       |
 
+<Callout type="warn">
+	Path fields such as `poster_path`, `backdrop_path`, `profile_path`, and `still_path` are optional on most TMDB response types. Always
+	guard against `undefined` before building a URL.
+</Callout>
+
 ```ts
 const movie = await tmdb.movies.details({ movie_id: 550 });
 const tv = await tmdb.tv_series.details({ series_id: 1396 });
@@ -142,25 +147,33 @@ const episode = await tmdb.tv_episodes.details({
 });
 
 // Poster — movies, TV series, collections
-const posterUrl = tmdb.images.poster(movie.poster_path, "w500");
-// → "https://image.tmdb.org/t/p/w500/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg"
+if (movie.poster_path) {
+	const posterUrl = tmdb.images.poster(movie.poster_path, "w500");
+	// → "https://image.tmdb.org/t/p/w500/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg"
+}
 
 // Backdrop — movies, TV series
-const backdropUrl = tmdb.images.backdrop(movie.backdrop_path, "w1280");
-// → "https://image.tmdb.org/t/p/w1280/rr7E0NoGKxvbkb89eR1GwfoYjpA.jpg"
+if (movie.backdrop_path) {
+	const backdropUrl = tmdb.images.backdrop(movie.backdrop_path, "w1280");
+	// → "https://image.tmdb.org/t/p/w1280/rr7E0NoGKxvbkb89eR1GwfoYjpA.jpg"
+}
 
-// Logo — companies, networks
+// Logo — companies, networks (logo_path is always present on NetworkDetails)
 const network = await tmdb.networks.details({ network_id: 213 });
 const logoUrl = tmdb.images.logo(network.logo_path, "w185");
 // → "https://image.tmdb.org/t/p/w185/alqLicR1ZMHMaZGP3xRQxn9sq7p.png"
 
 // Profile — people (actors, directors, crew)
-const profileUrl = tmdb.images.profile(person.profile_path, "w185");
-// → "https://image.tmdb.org/t/p/w185/r7WLn4Kbnqb6oJ8TmSI0e3GKEAO.jpg"
+if (person.profile_path) {
+	const profileUrl = tmdb.images.profile(person.profile_path, "w185");
+	// → "https://image.tmdb.org/t/p/w185/r7WLn4Kbnqb6oJ8TmSI0e3GKEAO.jpg"
+}
 
 // Still — TV episode thumbnails
-const stillUrl = tmdb.images.still(episode.still_path, "w300");
-// → "https://image.tmdb.org/t/p/w300/ydlY3iPfeOAvu8gVqrxPoMvzNCn.jpg"
+if (episode.still_path) {
+	const stillUrl = tmdb.images.still(episode.still_path, "w300");
+	// → "https://image.tmdb.org/t/p/w300/ydlY3iPfeOAvu8gVqrxPoMvzNCn.jpg"
+}
 ```
 
 Each method's second argument is optional. When omitted, the built-in default size for that
@@ -169,7 +182,9 @@ for stills).
 
 ```ts
 // Uses default size — equivalent to poster(path, "w500")
-const posterUrl = tmdb.images.poster(movie.poster_path);
+if (movie.poster_path) {
+	const posterUrl = tmdb.images.poster(movie.poster_path);
+}
 ```
 
 Default sizes can be overridden globally once in `TMDBOptions.images` and are applied automatically

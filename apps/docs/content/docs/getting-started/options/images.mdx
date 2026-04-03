@@ -17,14 +17,18 @@ size. When the size is omitted the configured default for that category is used.
 
 Builds a URL for a poster image (`poster_path` field on movies, TV series, collections, and seasons).
 
+`poster_path` is optional on most response types — guard before calling.
+
 ```ts
 const movie = await tmdb.movies.details({ movie_id: 550 });
 
-const url = tmdb.images.poster(movie.poster_path, "w500");
-// → "https://image.tmdb.org/t/p/w500/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg"
+if (movie.poster_path) {
+	const posterUrl = tmdb.images.poster(movie.poster_path, "w500");
+	// → "https://image.tmdb.org/t/p/w500/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg"
 
-// Omit size to use the configured default (w500)
-const url = tmdb.images.poster(movie.poster_path);
+	// Omit size to use the configured default (w500)
+	const posterUrlDefault = tmdb.images.poster(movie.poster_path);
+}
 ```
 
 **Size options (`PosterSize`):** `w92` · `w154` · `w185` · `w342` · `w500` · `w780` · `original`
@@ -35,11 +39,15 @@ const url = tmdb.images.poster(movie.poster_path);
 
 Builds a URL for a backdrop image (`backdrop_path` field on movies and TV series).
 
+`backdrop_path` is optional — guard before calling.
+
 ```ts
 const tv = await tmdb.tv_series.details({ series_id: 1396 });
 
-const url = tmdb.images.backdrop(tv.backdrop_path, "w1280");
-// → "https://image.tmdb.org/t/p/w1280/tsRy63Mu5cu8etL1X7ZLyf7UP1M.jpg"
+if (tv.backdrop_path) {
+	const backdropUrl = tmdb.images.backdrop(tv.backdrop_path, "w1280");
+	// → "https://image.tmdb.org/t/p/w1280/tsRy63Mu5cu8etL1X7ZLyf7UP1M.jpg"
+}
 ```
 
 **Size options (`BackdropSize`):** `w300` · `w780` · `w1280` · `original`
@@ -53,7 +61,7 @@ Builds a URL for a logo image (`logo_path` field on companies and networks).
 ```ts
 const network = await tmdb.networks.details({ network_id: 213 });
 
-const url = tmdb.images.logo(network.logo_path, "w185");
+const logoUrl = tmdb.images.logo(network.logo_path, "w185");
 // → "https://image.tmdb.org/t/p/w185/alqLicR1ZMHMaZGP3xRQxn9sq7p.png"
 ```
 
@@ -65,11 +73,15 @@ const url = tmdb.images.logo(network.logo_path, "w185");
 
 Builds a URL for a profile image (`profile_path` field on people).
 
+`profile_path` is optional — guard before calling.
+
 ```ts
 const person = await tmdb.people.details({ person_id: 31 });
 
-const url = tmdb.images.profile(person.profile_path, "w185");
-// → "https://image.tmdb.org/t/p/w185/r7WLn4Kbnqb6oJ8TmSI0e3GKEAO.jpg"
+if (person.profile_path) {
+	const profileUrl = tmdb.images.profile(person.profile_path, "w185");
+	// → "https://image.tmdb.org/t/p/w185/r7WLn4Kbnqb6oJ8TmSI0e3GKEAO.jpg"
+}
 ```
 
 **Size options (`ProfileSize`):** `w45` · `w185` · `h632` · `original`
@@ -80,6 +92,8 @@ const url = tmdb.images.profile(person.profile_path, "w185");
 
 Builds a URL for a TV episode still image (`still_path` field on TV episodes).
 
+`still_path` is optional — guard before calling.
+
 ```ts
 const episode = await tmdb.tv_episodes.details({
 	series_id: 1396,
@@ -87,8 +101,10 @@ const episode = await tmdb.tv_episodes.details({
 	episode_number: 1,
 });
 
-const url = tmdb.images.still(episode.still_path, "w300");
-// → "https://image.tmdb.org/t/p/w300/ydlY3iPfeOAvu8gVqrxPoMvzNCn.jpg"
+if (episode.still_path) {
+	const stillUrl = tmdb.images.still(episode.still_path, "w300");
+	// → "https://image.tmdb.org/t/p/w300/ydlY3iPfeOAvu8gVqrxPoMvzNCn.jpg"
+}
 ```
 
 **Size options (`StillSize`):** `w92` · `w185` · `w300` · `original`
