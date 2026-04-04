@@ -4,6 +4,27 @@ description: Latest updates and announcements
 icon: History
 ---
 
+## 🚀 1.18.1 - 4 April 2026
+
+#### ✨ New
+
+- **Image path autocompletion** — new opt-in `images.autocomplete_paths` option automatically rewrites relative TMDB image paths in API responses to full URLs. Affects `poster_path`, `backdrop_path`, `profile_path`, `logo_path`, `still_path`, and image collection `file_path` fields. Disabled by default to preserve original response semantics.
+
+```ts
+const tmdb = new TMDB(token, {
+	images: {
+		autocomplete_paths: true,
+		default_image_sizes: { posters: "original" },
+	},
+});
+
+const movie = await tmdb.movies.details({ movie_id: 550 });
+console.log(movie.poster_path);
+// → "https://image.tmdb.org/t/p/original/e1mjopzAS2KNsvpbpahQ1a6SkSn.jpg"
+```
+
+---
+
 ## 🚀 1.18.0 - 1 April 2026
 
 #### ✨ New
