@@ -24,8 +24,8 @@ export type ListMutationParams = {
 export type ListItem = {
 	/** Whether the item is adult content. */
 	adult: boolean;
-	/** Path to the backdrop image, or null if not available. */
-	backdrop_path: string | null;
+	/** Path to the backdrop image, if available. */
+	backdrop_path?: string;
 	/** Array of genre IDs. */
 	genre_ids: number[];
 	/** Unique TMDB ID of the item. */
@@ -40,8 +40,8 @@ export type ListItem = {
 	overview: string;
 	/** Popularity score. */
 	popularity: number;
-	/** Path to the poster image, or null if not available. */
-	poster_path: string | null;
+	/** Path to the poster image, if available. */
+	poster_path?: string;
 	/** Release date (YYYY-MM-DD). */
 	release_date: string;
 	/** Localized title. */
@@ -72,8 +72,8 @@ export type ListDetails = {
 	iso_639_1: string;
 	/** Display name of the list. */
 	name: string;
-	/** Path to the list's poster image, or null if not set. */
-	poster_path: string | null;
+	/** Path to the list's poster image, if set. */
+	poster_path?: string;
 };
 
 /** Query params for the list details endpoint. */
