@@ -1,0 +1,25 @@
+---
+title: Guest Sessions
+description: Access rated movies, TV shows, and TV episodes for a TMDB guest session.
+---
+
+The `GuestSessionsAPI` provides access to the rated content associated with a TMDB guest session. Guest sessions are created via [`authentication.create_guest_session()`](/docs/api-reference/authentication/create-guest-session) and allow users to rate media without a full TMDB account.
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const result = await tmdb.guest_sessions.rated_movies({
+	guest_session_id: "your-guest-session-id",
+});
+
+// or standalone
+import { GuestSessionsAPI } from "@lorenzopant/tmdb";
+const guestSessions = new GuestSessionsAPI("your-api-key");
+```
+
+## Methods
+
+- [`rated_movies()`](/docs/api-reference/guest-sessions/rated-movies) — Get the rated movies for a guest session.
+- [`rated_tv()`](/docs/api-reference/guest-sessions/rated-tv) — Get the rated TV shows for a guest session.
+- [`rated_tv_episodes()`](/docs/api-reference/guest-sessions/rated-tv-episodes) — Get the rated TV episodes for a guest session.

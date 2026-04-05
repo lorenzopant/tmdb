@@ -1,0 +1,49 @@
+---
+title: Rated TV Episodes
+description: Get the rated TV episodes for a guest session.
+---
+
+Get the paginated list of TV episodes rated during a guest session.
+
+```ts
+async rated_tv_episodes(params: GuestSessionRatedParams): Promise<GuestSessionRatedEpisodesResponse>
+```
+
+> **TMDB Reference:** [Rated TV Episodes](https://developer.themoviedb.org/reference/guest-session-rated-tv-episodes)
+
+## Parameters
+
+| Name               | Type                                                | Required | Description                                                                                     |
+| ------------------ | --------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------- |
+| `guest_session_id` | `string`                                            | ✅       | The guest session ID returned by `authentication.create_guest_session()`.                       |
+| `language`         | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized results. Defaults to `en-US`.                                            |
+| `page`             | `number`                                            | ❌       | Page number to return. Defaults to `1`.                                                         |
+| `sort_by`          | `AccountSortBy`                                     | ❌       | Sort direction. One of `"created_at.asc"` or `"created_at.desc"`. Defaults to `created_at.asc`. |
+
+## Returns
+
+A [`GuestSessionRatedEpisodesResponse`](/docs/types/guest-sessions#guestsessionratedepisodesresponse) — a [`PaginatedResponse<AccountRatedEpisodeItem>`](/docs/types/account#accountratedepisodeitem) with `page`, `total_pages`, `total_results`, and an array of rated episode objects, each including a `rating` field set by the guest user.
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const episodes = await tmdb.guest_sessions.rated_tv_episodes({
+	guest_session_id: "abc123",
+	language: "en-US",
+	page: 1,
+});
+
+console.log(episodes.results[0].name);
+// "Winter Is Coming"
+console.log(episodes.results[0].rating);
+// 8.5
+```
+
+## Related Types
+
+- [`GuestSessionRatedParams`](/docs/types/guest-sessions#guestsessionratedparams)
+- [`GuestSessionRatedEpisodesResponse`](/docs/types/guest-sessions#guestsessionratedepisodesresponse)
+- [`AccountRatedEpisodeItem`](/docs/types/account#accountratedepisodeitem)

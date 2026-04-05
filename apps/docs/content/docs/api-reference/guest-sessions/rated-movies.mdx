@@ -1,0 +1,49 @@
+---
+title: Rated Movies
+description: Get the rated movies for a guest session.
+---
+
+Get the paginated list of movies rated during a guest session.
+
+```ts
+async rated_movies(params: GuestSessionRatedParams): Promise<GuestSessionRatedMoviesResponse>
+```
+
+> **TMDB Reference:** [Rated Movies](https://developer.themoviedb.org/reference/guest-session-rated-movies)
+
+## Parameters
+
+| Name               | Type                                                | Required | Description                                                                                     |
+| ------------------ | --------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------- |
+| `guest_session_id` | `string`                                            | ✅       | The guest session ID returned by `authentication.create_guest_session()`.                       |
+| `language`         | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized results. Defaults to `en-US`.                                            |
+| `page`             | `number`                                            | ❌       | Page number to return. Defaults to `1`.                                                         |
+| `sort_by`          | `AccountSortBy`                                     | ❌       | Sort direction. One of `"created_at.asc"` or `"created_at.desc"`. Defaults to `created_at.asc`. |
+
+## Returns
+
+A [`GuestSessionRatedMoviesResponse`](/docs/types/guest-sessions#guestsessionratedmoviesresponse) — a [`PaginatedResponse<AccountRatedMovieItem>`](/docs/types/account#accountratedmovieitem) with `page`, `total_pages`, `total_results`, and an array of rated movie objects, each including a `rating` field set by the guest user.
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const movies = await tmdb.guest_sessions.rated_movies({
+	guest_session_id: "abc123",
+	language: "en-US",
+	sort_by: "created_at.desc",
+});
+
+console.log(movies.results[0].title);
+// "Dancer in the Dark"
+console.log(movies.results[0].rating);
+// 8.5
+```
+
+## Related Types
+
+- [`GuestSessionRatedParams`](/docs/types/guest-sessions#guestsessionratedparams)
+- [`GuestSessionRatedMoviesResponse`](/docs/types/guest-sessions#guestsessionratedmoviesresponse)
+- [`AccountRatedMovieItem`](/docs/types/account#accountratedmovieitem)

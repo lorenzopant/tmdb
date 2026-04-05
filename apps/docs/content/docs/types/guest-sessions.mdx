@@ -1,0 +1,51 @@
+---
+title: Guest Sessions
+description: Type definitions for the Guest Sessions API.
+---
+
+import { TypeTable } from "fumadocs-ui/components/type-table";
+
+Types related to the [GuestSessionsAPI](/docs/api-reference/guest-sessions) namespace.
+
+## `GuestSessionRatedParams`
+
+Shared params for all three guest session rated endpoints.
+
+<TypeTable
+	type={{
+		guest_session_id: {
+			type: "string",
+			required: true,
+			description: "The guest session ID returned by `authentication.create_guest_session()`.",
+		},
+		language: {
+			type: "Language",
+			description: "Language for localized results.",
+			default: "en-US",
+		},
+		page: { type: "number", description: "Page number to return.", default: "1" },
+		sort_by: {
+			type: "AccountSortBy",
+			description: 'Sort direction. One of `"created_at.asc"` or `"created_at.desc"`.',
+			default: "created_at.asc",
+		},
+	}}
+/>
+
+## `GuestSessionRatedMoviesResponse`
+
+The response type from [`guest_sessions.rated_movies()`](/docs/api-reference/guest-sessions/rated-movies).
+
+A [`PaginatedResponse<AccountRatedMovieItem>`](/docs/types/account#accountratedmovieitem) — each result includes a `rating` field with the user-assigned score alongside the standard movie fields.
+
+## `GuestSessionRatedTVResponse`
+
+The response type from [`guest_sessions.rated_tv()`](/docs/api-reference/guest-sessions/rated-tv).
+
+A [`PaginatedResponse<AccountRatedTVItem>`](/docs/types/account#accountratedtvitem) — each result includes a `rating` field alongside the standard TV show fields.
+
+## `GuestSessionRatedEpisodesResponse`
+
+The response type from [`guest_sessions.rated_tv_episodes()`](/docs/api-reference/guest-sessions/rated-tv-episodes).
+
+A [`PaginatedResponse<AccountRatedEpisodeItem>`](/docs/types/account#accountratedepisodeitem) — each result includes a `rating` field alongside episode-level fields such as `air_date`, `episode_number`, `season_number`, and `show_id`.

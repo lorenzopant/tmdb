@@ -9,6 +9,7 @@ export { V4ListsAPI } from "./endpoints/v4/lists";
 
 export { AuthenticationAPI } from "./endpoints/authentication";
 export { AccountAPI } from "./endpoints/account";
+export { GuestSessionsAPI } from "./endpoints/guest_sessions";
 export { CertificationsAPI } from "./endpoints/certifications";
 export { ChangesAPI } from "./endpoints/changes";
 export { CollectionsAPI } from "./endpoints/collections";
