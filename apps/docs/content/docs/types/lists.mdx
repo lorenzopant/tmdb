@@ -3,33 +3,31 @@ title: Lists
 description: Type definitions for the Lists API.
 ---
 
-import { AutoTypeTable } from "fumadocs-ui/components/type-table";
-
 Types related to the [ListsAPI](/docs/api-reference/lists) namespace.
 
 ## `ListMutationResponse`
 
 Standard response returned by `add_movie`, `remove_movie`, `delete`, and `clear`.
 
-<AutoTypeTable path="packages/tmdb/src/types/lists.ts" name="ListMutationResponse" />
+<AutoTypeTable path="lists.ts" name="ListMutationResponse" />
 
 ## `ListMutationParams`
 
 Shared query params for list endpoints that require a session ID and list ID.
 
-<AutoTypeTable path="packages/tmdb/src/types/lists.ts" name="ListMutationParams" />
+<AutoTypeTable path="lists.ts" name="ListMutationParams" />
 
 ## `ListItem`
 
 A single movie item inside a TMDB v3 list.
 
-<AutoTypeTable path="packages/tmdb/src/types/lists.ts" name="ListItem" />
+<AutoTypeTable path="lists.ts" name="ListItem" />
 
 ## `ListDetails`
 
 Full details of a TMDB v3 list, including all items.
 
-<AutoTypeTable path="packages/tmdb/src/types/lists.ts" name="ListDetails" />
+<AutoTypeTable path="lists.ts" name="ListDetails" />
 
 ## `ListDetailsParams`
 
@@ -45,31 +43,31 @@ Query params for [`lists.details()`](/docs/api-reference/lists/details).
 
 Request body for [`lists.create()`](/docs/api-reference/lists/create).
 
-<AutoTypeTable path="packages/tmdb/src/types/lists.ts" name="ListCreateBody" />
+<AutoTypeTable path="lists.ts" name="ListCreateBody" />
 
 ## `ListCreateParams`
 
 Query params for [`lists.create()`](/docs/api-reference/lists/create).
 
-<AutoTypeTable path="packages/tmdb/src/types/lists.ts" name="ListCreateParams" />
+<AutoTypeTable path="lists.ts" name="ListCreateParams" />
 
 ## `ListCreateResponse`
 
 Response from [`lists.create()`](/docs/api-reference/lists/create).
 
-<AutoTypeTable path="packages/tmdb/src/types/lists.ts" name="ListCreateResponse" />
+<AutoTypeTable path="lists.ts" name="ListCreateResponse" />
 
 ## `ListMovieBody`
 
 Shared request body for [`lists.add_movie()`](/docs/api-reference/lists/add-movie) and [`lists.remove_movie()`](/docs/api-reference/lists/remove-movie).
 
-<AutoTypeTable path="packages/tmdb/src/types/lists.ts" name="ListMovieBody" />
+<AutoTypeTable path="lists.ts" name="ListMovieBody" />
 
 ## `ListClearParams`
 
 Query params for [`lists.clear()`](/docs/api-reference/lists/clear).
 
-<AutoTypeTable path="packages/tmdb/src/types/lists.ts" name="ListClearParams" />
+<AutoTypeTable path="lists.ts" name="ListClearParams" />
 
 ## `ListItemStatusParams`
 
@@ -85,4 +83,4 @@ Query params for [`lists.check_item_status()`](/docs/api-reference/lists/check-i
 
 Response from [`lists.check_item_status()`](/docs/api-reference/lists/check-item-status).
 
-<AutoTypeTable path="packages/tmdb/src/types/lists.ts" name="ListItemStatusResponse" />
+<AutoTypeTable path="lists.ts" name="ListItemStatusResponse" />
