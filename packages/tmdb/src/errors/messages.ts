@@ -5,6 +5,7 @@
 export const Errors = {
 	NO_ACCESS_TOKEN: "TMDB requires a valid access token, please provide one.",
 	INVALID_CLIENT: "TMDB received an invalid ApiClient instance. Pass a valid ApiClient or an access token string.",
+	V4_REQUIRES_JWT: "TMDB v4 requires a Bearer (JWT) access token. API key strings are not supported for v4 endpoints.",
 };
 
 /**
