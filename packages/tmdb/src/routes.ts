@@ -176,3 +176,29 @@ export const ENDPOINTS = {
 		POPULAR: "/person/popular",
 	},
 };
+
+/**
+ * TMDB API v4 endpoint fragments.
+ * These are combined with `https://api.themoviedb.org/4` by the v4 ApiClient.
+ */
+export const ENDPOINTS_V4 = {
+	AUTH: {
+		REQUEST_TOKEN: "/auth/request_token",
+		ACCESS_TOKEN: "/auth/access_token",
+	},
+	ACCOUNT: {
+		DETAILS: "/account",
+		LISTS: "/lists",
+		FAVORITE_MOVIES: "/favorite/movies",
+		FAVORITE_TV: "/favorite/tv",
+		WATCHLIST_MOVIES: "/watchlist/movies",
+		WATCHLIST_TV: "/watchlist/tv",
+		RATED_MOVIES: "/rated/movies",
+		RATED_TV: "/rated/tv",
+	},
+	LISTS: {
+		DETAILS: "/list",
+		ITEMS: "/items",
+		ITEM_STATUS: "/item_status",
+	},
+};

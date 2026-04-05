@@ -12,7 +12,7 @@ import type {
 
 export class ApiClient {
 	private accessToken: string;
-	private baseUrl: string = "https://api.themoviedb.org/3";
+	private baseUrl: string;
 	private logger?: TMDBLogger;
 	/**
 	 * Tracks in-flight requests keyed by a deterministic string derived from the endpoint
@@ -30,6 +30,8 @@ export class ApiClient {
 	constructor(
 		accessToken: string,
 		options: {
+			/** @internal API version to target. Used by TMDBv4 — not exposed in TMDBOptions. */
+			version?: 3 | 4;
 			logger?: boolean | TMDBLoggerFn;
 			deduplication?: boolean;
 			images?: ImagesConfig;
@@ -40,6 +42,7 @@ export class ApiClient {
 		} = {},
 	) {
 		this.accessToken = accessToken;
+		this.baseUrl = `https://api.themoviedb.org/${options.version ?? 3}`;
 		this.logger = TMDBLogger.from(options.logger);
 		this.deduplication = options.deduplication !== false;
 		const raw = options.interceptors?.request;

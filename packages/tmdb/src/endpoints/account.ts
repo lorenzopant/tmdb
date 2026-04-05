@@ -1,11 +1,9 @@
 import { ENDPOINTS } from "../routes";
-import { TMDBAPIBase } from "./base";
 import type {
 	AccountAddFavoriteBody,
 	AccountAddToWatchlistBody,
 	AccountDetails,
 	AccountDetailsParams,
-	AccountListItem,
 	AccountListsParams,
 	AccountListsResponse,
 	AccountMediaListParams,
@@ -17,7 +15,7 @@ import type {
 	AccountRatedTVResponse,
 	AccountTVListResponse,
 } from "../types/account";
-import type { PaginatedResponse } from "../types/common";
+import { TMDBAPIBase } from "./base";
 
 export class AccountAPI extends TMDBAPIBase {
 	private accountPath(account_id: number): string {
@@ -51,10 +49,7 @@ export class AccountAPI extends TMDBAPIBase {
 	 * @param body media_type, media_id, and favorite flag.
 	 * @reference https://developer.themoviedb.org/reference/account-add-favorite
 	 */
-	async add_favorite(
-		params: AccountMutationParams,
-		body: AccountAddFavoriteBody,
-	): Promise<AccountMutationResponse> {
+	async add_favorite(params: AccountMutationParams, body: AccountAddFavoriteBody): Promise<AccountMutationResponse> {
 		const { account_id, ...queryParams } = params;
 		return this.client.mutate<AccountMutationResponse>(
 			"POST",
@@ -73,10 +68,7 @@ export class AccountAPI extends TMDBAPIBase {
 	 * @param body media_type, media_id, and watchlist flag.
 	 * @reference https://developer.themoviedb.org/reference/account-add-to-watchlist
 	 */
-	async add_to_watchlist(
-		params: AccountMutationParams,
-		body: AccountAddToWatchlistBody,
-	): Promise<AccountMutationResponse> {
+	async add_to_watchlist(params: AccountMutationParams, body: AccountAddToWatchlistBody): Promise<AccountMutationResponse> {
 		const { account_id, ...queryParams } = params;
 		return this.client.mutate<AccountMutationResponse>(
 			"POST",
@@ -96,10 +88,10 @@ export class AccountAPI extends TMDBAPIBase {
 	 */
 	async favorite_movies(params: AccountMediaListParams): Promise<AccountMovieListResponse> {
 		const { account_id, language = this.defaultOptions.language, ...rest } = params;
-		return this.client.request<AccountMovieListResponse>(
-			this.accountSubPath(account_id, ENDPOINTS.ACCOUNT.FAVORITE_MOVIES),
-			{ language, ...rest },
-		);
+		return this.client.request<AccountMovieListResponse>(this.accountSubPath(account_id, ENDPOINTS.ACCOUNT.FAVORITE_MOVIES), {
+			language,
+			...rest,
+		});
 	}
 
 	/**
@@ -112,10 +104,10 @@ export class AccountAPI extends TMDBAPIBase {
 	 */
 	async favorite_tv(params: AccountMediaListParams): Promise<AccountTVListResponse> {
 		const { account_id, language = this.defaultOptions.language, ...rest } = params;
-		return this.client.request<AccountTVListResponse>(
-			this.accountSubPath(account_id, ENDPOINTS.ACCOUNT.FAVORITE_TV),
-			{ language, ...rest },
-		);
+		return this.client.request<AccountTVListResponse>(this.accountSubPath(account_id, ENDPOINTS.ACCOUNT.FAVORITE_TV), {
+			language,
+			...rest,
+		});
 	}
 
 	/**
@@ -128,10 +120,10 @@ export class AccountAPI extends TMDBAPIBase {
 	 */
 	async watchlist_movies(params: AccountMediaListParams): Promise<AccountMovieListResponse> {
 		const { account_id, language = this.defaultOptions.language, ...rest } = params;
-		return this.client.request<AccountMovieListResponse>(
-			this.accountSubPath(account_id, ENDPOINTS.ACCOUNT.WATCHLIST_MOVIES),
-			{ language, ...rest },
-		);
+		return this.client.request<AccountMovieListResponse>(this.accountSubPath(account_id, ENDPOINTS.ACCOUNT.WATCHLIST_MOVIES), {
+			language,
+			...rest,
+		});
 	}
 
 	/**
@@ -144,10 +136,10 @@ export class AccountAPI extends TMDBAPIBase {
 	 */
 	async watchlist_tv(params: AccountMediaListParams): Promise<AccountTVListResponse> {
 		const { account_id, language = this.defaultOptions.language, ...rest } = params;
-		return this.client.request<AccountTVListResponse>(
-			this.accountSubPath(account_id, ENDPOINTS.ACCOUNT.WATCHLIST_TV),
-			{ language, ...rest },
-		);
+		return this.client.request<AccountTVListResponse>(this.accountSubPath(account_id, ENDPOINTS.ACCOUNT.WATCHLIST_TV), {
+			language,
+			...rest,
+		});
 	}
 
 	/**
@@ -160,10 +152,10 @@ export class AccountAPI extends TMDBAPIBase {
 	 */
 	async rated_movies(params: AccountMediaListParams): Promise<AccountRatedMoviesResponse> {
 		const { account_id, language = this.defaultOptions.language, ...rest } = params;
-		return this.client.request<AccountRatedMoviesResponse>(
-			this.accountSubPath(account_id, ENDPOINTS.ACCOUNT.RATED_MOVIES),
-			{ language, ...rest },
-		);
+		return this.client.request<AccountRatedMoviesResponse>(this.accountSubPath(account_id, ENDPOINTS.ACCOUNT.RATED_MOVIES), {
+			language,
+			...rest,
+		});
 	}
 
 	/**
@@ -176,10 +168,10 @@ export class AccountAPI extends TMDBAPIBase {
 	 */
 	async rated_tv(params: AccountMediaListParams): Promise<AccountRatedTVResponse> {
 		const { account_id, language = this.defaultOptions.language, ...rest } = params;
-		return this.client.request<AccountRatedTVResponse>(
-			this.accountSubPath(account_id, ENDPOINTS.ACCOUNT.RATED_TV),
-			{ language, ...rest },
-		);
+		return this.client.request<AccountRatedTVResponse>(this.accountSubPath(account_id, ENDPOINTS.ACCOUNT.RATED_TV), {
+			language,
+			...rest,
+		});
 	}
 
 	/**
@@ -192,10 +184,10 @@ export class AccountAPI extends TMDBAPIBase {
 	 */
 	async rated_tv_episodes(params: AccountMediaListParams): Promise<AccountRatedEpisodesResponse> {
 		const { account_id, language = this.defaultOptions.language, ...rest } = params;
-		return this.client.request<AccountRatedEpisodesResponse>(
-			this.accountSubPath(account_id, ENDPOINTS.ACCOUNT.RATED_TV_EPISODES),
-			{ language, ...rest },
-		);
+		return this.client.request<AccountRatedEpisodesResponse>(this.accountSubPath(account_id, ENDPOINTS.ACCOUNT.RATED_TV_EPISODES), {
+			language,
+			...rest,
+		});
 	}
 
 	/**
@@ -208,9 +200,6 @@ export class AccountAPI extends TMDBAPIBase {
 	 */
 	async lists(params: AccountListsParams): Promise<AccountListsResponse> {
 		const { account_id, ...rest } = params;
-		return this.client.request<AccountListsResponse>(
-			this.accountSubPath(account_id, ENDPOINTS.ACCOUNT.LISTS),
-			rest,
-		);
+		return this.client.request<AccountListsResponse>(this.accountSubPath(account_id, ENDPOINTS.ACCOUNT.LISTS), rest);
 	}
 }

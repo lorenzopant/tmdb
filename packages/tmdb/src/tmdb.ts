@@ -30,9 +30,12 @@ import { PeopleListsAPI } from "./endpoints/people_lists";
 import { PeopleAPI } from "./endpoints/people";
 import { AccountAPI } from "./endpoints/account";
 import { AuthenticationAPI } from "./endpoints/authentication";
+import { TMDBv4 } from "./tmdb.v4";
+import { isJwt } from "./utils";
 
 export class TMDB {
 	private client: ApiClient;
+	private accessToken: string;
 	private options: TMDBOptions; // ** Default options for all requests
 	public movies: MoviesAPI;
 	public movie_lists: MovieListsAPI;
@@ -61,7 +64,16 @@ export class TMDB {
 	public people: PeopleAPI;
 	public account: AccountAPI;
 	public authentication: AuthenticationAPI;
-	// etc...
+	/**
+	 * TMDB API v4 namespaces. Access via `tmdb.v4.auth`, `tmdb.v4.account`, `tmdb.v4.lists`.
+	 * Requires a Bearer (JWT) access token — throws if the instance was created with an API key.
+	 */
+	get v4(): TMDBv4 {
+		if (!isJwt(this.accessToken)) throw new Error(Errors.V4_REQUIRES_JWT);
+		if (!this._v4) this._v4 = new TMDBv4(this.accessToken, this.options);
+		return this._v4;
+	}
+	private _v4: TMDBv4 | undefined;
 
 	/**
 	 * Creates a new TMDB instance.
@@ -70,6 +82,7 @@ export class TMDB {
 	 */
 	constructor(accessToken: string, options: TMDBOptions = {}) {
 		if (!accessToken) throw new Error(Errors.NO_ACCESS_TOKEN);
+		this.accessToken = accessToken;
 		this.options = options;
 		this.client = new ApiClient(accessToken, {
 			logger: options.logger,

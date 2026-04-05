@@ -2,6 +2,7 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 
 import { TMDB } from "../tmdb";
+import { TMDBv4 } from "../tmdb.v4";
 import { ApiClient } from "../client";
 import { MoviesAPI } from "../endpoints/movies";
 import { GenresAPI } from "../endpoints/genres";
@@ -45,6 +46,43 @@ describe("TMDB API Client", () => {
 	it("should expose the people api", () => {
 		const tmdb = new TMDB("valid_access_token");
 		expect(tmdb.people).toBeDefined();
+	});
+});
+
+// Minimal helper — mirrors the one in utils/jwt.test.ts
+function toBase64Url(value: string): string {
+	const bytes = new TextEncoder().encode(value);
+	let binary = "";
+	for (const byte of bytes) binary += String.fromCharCode(byte);
+	return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+function makeJwt(): string {
+	const header = toBase64Url(JSON.stringify({ alg: "HS256", typ: "JWT" }));
+	const payload = toBase64Url(JSON.stringify({ sub: "test", iat: 1, exp: 9999999999 }));
+	return `${header}.${payload}.signature`;
+}
+
+describe("TMDB.v4 — lazy getter", () => {
+	it("throws V4_REQUIRES_JWT when the instance was created with a plain API key", () => {
+		const tmdb = new TMDB("plain-api-key");
+		expect(() => tmdb.v4).toThrow(Errors.V4_REQUIRES_JWT);
+	});
+
+	it("returns a TMDBv4 instance when the token is a valid JWT", () => {
+		const tmdb = new TMDB(makeJwt());
+		expect(tmdb.v4).toBeInstanceOf(TMDBv4);
+	});
+
+	it("returns the same cached TMDBv4 instance on repeated access", () => {
+		const tmdb = new TMDB(makeJwt());
+		expect(tmdb.v4).toBe(tmdb.v4);
+	});
+
+	it("exposes auth, account and lists namespaces on the v4 instance", () => {
+		const tmdb = new TMDB(makeJwt());
+		expect(tmdb.v4.auth).toBeDefined();
+		expect(tmdb.v4.account).toBeDefined();
+		expect(tmdb.v4.lists).toBeDefined();
 	});
 });
 
