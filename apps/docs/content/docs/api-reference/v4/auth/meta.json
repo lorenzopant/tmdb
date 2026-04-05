@@ -1,4 +1,0 @@
-{
-	"title": "Auth",
-	"pages": ["index", "create-request-token", "create-access-token", "delete-access-token"]
-}

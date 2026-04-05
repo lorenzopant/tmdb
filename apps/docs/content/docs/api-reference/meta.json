@@ -2,8 +2,7 @@
 	"title": "API Reference",
 	"icon": "BookOpenText",
 	"pages": [
-		"index",
-		"---v3 APIs---",
+		"---API v3---",
 		"authentication",
 		"account",
 		"certifications",
