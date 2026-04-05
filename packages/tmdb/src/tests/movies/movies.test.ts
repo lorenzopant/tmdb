@@ -156,6 +156,52 @@ describe("MoviesAPI", () => {
 			await api.images({ movie_id: 550 });
 			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/images", { language: "it-IT" });
 		});
+
+		describe("auto_include_image_language", () => {
+			it("should inject include_image_language from image_language_priority when enabled", async () => {
+				const api = new MoviesAPI(clientMock, {
+					images: {
+						auto_include_image_language: true,
+						image_language_priority: { posters: ["it", "null", "*"], backdrops: ["en"] },
+					},
+				});
+				await api.images({ movie_id: 550 });
+				const [, params] = (clientMock.request as ReturnType<typeof vi.fn>).mock.calls[0];
+				expect(params.include_image_language).toEqual(expect.arrayContaining(["it", "null", "en"]));
+				expect(params.include_image_language).not.toContain("*");
+			});
+
+			it("should not override an explicit include_image_language on the call site", async () => {
+				const api = new MoviesAPI(clientMock, {
+					images: {
+						auto_include_image_language: true,
+						image_language_priority: { posters: ["it"] },
+					},
+				});
+				await api.images({ movie_id: 550, include_image_language: ["fr", "null"] });
+				const [, params] = (clientMock.request as ReturnType<typeof vi.fn>).mock.calls[0];
+				expect(params.include_image_language).toEqual(["fr", "null"]);
+			});
+
+			it("should not inject when auto_include_image_language is false", async () => {
+				const api = new MoviesAPI(clientMock, {
+					images: {
+						auto_include_image_language: false,
+						image_language_priority: { posters: ["it"] },
+					},
+				});
+				await api.images({ movie_id: 550 });
+				const [, params] = (clientMock.request as ReturnType<typeof vi.fn>).mock.calls[0];
+				expect(params.include_image_language).toBeUndefined();
+			});
+
+			it("should not inject when image_language_priority is absent", async () => {
+				const api = new MoviesAPI(clientMock, { images: { auto_include_image_language: true } });
+				await api.images({ movie_id: 550 });
+				const [, params] = (clientMock.request as ReturnType<typeof vi.fn>).mock.calls[0];
+				expect(params.include_image_language).toBeUndefined();
+			});
+		});
 	});
 
 	describe("latest", () => {

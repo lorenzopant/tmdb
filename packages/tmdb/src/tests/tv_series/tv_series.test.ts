@@ -128,6 +128,27 @@ describe("TVSeriesAPI", () => {
 			await tvSeriesAPI.images({ series_id: 1396 });
 			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396/images", { language: "es-ES" });
 		});
+
+		it("should inject include_image_language from config when auto_include_image_language is enabled", async () => {
+			tvSeriesAPI = new TVSeriesAPI(clientMock, {
+				images: {
+					auto_include_image_language: true,
+					image_language_priority: { backdrops: ["en", "null"] },
+				},
+			});
+			await tvSeriesAPI.images({ series_id: 1396 });
+			const [, params] = (clientMock.request as ReturnType<typeof vi.fn>).mock.calls[0];
+			expect(params.include_image_language).toEqual(expect.arrayContaining(["en", "null"]));
+		});
+
+		it("should not override explicit include_image_language", async () => {
+			tvSeriesAPI = new TVSeriesAPI(clientMock, {
+				images: { auto_include_image_language: true, image_language_priority: { backdrops: ["en"] } },
+			});
+			await tvSeriesAPI.images({ series_id: 1396, include_image_language: ["fr"] });
+			const [, params] = (clientMock.request as ReturnType<typeof vi.fn>).mock.calls[0];
+			expect(params.include_image_language).toEqual(["fr"]);
+		});
 	});
 
 	describe("keywords", () => {

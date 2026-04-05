@@ -237,6 +237,122 @@ describe("ImageAPI", () => {
 		});
 	});
 
+	describe("image_language_priority", () => {
+		const makePosters = () => [
+			{ file_path: "/en.jpg", iso_639_1: "en" },
+			{ file_path: "/fr.jpg", iso_639_1: "fr" },
+			{ file_path: "/null.jpg", iso_639_1: undefined },
+			{ file_path: "/de.jpg", iso_639_1: "de" },
+		];
+
+		test("should reorder posters: textless first, then en, then rest", () => {
+			const imageAPI = new ImageAPI({
+				image_language_priority: { posters: ["null", "en", "*"] },
+			});
+
+			const input = { posters: makePosters() };
+			const result = imageAPI.autocompleteImagePaths(input);
+
+			expect(result.posters.map((p) => p.iso_639_1)).toEqual([undefined, "en", "fr", "de"]);
+		});
+
+		test("should reorder posters: en first, textless second, wildcard rest", () => {
+			const imageAPI = new ImageAPI({
+				image_language_priority: { posters: ["en", "null", "*"] },
+			});
+
+			const input = { posters: makePosters() };
+			const result = imageAPI.autocompleteImagePaths(input);
+
+			expect(result.posters.map((p) => p.iso_639_1)).toEqual(["en", undefined, "fr", "de"]);
+		});
+
+		test("should not drop items that have no matching priority entry", () => {
+			const imageAPI = new ImageAPI({
+				image_language_priority: { posters: ["en"] },
+			});
+
+			const input = { posters: makePosters() };
+			const result = imageAPI.autocompleteImagePaths(input);
+
+			// en first, then remaining in original order
+			expect(result.posters).toHaveLength(4);
+			expect(result.posters[0]?.iso_639_1).toBe("en");
+		});
+
+		test("wildcard * consumes all remaining items", () => {
+			const imageAPI = new ImageAPI({
+				image_language_priority: { posters: ["null", "*"] },
+			});
+
+			const input = { posters: makePosters() };
+			const result = imageAPI.autocompleteImagePaths(input);
+
+			expect(result.posters).toHaveLength(4);
+			expect(result.posters[0]?.iso_639_1).toBeUndefined();
+		});
+
+		test("should apply priority only to the configured collection, leave others unchanged", () => {
+			const imageAPI = new ImageAPI({
+				image_language_priority: { posters: ["null"] },
+			});
+
+			const original = [
+				{ file_path: "/a.jpg", iso_639_1: "en" },
+				{ file_path: "/b.jpg", iso_639_1: undefined },
+			];
+
+			const input = {
+				posters: [...original],
+				backdrops: [...original],
+			};
+
+			const result = imageAPI.autocompleteImagePaths(input);
+
+			// posters: reordered (null first)
+			expect(result.posters[0]?.iso_639_1).toBeUndefined();
+			// backdrops: unchanged order (en first, as in original)
+			expect(result.backdrops[0]?.iso_639_1).toBe("en");
+		});
+
+		test("should also autocomplete file_path inside priority-sorted items", () => {
+			const imageAPI = new ImageAPI({
+				default_image_sizes: { posters: "w342" },
+				image_language_priority: { posters: ["null", "en", "*"] },
+			});
+
+			const input = {
+				posters: [
+					{ file_path: "/en.jpg", iso_639_1: "en" },
+					{ file_path: "/null.jpg", iso_639_1: undefined },
+				],
+			};
+
+			const result = imageAPI.autocompleteImagePaths(input);
+
+			expect(result.posters[0]?.file_path).toBe(`${IMAGE_SECURE_BASE_URL}w342/null.jpg`);
+			expect(result.posters[1]?.file_path).toBe(`${IMAGE_SECURE_BASE_URL}w342/en.jpg`);
+		});
+
+		test("should treat iso_639_1 null (pre-sanitize) same as undefined for 'null' priority", () => {
+			const imageAPI = new ImageAPI({
+				image_language_priority: { posters: ["null", "*"] },
+			});
+
+			const input = {
+				posters: [
+					{ file_path: "/en.jpg", iso_639_1: "en" },
+					{ file_path: "/null.jpg", iso_639_1: null },
+				],
+			} as unknown as { posters: { file_path: string; iso_639_1: string | undefined }[] };
+
+			const result = imageAPI.autocompleteImagePaths(input);
+
+			expect(result.posters[0]?.iso_639_1).toBeNull();
+			expect(result.posters[1]?.iso_639_1).toBe("en");
+		});
+	});
+
 	test("should preserve Date and class instances without rebuilding them", () => {
 		const imageAPI = new ImageAPI();
 

@@ -98,6 +98,27 @@ describe("TVEpisodesAPI", () => {
 				include_image_language: undefined,
 			});
 		});
+
+		it("should inject include_image_language from config when auto_include_image_language is enabled", async () => {
+			tvEpisodesAPI = new TVEpisodesAPI(clientMock, {
+				images: {
+					auto_include_image_language: true,
+					image_language_priority: { stills: ["null", "en"] },
+				},
+			});
+			await tvEpisodesAPI.images(BASE_EPISODE_PARAMS);
+			const [, params] = (clientMock.request as ReturnType<typeof vi.fn>).mock.calls[0];
+			expect(params.include_image_language).toEqual(expect.arrayContaining(["null", "en"]));
+		});
+
+		it("should not override explicit include_image_language", async () => {
+			tvEpisodesAPI = new TVEpisodesAPI(clientMock, {
+				images: { auto_include_image_language: true, image_language_priority: { stills: ["null"] } },
+			});
+			await tvEpisodesAPI.images({ ...BASE_EPISODE_PARAMS, include_image_language: ["fr"] });
+			const [, params] = (clientMock.request as ReturnType<typeof vi.fn>).mock.calls[0];
+			expect(params.include_image_language).toEqual(["fr"]);
+		});
 	});
 
 	describe("translations", () => {

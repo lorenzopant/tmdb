@@ -164,7 +164,7 @@ export class MoviesAPI extends TMDBAPIBase {
 	async images(params: MovieImagesParams): Promise<MovieImages> {
 		const { movie_id, language = this.defaultOptions.language, ...rest } = params;
 		const endpoint = this.movieSubPath(movie_id, ENDPOINTS.MOVIES.IMAGES);
-		return this.client.request<MovieImages>(endpoint, { language, ...rest });
+		return this.client.request<MovieImages>(endpoint, this.injectImageLanguage({ language, ...rest }));
 	}
 
 	/**
