@@ -59,5 +59,27 @@ describe("CompaniesAPI", () => {
 				language: "de-DE",
 			});
 		});
+
+		it("should inject include_image_language from config when auto_include_image_language is enabled", async () => {
+			companiesAPI = new CompaniesAPI(clientMock, {
+				images: {
+					auto_include_image_language: true,
+					image_language_priority: { logos: ["null", "en", "*"] },
+				},
+			});
+			await companiesAPI.images({ company_id: 174 });
+			const [, params] = (clientMock.request as ReturnType<typeof vi.fn>).mock.calls[0];
+			expect(params.include_image_language).toEqual(expect.arrayContaining(["null", "en"]));
+			expect(params.include_image_language).not.toContain("*");
+		});
+
+		it("should not override explicit include_image_language", async () => {
+			companiesAPI = new CompaniesAPI(clientMock, {
+				images: { auto_include_image_language: true, image_language_priority: { logos: ["en"] } },
+			});
+			await companiesAPI.images({ company_id: 174, include_image_language: ["fr", "null"] });
+			const [, params] = (clientMock.request as ReturnType<typeof vi.fn>).mock.calls[0];
+			expect(params.include_image_language).toEqual(["fr", "null"]);
+		});
 	});
 });
