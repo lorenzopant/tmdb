@@ -47,6 +47,7 @@ export class TMDBv4 {
 			version: 4,
 			logger: options.logger,
 			deduplication: options.deduplication,
+			images: options.images,
 			interceptors: options.interceptors,
 		});
 		this.auth = new V4AuthAPI(this.client, options);
