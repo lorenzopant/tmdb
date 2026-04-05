@@ -1,0 +1,44 @@
+---
+title: Details
+description: Get the details and items of a TMDB list.
+---
+
+Get the details of a list, including all items it contains.
+
+```ts
+async details(params: ListDetailsParams): Promise<ListDetails>
+```
+
+> **TMDB Reference:** [Details](https://developer.themoviedb.org/reference/list-details)
+
+## Parameters
+
+| Name       | Type                                                | Required | Description                                          |
+| ---------- | --------------------------------------------------- | -------- | ---------------------------------------------------- |
+| `list_id`  | `number`                                            | ✅       | TMDB list ID.                                        |
+| `language` | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized results. Defaults to `en-US`. |
+| `page`     | `number`                                            | ❌       | Page number to return. Defaults to `1`.              |
+
+## Returns
+
+[`ListDetails`](/docs/types/lists#listdetails)
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const list = await tmdb.lists.details({ list_id: 1, language: "en-US" });
+
+console.log(list.name);
+// "The Marvel Universe"
+console.log(list.item_count);
+// 59
+```
+
+## Related Types
+
+- [`ListDetailsParams`](/docs/types/lists#listdetailsparams)
+- [`ListDetails`](/docs/types/lists#listdetails)
+- [`ListItem`](/docs/types/lists#listitem)
