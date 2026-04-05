@@ -1,0 +1,62 @@
+---
+title: Create Access Token
+description: Exchange an approved request token for a permanent user access token — step 3 of the v4 authentication flow.
+---
+
+import { TypeTable } from "fumadocs-ui/components/type-table";
+
+Exchanges a user-approved request token for a permanent user access token and the
+associated TMDB account ID. This is **step 3** of the v4 authentication flow.
+
+Store the returned `access_token` securely — it is valid indefinitely until explicitly
+revoked with [`delete_access_token()`](/docs/api-reference/v4/auth/delete-access-token).
+
+```ts
+async create_access_token(body: V4AuthCreateAccessTokenBody): Promise<V4AuthAccessTokenResponse>
+```
+
+> **TMDB Reference:** [Create Access Token](https://developer.themoviedb.org/reference/create-access-token)
+
+## Parameters
+
+<TypeTable
+	type={{
+		request_token: {
+			type: "string",
+			required: true,
+			description: "The request token that the user has approved at the TMDB website.",
+		},
+	}}
+/>
+
+## Returns
+
+[`V4AuthAccessTokenResponse`](/docs/types/v4-auth#v4authaccesstokenresponse)
+
+## Errors
+
+| HTTP | TMDB code | Cause                                                  |
+| ---- | --------- | ------------------------------------------------------ |
+| 401  | 3         | Invalid or missing access token.                       |
+| 401  | 33        | The request token has not been approved or is invalid. |
+| 401  | 10        | User suspended.                                        |
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-access-token");
+
+// request_token is obtained from create_request_token() after the user approves it
+const { access_token, account_id } = await tmdb.v4.auth.create_access_token({
+	request_token: "the-approved-request-token",
+});
+
+console.log(account_id); // use this with v4 account endpoints
+```
+
+## Related Types
+
+- [`V4AuthCreateAccessTokenBody`](/docs/types/v4-auth#v4authcreateaccesstokenbody)
+- [`V4AuthAccessTokenResponse`](/docs/types/v4-auth#v4authaccesstokenresponse)

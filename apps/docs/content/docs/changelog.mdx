@@ -4,6 +4,25 @@ description: Latest updates and announcements
 icon: History
 ---
 
+## 🚀 1.19.0 - 5 April 2026
+
+#### ✨ New
+
+- **v4 Auth API** — `tmdb.v4.auth` now exposes the full TMDB v4 authentication flow:
+  - [`create_request_token()`](/docs/api-reference/v4/auth/create-request-token) — generate a request token for the user to approve (step 1).
+  - [`create_access_token()`](/docs/api-reference/v4/auth/create-access-token) — exchange an approved request token for a permanent user access token (step 3).
+  - [`delete_access_token()`](/docs/api-reference/v4/auth/delete-access-token) — revoke an access token to log a user out.
+
+```ts
+const { request_token } = await tmdb.v4.auth.create_request_token({
+	redirect_to: "https://yourapp.com/callback",
+});
+// redirect user → https://www.themoviedb.org/auth/access?request_token={request_token}
+const { access_token, account_id } = await tmdb.v4.auth.create_access_token({ request_token });
+```
+
+---
+
 ## 🚀 1.18.1 - 4 April 2026
 
 #### ✨ New
@@ -64,8 +83,8 @@ console.log(movie.poster_path);
 
 - **Request interceptors** — hook into the request lifecycle before any TMDB API call is made. Pass a single [`RequestInterceptor`](/docs/types/options/interceptors#requestinterceptor) or an array; each interceptor receives a [`RequestInterceptorContext`](/docs/types/options/interceptors#requestinterceptorcontext) (`endpoint`, `params`, `method`) and may return a modified context to override the endpoint or params, or `void` to leave the request unchanged. Async interceptors are fully supported and awaited in order.
 - **Response interceptors** — two new hooks under `interceptors.response`:
-    - `onSuccess` — called after every successful response, before data is returned to the caller. Designed for side effects such as logging, caching, or image URL enrichment. Must not change the shape of the returned data.
-    - `onError` — called after a [`TMDBError`](/docs/types/options/interceptors#responseerrorinterceptor) is created. Receives a fully-typed `TMDBError` for side effects (Sentry, toast notifications, etc.). The error is always re-thrown after the interceptor runs.
+  - `onSuccess` — called after every successful response, before data is returned to the caller. Designed for side effects such as logging, caching, or image URL enrichment. Must not change the shape of the returned data.
+  - `onError` — called after a [`TMDBError`](/docs/types/options/interceptors#responseerrorinterceptor) is created. Receives a fully-typed `TMDBError` for side effects (Sentry, toast notifications, etc.). The error is always re-thrown after the interceptor runs.
 
 ```ts
 const tmdb = new TMDB(token, {

@@ -1,0 +1,56 @@
+---
+title: Delete Access Token
+description: Invalidate a user access token to log a user out.
+---
+
+import { TypeTable } from "fumadocs-ui/components/type-table";
+
+Revokes a user access token. Use this to log a user out of your application.
+Once deleted, the token can no longer be used to access user-scoped v4 endpoints.
+
+```ts
+async delete_access_token(body: V4AuthDeleteAccessTokenBody): Promise<V4AuthDeleteAccessTokenResponse>
+```
+
+> **TMDB Reference:** [Delete Access Token](https://developer.themoviedb.org/reference/delete-access-token)
+
+## Parameters
+
+<TypeTable
+	type={{
+		access_token: {
+			type: "string",
+			required: true,
+			description: "The user access token to invalidate.",
+		},
+	}}
+/>
+
+## Returns
+
+[`V4AuthDeleteAccessTokenResponse`](/docs/types/v4-auth#v4authdeletedaccesstokenresponse)
+
+## Errors
+
+| HTTP | TMDB code | Cause                            |
+| ---- | --------- | -------------------------------- |
+| 401  | 3         | Invalid or missing access token. |
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-access-token");
+
+const { success } = await tmdb.v4.auth.delete_access_token({
+	access_token: "the-user-access-token-to-revoke",
+});
+
+console.log(success); // true
+```
+
+## Related Types
+
+- [`V4AuthDeleteAccessTokenBody`](/docs/types/v4-auth#v4authdeletedaccesstokenbody)
+- [`V4AuthDeleteAccessTokenResponse`](/docs/types/v4-auth#v4authdeletedaccesstokenresponse)

@@ -93,6 +93,16 @@ const airingToday = await tvApi.airingToday();
 
 ---
 
+## API V4
+
+The TMDB v4 API is available under the `tmdb.v4` namespace. It provides methods for user authentication and account management.
+
+| API                                 | Unified client accessor | Standalone class | Description                                                                                                     |
+| ----------------------------------- | ----------------------- | ---------------- | --------------------------------------------------------------------------------------------------------------- |
+| [Auth](/docs/api-reference/v4/auth) | `tmdb.v4.auth`          | `V4AuthAPI`      | TMDB v4 OAuth-style authentication — create request tokens, exchange them for access tokens, and log users out. |
+
+---
+
 ## Constructor signature
 
 All standalone API classes share the same constructor signature:

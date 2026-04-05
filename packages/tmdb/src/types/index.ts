@@ -21,3 +21,4 @@ export * from "./credits";
 export * from "./reviews";
 export * from "./people-lists";
 export * from "./people";
+export * from "./v4/auth";

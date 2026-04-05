@@ -1,0 +1,70 @@
+---
+title: Create Request Token
+description: Generate a request token — step 1 of the v4 authentication flow.
+---
+
+import { TypeTable } from "fumadocs-ui/components/type-table";
+
+Generates a short-lived request token that the user must approve at the TMDB website.
+This is **step 1** of the v4 authentication flow.
+
+After receiving the token, redirect the user to:
+
+```
+https://www.themoviedb.org/auth/access?request_token={request_token}
+```
+
+Or with a redirect back to your app after approval:
+
+```
+https://www.themoviedb.org/auth/access?request_token={request_token}&redirect_to=https://yourapp.com/callback
+```
+
+Once the user approves the token, exchange it for a permanent access token via
+[`create_access_token()`](/docs/api-reference/v4/auth/create-access-token).
+
+```ts
+async create_request_token(body?: V4AuthCreateRequestTokenBody): Promise<V4AuthRequestTokenResponse>
+```
+
+> **TMDB Reference:** [Create Request Token](https://developer.themoviedb.org/reference/create-request-token)
+
+## Parameters
+
+<TypeTable
+	type={{
+		redirect_to: {
+			type: "string",
+			description: "URL to redirect the user back to after they approve the request token on TMDB.",
+		},
+	}}
+/>
+
+## Returns
+
+[`V4AuthRequestTokenResponse`](/docs/types/v4-auth#v4authrequesttokenresponse)
+
+## Errors
+
+| HTTP | TMDB code | Cause                            |
+| ---- | --------- | -------------------------------- |
+| 401  | 3         | Invalid or missing access token. |
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-access-token");
+const { request_token } = await tmdb.v4.auth.create_request_token({
+	redirect_to: "https://yourapp.com/callback",
+});
+
+const approvalUrl = `https://www.themoviedb.org/auth/access?request_token=${request_token}`;
+console.log(approvalUrl);
+```
+
+## Related Types
+
+- [`V4AuthCreateRequestTokenBody`](/docs/types/v4-auth#v4authcreaterequesttokenbody)
+- [`V4AuthRequestTokenResponse`](/docs/types/v4-auth#v4authrequesttokenresponse)
