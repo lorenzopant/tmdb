@@ -22,3 +22,4 @@ export * from "./reviews";
 export * from "./people-lists";
 export * from "./people";
 export * from "./v4/auth";
+export * from "./guest_sessions";

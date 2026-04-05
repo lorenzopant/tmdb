@@ -175,6 +175,12 @@ export const ENDPOINTS = {
 	PEOPLE_LISTS: {
 		POPULAR: "/person/popular",
 	},
+	GUEST_SESSIONS: {
+		DETAILS: "/guest_session",
+		RATED_MOVIES: "/rated/movies",
+		RATED_TV: "/rated/tv",
+		RATED_TV_EPISODES: "/rated/tv/episodes",
+	},
 };
 
 /**
