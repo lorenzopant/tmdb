@@ -62,7 +62,9 @@ run("git pull --rebase origin main");
 
 // Bump version in packages/tmdb only (no git tag — we do that manually below)
 const versionArgs = bumpType.startsWith("pre") ? "--preid=beta" : "";
-const versionCmd = `npm version ${bumpType} ${versionArgs} --no-git-tag-version`.trim().replace(/\s+/g, " ");
+const versionCmd = `npm version ${bumpType} ${versionArgs} --no-git-tag-version`
+	.trim()
+	.replace(/\s+/g, " ");
 
 let version;
 if (dryRun) {
@@ -79,7 +81,7 @@ const tag = `v${version}`;
 console.log(`\nReleasing ${tag}...`);
 
 run("git add packages/tmdb/package.json");
-run(`git commit -m "chore: release ${tag}"`);
+run(`git commit -m "🚀 chore: release ${tag}"`);
 run("git push origin main");
 run(`git tag ${tag}`);
 run(`git push origin ${tag}`);
