@@ -1,6 +1,11 @@
 // src/index.ts
 export { TMDB } from "./tmdb";
+export { TMDBv4 } from "./tmdb.v4";
 export { TMDBError } from "./errors/tmdb";
+
+export { V4AuthAPI } from "./endpoints/v4/auth";
+export { V4AccountAPI } from "./endpoints/v4/account";
+export { V4ListsAPI } from "./endpoints/v4/lists";
 
 export { AuthenticationAPI } from "./endpoints/authentication";
 export { AccountAPI } from "./endpoints/account";

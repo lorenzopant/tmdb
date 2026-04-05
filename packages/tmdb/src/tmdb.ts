@@ -30,6 +30,7 @@ import { PeopleListsAPI } from "./endpoints/people_lists";
 import { PeopleAPI } from "./endpoints/people";
 import { AccountAPI } from "./endpoints/account";
 import { AuthenticationAPI } from "./endpoints/authentication";
+import { TMDBv4 } from "./tmdb.v4";
 
 export class TMDB {
 	private client: ApiClient;
@@ -61,7 +62,8 @@ export class TMDB {
 	public people: PeopleAPI;
 	public account: AccountAPI;
 	public authentication: AuthenticationAPI;
-	// etc...
+	/** TMDB API v4 namespaces. Access via `tmdb.v4.auth`, `tmdb.v4.account`, `tmdb.v4.lists`. */
+	public v4: TMDBv4;
 
 	/**
 	 * Creates a new TMDB instance.
@@ -104,5 +106,6 @@ export class TMDB {
 		this.people = new PeopleAPI(this.client, this.options);
 		this.account = new AccountAPI(this.client, this.options);
 		this.authentication = new AuthenticationAPI(this.client, this.options);
+		this.v4 = new TMDBv4(accessToken, this.options);
 	}
 }
