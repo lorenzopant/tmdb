@@ -1,0 +1,34 @@
+---
+title: "v4 Auth"
+description: "TMDB v4 OAuth-style authentication — create request tokens, exchange them for access tokens, and log users out."
+---
+
+The `V4AuthAPI` provides the full v4 authentication flow: generating a request token,
+having the user approve it on the TMDB website, exchanging it for a permanent access token,
+and revoking it on logout.
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-access-token");
+
+// Step 1 — create a request token (optionally pass redirect_to)
+const { request_token } = await tmdb.v4.auth.create_request_token({
+	redirect_to: "https://yourapp.com/callback",
+});
+
+// Step 2 — redirect the user to approve:
+// https://www.themoviedb.org/auth/access?request_token={request_token}
+
+// Step 3 — exchange the approved token for a permanent access token
+const { access_token, account_id } = await tmdb.v4.auth.create_access_token({ request_token });
+
+// Later — log the user out
+await tmdb.v4.auth.delete_access_token({ access_token });
+```
+
+## Methods
+
+- [`create_request_token()`](/docs/api-reference/v4/auth/create-request-token) — Generate a request token for the user to approve (step 1).
+- [`create_access_token()`](/docs/api-reference/v4/auth/create-access-token) — Exchange an approved request token for a permanent access token (step 3).
+- [`delete_access_token()`](/docs/api-reference/v4/auth/delete-access-token) — Invalidate an access token to log a user out.

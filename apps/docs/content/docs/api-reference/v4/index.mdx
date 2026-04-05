@@ -1,0 +1,28 @@
+---
+title: "API V4"
+description: "TMDB API v4 — user authentication and account management."
+icon: Shield
+---
+
+`@lorenzopant/tmdb` exposes the TMDB v4 API surface via `tmdb.v4`, a sub-client
+backed by `https://api.themoviedb.org/4`. It shares the same access token and
+options as the parent `TMDB` instance.
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-access-token");
+
+// Step 1 — create a request token
+const { request_token } = await tmdb.v4.auth.create_request_token();
+
+// Step 2 — redirect the user to approve it:
+// https://www.themoviedb.org/auth/access?request_token={request_token}
+
+// Step 3 — exchange for an access token
+const { access_token, account_id } = await tmdb.v4.auth.create_access_token({ request_token });
+```
+
+## Namespaces
+
+- [`auth`](/docs/api-reference/v4/auth) — Request tokens, access tokens, and logout.
