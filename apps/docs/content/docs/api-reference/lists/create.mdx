@@ -1,0 +1,51 @@
+---
+title: Create
+description: Create a new TMDB list.
+---
+
+Create a new list. Requires a valid v3 session ID.
+
+```ts
+async create(params: ListCreateParams, body: ListCreateBody): Promise<ListCreateResponse>
+```
+
+> **TMDB Reference:** [Create](https://developer.themoviedb.org/reference/list-create)
+
+## Parameters
+
+| Name         | Type     | Required | Description    |
+| ------------ | -------- | -------- | -------------- |
+| `session_id` | `string` | ✅       | v3 session ID. |
+
+## Body
+
+| Name          | Type     | Required | Description                                         |
+| ------------- | -------- | -------- | --------------------------------------------------- |
+| `name`        | `string` | ✅       | Display name of the list.                           |
+| `description` | `string` | ✅       | Description of the list.                            |
+| `language`    | `string` | ✅       | ISO 639-1 language code for the list (e.g. `"en"`). |
+
+## Returns
+
+[`ListCreateResponse`](/docs/types/lists#listcreateresponse)
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const result = await tmdb.lists.create(
+	{ session_id: "your-session-id" },
+	{ name: "My Watchlist", description: "Movies I want to see", language: "en" },
+);
+
+console.log(result.list_id); // 5861
+console.log(result.success); // true
+```
+
+## Related Types
+
+- [`ListCreateParams`](/docs/types/lists#listcreateparams)
+- [`ListCreateBody`](/docs/types/lists#listcreatebody)
+- [`ListCreateResponse`](/docs/types/lists#listcreateresponse)

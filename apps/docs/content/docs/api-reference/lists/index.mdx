@@ -1,0 +1,32 @@
+---
+title: Lists
+description: Create and manage custom movie lists on TMDB (v3).
+---
+
+The `ListsAPI` allows you to create, manage, and query custom movie lists on TMDB. All mutation methods (`create`, `delete`, `add_movie`, `remove_movie`, `clear`) require a valid v3 `session_id`.
+
+<Callout type="info">
+	This is the v3 Lists API. For the v4 Lists API, use
+	[`tmdb.v4.lists`](/docs/api-reference/v4/lists).
+</Callout>
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+tmdb.lists; // access methods
+
+// or standalone
+import { ListsAPI } from "@lorenzopant/tmdb";
+const lists = new ListsAPI("your-api-key");
+```
+
+## Methods
+
+- [`details()`](/docs/api-reference/lists/details) — Get the details and items of a list.
+- [`create()`](/docs/api-reference/lists/create) — Create a new list.
+- [`delete()`](/docs/api-reference/lists/delete) — Delete a list.
+- [`add_movie()`](/docs/api-reference/lists/add-movie) — Add a movie to a list.
+- [`remove_movie()`](/docs/api-reference/lists/remove-movie) — Remove a movie from a list.
+- [`check_item_status()`](/docs/api-reference/lists/check-item-status) — Check if a movie is in a list.
+- [`clear()`](/docs/api-reference/lists/clear) — Clear all items from a list.

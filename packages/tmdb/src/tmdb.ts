@@ -31,6 +31,7 @@ import { PeopleAPI } from "./endpoints/people";
 import { AccountAPI } from "./endpoints/account";
 import { AuthenticationAPI } from "./endpoints/authentication";
 import { GuestSessionsAPI } from "./endpoints/guest_sessions";
+import { ListsAPI } from "./endpoints/lists";
 import { TMDBv4 } from "./tmdb.v4";
 import { isJwt } from "./utils";
 
@@ -66,6 +67,7 @@ export class TMDB {
 	public account: AccountAPI;
 	public authentication: AuthenticationAPI;
 	public guest_sessions: GuestSessionsAPI;
+	public lists: ListsAPI;
 	/**
 	 * TMDB API v4 namespaces. Access via `tmdb.v4.auth`, `tmdb.v4.account`, `tmdb.v4.lists`.
 	 * Requires a Bearer (JWT) access token — throws if the instance was created with an API key.
@@ -120,5 +122,6 @@ export class TMDB {
 		this.account = new AccountAPI(this.client, this.options);
 		this.authentication = new AuthenticationAPI(this.client, this.options);
 		this.guest_sessions = new GuestSessionsAPI(this.client, this.options);
+		this.lists = new ListsAPI(this.client, this.options);
 	}
 }
