@@ -3,8 +3,6 @@ title: Update
 description: Update a v4 list's metadata — name, description, visibility, or sort order.
 ---
 
-import { TypeTable } from "fumadocs-ui/components/type-table";
-
 Updates one or more metadata fields on an existing list. Only pass the fields you want
 to change; omitted fields are left unchanged.
 
@@ -16,32 +14,13 @@ async update(body: V4UpdateListBody): Promise<V4ListStatusResponse>
 
 ## Parameters
 
-<TypeTable
-	type={{
-		list_id: {
-			type: "number",
-			required: true,
-			description: "The TMDB list ID to update.",
-		},
-		name: {
-			type: "string",
-			description: "New display name.",
-		},
-		description: {
-			type: "string",
-			description: "New description text.",
-		},
-		public: {
-			type: "boolean",
-			description: "Change the visibility of the list.",
-		},
-		sort_by: {
-			type: "string",
-			description:
-				'Sort field and direction. Examples: `"original_order.asc"`, `"vote_average.desc"`, `"primary_release_date.desc"`.',
-		},
-	}}
-/>
+| Name          | Type      | Required | Description                                                                                                       |
+| ------------- | --------- | -------- | ----------------------------------------------------------------------------------------------------------------- |
+| `list_id`     | `number`  | ✅       | The TMDB list ID to update.                                                                                       |
+| `name`        | `string`  | ❌       | New display name.                                                                                                 |
+| `description` | `string`  | ❌       | New description text.                                                                                             |
+| `public`      | `boolean` | ❌       | Change the visibility of the list.                                                                                |
+| `sort_by`     | `string`  | ❌       | Sort field and direction. Examples: `"original_order.asc"`, `"vote_average.desc"`, `"primary_release_date.desc"`. |
 
 ## Returns
 

@@ -3,8 +3,6 @@ title: Update Items
 description: Update per-item comments for items already in a v4 list.
 ---
 
-import { TypeTable } from "fumadocs-ui/components/type-table";
-
 Updates the `comment` field for one or more items already present in the list.
 Items not included in the request are unaffected.
 
@@ -22,16 +20,9 @@ async update_items(list_id: number, body: V4UpdateListItemsBody): Promise<V4Upda
 
 ### Body
 
-<TypeTable
-	type={{
-		items: {
-			type: "V4ListItemInput[]",
-			required: true,
-			description:
-				"Items to update. Each entry requires `media_type` and `media_id`; set `comment` to the new value.",
-		},
-	}}
-/>
+| Name    | Type                | Required | Description                                                                                       |
+| ------- | ------------------- | -------- | ------------------------------------------------------------------------------------------------- |
+| `items` | `V4ListItemInput[]` | ✅       | Items to update. Each entry requires `media_type` and `media_id`; set `comment` to the new value. |
 
 ## Returns
 

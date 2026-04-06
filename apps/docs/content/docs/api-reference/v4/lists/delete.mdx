@@ -3,8 +3,6 @@ title: Delete
 description: Permanently delete a v4 list and all its items.
 ---
 
-import { TypeTable } from "fumadocs-ui/components/type-table";
-
 Permanently deletes a list and all of its items. **This action cannot be undone.**
 If you only want to empty the list, use [`clear()`](/docs/api-reference/v4/lists/clear) instead.
 
@@ -16,15 +14,9 @@ async delete(params: V4DeleteListParams): Promise<V4ListStatusResponse>
 
 ## Parameters
 
-<TypeTable
-	type={{
-		list_id: {
-			type: "number",
-			required: true,
-			description: "The TMDB list ID to delete.",
-		},
-	}}
-/>
+| Name      | Type     | Required | Description                 |
+| --------- | -------- | -------- | --------------------------- |
+| `list_id` | `number` | ✅       | The TMDB list ID to delete. |
 
 ## Returns
 

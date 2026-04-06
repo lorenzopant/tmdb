@@ -3,8 +3,6 @@ title: Create
 description: Create a new v4 list owned by the authenticated user.
 ---
 
-import { TypeTable } from "fumadocs-ui/components/type-table";
-
 Creates a new v4 list. The authenticated user becomes the owner. The returned `id`
 is required for all subsequent list operations.
 
@@ -16,29 +14,12 @@ async create(body: V4CreateListBody): Promise<V4CreateListResponse>
 
 ## Parameters
 
-<TypeTable
-	type={{
-		name: {
-			type: "string",
-			required: true,
-			description: "Display name of the list.",
-		},
-		iso_639_1: {
-			type: "string",
-			required: true,
-			description: 'ISO 639-1 language code for the list (e.g. `"en"`).',
-		},
-		description: {
-			type: "string",
-			description: "Optional description text.",
-		},
-		public: {
-			type: "boolean",
-			description: "Whether the list is publicly visible. Defaults to `true`.",
-			default: "true",
-		},
-	}}
-/>
+| Name          | Type      | Required | Description                                               |
+| ------------- | --------- | -------- | --------------------------------------------------------- |
+| `name`        | `string`  | ✅       | Display name of the list.                                 |
+| `iso_639_1`   | `string`  | ✅       | ISO 639-1 language code for the list (e.g. `"en"`).       |
+| `description` | `string`  | ❌       | Optional description text.                                |
+| `public`      | `boolean` | ❌       | Whether the list is publicly visible. Defaults to `true`. |
 
 ## Returns
 

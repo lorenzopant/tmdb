@@ -3,8 +3,6 @@ title: Create Request Token
 description: Generate a request token — step 1 of the v4 authentication flow.
 ---
 
-import { TypeTable } from "fumadocs-ui/components/type-table";
-
 Generates a short-lived request token that the user must approve at the TMDB website.
 This is **step 1** of the v4 authentication flow.
 
@@ -31,14 +29,9 @@ async create_request_token(body?: V4AuthCreateRequestTokenBody): Promise<V4AuthR
 
 ## Parameters
 
-<TypeTable
-	type={{
-		redirect_to: {
-			type: "string",
-			description: "URL to redirect the user back to after they approve the request token on TMDB.",
-		},
-	}}
-/>
+| Name          | Type     | Required | Description                                                                    |
+| ------------- | -------- | -------- | ------------------------------------------------------------------------------ |
+| `redirect_to` | `string` | ❌       | URL to redirect the user back to after they approve the request token on TMDB. |
 
 ## Returns
 

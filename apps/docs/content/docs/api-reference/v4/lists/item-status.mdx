@@ -3,8 +3,6 @@ title: Item Status
 description: Check whether a specific movie or TV show is already in a v4 list.
 ---
 
-import { TypeTable } from "fumadocs-ui/components/type-table";
-
 Checks whether a specific movie or TV show is already present in the list. Useful
 before adding an item to avoid duplicates.
 
@@ -16,25 +14,11 @@ async item_status(params: V4ListItemStatusParams): Promise<V4ListItemStatusRespo
 
 ## Parameters
 
-<TypeTable
-	type={{
-		list_id: {
-			type: "number",
-			required: true,
-			description: "The TMDB list ID.",
-		},
-		media_type: {
-			type: '"movie" | "tv"',
-			required: true,
-			description: "The media type to check.",
-		},
-		media_id: {
-			type: "number",
-			required: true,
-			description: "The TMDB media ID to check.",
-		},
-	}}
-/>
+| Name         | Type              | Required | Description                 |
+| ------------ | ----------------- | -------- | --------------------------- |
+| `list_id`    | `number`          | ✅       | The TMDB list ID.           |
+| `media_type` | `"movie" \| "tv"` | ✅       | The media type to check.    |
+| `media_id`   | `number`          | ✅       | The TMDB media ID to check. |
 
 ## Returns
 

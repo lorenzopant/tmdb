@@ -3,8 +3,6 @@ title: Remove Items
 description: Remove one or more items from a v4 list.
 ---
 
-import { TypeTable } from "fumadocs-ui/components/type-table";
-
 Removes one or more movies or TV shows from a list. Items not present in the list
 are silently ignored.
 
@@ -22,15 +20,9 @@ async remove_items(list_id: number, body: V4RemoveListItemsBody): Promise<V4List
 
 ### Body
 
-<TypeTable
-	type={{
-		items: {
-			type: 'Pick<V4ListItemInput, "media_type" | "media_id">[]',
-			required: true,
-			description: "Array of items to remove. Only `media_type` and `media_id` are required.",
-		},
-	}}
-/>
+| Name    | Type                                                  | Required | Description                                                              |
+| ------- | ----------------------------------------------------- | -------- | ------------------------------------------------------------------------ |
+| `items` | `Pick<V4ListItemInput, "media_type" \| "media_id">[]` | ✅       | Array of items to remove. Only `media_type` and `media_id` are required. |
 
 ## Returns
 
