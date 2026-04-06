@@ -1,0 +1,272 @@
+---
+title: v4 Lists
+description: Type definitions for the v4 Lists API.
+---
+
+import { TypeTable } from "fumadocs-ui/components/type-table";
+
+Types related to the [V4ListsAPI](/docs/api-reference/v4/lists) namespace.
+
+## `V4ListMediaType`
+
+Union type for list item media types.
+
+```ts
+type V4ListMediaType = "movie" | "tv";
+```
+
+---
+
+## `V4ListStatusResponse`
+
+Standard response returned by mutating endpoints: [`update()`](/docs/api-reference/v4/lists/update),
+[`delete()`](/docs/api-reference/v4/lists/delete), [`remove_items()`](/docs/api-reference/v4/lists/remove-items),
+and [`clear()`](/docs/api-reference/v4/lists/clear).
+
+<AutoTypeTable path="v4/lists.ts" name="V4ListStatusResponse" />
+
+---
+
+## `V4ListItemInput`
+
+A single item reference used when adding or updating items in a list.
+
+<TypeTable
+	type={{
+		media_type: {
+			type: '"movie" | "tv"',
+			required: true,
+			description: "The TMDB media type.",
+		},
+		media_id: {
+			type: "number",
+			required: true,
+			description: "The TMDB media ID.",
+		},
+		comment: {
+			type: "string",
+			description: "Optional free-text note attached to this item.",
+		},
+	}}
+/>
+
+---
+
+## `V4CreateListBody`
+
+Request body for [`v4.lists.create()`](/docs/api-reference/v4/lists/create).
+
+<TypeTable
+	type={{
+		name: {
+			type: "string",
+			required: true,
+			description: "Display name of the list.",
+		},
+		iso_639_1: {
+			type: "string",
+			required: true,
+			description: 'ISO 639-1 language code (e.g. `"en"`).',
+		},
+		description: {
+			type: "string",
+			description: "Optional description text.",
+		},
+		public: {
+			type: "boolean",
+			description: "Whether the list is publicly visible. Defaults to `true`.",
+			default: "true",
+		},
+	}}
+/>
+
+## `V4CreateListResponse`
+
+Returned by [`v4.lists.create()`](/docs/api-reference/v4/lists/create).
+
+<AutoTypeTable path="v4/lists.ts" name="V4CreateListResponse" />
+
+---
+
+## `V4ListDetailsParams`
+
+Query params for [`v4.lists.details()`](/docs/api-reference/v4/lists/details).
+
+<TypeTable
+	type={{
+		list_id: {
+			type: "number",
+			required: true,
+			description: "The TMDB list ID.",
+		},
+		language: {
+			type: "Language",
+			description: "Language for localized fields. Defaults to `en-US`.",
+			default: "en-US",
+		},
+		page: {
+			type: "number",
+			description: "Page number. Defaults to `1`.",
+			default: "1",
+		},
+	}}
+/>
+
+## `V4ListResult`
+
+A single media item returned inside the `results` array of [`V4ListDetails`](#v4listdetails).
+Fields vary between movies and TV shows — movie-specific fields (`title`, `release_date`, `video`)
+are optional and present only for `media_type: "movie"`; TV-specific fields (`name`,
+`first_air_date`, `origin_country`) are present only for `media_type: "tv"`.
+
+<AutoTypeTable path="v4/lists.ts" name="V4ListResult" />
+
+## `V4ListDetails`
+
+Full response from [`v4.lists.details()`](/docs/api-reference/v4/lists/details).
+
+<AutoTypeTable path="v4/lists.ts" name="V4ListDetails" />
+
+#### Related Types
+
+- [`V4ListResult`](#v4listresult)
+
+---
+
+## `V4UpdateListBody`
+
+Request body for [`v4.lists.update()`](/docs/api-reference/v4/lists/update).
+
+<TypeTable
+	type={{
+		list_id: {
+			type: "number",
+			required: true,
+			description: "The TMDB list ID to update.",
+		},
+		name: {
+			type: "string",
+			description: "New display name.",
+		},
+		description: {
+			type: "string",
+			description: "New description text.",
+		},
+		public: {
+			type: "boolean",
+			description: "Change the visibility of the list.",
+		},
+		sort_by: {
+			type: "string",
+			description: 'Sort field and direction, e.g. `"vote_average.desc"`, `"original_order.asc"`.',
+		},
+	}}
+/>
+
+---
+
+## `V4DeleteListParams`
+
+Query params for [`v4.lists.delete()`](/docs/api-reference/v4/lists/delete).
+
+<TypeTable
+	type={{
+		list_id: {
+			type: "number",
+			required: true,
+			description: "The TMDB list ID to delete.",
+		},
+	}}
+/>
+
+---
+
+## `V4AddListItemsBody`
+
+Request body for [`v4.lists.add_items()`](/docs/api-reference/v4/lists/add-items).
+
+<TypeTable
+	type={{
+		items: {
+			type: "V4ListItemInput[]",
+			required: true,
+			description: "Array of items to add.",
+		},
+	}}
+/>
+
+## `V4ListItemResult`
+
+Per-item result inside [`V4AddListItemsResponse`](#v4addlistitemsresponse).
+
+<AutoTypeTable path="v4/lists.ts" name="V4ListItemResult" />
+
+## `V4AddListItemsResponse`
+
+Returned by [`v4.lists.add_items()`](/docs/api-reference/v4/lists/add-items).
+
+<AutoTypeTable path="v4/lists.ts" name="V4AddListItemsResponse" />
+
+#### Related Types
+
+- [`V4ListItemResult`](#v4listitemresult)
+
+---
+
+## `V4UpdateListItemsBody`
+
+Request body for [`v4.lists.update_items()`](/docs/api-reference/v4/lists/update-items).
+Alias of [`V4AddListItemsBody`](#v4addlistitemsbody).
+
+## `V4UpdateListItemsResponse`
+
+Returned by [`v4.lists.update_items()`](/docs/api-reference/v4/lists/update-items).
+Alias of [`V4AddListItemsResponse`](#v4addlistitemsresponse).
+
+---
+
+## `V4RemoveListItemsBody`
+
+Request body for [`v4.lists.remove_items()`](/docs/api-reference/v4/lists/remove-items).
+
+<TypeTable
+	type={{
+		items: {
+			type: 'Pick<V4ListItemInput, "media_type" | "media_id">[]',
+			required: true,
+			description: "Items to remove. Only `media_type` and `media_id` are required.",
+		},
+	}}
+/>
+
+---
+
+## `V4ListItemStatusParams`
+
+Query params for [`v4.lists.item_status()`](/docs/api-reference/v4/lists/item-status).
+
+<TypeTable
+	type={{
+		list_id: {
+			type: "number",
+			required: true,
+			description: "The TMDB list ID.",
+		},
+		media_type: {
+			type: '"movie" | "tv"',
+			required: true,
+			description: "The media type to check.",
+		},
+		media_id: {
+			type: "number",
+			required: true,
+			description: "The TMDB media ID to check.",
+		},
+	}}
+/>
+
+## `V4ListItemStatusResponse`
+
+Returned by [`v4.lists.item_status()`](/docs/api-reference/v4/lists/item-status).
+
+<AutoTypeTable path="v4/lists.ts" name="V4ListItemStatusResponse" />

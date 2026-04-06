@@ -1,0 +1,74 @@
+---
+title: Create
+description: Create a new v4 list owned by the authenticated user.
+---
+
+import { TypeTable } from "fumadocs-ui/components/type-table";
+
+Creates a new v4 list. The authenticated user becomes the owner. The returned `id`
+is required for all subsequent list operations.
+
+```ts
+async create(body: V4CreateListBody): Promise<V4CreateListResponse>
+```
+
+> **TMDB Reference:** [Create List](https://developer.themoviedb.org/reference/list-create)
+
+## Parameters
+
+<TypeTable
+	type={{
+		name: {
+			type: "string",
+			required: true,
+			description: "Display name of the list.",
+		},
+		iso_639_1: {
+			type: "string",
+			required: true,
+			description: 'ISO 639-1 language code for the list (e.g. `"en"`).',
+		},
+		description: {
+			type: "string",
+			description: "Optional description text.",
+		},
+		public: {
+			type: "boolean",
+			description: "Whether the list is publicly visible. Defaults to `true`.",
+			default: "true",
+		},
+	}}
+/>
+
+## Returns
+
+[`V4CreateListResponse`](/docs/types/v4-lists#v4createlistresponse)
+
+## Errors
+
+| HTTP | TMDB code | Cause                            |
+| ---- | --------- | -------------------------------- |
+| 401  | 3         | Invalid or missing access token. |
+| 422  | 22        | Invalid request body parameters. |
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-access-token");
+
+const { id, success } = await tmdb.v4.lists.create({
+	name: "My Watchlist",
+	iso_639_1: "en",
+	description: "Movies and shows I want to watch",
+	public: false,
+});
+
+console.log(id); // e.g. 8700 — use this for subsequent calls
+```
+
+## Related Types
+
+- [`V4CreateListBody`](/docs/types/v4-lists#v4createlistbody)
+- [`V4CreateListResponse`](/docs/types/v4-lists#v4createlistresponse)

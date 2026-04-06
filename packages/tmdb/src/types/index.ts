@@ -22,5 +22,6 @@ export * from "./reviews";
 export * from "./people-lists";
 export * from "./people";
 export * from "./v4/auth";
+export * from "./v4/lists";
 export * from "./guest_sessions";
 export * from "./lists";
