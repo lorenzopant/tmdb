@@ -221,14 +221,14 @@ describe("V4ListsAPI", () => {
 	// MARK: clear
 
 	describe("clear", () => {
-		it("should call client.mutate with GET /list/{id}/clear", async () => {
+		it("should call client.request with GET /list/{id}/clear", async () => {
 			await api.clear(8700);
-			expect(clientMock.mutate).toHaveBeenCalledOnce();
-			expect(clientMock.mutate).toHaveBeenCalledWith("GET", "/list/8700/clear", {});
+			expect(clientMock.request).toHaveBeenCalledOnce();
+			expect(clientMock.request).toHaveBeenCalledWith("/list/8700/clear");
 		});
 
 		it("should return the status response", async () => {
-			(clientMock.mutate as ReturnType<typeof vi.fn>).mockResolvedValue(STATUS_OK);
+			(clientMock.request as ReturnType<typeof vi.fn>).mockResolvedValue(STATUS_OK);
 			const result = await api.clear(8700);
 			expect(result).toEqual(STATUS_OK);
 		});
