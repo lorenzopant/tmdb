@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiClient } from "../../client";
+import { RateLimiter } from "../../utils/rate-limiter";
 
 type MockResponse = {
 	ok: boolean;
@@ -139,5 +140,20 @@ describe("ApiClient rate limiting", () => {
 		await thirdPromise;
 		expect(thirdSettled).toBe(true);
 		expect(globalThis.fetch).toHaveBeenCalledTimes(3);
+	});
+
+	describe("RateLimiter constructor validation", () => {
+		it.each([0, -1, 0.5, NaN, Infinity, -Infinity])("throws RangeError for invalid max_requests: %s", (value) => {
+			expect(() => new RateLimiter({ max_requests: value })).toThrowError(RangeError);
+		});
+
+		it.each([0, -1, 0.5, NaN, Infinity, -Infinity])("throws RangeError for invalid per_ms: %s", (value) => {
+			expect(() => new RateLimiter({ per_ms: value })).toThrowError(RangeError);
+		});
+
+		it("does not throw with valid options", () => {
+			expect(() => new RateLimiter({ max_requests: 1, per_ms: 1 })).not.toThrow();
+			expect(() => new RateLimiter({ max_requests: 40, per_ms: 1_000 })).not.toThrow();
+		});
 	});
 });

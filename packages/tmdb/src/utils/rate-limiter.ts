@@ -30,8 +30,18 @@ export class RateLimiter {
 	private processing = false;
 
 	constructor(options: RateLimitOptions = {}) {
-		this.maxRequests = options.max_requests ?? 40;
-		this.windowMs = options.per_ms ?? 1_000;
+		const maxRequests = options.max_requests ?? 40;
+		const perMs = options.per_ms ?? 1_000;
+
+		if (!Number.isFinite(maxRequests) || !Number.isInteger(maxRequests) || maxRequests < 1) {
+			throw new RangeError(`rate_limit.max_requests must be a finite integer >= 1 (got ${maxRequests})`);
+		}
+		if (!Number.isFinite(perMs) || !Number.isInteger(perMs) || perMs < 1) {
+			throw new RangeError(`rate_limit.per_ms must be a finite integer >= 1 (got ${perMs})`);
+		}
+
+		this.maxRequests = maxRequests;
+		this.windowMs = perMs;
 	}
 
 	/**
