@@ -1,0 +1,111 @@
+---
+title: Rate Limiting
+description: Automatically queue requests to stay within TMDB's API rate limits.
+---
+
+The `rate_limit` option enables an automatic, sliding-window rate limiter that queues outgoing
+requests so they never exceed TMDB's API budget. It is **opt-in** — disabled by default, with no
+behaviour change for existing consumers.
+
+<Callout type="info">
+	TMDB's legacy hard limit of 40 requests per 10 seconds was disabled in December 2019. The current
+	limit sits at approximately 40 requests per second and may change at any time. Respect `429 Too
+	Many Requests` responses and back off accordingly. See the [TMDB rate limiting
+	docs](https://developer.themoviedb.org/docs/rate-limiting) for details.
+</Callout>
+
+---
+
+## Enabling rate limiting
+
+Pass `rate_limit: true` to use the built-in defaults (~40 requests per second):
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key", { rate_limit: true });
+```
+
+When the budget is exhausted, subsequent requests are queued in FIFO order and dispatched as
+slots become available — callers simply `await` the result as normal.
+
+---
+
+## Custom budget
+
+Pass a `RateLimitOptions` object to override `max_requests` and/or `per_ms`:
+
+```ts
+const tmdb = new TMDB("your-api-key", {
+	rate_limit: {
+		max_requests: 20,
+		per_ms: 5_000, // 20 requests per 5 seconds
+	},
+});
+```
+
+| Option         | Type     | Default | Description                                           |
+| -------------- | -------- | ------- | ----------------------------------------------------- |
+| `max_requests` | `number` | `40`    | Maximum number of requests allowed within the window. |
+| `per_ms`       | `number` | `1_000` | Rolling window size in milliseconds.                  |
+
+---
+
+## How it works
+
+The limiter uses a **sliding-window** algorithm:
+
+1. Before each request is dispatched, the limiter records a timestamp and checks how many
+   requests have been made in the last `per_ms` milliseconds.
+2. If fewer than `max_requests` are recorded, the request proceeds immediately.
+3. If the budget is full, the request waits until the oldest timestamp exits the window, then
+   proceeds.
+
+All queued callers are released in the order they arrived (FIFO). The limiter applies to **both
+read (`GET`) and mutation (`POST` / `PUT` / `DELETE`) requests** uniformly.
+
+---
+
+## Combining with deduplication
+
+Rate limiting and [request deduplication](/docs/getting-started/features#request-deduplication) work independently. When both are enabled (the default for deduplication), a deduplicated request counts as **one slot** in the rate limiter — multiple concurrent callers sharing a single in-flight fetch consume only one token.
+
+```ts
+const tmdb = new TMDB("your-api-key", {
+	rate_limit: true,
+	// deduplication is true by default
+});
+
+// All three share one fetch AND consume only one rate-limit slot
+const [a, b, c] = await Promise.all([
+	tmdb.movies.details({ movie_id: 550 }),
+	tmdb.movies.details({ movie_id: 550 }),
+	tmdb.movies.details({ movie_id: 550 }),
+]);
+```
+
+---
+
+## Typical use case
+
+Rate limiting is most useful in **bulk data-fetching scripts** or **background jobs** that fire
+many requests in a tight loop:
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key", { rate_limit: true });
+
+const movieIds = [550, 551, 552 /* ... hundreds more */];
+
+// Fire all at once — the limiter will pace them automatically
+const movies = await Promise.all(movieIds.map((id) => tmdb.movies.details({ movie_id: id })));
+```
+
+Without rate limiting the above would send hundreds of concurrent requests and risk a `429 Too Many Requests` response from TMDB. With `rate_limit: true` enabled, requests are paced to approximately 40 per second — no manual batching or `sleep()` calls needed.
+
+<Callout>
+	The limiter is **in-process only**. If your application runs multiple processes or workers that
+	share the same API key, each process maintains its own independent queue and the combined
+	throughput may still exceed TMDB's limit.
+</Callout>

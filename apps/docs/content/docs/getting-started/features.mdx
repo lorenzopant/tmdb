@@ -47,8 +47,8 @@ const [movie1, movie2] = await Promise.all([
   call always triggers a fresh fetch.
 
 <Callout>
-	Deduplication is **on by default** and applied to every method in the client. Only concurrent requests benefit — sequential calls always
-	produce independent fetches.
+	Deduplication is **on by default** and applied to every method in the client. Only concurrent
+	requests benefit — sequential calls always produce independent fetches.
 </Callout>
 
 ### Disabling deduplication
@@ -132,8 +132,8 @@ The builder exposes five methods, one per TMDB image category:
 | `still()`    | `still_path`     | `w300`       | [`StillSize`](/docs/types/options/images#stillsize)       |
 
 <Callout type="warn">
-	Path fields such as `poster_path`, `backdrop_path`, `profile_path`, and `still_path` are optional on most TMDB response types. Always
-	guard against `undefined` before building a URL.
+	Path fields such as `poster_path`, `backdrop_path`, `profile_path`, and `still_path` are optional
+	on most TMDB response types. Always guard against `undefined` before building a URL.
 </Callout>
 
 ```ts
@@ -266,3 +266,29 @@ const tmdb = new TMDB(apiKey, {
 
 Log entries cover three lifecycle stages: `request`, `response`, and `error`. See the
 [Logging guide](/docs/getting-started/options/logging) for the full reference.
+
+---
+
+## Rate Limiting
+
+The client includes an opt-in sliding-window rate limiter that queues outgoing requests so they
+stay within TMDB's API budget automatically — no manual batching or `sleep()` calls needed.
+
+```ts
+// Enable with defaults (~40 requests per second)
+const tmdb = new TMDB(apiKey, { rate_limit: true });
+
+// Custom budget
+const tmdb = new TMDB(apiKey, { rate_limit: { max_requests: 20, per_ms: 5_000 } });
+```
+
+When the budget is exhausted, requests are held in a FIFO queue and dispatched as slots free up.
+The limiter applies to both read and mutation requests.
+
+<Callout>
+	Rate limiting is **disabled by default**. Enable it when running bulk data-fetching scripts or
+	background jobs that fire many requests in a tight loop — scenarios where hitting `429 Too Many
+	Requests` would otherwise be likely.
+</Callout>
+
+See the [Rate Limiting guide](/docs/getting-started/options/rate-limiting) for full details.

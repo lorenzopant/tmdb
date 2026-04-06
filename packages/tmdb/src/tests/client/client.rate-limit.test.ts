@@ -54,7 +54,7 @@ describe("ApiClient rate limiting", () => {
 
 	it("dispatches requests immediately when under the limit", async () => {
 		const client = new ApiClient(token, {
-			rate_limit: { max_requests: 5, per_ms: 10_000 },
+			rate_limit: { max_requests: 5, per_ms: 1_000 },
 			deduplication: false,
 		});
 
@@ -69,7 +69,7 @@ describe("ApiClient rate limiting", () => {
 
 	it("queues the 6th request when max_requests=5 are in the window", async () => {
 		const client = new ApiClient(token, {
-			rate_limit: { max_requests: 5, per_ms: 10_000 },
+			rate_limit: { max_requests: 5, per_ms: 1_000 },
 			deduplication: false,
 		});
 
@@ -93,7 +93,7 @@ describe("ApiClient rate limiting", () => {
 		expect(sixthSettled).toBe(false);
 
 		// Advance time past the window so the oldest slot expires
-		vi.advanceTimersByTime(10_001);
+		vi.advanceTimersByTime(1_001);
 		await sixthPromise;
 
 		expect(sixthSettled).toBe(true);
@@ -101,7 +101,7 @@ describe("ApiClient rate limiting", () => {
 	});
 
 	it("accepts rate_limit: true and uses default limits", async () => {
-		// Default is 40 req / 10 s. Test that true is accepted and doesn't throw.
+		// Default is ~40 req / s. Test that true is accepted and doesn't throw.
 		const client = new ApiClient(token, { rate_limit: true, deduplication: false });
 
 		(globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(makeResponse({ id: 1 }));
@@ -112,7 +112,7 @@ describe("ApiClient rate limiting", () => {
 
 	it("rate limiter applies to mutate() calls as well", async () => {
 		const client = new ApiClient(token, {
-			rate_limit: { max_requests: 2, per_ms: 10_000 },
+			rate_limit: { max_requests: 2, per_ms: 1_000 },
 			deduplication: false,
 		});
 
@@ -135,7 +135,7 @@ describe("ApiClient rate limiting", () => {
 		await Promise.resolve();
 		expect(thirdSettled).toBe(false);
 
-		vi.advanceTimersByTime(10_001);
+		vi.advanceTimersByTime(1_001);
 		await thirdPromise;
 		expect(thirdSettled).toBe(true);
 		expect(globalThis.fetch).toHaveBeenCalledTimes(3);

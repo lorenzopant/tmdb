@@ -6,7 +6,7 @@ export type RateLimitOptions = {
 	max_requests?: number;
 	/**
 	 * Window size in milliseconds.
-	 * @default 10_000
+	 * @default 1_000
 	 */
 	per_ms?: number;
 };
@@ -31,7 +31,7 @@ export class RateLimiter {
 
 	constructor(options: RateLimitOptions = {}) {
 		this.maxRequests = options.max_requests ?? 40;
-		this.windowMs = options.per_ms ?? 10_000;
+		this.windowMs = options.per_ms ?? 1_000;
 	}
 
 	/**

@@ -162,7 +162,7 @@ export type TMDBOptions = {
 	/**
 	 * When enabled, outgoing requests are queued to stay within TMDB's API rate limits.
 	 *
-	 * - `true` — uses the default limits (40 requests per 10 seconds).
+	 * - `true` — uses the default limits (approximately 40 requests per second).
 	 * - Pass a {@link RateLimitOptions} object to customize `max_requests` and/or `per_ms`.
 	 *
 	 * Requests that exceed the budget are held in a FIFO queue and dispatched as
@@ -172,11 +172,11 @@ export type TMDBOptions = {
 	 *
 	 * @example
 	 * ```ts
-	 * // Enable with defaults (40 req / 10 s)
+	 * // Enable with defaults (~40 req / s)
 	 * const tmdb = new TMDB(token, { rate_limit: true });
 	 *
 	 * // Custom budget
-	 * const tmdb = new TMDB(token, { rate_limit: { max_requests: 50, per_ms: 10_000 } });
+	 * const tmdb = new TMDB(token, { rate_limit: { max_requests: 30, per_ms: 1_000 } });
 	 * ```
 	 */
 	rate_limit?: boolean | RateLimitOptions;
