@@ -210,7 +210,10 @@ export class ApiClient {
 		params: Record<string, unknown | undefined>,
 		body?: Record<string, unknown>,
 	): Promise<T> {
-		if (this.rateLimiter) await this.rateLimiter.acquire();
+		// Serialise the body before acquiring a rate-limit slot so a JSON.stringify
+		// error never consumes budget without a matching network request.
+		const bodyJson = body !== undefined ? JSON.stringify(body) : undefined;
+
 		const ctx = await this.runRequestInterceptors({
 			endpoint,
 			params: params as Record<string, unknown>,
@@ -236,6 +239,10 @@ export class ApiClient {
 			endpoint: effectiveEndpoint,
 		});
 
+		// Acquire a rate-limit slot immediately before the fetch so interceptor
+		// errors or serialisation failures never consume budget unnecessarily.
+		if (this.rateLimiter) await this.rateLimiter.acquire();
+
 		let res: Response;
 		try {
 			res = await fetch(url.toString(), {
@@ -248,7 +255,7 @@ export class ApiClient {
 					: {
 							"Content-Type": "application/json;charset=utf-8",
 						},
-				...(body !== undefined ? { body: JSON.stringify(body) } : {}),
+				...(bodyJson !== undefined ? { body: bodyJson } : {}),
 			});
 		} catch (error) {
 			this.logger?.log({
