@@ -131,6 +131,6 @@ export class V4ListsAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/list-clear
 	 */
 	async clear(list_id: number): Promise<V4ListStatusResponse> {
-		return this.client.request<V4ListStatusResponse>(`${this.listPath(list_id)}${ENDPOINTS_V4.LISTS.CLEAR}`);
+		return this.client.mutate<V4ListStatusResponse>("GET", `${this.listPath(list_id)}${ENDPOINTS_V4.LISTS.CLEAR}`);
 	}
 }

@@ -70,7 +70,7 @@ export type V4ListResult = {
 	/** Whether the item is adult-only content. */
 	adult: boolean;
 	/** Backdrop image path, or `null` if unavailable. */
-	backdrop_path: string | null;
+	backdrop_path?: string;
 	/** TMDB ID. */
 	id: number;
 	/** The media type. */
@@ -78,7 +78,7 @@ export type V4ListResult = {
 	/** Original language. */
 	original_language: string;
 	/** Poster image path, or `null` if unavailable. */
-	poster_path: string | null;
+	poster_path?: string;
 	/** Popularity score. */
 	popularity: number;
 	/** Vote average. */
@@ -117,9 +117,9 @@ export type V4ListDetails = {
 	/** Username of the list creator. */
 	created_by: string;
 	/** Backdrop image path, or `null`. */
-	backdrop_path: string | null;
+	backdrop_path?: string;
 	/** Cover poster image path, or `null`. */
-	poster_path: string | null;
+	poster_path?: string;
 	/** Whether the list is publicly visible. */
 	public: boolean;
 	/** ISO 639-1 language code. */
