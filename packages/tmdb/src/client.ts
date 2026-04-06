@@ -2,6 +2,8 @@ import { TMDBAPIErrorResponse, TMDBError } from "./errors/tmdb";
 import { ImageAPI } from "./images/images";
 import type { ImagesConfig } from "./types/config/images";
 import { TMDBLogger, TMDBLoggerFn } from "./utils/logger";
+import { RateLimiter } from "./utils/rate-limiter";
+import type { RateLimitOptions } from "./utils/rate-limiter";
 import { isJwt } from "./utils";
 import type {
 	RequestInterceptor,
@@ -22,6 +24,7 @@ export class ApiClient {
 	 */
 	private inflightRequests: Map<string, Promise<unknown>> = new Map();
 	private deduplication: boolean;
+	private rateLimiter?: RateLimiter;
 	private requestInterceptors: RequestInterceptor[];
 	private onSuccessInterceptor?: ResponseSuccessInterceptor;
 	private onErrorInterceptor?: ResponseErrorInterceptor;
@@ -35,6 +38,7 @@ export class ApiClient {
 			logger?: boolean | TMDBLoggerFn;
 			deduplication?: boolean;
 			images?: ImagesConfig;
+			rate_limit?: boolean | RateLimitOptions;
 			interceptors?: {
 				request?: RequestInterceptor | RequestInterceptor[];
 				response?: { onSuccess?: ResponseSuccessInterceptor; onError?: ResponseErrorInterceptor };
@@ -45,6 +49,10 @@ export class ApiClient {
 		this.baseUrl = `https://api.themoviedb.org/${options.version ?? 3}`;
 		this.logger = TMDBLogger.from(options.logger);
 		this.deduplication = options.deduplication !== false;
+		if (options.rate_limit) {
+			const rlOpts = options.rate_limit === true ? {} : options.rate_limit;
+			this.rateLimiter = new RateLimiter(rlOpts);
+		}
 		const raw = options.interceptors?.request;
 		this.requestInterceptors = raw == null ? [] : Array.isArray(raw) ? raw : [raw];
 		this.onSuccessInterceptor = options.interceptors?.response?.onSuccess;
@@ -202,6 +210,7 @@ export class ApiClient {
 		params: Record<string, unknown | undefined>,
 		body?: Record<string, unknown>,
 	): Promise<T> {
+		if (this.rateLimiter) await this.rateLimiter.acquire();
 		const ctx = await this.runRequestInterceptors({
 			endpoint,
 			params: params as Record<string, unknown>,
