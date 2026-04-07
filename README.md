@@ -128,7 +128,7 @@ The following features are planned to improve developer experience and extend th
 
 ### ⚡ Performance
 
-- [ ] **In-memory caching** — Cache GET responses by URL + params with a configurable TTL (TMDB data like genres or configurations rarely changes)
+- [x] **In-memory caching** — Cache GET responses by URL + params with a configurable TTL (TMDB data like genres or configurations rarely changes)
 - [x] **Request deduplication** — Reuse in-flight Promises for identical concurrent requests instead of firing duplicates
 - [x] **Rate limiter** — Automatically queue requests to stay within TMDB's API rate limits (~40 requests per second)
 

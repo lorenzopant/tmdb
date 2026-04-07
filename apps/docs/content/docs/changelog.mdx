@@ -4,6 +4,46 @@ description: Latest updates and announcements
 icon: History
 ---
 
+## 🚀 1.20.1 - 7 April 2026
+
+#### ✨ New
+
+- **Opt-in in-memory response cache** — new `cache` option caches `GET` responses in memory with a configurable TTL. Pass `true` for defaults (5-minute TTL, no size limit) or a `CacheOptions` object for a custom budget. Mutations are never cached. Disabled by default — no behaviour change for existing consumers.
+
+```ts
+// Default TTL (5 minutes)
+const tmdb = new TMDB(token, { cache: true });
+
+// Custom TTL, bounded memory, and per-endpoint exclusions
+const tmdb = new TMDB(token, {
+	cache: {
+		ttl: 60_000,
+		max_size: 500,
+		excluded_endpoints: ["/trending", /\/discover\//],
+	},
+});
+```
+
+- **`tmdb.cache` controls** — invalidate a single cache entry after a mutation, wipe everything on sign-out, or inspect the current size at runtime:
+
+```ts
+tmdb.cache?.invalidate("/movie/now_playing", { language: "en-US" });
+tmdb.cache?.clear();
+console.log(tmdb.cache?.size);
+```
+
+#### 📦 NPM Package
+
+- Added minification option to reduce package size (no changes to the public API)
+- Updated README for NPM package
+
+#### 📖 Docs
+
+- New [Response Caching](/docs/getting-started/options/cache) guide covering: enabling with `true`, `CacheOptions` reference, how cache keys work, lazy TTL eviction, `max_size` FIFO eviction, `excluded_endpoints`, the `tmdb.cache` invalidation API, interaction with deduplication, and typical use cases.
+- [Features](/docs/getting-started/features) and [Options](/docs/getting-started/options) pages updated with response caching sections.
+
+---
+
 ## 🚀 1.20.0 - 7 April 2026
 
 #### ✨ New
