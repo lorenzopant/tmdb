@@ -165,9 +165,9 @@ Planned features and improvements include:
 | Discover          | ✅     |
 | Find              | ✅     |
 | Genres            | ✅     |
-| Guest Sessions    | ❌     |
+| Guest Sessions    | ✅     |
 | Keywords          | ✅     |
-| Lists             | ❌     |
+| Lists             | ✅     |
 | Movie Lists       | ✅     |
 | Movies            | ✅     |
 | Networks          | ✅     |
