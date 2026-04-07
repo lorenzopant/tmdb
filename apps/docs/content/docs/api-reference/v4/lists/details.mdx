@@ -1,0 +1,48 @@
+---
+title: Details
+description: Retrieve paginated details and items for a v4 list.
+---
+
+Returns the full metadata and a paginated array of items for a list. Works for both
+public lists and private lists owned by the authenticated user.
+
+```ts
+async details(params: V4ListDetailsParams): Promise<V4ListDetails>
+```
+
+> **TMDB Reference:** [List Details](https://developer.themoviedb.org/reference/list-details)
+
+## Parameters
+
+| Name       | Type                                                | Required | Description                                                                 |
+| ---------- | --------------------------------------------------- | -------- | --------------------------------------------------------------------------- |
+| `list_id`  | `number`                                            | ✅       | The TMDB list ID.                                                           |
+| `language` | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized fields (title, overview, etc.). Defaults to `en-US`. |
+| `page`     | `number`                                            | ❌       | Page number. Defaults to `1`.                                               |
+
+## Returns
+
+[`V4ListDetails`](/docs/types/v4-lists#v4listdetails)
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-access-token");
+
+const list = await tmdb.v4.lists.details({ list_id: 8700, language: "en-US", page: 1 });
+
+console.log(list.name); // "My Watchlist"
+console.log(list.item_count); // 42
+console.log(list.total_pages); // 3
+list.results.forEach((item) => {
+	console.log(item.media_type, item.id, item.title ?? item.name);
+});
+```
+
+## Related Types
+
+- [`V4ListDetailsParams`](/docs/types/v4-lists#v4listdetailsparams)
+- [`V4ListDetails`](/docs/types/v4-lists#v4listdetails)
+- [`V4ListResult`](/docs/types/v4-lists#v4listresult)

@@ -1,0 +1,59 @@
+---
+title: Item Status
+description: Check whether a specific movie or TV show is already in a v4 list.
+---
+
+Checks whether a specific movie or TV show is already present in the list. Useful
+before adding an item to avoid duplicates.
+
+```ts
+async item_status(params: V4ListItemStatusParams): Promise<V4ListItemStatusResponse>
+```
+
+> **TMDB Reference:** [Item Status](https://developer.themoviedb.org/reference/list-item-status)
+
+## Parameters
+
+| Name         | Type              | Required | Description                 |
+| ------------ | ----------------- | -------- | --------------------------- |
+| `list_id`    | `number`          | ✅       | The TMDB list ID.           |
+| `media_type` | `"movie" \| "tv"` | ✅       | The media type to check.    |
+| `media_id`   | `number`          | ✅       | The TMDB media ID to check. |
+
+## Returns
+
+[`V4ListItemStatusResponse`](/docs/types/v4-lists#v4listitemstatusresponse)
+
+An object is returned if the item is in the list. TMDB returns a `404` if the item
+is **not** present — wrap the call in a try/catch to handle that case.
+
+## Errors
+
+| HTTP | TMDB code | Cause                            |
+| ---- | --------- | -------------------------------- |
+| 401  | 3         | Invalid or missing access token. |
+| 404  | 34        | Item not found in the list.      |
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-access-token");
+
+try {
+	const status = await tmdb.v4.lists.item_status({
+		list_id: 8700,
+		media_type: "movie",
+		media_id: 550,
+	});
+	console.log("In list:", status.media_id); // 550
+} catch {
+	console.log("Not in list");
+}
+```
+
+## Related Types
+
+- [`V4ListItemStatusParams`](/docs/types/v4-lists#v4listitemstatusparams)
+- [`V4ListItemStatusResponse`](/docs/types/v4-lists#v4listitemstatusresponse)

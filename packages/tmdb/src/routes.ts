@@ -213,5 +213,6 @@ export const ENDPOINTS_V4 = {
 		DETAILS: "/list",
 		ITEMS: "/items",
 		ITEM_STATUS: "/item_status",
+		CLEAR: "/clear",
 	},
 };

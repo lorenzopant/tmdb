@@ -1,0 +1,57 @@
+---
+title: Update Items
+description: Update per-item comments for items already in a v4 list.
+---
+
+Updates the `comment` field for one or more items already present in the list.
+Items not included in the request are unaffected.
+
+```ts
+async update_items(list_id: number, body: V4UpdateListItemsBody): Promise<V4UpdateListItemsResponse>
+```
+
+> **TMDB Reference:** [Update Items](https://developer.themoviedb.org/reference/list-update-items)
+
+## Parameters
+
+| Name      | Type     | Required | Description       |
+| --------- | -------- | -------- | ----------------- |
+| `list_id` | `number` | ✅       | The TMDB list ID. |
+
+### Body
+
+| Name    | Type                | Required | Description                                                                                       |
+| ------- | ------------------- | -------- | ------------------------------------------------------------------------------------------------- |
+| `items` | `V4ListItemInput[]` | ✅       | Items to update. Each entry requires `media_type` and `media_id`; set `comment` to the new value. |
+
+## Returns
+
+[`V4UpdateListItemsResponse`](/docs/types/v4-lists#v4updatelistitemsresponse)
+
+## Errors
+
+| HTTP | TMDB code | Cause                            |
+| ---- | --------- | -------------------------------- |
+| 401  | 3         | Invalid or missing access token. |
+| 404  | 34        | List not found.                  |
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-access-token");
+
+await tmdb.v4.lists.update_items(8700, {
+	items: [
+		{ media_type: "movie", media_id: 550, comment: "Updated: a masterpiece" },
+		{ media_type: "tv", media_id: 1396, comment: "Best finale ever" },
+	],
+});
+```
+
+## Related Types
+
+- [`V4UpdateListItemsBody`](/docs/types/v4-lists#v4updatelistitemsbody)
+- [`V4UpdateListItemsResponse`](/docs/types/v4-lists#v4updatelistitemsresponse)
+- [`V4ListItemInput`](/docs/types/v4-lists#v4listiteminput)

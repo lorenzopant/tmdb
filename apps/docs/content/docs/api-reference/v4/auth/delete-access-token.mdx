@@ -3,8 +3,6 @@ title: Delete Access Token
 description: Invalidate a user access token to log a user out.
 ---
 
-import { TypeTable } from "fumadocs-ui/components/type-table";
-
 Revokes a user access token. Use this to log a user out of your application.
 Once deleted, the token can no longer be used to access user-scoped v4 endpoints.
 
@@ -16,15 +14,9 @@ async delete_access_token(body: V4AuthDeleteAccessTokenBody): Promise<V4AuthDele
 
 ## Parameters
 
-<TypeTable
-	type={{
-		access_token: {
-			type: "string",
-			required: true,
-			description: "The user access token to invalidate.",
-		},
-	}}
-/>
+| Name           | Type     | Required | Description                          |
+| -------------- | -------- | -------- | ------------------------------------ |
+| `access_token` | `string` | ✅       | The user access token to invalidate. |
 
 ## Returns
 

@@ -1,0 +1,74 @@
+---
+title: Lists
+description: Create and manage v4 lists — full CRUD for user-owned lists with support for both movies and TV shows.
+---
+
+The `V4ListsAPI` lets authenticated users create, read, update, and delete their own TMDB lists,
+add or remove both movies and TV shows, annotate items with per-item comments, and control
+list visibility. All mutating operations require a user **access token** issued by the
+[v4 auth flow](/docs/api-reference/v4/auth).
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-access-token");
+
+// Create a list
+const { id } = await tmdb.v4.lists.create({ name: "My Watchlist", iso_639_1: "en" });
+
+// Add a movie and a TV show
+await tmdb.v4.lists.add_items(id, {
+	items: [
+		{ media_type: "movie", media_id: 550 },
+		{ media_type: "tv", media_id: 1396 },
+	],
+});
+
+// Read back the paginated contents
+const list = await tmdb.v4.lists.details({ list_id: id });
+console.log(list.item_count); // 2
+```
+
+## Methods
+
+- [`create()`](/docs/api-reference/v4/lists/create) — Create a new list.
+- [`details()`](/docs/api-reference/v4/lists/details) — Retrieve paginated list details and items.
+- [`update()`](/docs/api-reference/v4/lists/update) — Update a list's name, description, visibility, or sort order.
+- [`delete()`](/docs/api-reference/v4/lists/delete) — Permanently delete a list.
+- [`add_items()`](/docs/api-reference/v4/lists/add-items) — Add movies and/or TV shows to a list.
+- [`update_items()`](/docs/api-reference/v4/lists/update-items) — Update per-item comments.
+- [`remove_items()`](/docs/api-reference/v4/lists/remove-items) — Remove items from a list.
+- [`item_status()`](/docs/api-reference/v4/lists/item-status) — Check if a specific item is already in a list.
+- [`clear()`](/docs/api-reference/v4/lists/clear) — Remove all items without deleting the list.
+
+---
+
+## v3 vs v4 Lists
+
+TMDB ships two generations of the lists API. Here's how they compare:
+
+| Feature               | v3 `tmdb.lists`     | v4 `tmdb.v4.lists`                       |
+| --------------------- | ------------------- | ---------------------------------------- |
+| **Auth**              | v3 `session_id`     | v4 `access_token`                        |
+| **Media types**       | One media type only | Movies **and** TV shows                  |
+| **Per-item comments** | ❌                  | ✅                                       |
+| **Public / private**  | Always public       | Configurable                             |
+| **Sort options**      | None                | Multiple (vote average, release date, …) |
+| **Pagination**        | ❌                  | ✅                                       |
+| **Update metadata**   | ❌                  | ✅ (name, description, sort)             |
+| **Batch add/remove**  | One item at a time  | Multiple items per request               |
+
+### When to use v3 lists
+
+- Your app already uses the **v3 session_id** auth flow and you don't need TV support.
+- You're integrating with legacy TMDB tooling that only speaks v3.
+
+### When to use v4 lists
+
+Use the v4 API whenever you can. It supersedes v3 lists in every measurable way:
+you get multi media type support, per-item comments, pagination, public/private control, and
+richer sort options — all through the more modern token-based auth flow.
+
+<Callout type="info">
+	Looking for the v3 API? See [`tmdb.lists`](/docs/api-reference/lists).
+</Callout>

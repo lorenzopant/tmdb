@@ -1,0 +1,48 @@
+---
+title: Clear
+description: Remove all items from a v4 list without deleting the list itself.
+---
+
+import { TypeTable } from "fumadocs-ui/components/type-table";
+
+Removes every item from the list while keeping the list and its metadata intact.
+To permanently delete the list as well, use [`delete()`](/docs/api-reference/v4/lists/delete).
+
+```ts
+async clear(list_id: number): Promise<V4ListStatusResponse>
+```
+
+> **TMDB Reference:** [Clear List](https://developer.themoviedb.org/reference/list-clear)
+
+## Parameters
+
+| Name      | Type     | Required | Description                |
+| --------- | -------- | -------- | -------------------------- |
+| `list_id` | `number` | ✅       | The TMDB list ID to clear. |
+
+## Returns
+
+[`V4ListStatusResponse`](/docs/types/v4-lists#v4liststatusresponse)
+
+## Errors
+
+| HTTP | TMDB code | Cause                               |
+| ---- | --------- | ----------------------------------- |
+| 401  | 3         | Invalid or missing access token.    |
+| 404  | 34        | List not found.                     |
+| 403  | 15        | Not authorized to modify this list. |
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-access-token");
+
+const { success } = await tmdb.v4.lists.clear(8700);
+console.log(success); // true — list is now empty, but still exists
+```
+
+## Related Types
+
+- [`V4ListStatusResponse`](/docs/types/v4-lists#v4liststatusresponse)

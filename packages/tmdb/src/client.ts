@@ -175,16 +175,20 @@ export class ApiClient {
 	}
 
 	/**
-	 * Makes an authenticated mutation request (POST, PUT, or DELETE) to the TMDB API.
-	 * Unlike `request()`, mutations are never deduplicated since they change server state.
+	 * Makes an authenticated mutation request to the TMDB API.
+	 * Unlike `request()`, mutations are **never deduplicated** since they change server state.
+	 *
+	 * Accepts `"GET"` in addition to the standard mutation verbs for the rare TMDB endpoints
+	 * (e.g. `GET /4/list/{id}/clear`) that are specified as GET but carry side effects and
+	 * must therefore not be collapsed by the deduplication layer.
 	 *
 	 * @param method - HTTP method to use
 	 * @param endpoint - API path (e.g. "/account/123/favorite")
-	 * @param body - JSON body to send (omit for DELETE requests without a body)
+	 * @param body - JSON body to send (omit for DELETE/GET requests without a body)
 	 * @param params - Optional query string parameters (e.g. session_id)
 	 */
 	async mutate<T>(
-		method: "POST" | "PUT" | "DELETE",
+		method: "GET" | "POST" | "PUT" | "DELETE",
 		endpoint: string,
 		body?: Record<string, unknown>,
 		params: Record<string, unknown | undefined> = {},

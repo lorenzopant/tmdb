@@ -1,0 +1,70 @@
+---
+title: Add Items
+description: Add one or more movies or TV shows to a v4 list.
+---
+
+Adds one or more movies or TV shows to a list in a single request. The response
+contains a per-item result so you can check whether each item was added successfully.
+
+```ts
+async add_items(list_id: number, body: V4AddListItemsBody): Promise<V4AddListItemsResponse>
+```
+
+> **TMDB Reference:** [Add Items](https://developer.themoviedb.org/reference/list-add-items)
+
+## Parameters
+
+| Name      | Type     | Required | Description       |
+| --------- | -------- | -------- | ----------------- |
+| `list_id` | `number` | ✅       | The TMDB list ID. |
+
+### Body
+
+| Name    | Type                | Required | Description                                                            |
+| ------- | ------------------- | -------- | ---------------------------------------------------------------------- |
+| `items` | `V4ListItemInput[]` | ✅       | Array of items to add. Each item requires `media_type` and `media_id`. |
+
+**`V4ListItemInput` fields:**
+
+| Name         | Type              | Required | Description                              |
+| ------------ | ----------------- | -------- | ---------------------------------------- |
+| `media_type` | `"movie" \| "tv"` | ✅       | The TMDB media type.                     |
+| `media_id`   | `number`          | ✅       | The TMDB media ID.                       |
+| `comment`    | `string`          | ❌       | Optional free-text note about this item. |
+
+## Returns
+
+[`V4AddListItemsResponse`](/docs/types/v4-lists#v4addlistitemsresponse)
+
+## Errors
+
+| HTTP | TMDB code | Cause                            |
+| ---- | --------- | -------------------------------- |
+| 401  | 3         | Invalid or missing access token. |
+| 404  | 34        | List not found.                  |
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-access-token");
+
+const { results } = await tmdb.v4.lists.add_items(8700, {
+	items: [
+		{ media_type: "movie", media_id: 550, comment: "Brad Pitt at his best" },
+		{ media_type: "tv", media_id: 1396 },
+	],
+});
+
+results.forEach(({ media_type, media_id, success }) => {
+	console.log(`${media_type}:${media_id} added: ${success}`);
+});
+```
+
+## Related Types
+
+- [`V4AddListItemsBody`](/docs/types/v4-lists#v4addlistitemsbody)
+- [`V4ListItemInput`](/docs/types/v4-lists#v4listiteminput)
+- [`V4AddListItemsResponse`](/docs/types/v4-lists#v4addlistitemsresponse)
+- [`V4ListItemResult`](/docs/types/v4-lists#v4listitemresult)
