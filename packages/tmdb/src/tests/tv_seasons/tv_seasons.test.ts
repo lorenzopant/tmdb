@@ -115,6 +115,27 @@ describe("TVSeasonsAPI", () => {
 				include_image_language: undefined,
 			});
 		});
+
+		it("should inject include_image_language from config when auto_include_image_language is enabled", async () => {
+			tvSeasonsAPI = new TVSeasonsAPI(clientMock, {
+				images: {
+					auto_include_image_language: true,
+					image_language_priority: { stills: ["null", "*"] },
+				},
+			});
+			await tvSeasonsAPI.images(BASE_SEASON_PARAMS);
+			const [, params] = (clientMock.request as ReturnType<typeof vi.fn>).mock.calls[0];
+			expect(params.include_image_language).toEqual(["null"]);
+		});
+
+		it("should not override explicit include_image_language", async () => {
+			tvSeasonsAPI = new TVSeasonsAPI(clientMock, {
+				images: { auto_include_image_language: true, image_language_priority: { stills: ["null"] } },
+			});
+			await tvSeasonsAPI.images({ ...BASE_SEASON_PARAMS, include_image_language: ["en"] });
+			const [, params] = (clientMock.request as ReturnType<typeof vi.fn>).mock.calls[0];
+			expect(params.include_image_language).toEqual(["en"]);
+		});
 	});
 
 	describe("translations", () => {

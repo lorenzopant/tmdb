@@ -69,7 +69,9 @@ export class ImageAPI {
 	 */
 	public autocompleteImagePaths<T>(value: T, collectionKey?: ImageCollectionKey): T {
 		if (Array.isArray(value)) {
-			return value.map((entry) => this.autocompleteImagePaths(entry, collectionKey)) as T;
+			const priorities = collectionKey && this.options.image_language_priority?.[collectionKey];
+			const items = priorities ? this.sortByLanguagePriority(value, priorities) : value;
+			return items.map((entry) => this.autocompleteImagePaths(entry, collectionKey)) as T;
 		}
 
 		if (!isPlainObject(value)) {
@@ -97,6 +99,48 @@ export class ImageAPI {
 	}
 
 	// MARK: Private methods
+
+	/**
+	 * Reorders an image-item array according to a language priority list.
+	 *
+	 * Iterates through each priority entry in order:
+	 * - `"null"` matches items where `iso_639_1` is `null` or `undefined` (untagged)
+	 * - `"*"` consumes all remaining items as a catch-all and stops processing
+	 * - Any other string is matched against `iso_639_1` directly
+	 *
+	 * Items not matched by any entry are appended at the end.
+	 * No items are dropped — only their order changes.
+	 */
+	private sortByLanguagePriority(items: unknown[], priorities: string[]): unknown[] {
+		const result: unknown[] = [];
+		const remaining = [...items];
+
+		for (const priority of priorities) {
+			if (priority === "*") {
+				result.push(...remaining.splice(0, remaining.length));
+				break;
+			}
+
+			const next: unknown[] = [];
+			for (const item of remaining) {
+				const lang = (item as Record<string, unknown>)?.iso_639_1;
+				const isMatch = priority === "null" ? lang == null : lang === priority;
+				if (isMatch) {
+					result.push(item);
+				} else {
+					next.push(item);
+				}
+			}
+
+			remaining.length = 0;
+			remaining.push(...next);
+		}
+
+		// Append items not matched by any priority entry
+		result.push(...remaining);
+		return result;
+	}
+
 	private isImageCollectionKey(value: string): value is ImageCollectionKey {
 		return Object.hasOwn(IMAGE_COLLECTION_BUILDERS, value);
 	}

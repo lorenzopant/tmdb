@@ -49,4 +49,32 @@ export abstract class TMDBAPIBase {
 		if (defaultLang === undefined) return params;
 		return { ...params, language: defaultLang } as T;
 	}
+
+	/**
+	 * When `images.auto_include_image_language` is enabled, derives `include_image_language`
+	 * from the language codes in `images.image_language_priority` and injects it into params.
+	 *
+	 * - An explicit `include_image_language` on the call site always wins.
+	 * - `"*"` is excluded — it has no meaning as an HTTP query parameter.
+	 * - Has no effect when `auto_include_image_language` is false/absent or when
+	 *   `image_language_priority` is not configured.
+	 */
+	protected injectImageLanguage<T extends object>(params: T): T {
+		if (!this.defaultOptions.images?.auto_include_image_language) return params;
+		if ((params as Record<string, unknown>).include_image_language !== undefined) return params;
+
+		const priority = this.defaultOptions.images?.image_language_priority;
+		if (!priority) return params;
+
+		const langs = [
+			...new Set(
+				Object.values(priority)
+					.flat()
+					.filter((v) => v !== "*"),
+			),
+		];
+
+		if (!langs.length) return params;
+		return { ...params, include_image_language: langs } as T;
+	}
 }

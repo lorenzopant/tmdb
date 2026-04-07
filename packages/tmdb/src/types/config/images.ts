@@ -51,6 +51,25 @@ export type DefaultImageSizesConfig = {
 	still?: StillSize;
 };
 
+/**
+ * Per-collection language priority order used by `autocomplete_paths`.
+ *
+ * When set, image items in the matching collection array are reordered so that
+ * images whose `iso_639_1` matches earlier priority entries appear first.
+ * No items are ever dropped — only their order is affected.
+ *
+ * Special values:
+ * - `"null"` — matches untagged images (where `iso_639_1` is `null` or absent)
+ * - `"*"` — catch-all: consumes all remaining items at that position
+ *
+ * Items not matched by any entry are appended at the end.
+ *
+ * @example
+ * // Prefer textless posters → English → any fallback
+ * { posters: ["null", "en", "*"] }
+ */
+export type ImageLanguagePriorityConfig = Partial<Record<"backdrops" | "logos" | "posters" | "profiles" | "stills", string[]>>;
+
 export type ImagesConfig = {
 	/**
 	 * Whether to use the secure (HTTPS) image base URL.
@@ -70,4 +89,43 @@ export type ImagesConfig = {
 	 * where fields like `poster_path` contain the original relative TMDB path.
 	 */
 	autocomplete_paths?: boolean;
+	/**
+	 * Controls the order of image items inside collection arrays (e.g. `posters`, `backdrops`)
+	 * when `autocomplete_paths` is enabled.
+	 *
+	 * Use `"null"` to match untagged images, ISO-639-1 codes (e.g. `"en"`) to match
+	 * language-specific images, and `"*"` as a catch-all fallback.
+	 *
+	 * Items not matched by any entry are appended at the end. No items are dropped.
+	 *
+	 * @example
+	 * image_language_priority: {
+	 *   posters: ["null", "en", "*"],
+	 * }
+	 */
+	image_language_priority?: ImageLanguagePriorityConfig;
+	/**
+	 * When `true`, automatically derives `include_image_language` from the language
+	 * codes declared in `image_language_priority` and injects it into every `.images()`
+	 * request — so TMDB returns the language variants that the priority config expects
+	 * to sort.
+	 *
+	 * The injected value is the union of all language codes across all configured
+	 * collections, with `"*"` excluded (it has no meaning as an HTTP parameter).
+	 * An explicit `include_image_language` on the call site always takes precedence.
+	 *
+	 * Requires `image_language_priority` to be set; has no effect without it.
+	 *
+	 * @default false
+	 *
+	 * @example
+	 * // Config: automatically fetch Italian + textless posters on every images() call
+	 * images: {
+	 *   autocomplete_paths: true,
+	 *   image_language_priority: { posters: ["it", "null", "*"] },
+	 *   auto_include_image_language: true,
+	 * }
+	 * // Equivalent to always passing: include_image_language: ["it", "null"]
+	 */
+	auto_include_image_language?: boolean;
 };

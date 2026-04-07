@@ -61,6 +61,28 @@ describe("CollectionsAPI", () => {
 				language: "it-IT",
 			});
 		});
+
+		it("should inject include_image_language from config when auto_include_image_language is enabled", async () => {
+			collectionsAPI = new CollectionsAPI(clientMock, {
+				images: {
+					auto_include_image_language: true,
+					image_language_priority: { posters: ["null", "en", "*"] },
+				},
+			});
+			await collectionsAPI.images({ collection_id: 10 });
+			const [, params] = (clientMock.request as ReturnType<typeof vi.fn>).mock.calls[0];
+			expect(params.include_image_language).toEqual(expect.arrayContaining(["null", "en"]));
+			expect(params.include_image_language).not.toContain("*");
+		});
+
+		it("should not override explicit include_image_language", async () => {
+			collectionsAPI = new CollectionsAPI(clientMock, {
+				images: { auto_include_image_language: true, image_language_priority: { posters: ["en"] } },
+			});
+			await collectionsAPI.images({ collection_id: 10, include_image_language: ["fr", "null"] });
+			const [, params] = (clientMock.request as ReturnType<typeof vi.fn>).mock.calls[0];
+			expect(params.include_image_language).toEqual(["fr", "null"]);
+		});
 	});
 
 	describe("translations", () => {

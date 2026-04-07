@@ -56,6 +56,6 @@ export class CompaniesAPI extends TMDBAPIBase {
 	async images(params: CompanyImagesParams): Promise<CompanyImages> {
 		const { company_id, ...rest } = params;
 		const endpoint = `${this.companyPath(company_id)}${ENDPOINTS.COMPANIES.IMAGES}`;
-		return this.client.request<CompanyImages>(endpoint, this.withLanguage(rest));
+		return this.client.request<CompanyImages>(endpoint, this.injectImageLanguage(this.withLanguage(rest) ?? rest));
 	}
 }

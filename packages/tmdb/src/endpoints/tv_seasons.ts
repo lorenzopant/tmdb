@@ -140,7 +140,7 @@ export class TVSeasonsAPI extends TMDBAPIBase {
 	async images(params: TVSeasonImagesParams): Promise<TVSeasonImages> {
 		const { language = this.defaultOptions.language, include_image_language, ...rest } = params;
 		const endpoint = this.seasonSubPath(rest, ENDPOINTS.TV_SEASONS.IMAGES);
-		return this.client.request(endpoint, { language, include_image_language });
+		return this.client.request(endpoint, this.injectImageLanguage({ language, include_image_language }));
 	}
 
 	/**
