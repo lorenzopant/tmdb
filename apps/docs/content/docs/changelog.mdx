@@ -4,6 +4,33 @@ description: Latest updates and announcements
 icon: History
 ---
 
+## 🚀 1.20.0 - 7 April 2026
+
+#### ✨ New
+
+- **[Lists API (v3)](/docs/api-reference/lists)** — full CRUD for TMDB v3 lists via `tmdb.lists`: create, details, update, clear, delete, add items, remove items, and list item details endpoints all supported with full typings and pagination where applicable. Note that v3 lists are distinct from v4 lists (managed via `tmdb.v4.lists`) and have different features and limitations — refer to the [Lists API documentation](/docs/api-reference/lists) for details on each version.
+- **[Lists API (v4)](/docs/api-reference/v4/lists)** — full CRUD for TMDB v4 lists via `tmdb.v4.lists`:
+- **[Guest Sessions API](/docs/api-reference/guest-sessions)** — read rated content for a guest session via `tmdb.guest_sessions`:
+- **Opt-in auto rate limiting** — new `rate_limit` option automatically queues requests to stay within TMDB's API budget using a sliding-window algorithm. Pass `true` for defaults (~40 req / s) or a `RateLimitOptions` object for a custom budget. Applies to both read and mutation requests. Disabled by default — no behaviour change for existing consumers.
+
+```ts
+// Default limits (~40 req / s)
+const tmdb = new TMDB(token, { rate_limit: true });
+
+// Custom budget
+const tmdb = new TMDB(token, { rate_limit: { max_requests: 20, per_ms: 1_000 } });
+```
+
+Requests exceeding the budget are held in a FIFO queue and dispatched as a smooth drip — as soon as any slot frees up, the next caller proceeds. No manual batching or `sleep()` calls needed.
+
+#### 📖 Docs
+
+- New [Rate Limiting](/docs/getting-started/options/rate-limiting) guide covering: enabling with `true`, custom budgets, how the sliding-window and pacing work, interaction with deduplication, and a bulk-fetch use-case example.
+- New [v4 Lists types](/docs/types/v4-lists) page.
+- [Features](/docs/getting-started/features) and [Options](/docs/getting-started/options) pages updated with rate limiting sections.
+
+---
+
 ## 🚀 1.19.0 - 5 April 2026
 
 #### ✨ New
