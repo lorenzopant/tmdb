@@ -1,4 +1,5 @@
 import { TMDBError } from "../../errors/tmdb";
+import type { CacheOptions } from "../../utils/cache";
 import type { TMDBLoggerFn } from "../../utils/logger";
 import type { RateLimitOptions } from "../../utils/rate-limiter";
 import { CountryISO3166_1 } from "./countries";
@@ -180,4 +181,26 @@ export type TMDBOptions = {
 	 * ```
 	 */
 	rate_limit?: boolean | RateLimitOptions;
+	/**
+	 * Enables in-memory TTL-based caching for GET requests.
+	 *
+	 * - `true` — uses the default TTL of 5 minutes with no size limit.
+	 * - Pass a {@link CacheOptions} object to customize `ttl` and/or `max_size`.
+	 *
+	 * Cached responses are served immediately without hitting the network.
+	 * Entries expire lazily on access once the TTL has elapsed.
+	 * Only `GET` requests are cached; mutations are never cached.
+	 *
+	 * @default false (disabled)
+	 *
+	 * @example
+	 * ```ts
+	 * // Enable with defaults (5-minute TTL)
+	 * const tmdb = new TMDB(token, { cache: true });
+	 *
+	 * // Custom TTL and bounded size
+	 * const tmdb = new TMDB(token, { cache: { ttl: 60_000, max_size: 500 } });
+	 * ```
+	 */
+	cache?: boolean | CacheOptions;
 };

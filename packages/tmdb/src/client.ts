@@ -2,6 +2,8 @@ import { TMDBAPIErrorResponse, TMDBError } from "./errors/tmdb";
 import { ImageAPI } from "./images/images";
 import type { ImagesConfig } from "./types/config/images";
 import { TMDBLogger, TMDBLoggerFn } from "./utils/logger";
+import { ResponseCache } from "./utils/cache";
+import type { CacheOptions } from "./utils/cache";
 import { RateLimiter } from "./utils/rate-limiter";
 import type { RateLimitOptions } from "./utils/rate-limiter";
 import { isJwt } from "./utils";
@@ -29,6 +31,7 @@ export class ApiClient {
 	private onSuccessInterceptor?: ResponseSuccessInterceptor;
 	private onErrorInterceptor?: ResponseErrorInterceptor;
 	private imageApi?: ImageAPI;
+	private responseCache?: ResponseCache;
 
 	constructor(
 		accessToken: string,
@@ -39,6 +42,7 @@ export class ApiClient {
 			deduplication?: boolean;
 			images?: ImagesConfig;
 			rate_limit?: boolean | RateLimitOptions;
+			cache?: boolean | CacheOptions;
 			interceptors?: {
 				request?: RequestInterceptor | RequestInterceptor[];
 				response?: { onSuccess?: ResponseSuccessInterceptor; onError?: ResponseErrorInterceptor };
@@ -52,6 +56,10 @@ export class ApiClient {
 		if (options.rate_limit) {
 			const rlOpts = options.rate_limit === true ? {} : options.rate_limit;
 			this.rateLimiter = new RateLimiter(rlOpts);
+		}
+		if (options.cache) {
+			const cOpts = options.cache === true ? {} : options.cache;
+			this.responseCache = new ResponseCache(cOpts);
 		}
 		const raw = options.interceptors?.request;
 		this.requestInterceptors = raw == null ? [] : Array.isArray(raw) ? raw : [raw];
@@ -97,15 +105,32 @@ export class ApiClient {
 	 * `TMDBOptions.deduplication = false`.
 	 */
 	async request<T>(endpoint: string, params: Record<string, unknown | undefined> = {}): Promise<T> {
-		if (!this.deduplication) return this.execute<T>("GET", endpoint, params);
-
 		const key = this.buildRequestKey(endpoint, params);
+
+		// Cache check — short-circuit before deduplication and any network activity
+		if (this.responseCache) {
+			const cached = this.responseCache.get<T>(key);
+			if (cached !== undefined) return cached;
+		}
+
+		if (!this.deduplication) {
+			const result = await this.execute<T>("GET", endpoint, params);
+			this.responseCache?.set(key, result);
+			return result;
+		}
+
 		const existing = this.inflightRequests.get(key);
 		if (existing) return existing as Promise<T>;
 
-		const promise = this.execute<T>("GET", endpoint, params).finally(() => {
-			this.inflightRequests.delete(key);
-		});
+		const cache = this.responseCache;
+		const promise = this.execute<T>("GET", endpoint, params)
+			.then((result) => {
+				cache?.set(key, result);
+				return result;
+			})
+			.finally(() => {
+				this.inflightRequests.delete(key);
+			});
 		this.inflightRequests.set(key, promise);
 		return promise;
 	}
