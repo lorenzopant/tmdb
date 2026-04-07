@@ -34,23 +34,13 @@ import { Errors } from "./errors/messages";
 export class TMDBv4 {
 	private client: ApiClient;
 
-	/** v4 authentication — request token → access token → logout. */
 	public auth: V4AuthAPI;
-	/** v4 account — details, lists, favorites, watchlist, rated. */
 	public account: V4AccountAPI;
-	/** v4 lists — full CRUD for user-created lists. */
 	public lists: V4ListsAPI;
 
 	constructor(accessToken: string, options: TMDBOptions = {}) {
 		if (!accessToken) throw new Error(Errors.NO_ACCESS_TOKEN);
-		this.client = new ApiClient(accessToken, {
-			version: 4,
-			logger: options.logger,
-			deduplication: options.deduplication,
-			images: options.images,
-			rate_limit: options.rate_limit,
-			interceptors: options.interceptors,
-		});
+		this.client = new ApiClient(accessToken, { ...options, version: 4 });
 		this.auth = new V4AuthAPI(this.client, options);
 		this.account = new V4AccountAPI(this.client, options);
 		this.lists = new V4ListsAPI(this.client, options);

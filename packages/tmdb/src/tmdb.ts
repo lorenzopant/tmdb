@@ -80,6 +80,40 @@ export class TMDB {
 	private _v4: TMDBv4 | undefined;
 
 	/**
+	 * Response cache controls. Only available when `cache` was set in the constructor options.
+	 *
+	 * - `clear()` — remove all cached entries (e.g. after a user signs out or state resets).
+	 * - `invalidate(endpoint, params?)` — remove a single entry by endpoint + params.
+	 * - `size` — number of entries currently held in memory.
+	 *
+	 * @example
+	 * ```ts
+	 * // Invalidate now_playing after a mutation
+	 * tmdb.cache?.invalidate("/movie/now_playing");
+	 *
+	 * // Clear everything
+	 * tmdb.cache?.clear();
+	 * ```
+	 */
+	get cache():
+		| { clear(): void; invalidate(endpoint: string, params?: Record<string, unknown>): boolean; readonly size: number }
+		| undefined {
+		if (!this.options.cache) return undefined;
+		const client = this.client;
+		return {
+			clear() {
+				client.clearCache();
+			},
+			invalidate(endpoint, params) {
+				return client.invalidateCache(endpoint, params);
+			},
+			get size() {
+				return client.cacheSize;
+			},
+		};
+	}
+
+	/**
 	 * Creates a new TMDB instance.
 	 * @param accessToken The TMDB API access token.
 	 * @param options Optional default options (e.g., language) for all requests.
@@ -93,6 +127,7 @@ export class TMDB {
 			deduplication: options.deduplication,
 			images: options.images,
 			rate_limit: options.rate_limit,
+			cache: options.cache,
 			interceptors: options.interceptors,
 		});
 		this.movies = new MoviesAPI(this.client, this.options);

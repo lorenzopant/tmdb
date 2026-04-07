@@ -2,6 +2,8 @@ import { TMDBAPIErrorResponse, TMDBError } from "./errors/tmdb";
 import { ImageAPI } from "./images/images";
 import type { ImagesConfig } from "./types/config/images";
 import { TMDBLogger, TMDBLoggerFn } from "./utils/logger";
+import { ResponseCache } from "./utils/cache";
+import type { CacheOptions } from "./utils/cache";
 import { RateLimiter } from "./utils/rate-limiter";
 import type { RateLimitOptions } from "./utils/rate-limiter";
 import { isJwt } from "./utils";
@@ -29,6 +31,7 @@ export class ApiClient {
 	private onSuccessInterceptor?: ResponseSuccessInterceptor;
 	private onErrorInterceptor?: ResponseErrorInterceptor;
 	private imageApi?: ImageAPI;
+	private responseCache?: ResponseCache;
 
 	constructor(
 		accessToken: string,
@@ -39,6 +42,7 @@ export class ApiClient {
 			deduplication?: boolean;
 			images?: ImagesConfig;
 			rate_limit?: boolean | RateLimitOptions;
+			cache?: boolean | CacheOptions;
 			interceptors?: {
 				request?: RequestInterceptor | RequestInterceptor[];
 				response?: { onSuccess?: ResponseSuccessInterceptor; onError?: ResponseErrorInterceptor };
@@ -52,6 +56,10 @@ export class ApiClient {
 		if (options.rate_limit) {
 			const rlOpts = options.rate_limit === true ? {} : options.rate_limit;
 			this.rateLimiter = new RateLimiter(rlOpts);
+		}
+		if (options.cache) {
+			const cOpts = options.cache === true ? {} : options.cache;
+			this.responseCache = new ResponseCache(cOpts);
 		}
 		const raw = options.interceptors?.request;
 		this.requestInterceptors = raw == null ? [] : Array.isArray(raw) ? raw : [raw];
@@ -97,17 +105,69 @@ export class ApiClient {
 	 * `TMDBOptions.deduplication = false`.
 	 */
 	async request<T>(endpoint: string, params: Record<string, unknown | undefined> = {}): Promise<T> {
-		if (!this.deduplication) return this.execute<T>("GET", endpoint, params);
+		// Run interceptors first so the cache/dedup key is derived from the request
+		// that will actually be sent — not the raw pre-interceptor values.
+		const ctx = await this.runRequestInterceptors({
+			endpoint,
+			params: params as Record<string, unknown>,
+			method: "GET",
+		});
+		const effectiveEndpoint = ctx.endpoint;
+		const effectiveParams = ctx.params;
 
-		const key = this.buildRequestKey(endpoint, params);
+		const key = this.buildRequestKey(effectiveEndpoint, effectiveParams);
+		const cacheable = !!this.responseCache?.shouldCache(key);
+
+		// Cache check — short-circuit before deduplication and any network activity.
+		// Use has() rather than checking the value against undefined so that a cached
+		// undefined value (e.g. an endpoint that returned null, sanitised to undefined)
+		// is correctly treated as a hit.
+		if (cacheable && this.responseCache!.has(key)) return this.responseCache!.get<T>(key) as T;
+
+		if (!this.deduplication) {
+			const result = await this.execute<T>("GET", effectiveEndpoint, effectiveParams, undefined, true);
+			if (cacheable) this.responseCache!.set(key, result);
+			return result;
+		}
+
 		const existing = this.inflightRequests.get(key);
 		if (existing) return existing as Promise<T>;
 
-		const promise = this.execute<T>("GET", endpoint, params).finally(() => {
-			this.inflightRequests.delete(key);
-		});
+		const cache = cacheable ? this.responseCache : undefined;
+		const promise = this.execute<T>("GET", effectiveEndpoint, effectiveParams, undefined, true)
+			.then((result) => {
+				cache?.set(key, result);
+				return result;
+			})
+			.finally(() => {
+				this.inflightRequests.delete(key);
+			});
 		this.inflightRequests.set(key, promise);
 		return promise;
+	}
+
+	/**
+	 * Removes a single entry from the response cache.
+	 *
+	 * The key is built from `endpoint` + `params` using the same deterministic algorithm
+	 * as the cache itself, so the arguments must match exactly what was used in the original
+	 * request (including parameter values and casing).
+	 *
+	 * @returns `true` if an entry was found and removed, `false` if it was not cached.
+	 */
+	invalidateCache(endpoint: string, params: Record<string, unknown> = {}): boolean {
+		if (!this.responseCache) return false;
+		return this.responseCache.delete(this.buildRequestKey(endpoint, params));
+	}
+
+	/** Removes all entries from the response cache. */
+	clearCache(): void {
+		this.responseCache?.clear();
+	}
+
+	/** Returns the number of entries currently held in the response cache. */
+	get cacheSize(): number {
+		return this.responseCache?.size ?? 0;
 	}
 
 	/**
@@ -207,24 +267,38 @@ export class ApiClient {
 	/**
 	 * Shared fetch + response-parsing pipeline used by both `request` and `mutate`.
 	 * Handles URL construction, auth, logging, error mapping, and null sanitisation.
+	 *
+	 * When called from `request()`, interceptors have already been applied and
+	 * `endpoint`/`params` are the effective (post-interceptor) values — interceptors
+	 * are skipped. When called from `mutate()`, interceptors run here as normal.
 	 */
 	private async execute<T>(
 		method: "GET" | "POST" | "PUT" | "DELETE",
 		endpoint: string,
 		params: Record<string, unknown | undefined>,
 		body?: Record<string, unknown>,
+		/** Pass `true` when the caller has already applied request interceptors. */
+		interceptorsAlreadyApplied = false,
 	): Promise<T> {
 		// Serialise the body before acquiring a rate-limit slot so a JSON.stringify
 		// error never consumes budget without a matching network request.
 		const bodyJson = body !== undefined ? JSON.stringify(body) : undefined;
 
-		const ctx = await this.runRequestInterceptors({
-			endpoint,
-			params: params as Record<string, unknown>,
-			method,
-		});
-		const effectiveEndpoint = ctx.endpoint;
-		const effectiveParams = ctx.params;
+		let effectiveEndpoint: string;
+		let effectiveParams: Record<string, unknown>;
+
+		if (interceptorsAlreadyApplied) {
+			effectiveEndpoint = endpoint;
+			effectiveParams = params as Record<string, unknown>;
+		} else {
+			const ctx = await this.runRequestInterceptors({
+				endpoint,
+				params: params as Record<string, unknown>,
+				method,
+			});
+			effectiveEndpoint = ctx.endpoint;
+			effectiveParams = ctx.params;
+		}
 
 		const url = new URL(`${this.baseUrl}${effectiveEndpoint}`);
 		const jwt = isJwt(this.accessToken);

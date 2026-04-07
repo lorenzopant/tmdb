@@ -1,0 +1,184 @@
+---
+title: Response Caching
+description: Cache GET responses in memory with a configurable TTL to reduce redundant network requests.
+---
+
+The `cache` option enables an in-memory, TTL-based response cache. Repeated identical `GET`
+requests are served from memory without hitting the network. It is **opt-in** — disabled by
+default, with no behaviour change for existing consumers.
+
+<Callout type="info">
+	The cache is **in-process only**. It is not shared across server instances, workers, or requests
+	in SSR environments. For persistent or shared caching, use the [`response.onSuccess`
+	interceptor](/docs/getting-started/options/interceptors) to integrate with your own caching layer
+	(Redis, LRU, etc.).
+</Callout>
+
+---
+
+## Enabling the cache
+
+Pass `cache: true` to use the built-in defaults (5-minute TTL, no size limit):
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key", { cache: true });
+
+// First call — hits the network
+const movie = await tmdb.movies.details({ movie_id: 550 });
+
+// Second call — served from memory, no fetch fired
+const same = await tmdb.movies.details({ movie_id: 550 });
+```
+
+---
+
+## Custom options
+
+Pass a `CacheOptions` object to control the TTL, cap the memory footprint, or exclude specific
+endpoints from being cached:
+
+```ts
+const tmdb = new TMDB("your-api-key", {
+	cache: {
+		ttl: 60_000, // 1 minute
+		max_size: 500, // evict oldest entry when exceeded
+	},
+});
+```
+
+| Option               | Type                   | Default           | Description                                                       |
+| -------------------- | ---------------------- | ----------------- | ----------------------------------------------------------------- |
+| `ttl`                | `number`               | `300_000` (5 min) | How long each entry is valid, in milliseconds.                    |
+| `max_size`           | `number`               | unlimited         | Maximum entries in memory. Oldest is evicted when exceeded.       |
+| `excluded_endpoints` | `(string \| RegExp)[]` | `[]`              | Endpoints that should never be read from or written to the cache. |
+
+---
+
+## How it works
+
+**Cache keys** are built from the endpoint path plus the request parameters, sorted
+alphabetically so that `{ language, page }` and `{ page, language }` produce the same key:
+
+```
+/movie/now_playing?language=en-US&page=1
+```
+
+**TTL eviction** is lazy — entries are not removed on a timer. An entry is evicted only on the
+next `get()` after its TTL has elapsed. This means the memory footprint stays bounded without
+background timers.
+
+**`max_size` eviction** uses a FIFO strategy. When the store is full and a new key is inserted,
+the oldest entry (by insertion order) is removed first.
+
+**Mutations are never cached.** `POST`, `PUT`, and `DELETE` requests always bypass the cache.
+
+---
+
+## Excluding specific endpoints
+
+Use `excluded_endpoints` to permanently opt certain endpoints out of caching, even when the
+global `cache` option is enabled:
+
+- A `string` is matched against the **start** of the cache key (`key.startsWith(pattern)`).
+- A `RegExp` is tested against the **full** cache key (`pattern.test(key)`).
+
+```ts
+const tmdb = new TMDB("your-api-key", {
+	cache: {
+		ttl: 300_000,
+		excluded_endpoints: [
+			"/trending", // never cache any /trending/* endpoint
+			/\/discover\//, // never cache discover queries
+		],
+	},
+});
+
+// These will always go to the network
+await tmdb.trending.movie({ time_window: "day" });
+await tmdb.discover.movie({ sort_by: "popularity.desc" });
+
+// This is still cached normally
+await tmdb.movies.details({ movie_id: 550 });
+```
+
+---
+
+## Invalidating the cache
+
+Use `tmdb.cache` to control the cache at runtime. The getter returns `undefined` when caching is
+disabled, so the natural usage is optional chaining (`?.`).
+
+### Invalidate a single entry
+
+```ts
+// After a mutation — force the next read to re-fetch
+tmdb.cache?.invalidate("/movie/now_playing");
+
+// With params — must match the exact values passed to the original request
+tmdb.cache?.invalidate("/movie/now_playing", { language: "en-US", page: 1 });
+```
+
+`invalidate()` returns `true` if an entry was found and removed, `false` otherwise.
+
+### Clear everything
+
+```ts
+// Wipe the entire cache — useful on sign-out or full state reset
+tmdb.cache?.clear();
+```
+
+### Inspect the size
+
+```ts
+console.log(`${tmdb.cache?.size} entries cached`);
+```
+
+---
+
+## Combining with deduplication
+
+Caching and [request deduplication](/docs/getting-started/features#request-deduplication) work
+together. The cache check runs **before** the deduplication layer:
+
+1. If the response is in the cache → return immediately, no in-flight lookup needed.
+2. If not cached and deduplication is enabled → concurrent callers share one in-flight fetch; the
+   result is written to the cache when it resolves.
+3. If not cached and deduplication is disabled → each caller fetches independently; each result is
+   written to the cache.
+
+```ts
+const tmdb = new TMDB("your-api-key", {
+	cache: { ttl: 60_000 },
+	// deduplication is true by default
+});
+
+// First call — fetches once (deduplication collapses concurrent siblings)
+const [a, b] = await Promise.all([
+	tmdb.movies.details({ movie_id: 550 }),
+	tmdb.movies.details({ movie_id: 550 }),
+]);
+
+// Subsequent calls — served from cache, zero network activity
+const c = await tmdb.movies.details({ movie_id: 550 });
+```
+
+---
+
+## Typical use cases
+
+| Scenario                                  | Recommended config                                  |
+| ----------------------------------------- | --------------------------------------------------- |
+| SSR page that re-renders on every request | `cache: true` with a short TTL (e.g. `60_000`)      |
+| Client-side SPA with infrequent updates   | `cache: true` with the default 5-minute TTL         |
+| Bulk data script with stable references   | `cache: true`, exclude volatile endpoints           |
+| Highly dynamic data (trending, discover)  | `excluded_endpoints: ["/trending", /\/discover\//]` |
+
+<Callout>
+	For shared or cross-process caching in Node.js servers, use the [`response.onSuccess`
+	interceptor](/docs/getting-started/options/interceptors) to write responses to an external store
+	(Redis, Memcached, etc.) and the [`request`
+	interceptor](/docs/getting-started/options/interceptors) to read from it before the request is
+	dispatched.
+</Callout>

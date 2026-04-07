@@ -292,3 +292,54 @@ The limiter applies to both read and mutation requests.
 </Callout>
 
 See the [Rate Limiting guide](/docs/getting-started/options/rate-limiting) for full details.
+
+---
+
+## Response Caching
+
+The client includes an opt-in in-memory response cache. Repeated identical `GET` requests are
+served from memory without hitting the network — useful for SSR pages that re-render frequently
+or client-side apps with stable reference data.
+
+```ts
+// Enable with defaults (5-minute TTL, no size limit)
+const tmdb = new TMDB(apiKey, { cache: true });
+
+// Custom TTL and bounded memory
+const tmdb = new TMDB(apiKey, { cache: { ttl: 60_000, max_size: 500 } });
+```
+
+Cache keys are derived from the endpoint path and parameters (sorted). Entries expire lazily on
+the next access after their TTL has elapsed — no background timers. Mutations are never cached.
+
+### Invalidation
+
+Use `tmdb.cache` to clear or invalidate entries at runtime:
+
+```ts
+// Remove one entry after a mutation
+tmdb.cache?.invalidate("/movie/now_playing", { language: "en-US" });
+
+// Wipe everything — e.g. on sign-out
+tmdb.cache?.clear();
+```
+
+### Excluding endpoints
+
+Certain endpoints can be permanently opted out even while the global cache is enabled:
+
+```ts
+const tmdb = new TMDB(apiKey, {
+	cache: {
+		excluded_endpoints: ["/trending", /\/discover\//],
+	},
+});
+```
+
+<Callout>
+	Response caching is **disabled by default**. The cache is in-process only — not shared across
+	server instances or SSR requests. For persistent caching use the [`response.onSuccess`
+	interceptor](/docs/getting-started/options/interceptors) to integrate with an external store.
+</Callout>
+
+See the [Response Caching guide](/docs/getting-started/options/cache) for full details.
