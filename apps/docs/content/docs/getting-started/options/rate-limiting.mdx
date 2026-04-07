@@ -58,11 +58,24 @@ The limiter uses a **sliding-window** algorithm:
 1. Before each request is dispatched, the limiter records a timestamp and checks how many
    requests have been made in the last `per_ms` milliseconds.
 2. If fewer than `max_requests` are recorded, the request proceeds immediately.
-3. If the budget is full, the request waits until the oldest timestamp exits the window, then
-   proceeds.
+3. If the budget is full, the request waits until the **oldest** timestamp exits the window, then
+   proceeds — not until the entire window resets.
 
 All queued callers are released in the order they arrived (FIFO). The limiter applies to **both
 read (`GET`) and mutation (`POST` / `PUT` / `DELETE`) requests** uniformly.
+
+### Pacing, not batching
+
+Requests are dispatched as a **smooth drip**, not as batches. With the defaults (`40 req / 1 s`)
+and 100 concurrent callers:
+
+- Calls 1–40 are released immediately, each stamped with the current time.
+- Call 41 waits only until the **oldest** of the first 40 timestamps is ≥ 1 s old — the minimum
+  possible delay — and is then released.
+- Calls 42–100 each follow the same logic in turn.
+
+This means the limiter never holds back a request longer than necessary. As soon as any slot in
+the window frees up, the next queued caller proceeds.
 
 ---
 
