@@ -307,5 +307,33 @@ describe("ResponseCache", () => {
 			cache.set("/trending/movie/day", { results: [] }); // manual set — client would skip this
 			expect(cache.size).toBe(1); // stored, but shouldCache correctly said "no"
 		});
+
+		it("normalizes global RegExp flag to prevent lastIndex mutation flakiness", () => {
+			// /g flag causes lastIndex to advance on each .test(), making every other call
+			// return a different result. The cache must strip the flag so results are stable.
+			const globalPattern = /\/discover\//g;
+			const cache = new ResponseCache({ ttl: 1_000, excluded_endpoints: [globalPattern] });
+
+			// All calls must consistently return false (excluded) regardless of call count.
+			for (let i = 0; i < 6; i++) {
+				expect(cache.shouldCache("/discover/movie")).toBe(false);
+			}
+		});
+
+		it("normalizes sticky RegExp flag for the same reason", () => {
+			const stickyPattern = /^\/trending/y;
+			const cache = new ResponseCache({ ttl: 1_000, excluded_endpoints: [stickyPattern] });
+
+			for (let i = 0; i < 6; i++) {
+				expect(cache.shouldCache("/trending/movie/day")).toBe(false);
+			}
+		});
+
+		it("does not alter RegExp patterns that have no global or sticky flags", () => {
+			const pattern = /\/movie\//i;
+			const cache = new ResponseCache({ ttl: 1_000, excluded_endpoints: [pattern] });
+			expect(cache.shouldCache("/movie/550")).toBe(false);
+			expect(cache.shouldCache("/tv/1396")).toBe(true);
+		});
 	});
 });

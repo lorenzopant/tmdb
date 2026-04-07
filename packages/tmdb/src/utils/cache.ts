@@ -17,6 +17,10 @@ export type CacheOptions = {
 	 * - A `string` is matched with `key.startsWith(pattern)`.
 	 * - A `RegExp` is tested with `pattern.test(key)`.
 	 *
+	 * `RegExp` patterns with the global (`g`) or sticky (`y`) flag are automatically
+	 * normalized by stripping those flags. Stateful `lastIndex` mutations would otherwise
+	 * cause flaky cache behaviour across repeated calls.
+	 *
 	 * @example
 	 * ```ts
 	 * // Never cache trending or any discover endpoint
@@ -61,7 +65,14 @@ export class ResponseCache {
 		}
 		this.ttl = ttl;
 		this.maxSize = options.max_size;
-		this.excludedEndpoints = options.excluded_endpoints ?? [];
+		// Strip global/sticky flags from RegExp patterns so repeated .test() calls
+		// never mutate lastIndex and produce inconsistent results.
+		this.excludedEndpoints = (options.excluded_endpoints ?? []).map((pattern) => {
+			if (typeof pattern !== "string" && /[gy]/.test(pattern.flags)) {
+				return new RegExp(pattern.source, pattern.flags.replace(/[gy]/g, ""));
+			}
+			return pattern;
+		});
 	}
 
 	/**
