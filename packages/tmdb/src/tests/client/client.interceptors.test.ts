@@ -26,8 +26,7 @@ const makeResponse = (body: unknown = { id: 1 }): MockResponse => ({
 });
 
 // Hardcoded mock JWT — fetch is fully mocked, so a real token is not needed
-const token =
-	"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0IiwiaWF0IjoxNjAwMDAwMDAwfQ.signature";
+const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0IiwiaWF0IjoxNjAwMDAwMDAwfQ.signature";
 
 describe("ApiClient request interceptors", () => {
 	const originalFetch = globalThis.fetch;
@@ -87,9 +86,7 @@ describe("ApiClient request interceptors", () => {
 
 		await client.request("/movie/1", { language: "en-US" });
 
-		const calledUrl = new URL(
-			(globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls[0][0] as string,
-		);
+		const calledUrl = new URL((globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls[0][0] as string);
 		expect(calledUrl.searchParams.get("language")).toBe("fr-FR");
 	});
 
@@ -102,9 +99,7 @@ describe("ApiClient request interceptors", () => {
 
 		await client.request("/movie/1");
 
-		const calledUrl = new URL(
-			(globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls[0][0] as string,
-		);
+		const calledUrl = new URL((globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls[0][0] as string);
 		expect(calledUrl.pathname).toBe("/3/movie/999");
 	});
 
@@ -120,9 +115,7 @@ describe("ApiClient request interceptors", () => {
 
 		await client.request("/movie/1", {});
 
-		const calledUrl = new URL(
-			(globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls[0][0] as string,
-		);
+		const calledUrl = new URL((globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls[0][0] as string);
 		expect(calledUrl.searchParams.get("include_adult")).toBe("false");
 		expect(calledUrl.searchParams.get("language")).toBe("de-DE");
 	});
@@ -147,9 +140,7 @@ describe("ApiClient request interceptors", () => {
 
 		await client.request("/movie/1", { language: "en-US" });
 
-		const calledUrl = new URL(
-			(globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls[0][0] as string,
-		);
+		const calledUrl = new URL((globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls[0][0] as string);
 		expect(calledUrl.pathname).toBe("/3/movie/1");
 		expect(calledUrl.searchParams.get("language")).toBe("en-US");
 	});
@@ -160,5 +151,110 @@ describe("ApiClient request interceptors", () => {
 		await client.request("/movie/1", { language: "en-US" });
 
 		expect(globalThis.fetch).toHaveBeenCalledOnce();
+	});
+
+	// -------------------------------------------------------------------------
+	// Interceptors × deduplication
+	// -------------------------------------------------------------------------
+
+	it("deduplication key is based on post-interceptor endpoint so rewritten endpoints are deduplicated correctly", async () => {
+		// Interceptor rewrites /movie/1 → /movie/999.
+		// Two concurrent calls with the same original endpoint + same rewritten target
+		// should share one in-flight fetch.
+		let resolveJson!: (v: unknown) => void;
+		const jsonPromise = new Promise((resolve) => {
+			resolveJson = resolve;
+		});
+		const response: MockResponse = {
+			ok: true,
+			status: 200,
+			statusText: "OK",
+			url: "https://api.themoviedb.org/3/movie/999",
+			headers: makeHeaders({}),
+			json: () => jsonPromise,
+		};
+		(globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(response);
+
+		const client = new ApiClient(token, {
+			interceptors: { request: (ctx) => ({ ...ctx, endpoint: "/movie/999" }) },
+		});
+
+		const [r1, r2] = await Promise.all([
+			client.request("/movie/1"),
+			client.request("/movie/1"),
+			(async () => {
+				resolveJson({ id: 999 });
+			})(),
+		]).then(([a, b]) => [a, b]);
+
+		// Both callers resolved; only one fetch fired because the rewritten endpoint
+		// is the same and dedup works on the effective key.
+		expect(globalThis.fetch).toHaveBeenCalledTimes(1);
+		expect(r1).toEqual({ id: 999 });
+		expect(r2).toEqual({ id: 999 });
+	});
+
+	it("deduplication does not collapse requests that interceptors route to different endpoints", async () => {
+		let counter = 0;
+		// Interceptor routes each call to a unique endpoint based on a closure counter.
+		const client = new ApiClient(token, {
+			interceptors: { request: (ctx) => ({ ...ctx, endpoint: `/movie/${++counter}` }) },
+		});
+
+		(globalThis.fetch as ReturnType<typeof vi.fn>)
+			.mockResolvedValueOnce(makeResponse({ id: 1 }))
+			.mockResolvedValueOnce(makeResponse({ id: 2 }));
+
+		const [r1, r2] = await Promise.all([client.request("/movie/X"), client.request("/movie/X")]);
+
+		// Interceptor produced two different effective endpoints → two fetches.
+		expect(globalThis.fetch).toHaveBeenCalledTimes(2);
+		expect(r1).toEqual({ id: 1 });
+		expect(r2).toEqual({ id: 2 });
+	});
+
+	// -------------------------------------------------------------------------
+	// Interceptors × cache
+	// -------------------------------------------------------------------------
+
+	it("cache is keyed on post-interceptor endpoint so rewritten requests hit the cache correctly", async () => {
+		// Interceptor appends include_adult=false to every request.
+		// The cache key must include that param — a plain /movie/1 lookup must not
+		// hit the same entry as /movie/1?include_adult=false.
+		const client = new ApiClient(token, {
+			cache: { ttl: 60_000 },
+			deduplication: false,
+			interceptors: {
+				request: (ctx) => ({ ...ctx, params: { ...ctx.params, include_adult: false } }),
+			},
+		});
+
+		(globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(makeResponse({ id: 550 }));
+
+		await client.request("/movie/550");
+		// Second call should be served from cache (same effective endpoint+params).
+		await client.request("/movie/550");
+
+		expect(globalThis.fetch).toHaveBeenCalledTimes(1);
+	});
+
+	it("interceptors run exactly once per request() call even when cache is enabled", async () => {
+		const interceptor = vi.fn((ctx: RequestInterceptorContext) => ctx);
+		const client = new ApiClient(token, {
+			cache: { ttl: 60_000 },
+			deduplication: false,
+			interceptors: { request: interceptor },
+		});
+
+		(globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce(makeResponse({ id: 1 }));
+
+		// First call — interceptor runs once, fetch fires.
+		await client.request("/movie/1");
+		// Second call — served from cache, but interceptor should still run to derive the key.
+		await client.request("/movie/1");
+
+		// fetch fired once (second was cached), interceptor ran twice (once per call).
+		expect(globalThis.fetch).toHaveBeenCalledTimes(1);
+		expect(interceptor).toHaveBeenCalledTimes(2);
 	});
 });

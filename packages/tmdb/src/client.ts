@@ -105,7 +105,17 @@ export class ApiClient {
 	 * `TMDBOptions.deduplication = false`.
 	 */
 	async request<T>(endpoint: string, params: Record<string, unknown | undefined> = {}): Promise<T> {
-		const key = this.buildRequestKey(endpoint, params);
+		// Run interceptors first so the cache/dedup key is derived from the request
+		// that will actually be sent — not the raw pre-interceptor values.
+		const ctx = await this.runRequestInterceptors({
+			endpoint,
+			params: params as Record<string, unknown>,
+			method: "GET",
+		});
+		const effectiveEndpoint = ctx.endpoint;
+		const effectiveParams = ctx.params;
+
+		const key = this.buildRequestKey(effectiveEndpoint, effectiveParams);
 		const cacheable = !!this.responseCache?.shouldCache(key);
 
 		// Cache check — short-circuit before deduplication and any network activity
@@ -115,7 +125,7 @@ export class ApiClient {
 		}
 
 		if (!this.deduplication) {
-			const result = await this.execute<T>("GET", endpoint, params);
+			const result = await this.execute<T>("GET", effectiveEndpoint, effectiveParams, undefined, true);
 			if (cacheable) this.responseCache!.set(key, result);
 			return result;
 		}
@@ -124,7 +134,7 @@ export class ApiClient {
 		if (existing) return existing as Promise<T>;
 
 		const cache = cacheable ? this.responseCache : undefined;
-		const promise = this.execute<T>("GET", endpoint, params)
+		const promise = this.execute<T>("GET", effectiveEndpoint, effectiveParams, undefined, true)
 			.then((result) => {
 				cache?.set(key, result);
 				return result;
@@ -257,24 +267,38 @@ export class ApiClient {
 	/**
 	 * Shared fetch + response-parsing pipeline used by both `request` and `mutate`.
 	 * Handles URL construction, auth, logging, error mapping, and null sanitisation.
+	 *
+	 * When called from `request()`, interceptors have already been applied and
+	 * `endpoint`/`params` are the effective (post-interceptor) values — interceptors
+	 * are skipped. When called from `mutate()`, interceptors run here as normal.
 	 */
 	private async execute<T>(
 		method: "GET" | "POST" | "PUT" | "DELETE",
 		endpoint: string,
 		params: Record<string, unknown | undefined>,
 		body?: Record<string, unknown>,
+		/** Pass `true` when the caller has already applied request interceptors. */
+		interceptorsAlreadyApplied = false,
 	): Promise<T> {
 		// Serialise the body before acquiring a rate-limit slot so a JSON.stringify
 		// error never consumes budget without a matching network request.
 		const bodyJson = body !== undefined ? JSON.stringify(body) : undefined;
 
-		const ctx = await this.runRequestInterceptors({
-			endpoint,
-			params: params as Record<string, unknown>,
-			method,
-		});
-		const effectiveEndpoint = ctx.endpoint;
-		const effectiveParams = ctx.params;
+		let effectiveEndpoint: string;
+		let effectiveParams: Record<string, unknown>;
+
+		if (interceptorsAlreadyApplied) {
+			effectiveEndpoint = endpoint;
+			effectiveParams = params as Record<string, unknown>;
+		} else {
+			const ctx = await this.runRequestInterceptors({
+				endpoint,
+				params: params as Record<string, unknown>,
+				method,
+			});
+			effectiveEndpoint = ctx.endpoint;
+			effectiveParams = ctx.params;
+		}
 
 		const url = new URL(`${this.baseUrl}${effectiveEndpoint}`);
 		const jwt = isJwt(this.accessToken);
