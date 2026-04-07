@@ -113,6 +113,52 @@ describe("ResponseCache", () => {
 			expect(cache.get("bool")).toBe(true);
 			expect(cache.get("nil")).toBeNull();
 		});
+
+		it("returns undefined for a key whose stored value is undefined", () => {
+			const cache = new ResponseCache({ ttl: 1_000 });
+			cache.set("k", undefined);
+			// get() returns undefined — use has() to distinguish hit from miss
+			expect(cache.get("k")).toBeUndefined();
+		});
+	});
+
+	// -------------------------------------------------------------------------
+	// has
+	// -------------------------------------------------------------------------
+
+	describe("has", () => {
+		it("returns false for a missing key", () => {
+			const cache = new ResponseCache({ ttl: 1_000 });
+			expect(cache.has("missing")).toBe(false);
+		});
+
+		it("returns true for a present, non-expired key", () => {
+			const cache = new ResponseCache({ ttl: 1_000 });
+			cache.set("k", { id: 1 });
+			expect(cache.has("k")).toBe(true);
+		});
+
+		it("returns false and evicts the entry after the TTL expires", () => {
+			const cache = new ResponseCache({ ttl: 1_000 });
+			cache.set("k", { id: 1 });
+			vi.advanceTimersByTime(1_001);
+			expect(cache.has("k")).toBe(false);
+			expect(cache.size).toBe(0);
+		});
+
+		it("returns true when the stored value is undefined (distinguishes hit from miss)", () => {
+			const cache = new ResponseCache({ ttl: 1_000 });
+			cache.set("k", undefined);
+			expect(cache.has("k")).toBe(true);
+			expect(cache.get("k")).toBeUndefined();
+		});
+
+		it("returns true at the TTL boundary (not yet expired)", () => {
+			const cache = new ResponseCache({ ttl: 1_000 });
+			cache.set("k", "v");
+			vi.advanceTimersByTime(1_000);
+			expect(cache.has("k")).toBe(true);
+		});
 	});
 
 	describe("set", () => {

@@ -86,6 +86,8 @@ export class ResponseCache {
 	/**
 	 * Returns the cached value for `key`, or `undefined` if absent or expired.
 	 * Expired entries are evicted on access.
+	 *
+	 * Use {@link has} to distinguish a cached `undefined` value from a cache miss.
 	 */
 	get<T>(key: string): T | undefined {
 		const entry = this.store.get(key);
@@ -95,6 +97,22 @@ export class ResponseCache {
 			return undefined;
 		}
 		return entry.value as T;
+	}
+
+	/**
+	 * Returns `true` when a non-expired entry exists for `key`.
+	 * Expired entries are evicted on access, just like {@link get}.
+	 *
+	 * Use this as the hit/miss signal when the cached value may itself be `undefined`.
+	 */
+	has(key: string): boolean {
+		const entry = this.store.get(key);
+		if (!entry) return false;
+		if (Date.now() > entry.expiresAt) {
+			this.store.delete(key);
+			return false;
+		}
+		return true;
 	}
 
 	/**

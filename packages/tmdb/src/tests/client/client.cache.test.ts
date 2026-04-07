@@ -173,6 +173,23 @@ describe("ApiClient response caching", () => {
 		expect(globalThis.fetch).toHaveBeenCalledTimes(1);
 	});
 
+	it("serves a cached undefined value as a hit (does not re-fetch)", async () => {
+		// sanitizeNulls() converts top-level null → undefined, so an endpoint that
+		// returns null would be stored as undefined. The client must use has() not a
+		// value-against-undefined check so these are treated as cache hits.
+		const client = new ApiClient(token, { cache: { ttl: 60_000 }, deduplication: false });
+
+		(globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce(makeResponse(null));
+
+		const r1 = await client.request("/movie/550");
+		const r2 = await client.request("/movie/550");
+
+		expect(globalThis.fetch).toHaveBeenCalledTimes(1);
+		// null is sanitised to undefined by sanitizeNulls()
+		expect(r1).toBeUndefined();
+		expect(r2).toBeUndefined();
+	});
+
 	// -------------------------------------------------------------------------
 	// excluded_endpoints
 	// -------------------------------------------------------------------------

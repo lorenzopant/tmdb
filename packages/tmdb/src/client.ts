@@ -118,11 +118,11 @@ export class ApiClient {
 		const key = this.buildRequestKey(effectiveEndpoint, effectiveParams);
 		const cacheable = !!this.responseCache?.shouldCache(key);
 
-		// Cache check — short-circuit before deduplication and any network activity
-		if (cacheable) {
-			const cached = this.responseCache!.get<T>(key);
-			if (cached !== undefined) return cached;
-		}
+		// Cache check — short-circuit before deduplication and any network activity.
+		// Use has() rather than checking the value against undefined so that a cached
+		// undefined value (e.g. an endpoint that returned null, sanitised to undefined)
+		// is correctly treated as a hit.
+		if (cacheable && this.responseCache!.has(key)) return this.responseCache!.get<T>(key) as T;
 
 		if (!this.deduplication) {
 			const result = await this.execute<T>("GET", effectiveEndpoint, effectiveParams, undefined, true);
