@@ -1,5 +1,6 @@
 import { TMDBError } from "../../errors/tmdb";
 import type { TMDBLoggerFn } from "../../utils/logger";
+import type { RateLimitOptions } from "../../utils/rate-limiter";
 import { CountryISO3166_1 } from "./countries";
 import { ImagesConfig } from "./images";
 import { Language } from "./languages";
@@ -62,9 +63,7 @@ export type RequestInterceptor = (
  * });
  * ```
  */
-export type ResponseSuccessInterceptor = (
-	data: unknown,
-) => unknown | void | Promise<unknown | void>;
+export type ResponseSuccessInterceptor = (data: unknown) => unknown | void | Promise<unknown | void>;
 
 /**
  * Called after a TMDB API error has been normalised into a {@link TMDBError}.
@@ -160,4 +159,25 @@ export type TMDBOptions = {
 			onError?: ResponseErrorInterceptor;
 		};
 	};
+	/**
+	 * When enabled, outgoing requests are queued to stay within TMDB's API rate limits.
+	 *
+	 * - `true` — uses the default limits (approximately 40 requests per second).
+	 * - Pass a {@link RateLimitOptions} object to customize `max_requests` and/or `per_ms`.
+	 *
+	 * Requests that exceed the budget are held in a FIFO queue and dispatched as
+	 * slots become available. This is especially useful for bulk data-fetching scripts.
+	 *
+	 * @default false (disabled)
+	 *
+	 * @example
+	 * ```ts
+	 * // Enable with defaults (~40 req / s)
+	 * const tmdb = new TMDB(token, { rate_limit: true });
+	 *
+	 * // Custom budget
+	 * const tmdb = new TMDB(token, { rate_limit: { max_requests: 30, per_ms: 1_000 } });
+	 * ```
+	 */
+	rate_limit?: boolean | RateLimitOptions;
 };

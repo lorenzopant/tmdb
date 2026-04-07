@@ -92,6 +92,7 @@ export class TMDB {
 			logger: options.logger,
 			deduplication: options.deduplication,
 			images: options.images,
+			rate_limit: options.rate_limit,
 			interceptors: options.interceptors,
 		});
 		this.movies = new MoviesAPI(this.client, this.options);

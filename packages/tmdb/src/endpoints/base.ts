@@ -13,6 +13,7 @@ export abstract class TMDBAPIBase {
 			this.client = new ApiClient(accessTokenOrClient, {
 				logger: defaultOptions.logger,
 				deduplication: defaultOptions.deduplication,
+				rate_limit: defaultOptions.rate_limit,
 				interceptors: defaultOptions.interceptors,
 			});
 		} else if (accessTokenOrClient instanceof ApiClient) {
