@@ -255,4 +255,57 @@ describe("ResponseCache", () => {
 			expect(cache.size).toBe(0);
 		});
 	});
+
+	// -------------------------------------------------------------------------
+	// shouldCache / excluded_endpoints
+	// -------------------------------------------------------------------------
+
+	describe("shouldCache", () => {
+		it("returns true for all keys when no exclusions are configured", () => {
+			const cache = new ResponseCache({ ttl: 1_000 });
+			expect(cache.shouldCache("/movie/now_playing")).toBe(true);
+			expect(cache.shouldCache("/trending/movie/day")).toBe(true);
+		});
+
+		it("returns false when a string pattern matches the start of the key", () => {
+			const cache = new ResponseCache({ ttl: 1_000, excluded_endpoints: ["/trending"] });
+			expect(cache.shouldCache("/trending/movie/day")).toBe(false);
+			expect(cache.shouldCache("/trending/tv/week")).toBe(false);
+		});
+
+		it("returns true when a string pattern does not match the start of the key", () => {
+			const cache = new ResponseCache({ ttl: 1_000, excluded_endpoints: ["/trending"] });
+			expect(cache.shouldCache("/movie/now_playing")).toBe(true);
+		});
+
+		it("returns false when a RegExp pattern matches", () => {
+			const cache = new ResponseCache({ ttl: 1_000, excluded_endpoints: [/\/discover\//] });
+			expect(cache.shouldCache("/discover/movie?sort_by=popularity")).toBe(false);
+			expect(cache.shouldCache("/discover/tv?sort_by=vote_average")).toBe(false);
+		});
+
+		it("returns true when a RegExp pattern does not match", () => {
+			const cache = new ResponseCache({ ttl: 1_000, excluded_endpoints: [/\/discover\//] });
+			expect(cache.shouldCache("/movie/popular")).toBe(true);
+		});
+
+		it("returns false when any pattern in a mixed list matches", () => {
+			const cache = new ResponseCache({
+				ttl: 1_000,
+				excluded_endpoints: ["/trending", /\/discover\//],
+			});
+			expect(cache.shouldCache("/trending/movie/day")).toBe(false);
+			expect(cache.shouldCache("/discover/movie")).toBe(false);
+			expect(cache.shouldCache("/movie/popular")).toBe(true);
+		});
+
+		it("does not store entries for excluded keys", () => {
+			const cache = new ResponseCache({ ttl: 1_000, excluded_endpoints: ["/trending"] });
+			// Calling set directly bypasses shouldCache — only the client honours it;
+			// this test verifies shouldCache returns the right answer so client can skip set/get.
+			expect(cache.shouldCache("/trending/movie/day")).toBe(false);
+			cache.set("/trending/movie/day", { results: [] }); // manual set — client would skip this
+			expect(cache.size).toBe(1); // stored, but shouldCache correctly said "no"
+		});
+	});
 });

@@ -172,4 +172,112 @@ describe("ApiClient response caching", () => {
 
 		expect(globalThis.fetch).toHaveBeenCalledTimes(1);
 	});
+
+	// -------------------------------------------------------------------------
+	// excluded_endpoints
+	// -------------------------------------------------------------------------
+
+	it("never caches requests matching an excluded string prefix", async () => {
+		const client = new ApiClient(token, {
+			cache: { ttl: 60_000, excluded_endpoints: ["/trending"] },
+			deduplication: false,
+		});
+
+		(globalThis.fetch as ReturnType<typeof vi.fn>)
+			.mockResolvedValueOnce(makeResponse({ results: [1] }))
+			.mockResolvedValueOnce(makeResponse({ results: [2] }));
+
+		await client.request("/trending/movie/day");
+		await client.request("/trending/movie/day");
+
+		expect(globalThis.fetch).toHaveBeenCalledTimes(2);
+	});
+
+	it("still caches non-excluded endpoints when exclusions are configured", async () => {
+		const client = new ApiClient(token, {
+			cache: { ttl: 60_000, excluded_endpoints: ["/trending"] },
+			deduplication: false,
+		});
+
+		(globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce(makeResponse({ id: 550 }));
+
+		await client.request("/movie/550");
+		await client.request("/movie/550");
+
+		expect(globalThis.fetch).toHaveBeenCalledTimes(1);
+	});
+
+	it("never caches requests matching an excluded RegExp", async () => {
+		const client = new ApiClient(token, {
+			cache: { ttl: 60_000, excluded_endpoints: [/\/discover\//] },
+			deduplication: false,
+		});
+
+		(globalThis.fetch as ReturnType<typeof vi.fn>)
+			.mockResolvedValueOnce(makeResponse({ results: [] }))
+			.mockResolvedValueOnce(makeResponse({ results: [] }));
+
+		await client.request("/discover/movie", { sort_by: "popularity.desc" });
+		await client.request("/discover/movie", { sort_by: "popularity.desc" });
+
+		expect(globalThis.fetch).toHaveBeenCalledTimes(2);
+	});
+
+	// -------------------------------------------------------------------------
+	// invalidateCache / clearCache / cacheSize
+	// -------------------------------------------------------------------------
+
+	it("invalidateCache removes the entry so the next request fetches fresh data", async () => {
+		const client = new ApiClient(token, { cache: { ttl: 60_000 }, deduplication: false });
+
+		(globalThis.fetch as ReturnType<typeof vi.fn>)
+			.mockResolvedValueOnce(makeResponse({ id: 550, v: 1 }))
+			.mockResolvedValueOnce(makeResponse({ id: 550, v: 2 }));
+
+		await client.request("/movie/550", { language: "en-US" });
+		client.invalidateCache("/movie/550", { language: "en-US" });
+		const r = await client.request("/movie/550", { language: "en-US" });
+
+		expect(globalThis.fetch).toHaveBeenCalledTimes(2);
+		expect(r).toEqual({ id: 550, v: 2 });
+	});
+
+	it("invalidateCache returns false when the entry is not in the cache", async () => {
+		const client = new ApiClient(token, { cache: { ttl: 60_000 }, deduplication: false });
+		expect(client.invalidateCache("/movie/999")).toBe(false);
+	});
+
+	it("invalidateCache returns false when cache is not enabled", async () => {
+		const client = new ApiClient(token, { deduplication: false });
+		expect(client.invalidateCache("/movie/550")).toBe(false);
+	});
+
+	it("clearCache removes all entries so subsequent requests re-fetch", async () => {
+		const client = new ApiClient(token, { cache: { ttl: 60_000 }, deduplication: false });
+
+		(globalThis.fetch as ReturnType<typeof vi.fn>)
+			.mockResolvedValueOnce(makeResponse({ id: 1 }))
+			.mockResolvedValueOnce(makeResponse({ id: 2 }))
+			.mockResolvedValueOnce(makeResponse({ id: 1, fresh: true }))
+			.mockResolvedValueOnce(makeResponse({ id: 2, fresh: true }));
+
+		await client.request("/movie/1");
+		await client.request("/movie/2");
+		expect(client.cacheSize).toBe(2);
+
+		client.clearCache();
+		expect(client.cacheSize).toBe(0);
+
+		const r1 = await client.request("/movie/1");
+		const r2 = await client.request("/movie/2");
+
+		expect(globalThis.fetch).toHaveBeenCalledTimes(4);
+		expect(r1).toEqual({ id: 1, fresh: true });
+		expect(r2).toEqual({ id: 2, fresh: true });
+	});
+
+	it("cacheSize returns 0 when cache is not enabled", () => {
+		const client = new ApiClient(token);
+		expect(client.cacheSize).toBe(0);
+	});
 });

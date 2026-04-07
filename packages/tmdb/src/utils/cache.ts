@@ -10,6 +10,24 @@ export type CacheOptions = {
 	 * Defaults to unlimited.
 	 */
 	max_size?: number;
+	/**
+	 * Endpoints that should never be cached.
+	 *
+	 * Each pattern is matched against the full cache key (`endpoint?param=value&…`).
+	 * - A `string` is matched with `key.startsWith(pattern)`.
+	 * - A `RegExp` is tested with `pattern.test(key)`.
+	 *
+	 * @example
+	 * ```ts
+	 * // Never cache trending or any discover endpoint
+	 * const tmdb = new TMDB(token, {
+	 *   cache: {
+	 *     excluded_endpoints: ["/trending", /\/discover\//],
+	 *   },
+	 * });
+	 * ```
+	 */
+	excluded_endpoints?: (string | RegExp)[];
 };
 
 type CacheEntry = {
@@ -28,6 +46,7 @@ type CacheEntry = {
 export class ResponseCache {
 	private readonly ttl: number;
 	private readonly maxSize: number | undefined;
+	private readonly excludedEndpoints: (string | RegExp)[];
 	private store: Map<string, CacheEntry> = new Map();
 
 	constructor(options: CacheOptions = {}) {
@@ -42,6 +61,15 @@ export class ResponseCache {
 		}
 		this.ttl = ttl;
 		this.maxSize = options.max_size;
+		this.excludedEndpoints = options.excluded_endpoints ?? [];
+	}
+
+	/**
+	 * Returns `true` when the given cache key should be cached.
+	 * A key is excluded when it matches any pattern in `excluded_endpoints`.
+	 */
+	shouldCache(key: string): boolean {
+		return !this.excludedEndpoints.some((pattern) => (typeof pattern === "string" ? key.startsWith(pattern) : pattern.test(key)));
 	}
 
 	/**

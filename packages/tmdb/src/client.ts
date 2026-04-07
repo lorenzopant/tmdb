@@ -106,23 +106,24 @@ export class ApiClient {
 	 */
 	async request<T>(endpoint: string, params: Record<string, unknown | undefined> = {}): Promise<T> {
 		const key = this.buildRequestKey(endpoint, params);
+		const cacheable = !!this.responseCache?.shouldCache(key);
 
 		// Cache check — short-circuit before deduplication and any network activity
-		if (this.responseCache) {
-			const cached = this.responseCache.get<T>(key);
+		if (cacheable) {
+			const cached = this.responseCache!.get<T>(key);
 			if (cached !== undefined) return cached;
 		}
 
 		if (!this.deduplication) {
 			const result = await this.execute<T>("GET", endpoint, params);
-			this.responseCache?.set(key, result);
+			if (cacheable) this.responseCache!.set(key, result);
 			return result;
 		}
 
 		const existing = this.inflightRequests.get(key);
 		if (existing) return existing as Promise<T>;
 
-		const cache = this.responseCache;
+		const cache = cacheable ? this.responseCache : undefined;
 		const promise = this.execute<T>("GET", endpoint, params)
 			.then((result) => {
 				cache?.set(key, result);
@@ -133,6 +134,30 @@ export class ApiClient {
 			});
 		this.inflightRequests.set(key, promise);
 		return promise;
+	}
+
+	/**
+	 * Removes a single entry from the response cache.
+	 *
+	 * The key is built from `endpoint` + `params` using the same deterministic algorithm
+	 * as the cache itself, so the arguments must match exactly what was used in the original
+	 * request (including parameter values and casing).
+	 *
+	 * @returns `true` if an entry was found and removed, `false` if it was not cached.
+	 */
+	invalidateCache(endpoint: string, params: Record<string, unknown> = {}): boolean {
+		if (!this.responseCache) return false;
+		return this.responseCache.delete(this.buildRequestKey(endpoint, params));
+	}
+
+	/** Removes all entries from the response cache. */
+	clearCache(): void {
+		this.responseCache?.clear();
+	}
+
+	/** Returns the number of entries currently held in the response cache. */
+	get cacheSize(): number {
+		return this.responseCache?.size ?? 0;
 	}
 
 	/**
