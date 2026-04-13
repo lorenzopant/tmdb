@@ -139,7 +139,8 @@ The following features are planned to improve developer experience and extend th
 - [x] **Language/region defaults** — Set `language` and `region` once at the client level instead of passing them on every call
 - [x] **Typed errors** — Structured `TMDBError` objects with `statusCode`, `statusMessage`, and original request context instead of raw HTTP errors
 - [x] **Image URL auto-enrichment** — Automatically convert image path fields (e.g., `poster_path`) into full URLs in responses
-- [ ] **withMeta()** - Opt-in method wrapper that returns additional user-defined metadata alongside the response data (e.g., timestamps, cache status, etc.)
+- [ ] **Better discover query builder** - A typed, chainable builder `.withGenres().releasedAfter('2020').sortBy('popularity')` is far more ergonomic than passing raw param objects.
+
 
 > 💡 Have a feature request? Open an issue or submit a PR!
 
