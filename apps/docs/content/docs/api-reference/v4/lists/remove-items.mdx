@@ -1,0 +1,56 @@
+---
+title: Remove Items
+description: Remove one or more items from a v4 list.
+---
+
+Removes one or more movies or TV shows from a list. Items not present in the list
+are silently ignored.
+
+```ts
+async remove_items(list_id: number, body: V4RemoveListItemsBody): Promise<V4ListStatusResponse>
+```
+
+> **TMDB Reference:** [Remove Items](https://developer.themoviedb.org/reference/list-remove-items)
+
+## Parameters
+
+| Name      | Type     | Required | Description       |
+| --------- | -------- | -------- | ----------------- |
+| `list_id` | `number` | ✅       | The TMDB list ID. |
+
+### Body
+
+| Name    | Type                                                  | Required | Description                                                              |
+| ------- | ----------------------------------------------------- | -------- | ------------------------------------------------------------------------ |
+| `items` | `Pick<V4ListItemInput, "media_type" \| "media_id">[]` | ✅       | Array of items to remove. Only `media_type` and `media_id` are required. |
+
+## Returns
+
+[`V4ListStatusResponse`](/docs/types/v4-lists#v4liststatusresponse)
+
+## Errors
+
+| HTTP | TMDB code | Cause                            |
+| ---- | --------- | -------------------------------- |
+| 401  | 3         | Invalid or missing access token. |
+| 404  | 34        | List not found.                  |
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-access-token");
+
+await tmdb.v4.lists.remove_items(8700, {
+	items: [
+		{ media_type: "movie", media_id: 550 },
+		{ media_type: "tv", media_id: 1396 },
+	],
+});
+```
+
+## Related Types
+
+- [`V4RemoveListItemsBody`](/docs/types/v4-lists#v4removelistitemsbody)
+- [`V4ListStatusResponse`](/docs/types/v4-lists#v4liststatusresponse)

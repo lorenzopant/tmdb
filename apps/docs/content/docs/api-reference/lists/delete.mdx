@@ -1,0 +1,42 @@
+---
+title: Delete
+description: Delete a TMDB list.
+---
+
+Delete a list. Requires a valid v3 session ID.
+
+```ts
+async delete(params: ListMutationParams): Promise<ListMutationResponse>
+```
+
+> **TMDB Reference:** [Delete](https://developer.themoviedb.org/reference/list-delete)
+
+## Parameters
+
+| Name         | Type     | Required | Description             |
+| ------------ | -------- | -------- | ----------------------- |
+| `list_id`    | `number` | ✅       | TMDB list ID to delete. |
+| `session_id` | `string` | ✅       | v3 session ID.          |
+
+## Returns
+
+[`ListMutationResponse`](/docs/types/lists#listmutationresponse)
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const result = await tmdb.lists.delete({
+	list_id: 5861,
+	session_id: "your-session-id",
+});
+
+console.log(result.status_code); // 12
+```
+
+## Related Types
+
+- [`ListMutationParams`](/docs/types/lists#listmutationparams)
+- [`ListMutationResponse`](/docs/types/lists#listmutationresponse)

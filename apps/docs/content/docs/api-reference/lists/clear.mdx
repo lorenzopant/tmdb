@@ -1,0 +1,44 @@
+---
+title: Clear
+description: Clear all items from a TMDB list.
+---
+
+Clear all items from a list. The `confirm` parameter must be set to `true` for the operation to execute.
+
+```ts
+async clear(params: ListClearParams): Promise<ListMutationResponse>
+```
+
+> **TMDB Reference:** [Clear](https://developer.themoviedb.org/reference/list-clear)
+
+## Parameters
+
+| Name         | Type      | Required | Description                                    |
+| ------------ | --------- | -------- | ---------------------------------------------- |
+| `list_id`    | `number`  | ✅       | TMDB list ID.                                  |
+| `session_id` | `string`  | ✅       | v3 session ID.                                 |
+| `confirm`    | `boolean` | ✅       | Must be `true` to execute the clear operation. |
+
+## Returns
+
+[`ListMutationResponse`](/docs/types/lists#listmutationresponse)
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const result = await tmdb.lists.clear({
+	list_id: 5861,
+	session_id: "your-session-id",
+	confirm: true,
+});
+
+console.log(result.status_code); // 12
+```
+
+## Related Types
+
+- [`ListClearParams`](/docs/types/lists#listclearparams)
+- [`ListMutationResponse`](/docs/types/lists#listmutationresponse)

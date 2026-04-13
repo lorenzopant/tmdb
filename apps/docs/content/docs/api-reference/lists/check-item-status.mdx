@@ -1,0 +1,43 @@
+---
+title: Check Item Status
+description: Check if a movie is on a TMDB list.
+---
+
+Check if a movie has been added to the list. Returns the item's presence status.
+
+```ts
+async check_item_status(params: ListItemStatusParams): Promise<ListItemStatusResponse>
+```
+
+> **TMDB Reference:** [Check Item Status](https://developer.themoviedb.org/reference/list-check-item-status)
+
+## Parameters
+
+| Name       | Type     | Required | Description                                   |
+| ---------- | -------- | -------- | --------------------------------------------- |
+| `list_id`  | `number` | ✅       | TMDB list ID.                                 |
+| `language` | `string` | ❌       | ISO 639-1 language code. Defaults to `en-US`. |
+| `movie_id` | `number` | ❌       | TMDB movie ID to check for.                   |
+
+## Returns
+
+[`ListItemStatusResponse`](/docs/types/lists#listitemstatusresponse)
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key");
+const result = await tmdb.lists.check_item_status({
+	list_id: 5861,
+	movie_id: 550,
+});
+
+console.log(result.item_present); // true
+```
+
+## Related Types
+
+- [`ListItemStatusParams`](/docs/types/lists#listitemstatusparams)
+- [`ListItemStatusResponse`](/docs/types/lists#listitemstatusresponse)

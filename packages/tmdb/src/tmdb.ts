@@ -31,6 +31,7 @@ import { PeopleAPI } from "./endpoints/people";
 import { AccountAPI } from "./endpoints/account";
 import { AuthenticationAPI } from "./endpoints/authentication";
 import { GuestSessionsAPI } from "./endpoints/guest_sessions";
+import { ListsAPI } from "./endpoints/lists";
 import { TMDBv4 } from "./tmdb.v4";
 import { isJwt } from "./utils";
 
@@ -66,6 +67,7 @@ export class TMDB {
 	public account: AccountAPI;
 	public authentication: AuthenticationAPI;
 	public guest_sessions: GuestSessionsAPI;
+	public lists: ListsAPI;
 	/**
 	 * TMDB API v4 namespaces. Access via `tmdb.v4.auth`, `tmdb.v4.account`, `tmdb.v4.lists`.
 	 * Requires a Bearer (JWT) access token — throws if the instance was created with an API key.
@@ -76,6 +78,40 @@ export class TMDB {
 		return this._v4;
 	}
 	private _v4: TMDBv4 | undefined;
+
+	/**
+	 * Response cache controls. Only available when `cache` was set in the constructor options.
+	 *
+	 * - `clear()` — remove all cached entries (e.g. after a user signs out or state resets).
+	 * - `invalidate(endpoint, params?)` — remove a single entry by endpoint + params.
+	 * - `size` — number of entries currently held in memory.
+	 *
+	 * @example
+	 * ```ts
+	 * // Invalidate now_playing after a mutation
+	 * tmdb.cache?.invalidate("/movie/now_playing");
+	 *
+	 * // Clear everything
+	 * tmdb.cache?.clear();
+	 * ```
+	 */
+	get cache():
+		| { clear(): void; invalidate(endpoint: string, params?: Record<string, unknown>): boolean; readonly size: number }
+		| undefined {
+		if (!this.options.cache) return undefined;
+		const client = this.client;
+		return {
+			clear() {
+				client.clearCache();
+			},
+			invalidate(endpoint, params) {
+				return client.invalidateCache(endpoint, params);
+			},
+			get size() {
+				return client.cacheSize;
+			},
+		};
+	}
 
 	/**
 	 * Creates a new TMDB instance.
@@ -90,6 +126,8 @@ export class TMDB {
 			logger: options.logger,
 			deduplication: options.deduplication,
 			images: options.images,
+			rate_limit: options.rate_limit,
+			cache: options.cache,
 			interceptors: options.interceptors,
 		});
 		this.movies = new MoviesAPI(this.client, this.options);
@@ -120,5 +158,6 @@ export class TMDB {
 		this.account = new AccountAPI(this.client, this.options);
 		this.authentication = new AuthenticationAPI(this.client, this.options);
 		this.guest_sessions = new GuestSessionsAPI(this.client, this.options);
+		this.lists = new ListsAPI(this.client, this.options);
 	}
 }

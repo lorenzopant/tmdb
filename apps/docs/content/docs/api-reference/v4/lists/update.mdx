@@ -1,0 +1,55 @@
+---
+title: Update
+description: Update a v4 list's metadata — name, description, visibility, or sort order.
+---
+
+Updates one or more metadata fields on an existing list. Only pass the fields you want
+to change; omitted fields are left unchanged.
+
+```ts
+async update(body: V4UpdateListBody): Promise<V4ListStatusResponse>
+```
+
+> **TMDB Reference:** [Update List](https://developer.themoviedb.org/reference/list-update)
+
+## Parameters
+
+| Name          | Type      | Required | Description                                                                                                       |
+| ------------- | --------- | -------- | ----------------------------------------------------------------------------------------------------------------- |
+| `list_id`     | `number`  | ✅       | The TMDB list ID to update.                                                                                       |
+| `name`        | `string`  | ❌       | New display name.                                                                                                 |
+| `description` | `string`  | ❌       | New description text.                                                                                             |
+| `public`      | `boolean` | ❌       | Change the visibility of the list.                                                                                |
+| `sort_by`     | `string`  | ❌       | Sort field and direction. Examples: `"original_order.asc"`, `"vote_average.desc"`, `"primary_release_date.desc"`. |
+
+## Returns
+
+[`V4ListStatusResponse`](/docs/types/v4-lists#v4liststatusresponse)
+
+## Errors
+
+| HTTP | TMDB code | Cause                               |
+| ---- | --------- | ----------------------------------- |
+| 401  | 3         | Invalid or missing access token.    |
+| 404  | 34        | List not found.                     |
+| 403  | 15        | Not authorized to modify this list. |
+
+## Example
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-access-token");
+
+await tmdb.v4.lists.update({
+	list_id: 8700,
+	name: "My Updated Watchlist",
+	public: true,
+	sort_by: "vote_average.desc",
+});
+```
+
+## Related Types
+
+- [`V4UpdateListBody`](/docs/types/v4-lists#v4updatelistbody)
+- [`V4ListStatusResponse`](/docs/types/v4-lists#v4liststatusresponse)

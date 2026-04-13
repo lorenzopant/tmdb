@@ -2,6 +2,10 @@ import { TMDBAPIErrorResponse, TMDBError } from "./errors/tmdb";
 import { ImageAPI } from "./images/images";
 import type { ImagesConfig } from "./types/config/images";
 import { TMDBLogger, TMDBLoggerFn } from "./utils/logger";
+import { ResponseCache } from "./utils/cache";
+import type { CacheOptions } from "./utils/cache";
+import { RateLimiter } from "./utils/rate-limiter";
+import type { RateLimitOptions } from "./utils/rate-limiter";
 import { isJwt } from "./utils";
 import type {
 	RequestInterceptor,
@@ -22,10 +26,12 @@ export class ApiClient {
 	 */
 	private inflightRequests: Map<string, Promise<unknown>> = new Map();
 	private deduplication: boolean;
+	private rateLimiter?: RateLimiter;
 	private requestInterceptors: RequestInterceptor[];
 	private onSuccessInterceptor?: ResponseSuccessInterceptor;
 	private onErrorInterceptor?: ResponseErrorInterceptor;
 	private imageApi?: ImageAPI;
+	private responseCache?: ResponseCache;
 
 	constructor(
 		accessToken: string,
@@ -35,6 +41,8 @@ export class ApiClient {
 			logger?: boolean | TMDBLoggerFn;
 			deduplication?: boolean;
 			images?: ImagesConfig;
+			rate_limit?: boolean | RateLimitOptions;
+			cache?: boolean | CacheOptions;
 			interceptors?: {
 				request?: RequestInterceptor | RequestInterceptor[];
 				response?: { onSuccess?: ResponseSuccessInterceptor; onError?: ResponseErrorInterceptor };
@@ -45,6 +53,14 @@ export class ApiClient {
 		this.baseUrl = `https://api.themoviedb.org/${options.version ?? 3}`;
 		this.logger = TMDBLogger.from(options.logger);
 		this.deduplication = options.deduplication !== false;
+		if (options.rate_limit) {
+			const rlOpts = options.rate_limit === true ? {} : options.rate_limit;
+			this.rateLimiter = new RateLimiter(rlOpts);
+		}
+		if (options.cache) {
+			const cOpts = options.cache === true ? {} : options.cache;
+			this.responseCache = new ResponseCache(cOpts);
+		}
 		const raw = options.interceptors?.request;
 		this.requestInterceptors = raw == null ? [] : Array.isArray(raw) ? raw : [raw];
 		this.onSuccessInterceptor = options.interceptors?.response?.onSuccess;
@@ -89,17 +105,69 @@ export class ApiClient {
 	 * `TMDBOptions.deduplication = false`.
 	 */
 	async request<T>(endpoint: string, params: Record<string, unknown | undefined> = {}): Promise<T> {
-		if (!this.deduplication) return this.execute<T>("GET", endpoint, params);
+		// Run interceptors first so the cache/dedup key is derived from the request
+		// that will actually be sent — not the raw pre-interceptor values.
+		const ctx = await this.runRequestInterceptors({
+			endpoint,
+			params: params as Record<string, unknown>,
+			method: "GET",
+		});
+		const effectiveEndpoint = ctx.endpoint;
+		const effectiveParams = ctx.params;
 
-		const key = this.buildRequestKey(endpoint, params);
+		const key = this.buildRequestKey(effectiveEndpoint, effectiveParams);
+		const cacheable = !!this.responseCache?.shouldCache(key);
+
+		// Cache check — short-circuit before deduplication and any network activity.
+		// Use has() rather than checking the value against undefined so that a cached
+		// undefined value (e.g. an endpoint that returned null, sanitised to undefined)
+		// is correctly treated as a hit.
+		if (cacheable && this.responseCache!.has(key)) return this.responseCache!.get<T>(key) as T;
+
+		if (!this.deduplication) {
+			const result = await this.execute<T>("GET", effectiveEndpoint, effectiveParams, undefined, true);
+			if (cacheable) this.responseCache!.set(key, result);
+			return result;
+		}
+
 		const existing = this.inflightRequests.get(key);
 		if (existing) return existing as Promise<T>;
 
-		const promise = this.execute<T>("GET", endpoint, params).finally(() => {
-			this.inflightRequests.delete(key);
-		});
+		const cache = cacheable ? this.responseCache : undefined;
+		const promise = this.execute<T>("GET", effectiveEndpoint, effectiveParams, undefined, true)
+			.then((result) => {
+				cache?.set(key, result);
+				return result;
+			})
+			.finally(() => {
+				this.inflightRequests.delete(key);
+			});
 		this.inflightRequests.set(key, promise);
 		return promise;
+	}
+
+	/**
+	 * Removes a single entry from the response cache.
+	 *
+	 * The key is built from `endpoint` + `params` using the same deterministic algorithm
+	 * as the cache itself, so the arguments must match exactly what was used in the original
+	 * request (including parameter values and casing).
+	 *
+	 * @returns `true` if an entry was found and removed, `false` if it was not cached.
+	 */
+	invalidateCache(endpoint: string, params: Record<string, unknown> = {}): boolean {
+		if (!this.responseCache) return false;
+		return this.responseCache.delete(this.buildRequestKey(endpoint, params));
+	}
+
+	/** Removes all entries from the response cache. */
+	clearCache(): void {
+		this.responseCache?.clear();
+	}
+
+	/** Returns the number of entries currently held in the response cache. */
+	get cacheSize(): number {
+		return this.responseCache?.size ?? 0;
 	}
 
 	/**
@@ -175,16 +243,20 @@ export class ApiClient {
 	}
 
 	/**
-	 * Makes an authenticated mutation request (POST, PUT, or DELETE) to the TMDB API.
-	 * Unlike `request()`, mutations are never deduplicated since they change server state.
+	 * Makes an authenticated mutation request to the TMDB API.
+	 * Unlike `request()`, mutations are **never deduplicated** since they change server state.
+	 *
+	 * Accepts `"GET"` in addition to the standard mutation verbs for the rare TMDB endpoints
+	 * (e.g. `GET /4/list/{id}/clear`) that are specified as GET but carry side effects and
+	 * must therefore not be collapsed by the deduplication layer.
 	 *
 	 * @param method - HTTP method to use
 	 * @param endpoint - API path (e.g. "/account/123/favorite")
-	 * @param body - JSON body to send (omit for DELETE requests without a body)
+	 * @param body - JSON body to send (omit for DELETE/GET requests without a body)
 	 * @param params - Optional query string parameters (e.g. session_id)
 	 */
 	async mutate<T>(
-		method: "POST" | "PUT" | "DELETE",
+		method: "GET" | "POST" | "PUT" | "DELETE",
 		endpoint: string,
 		body?: Record<string, unknown>,
 		params: Record<string, unknown | undefined> = {},
@@ -195,20 +267,38 @@ export class ApiClient {
 	/**
 	 * Shared fetch + response-parsing pipeline used by both `request` and `mutate`.
 	 * Handles URL construction, auth, logging, error mapping, and null sanitisation.
+	 *
+	 * When called from `request()`, interceptors have already been applied and
+	 * `endpoint`/`params` are the effective (post-interceptor) values — interceptors
+	 * are skipped. When called from `mutate()`, interceptors run here as normal.
 	 */
 	private async execute<T>(
 		method: "GET" | "POST" | "PUT" | "DELETE",
 		endpoint: string,
 		params: Record<string, unknown | undefined>,
 		body?: Record<string, unknown>,
+		/** Pass `true` when the caller has already applied request interceptors. */
+		interceptorsAlreadyApplied = false,
 	): Promise<T> {
-		const ctx = await this.runRequestInterceptors({
-			endpoint,
-			params: params as Record<string, unknown>,
-			method,
-		});
-		const effectiveEndpoint = ctx.endpoint;
-		const effectiveParams = ctx.params;
+		// Serialise the body before acquiring a rate-limit slot so a JSON.stringify
+		// error never consumes budget without a matching network request.
+		const bodyJson = body !== undefined ? JSON.stringify(body) : undefined;
+
+		let effectiveEndpoint: string;
+		let effectiveParams: Record<string, unknown>;
+
+		if (interceptorsAlreadyApplied) {
+			effectiveEndpoint = endpoint;
+			effectiveParams = params as Record<string, unknown>;
+		} else {
+			const ctx = await this.runRequestInterceptors({
+				endpoint,
+				params: params as Record<string, unknown>,
+				method,
+			});
+			effectiveEndpoint = ctx.endpoint;
+			effectiveParams = ctx.params;
+		}
 
 		const url = new URL(`${this.baseUrl}${effectiveEndpoint}`);
 		const jwt = isJwt(this.accessToken);
@@ -227,6 +317,10 @@ export class ApiClient {
 			endpoint: effectiveEndpoint,
 		});
 
+		// Acquire a rate-limit slot immediately before the fetch so interceptor
+		// errors or serialisation failures never consume budget unnecessarily.
+		if (this.rateLimiter) await this.rateLimiter.acquire();
+
 		let res: Response;
 		try {
 			res = await fetch(url.toString(), {
@@ -239,7 +333,7 @@ export class ApiClient {
 					: {
 							"Content-Type": "application/json;charset=utf-8",
 						},
-				...(body !== undefined ? { body: JSON.stringify(body) } : {}),
+				...(bodyJson !== undefined ? { body: bodyJson } : {}),
 			});
 		} catch (error) {
 			this.logger?.log({

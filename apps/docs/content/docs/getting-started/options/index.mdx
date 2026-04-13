@@ -36,6 +36,8 @@ const tmdb = new TMDB("your-api-key", {
 | `logger`        | `boolean \| TMDBLoggerFn`                                | Enable the built-in console logger or supply a custom logging function.                            |
 | `deduplication` | `boolean`                                                | Deduplicate concurrent identical requests. Defaults to `true`.                                     |
 | `interceptors`  | `{ request?: ..., response?: { onSuccess?, onError? } }` | Hook into the request/response lifecycle before or after each API call.                            |
+| `rate_limit`    | `boolean \| RateLimitOptions`                            | Queue requests to stay within TMDB's API rate limits. Disabled by default.                         |
+| `cache`         | `boolean \| CacheOptions`                                | Cache `GET` responses in memory with a configurable TTL. Disabled by default.                      |
 
 ---
 
@@ -209,3 +211,55 @@ const tmdb = new TMDB(apiKey, {
 ```
 
 See the [Interceptors guide](/docs/getting-started/options/interceptors) for full details and examples.
+
+---
+
+### `rate_limit`
+
+**Type:** `boolean | RateLimitOptions` · **Default:** `false`
+
+Enables the built-in sliding-window rate limiter. When set, outgoing requests that exceed the
+configured budget are queued in FIFO order and dispatched as slots become available.
+
+- Pass `true` to use the defaults (~40 requests per second).
+- Pass a `RateLimitOptions` object to set a custom `max_requests` and/or `per_ms`.
+
+```ts
+// Default limits (~40 req / s)
+const tmdb = new TMDB(apiKey, { rate_limit: true });
+
+// Custom budget
+const tmdb = new TMDB(apiKey, {
+	rate_limit: { max_requests: 20, per_ms: 1_000 },
+});
+```
+
+See the [Rate Limiting guide](/docs/getting-started/options/rate-limiting) for full details.
+
+---
+
+### `cache`
+
+**Type:** `boolean | CacheOptions` · **Default:** `false`
+
+Enables the built-in in-memory response cache. Repeated identical `GET` requests are served from
+memory without hitting the network. Mutations are never cached.
+
+- Pass `true` to use the defaults (5-minute TTL, no size limit).
+- Pass a `CacheOptions` object to set a custom `ttl`, cap `max_size`, or exclude specific endpoints.
+
+```ts
+// Default TTL (5 minutes)
+const tmdb = new TMDB(apiKey, { cache: true });
+
+// Custom options
+const tmdb = new TMDB(apiKey, {
+	cache: {
+		ttl: 60_000,
+		max_size: 500,
+		excluded_endpoints: ["/trending", /\/discover\//],
+	},
+});
+```
+
+See the [Response Caching guide](/docs/getting-started/options/cache) for full details.

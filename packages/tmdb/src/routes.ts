@@ -175,6 +175,13 @@ export const ENDPOINTS = {
 	PEOPLE_LISTS: {
 		POPULAR: "/person/popular",
 	},
+	LISTS: {
+		DETAILS: "/list",
+		ADD_ITEM: "/add_item",
+		ITEM_STATUS: "/item_status",
+		CLEAR: "/clear",
+		REMOVE_ITEM: "/remove_item",
+	},
 	GUEST_SESSIONS: {
 		DETAILS: "/guest_session",
 		RATED_MOVIES: "/rated/movies",
@@ -206,5 +213,6 @@ export const ENDPOINTS_V4 = {
 		DETAILS: "/list",
 		ITEMS: "/items",
 		ITEM_STATUS: "/item_status",
+		CLEAR: "/clear",
 	},
 };
