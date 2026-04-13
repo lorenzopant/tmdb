@@ -189,6 +189,87 @@ fields contain relative paths that can be passed to `tmdb.images.*` manually.
 
 ---
 
+### `image_language_priority`
+
+**Type:** `ImageLanguagePriorityConfig` · **Optional**
+
+Controls the order of image items inside collection arrays (e.g. `posters`, `backdrops`) when
+`autocomplete_paths` is enabled. Accepts a partial map of collection key → priority list.
+
+Each priority entry is applied in order:
+
+| Entry value       | Meaning                                                        |
+| ----------------- | -------------------------------------------------------------- |
+| `"null"`          | Untagged images where `iso_639_1` is `null` (textless)         |
+| `"en"`, `"it"`, … | Images whose `iso_639_1` matches the given ISO 639-1 code      |
+| `"*"`             | Catch-all — all remaining items not matched by earlier entries |
+
+No items are ever dropped — only their order changes. Items not matched by any entry are appended at
+the end.
+
+```ts
+const tmdb = new TMDB(apiKey, {
+	images: {
+		autocomplete_paths: true,
+		image_language_priority: {
+			// 1. textless posters first  2. English  3. any remaining
+			posters: ["null", "en", "*"],
+		},
+	},
+});
+
+// When autocomplete_paths resolves the posters array, items are reordered
+// so the first poster is the best match according to the priority list.
+const images = await tmdb.movies.images({ movie_id: 550 });
+console.log(images.posters[0]); // → best match poster URL
+```
+
+Supported collection keys: `backdrops`, `logos`, `posters`, `profiles`, `stills`.
+
+---
+
+### `auto_include_image_language`
+
+**Type:** `boolean` · **Default:** `false`
+
+When `true`, the client automatically derives `include_image_language` from the language codes
+declared in `image_language_priority` and injects it into every `.images()` request. This ensures
+TMDB actually returns the language variants the priority config expects to sort.
+
+The injected value is the union of all language codes across all configured collections, with `"*"`
+excluded (it has no meaning as an HTTP query parameter). An explicit `include_image_language` at the
+call site always takes precedence.
+
+Requires `image_language_priority` to be configured; has no effect without it.
+
+```ts
+const tmdb = new TMDB(apiKey, {
+	images: {
+		autocomplete_paths: true,
+		image_language_priority: { posters: ["null", "en", "*"] },
+		// Automatically sends include_image_language: ["null", "en"] on every .images() call
+		auto_include_image_language: true,
+	},
+});
+
+// No need to pass include_image_language manually — it's injected automatically
+const images = await tmdb.movies.images({ movie_id: 550 });
+
+// Explicit call-site value always takes precedence over the injected default
+const customImages = await tmdb.movies.images({
+	movie_id: 550,
+	include_image_language: ["fr", "null"],
+});
+```
+
+<Callout>
+	Enable `auto_include_image_language` together with `image_language_priority` for a fully automatic
+	setup: TMDB returns the right language variants **and** the client orders them according to your
+	priority list — all without any extra call-site code.
+</Callout>
+
+---
+
 ### `default_image_sizes`
 
 **Type:** `Partial<DefaultImageSizesConfig>` · **Optional**

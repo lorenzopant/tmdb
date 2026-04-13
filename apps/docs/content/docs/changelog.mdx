@@ -4,6 +4,47 @@ description: Latest updates and announcements
 icon: History
 ---
 
+## 🚀 1.20.2 - 13 April 2026
+
+#### ✨ New
+
+- **Image language priority** — new `image_language_priority` option inside `images` config lets consumers define a per-collection language fallback order when `autocomplete_paths` is enabled. TMDB image arrays (e.g. `posters`, `backdrops`) are reordered so the best match according to the priority list appears first. No items are dropped — only their order changes.
+
+```ts
+const tmdb = new TMDB(token, {
+	images: {
+		autocomplete_paths: true,
+		image_language_priority: {
+			// 1. textless posters  2. English  3. any remaining
+			posters: ["null", "en", "*"],
+		},
+	},
+});
+```
+
+Special values: `"null"` matches untagged images (`iso_639_1 == null`), `"*"` is a catch-all that consumes all remaining items.
+
+- **`auto_include_image_language`** — companion boolean option that derives `include_image_language` from the language codes in `image_language_priority` and automatically injects it into every `.images()` request. This ensures TMDB returns the language variants the priority config needs to sort — no manual `include_image_language` calls required. An explicit `include_image_language` at the call site always takes precedence.
+
+```ts
+const tmdb = new TMDB(token, {
+	images: {
+		autocomplete_paths: true,
+		image_language_priority: { posters: ["null", "en", "*"] },
+		auto_include_image_language: true,
+		// → automatically sends include_image_language: ["null", "en"] on every .images() call
+	},
+});
+```
+
+Applies to `movies.images()`, `tv_series.images()`, `tv_seasons.images()`, `tv_episodes.images()`, `collections.images()`, and `companies.images()`.
+
+#### 📖 Docs
+
+- [Images Configuration](/docs/getting-started/options/images) page updated with new `image_language_priority` and `auto_include_image_language` sections.
+
+---
+
 ## 🚀 1.20.1 - 7 April 2026
 
 #### ✨ New
