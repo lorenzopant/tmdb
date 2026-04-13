@@ -145,8 +145,8 @@ const movies = await fetchAllPages((p) => tmdb.movie_lists.now_playing({ page: p
 });
 ```
 
-When two items share the same key, the **last occurrence wins** — preserving the most recently
-fetched position, which is typically the more accurate one.
+When two items share the same key, the **last occurrence wins** — the value is replaced with the
+most recently fetched one, but the item retains its original position in the result list.
 
 ---
 
