@@ -1,0 +1,146 @@
+---
+title: Retry
+description: Automatically retry failed requests with exponential back-off.
+---
+
+The `retry` option enables automatic retry logic for transient errors. When a request fails due
+to a server-side 5xx error or a network fault, the client waits and tries again — up to a
+configurable number of times, with exponentially increasing delays between attempts.
+
+It is **opt-in** — disabled by default with no behaviour change for existing consumers.
+
+---
+
+## Enabling retry
+
+Pass `retry: true` to use the built-in defaults:
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key", { retry: true });
+```
+
+**Defaults:**
+
+| Setting         | Value    |
+| --------------- | -------- |
+| `max_retries`   | `3`      |
+| `base_delay_ms` | `500`    |
+| `max_delay_ms`  | `30_000` |
+
+---
+
+## Custom options
+
+Pass a `RetryOptions` object to override individual settings:
+
+```ts
+const tmdb = new TMDB("your-api-key", {
+	retry: {
+		max_retries: 5,
+		base_delay_ms: 200,
+		max_delay_ms: 10_000,
+	},
+});
+```
+
+| Option          | Type                                              | Default   | Description                                                      |
+| --------------- | ------------------------------------------------- | --------- | ---------------------------------------------------------------- |
+| `max_retries`   | `number`                                          | `3`       | Maximum retry attempts after the initial request fails.          |
+| `base_delay_ms` | `number`                                          | `500`     | Base delay in milliseconds for exponential back-off calculation. |
+| `max_delay_ms`  | `number`                                          | `30_000`  | Upper bound on the back-off delay before jitter is applied.      |
+| `shouldRetry`   | `(error, attempt) => boolean \| Promise<boolean>` | See below | Predicate to decide whether a given error warrants a retry.      |
+
+---
+
+## Which errors are retried
+
+By default, the following errors trigger a retry:
+
+- **HTTP 5xx responses** — `TMDBError` instances with `http_status_code >= 500`
+  (e.g. `500 Internal Server Error`, `503 Service Unavailable`)
+- **Network / DNS errors** — any non-`TMDBError` exception thrown by the underlying `fetch`
+  (e.g. connection reset, timeout, offline)
+
+**4xx client errors are never retried** by default because they indicate a caller-side problem
+(wrong parameters, invalid token, resource not found) that won't resolve on its own.
+
+---
+
+## Custom `shouldRetry` predicate
+
+Override the retry decision entirely by providing a synchronous or async `shouldRetry` function:
+
+```ts
+import { TMDBError } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB("your-api-key", {
+	retry: {
+		max_retries: 4,
+		shouldRetry: (error, attempt) => {
+			// Also retry 429 responses, but only on the first two attempts
+			if (error instanceof TMDBError) {
+				return error.http_status_code >= 500 || (error.http_status_code === 429 && attempt <= 2);
+			}
+			return true; // retry all network errors
+		},
+	},
+});
+```
+
+The predicate receives:
+
+| Argument  | Type      | Description                                                                          |
+| --------- | --------- | ------------------------------------------------------------------------------------ |
+| `error`   | `unknown` | The error thrown by the last attempt — typically a `TMDBError` or a network `Error`. |
+| `attempt` | `number`  | 1-indexed retry attempt number (1 = first retry after the initial failure).          |
+
+Return `true` to retry, `false` to stop and re-throw immediately.
+
+---
+
+## Back-off algorithm
+
+The client uses **full jitter** exponential back-off:
+
+```
+delay = random(0, min(base_delay_ms * 2^(attempt-1), max_delay_ms))
+```
+
+Full jitter distributes retry load evenly across time, which prevents multiple clients from
+all retrying in tight synchrony after a server hiccup (the "thundering herd" problem).
+
+Example delays with `base_delay_ms: 500`, `max_delay_ms: 30_000`:
+
+| Attempt | Exponential cap | Actual delay (random) |
+| ------- | --------------- | --------------------- |
+| 1       | 500 ms          | 0 - 499 ms            |
+| 2       | 1 000 ms        | 0 - 999 ms            |
+| 3       | 2 000 ms        | 0 - 1 999 ms          |
+| 4       | 4 000 ms        | 0 - 3 999 ms          |
+| 8       | 30 000 ms (cap) | 0 - 29 999 ms         |
+
+---
+
+## Combining with rate limiting
+
+Retry and [rate limiting](/docs/getting-started/options/rate-limiting) work together naturally.
+Each retry attempt acquires its own rate-limit slot before the fetch is dispatched, so retried
+requests respect the same budget as regular requests.
+
+```ts
+const tmdb = new TMDB("your-api-key", {
+	rate_limit: true,
+	retry: true,
+});
+```
+
+---
+
+## Applies to mutations too
+
+The retry option covers all HTTP methods — `GET` reads **and** `POST` / `PUT` / `DELETE`
+mutations — because transient server errors can affect any kind of request. If you only want to
+retry reads, supply a `shouldRetry` predicate that checks the request context through the error
+or limit retry to specific error codes.

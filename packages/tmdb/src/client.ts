@@ -6,6 +6,8 @@ import { ResponseCache } from "./utils/cache";
 import type { CacheOptions } from "./utils/cache";
 import { RateLimiter } from "./utils/rate-limiter";
 import type { RateLimitOptions } from "./utils/rate-limiter";
+import { RetryManager } from "./utils/retry";
+import type { RetryOptions } from "./utils/retry";
 import { isJwt } from "./utils";
 import type {
 	RequestInterceptor,
@@ -27,6 +29,7 @@ export class ApiClient {
 	private inflightRequests: Map<string, Promise<unknown>> = new Map();
 	private deduplication: boolean;
 	private rateLimiter?: RateLimiter;
+	private retryManager?: RetryManager;
 	private requestInterceptors: RequestInterceptor[];
 	private onSuccessInterceptor?: ResponseSuccessInterceptor;
 	private onErrorInterceptor?: ResponseErrorInterceptor;
@@ -42,6 +45,7 @@ export class ApiClient {
 			deduplication?: boolean;
 			images?: ImagesConfig;
 			rate_limit?: boolean | RateLimitOptions;
+			retry?: boolean | RetryOptions;
 			cache?: boolean | CacheOptions;
 			interceptors?: {
 				request?: RequestInterceptor | RequestInterceptor[];
@@ -56,6 +60,10 @@ export class ApiClient {
 		if (options.rate_limit) {
 			const rlOpts = options.rate_limit === true ? {} : options.rate_limit;
 			this.rateLimiter = new RateLimiter(rlOpts);
+		}
+		if (options.retry) {
+			const retryOpts = options.retry === true ? {} : options.retry;
+			this.retryManager = new RetryManager(retryOpts);
 		}
 		if (options.cache) {
 			const cOpts = options.cache === true ? {} : options.cache;
@@ -317,55 +325,62 @@ export class ApiClient {
 			endpoint: effectiveEndpoint,
 		});
 
-		// Acquire a rate-limit slot immediately before the fetch so interceptor
-		// errors or serialisation failures never consume budget unnecessarily.
-		if (this.rateLimiter) await this.rateLimiter.acquire();
+		// Each attempt acquires its own rate-limit slot and makes a fresh fetch.
+		// This closure is invoked once per attempt by the optional RetryManager.
+		const attemptFetch = async (): Promise<T> => {
+			// Acquire a rate-limit slot immediately before the fetch so interceptor
+			// errors or serialisation failures never consume budget unnecessarily.
+			if (this.rateLimiter) await this.rateLimiter.acquire();
 
-		let res: Response;
-		try {
-			res = await fetch(url.toString(), {
-				method,
-				headers: jwt
-					? {
-							Authorization: `Bearer ${this.accessToken}`,
-							"Content-Type": "application/json;charset=utf-8",
-						}
-					: {
-							"Content-Type": "application/json;charset=utf-8",
-						},
-				...(bodyJson !== undefined ? { body: bodyJson } : {}),
-			});
-		} catch (error) {
+			let res: Response;
+			try {
+				res = await fetch(url.toString(), {
+					method,
+					headers: jwt
+						? {
+								Authorization: `Bearer ${this.accessToken}`,
+								"Content-Type": "application/json;charset=utf-8",
+							}
+						: {
+								"Content-Type": "application/json;charset=utf-8",
+							},
+					...(bodyJson !== undefined ? { body: bodyJson } : {}),
+				});
+			} catch (error) {
+				this.logger?.log({
+					type: "error",
+					method,
+					endpoint: effectiveEndpoint,
+					errorMessage: error instanceof Error ? error.message : String(error),
+					durationMs: Date.now() - startedAt,
+				});
+				throw error;
+			}
+
+			if (!res.ok) await this.handleError(res, effectiveEndpoint, method);
+
 			this.logger?.log({
-				type: "error",
+				type: "response",
 				method,
 				endpoint: effectiveEndpoint,
-				errorMessage: error instanceof Error ? error.message : String(error),
+				status: res.status,
+				statusText: res.statusText,
 				durationMs: Date.now() - startedAt,
 			});
-			throw error;
-		}
 
-		if (!res.ok) await this.handleError(res, effectiveEndpoint, method);
+			const data = await res.json();
+			const sanitized = this.sanitizeNulls<T>(data);
+			const transformed = this.imageApi ? this.imageApi.autocompleteImagePaths(sanitized) : sanitized;
 
-		this.logger?.log({
-			type: "response",
-			method,
-			endpoint: effectiveEndpoint,
-			status: res.status,
-			statusText: res.statusText,
-			durationMs: Date.now() - startedAt,
-		});
+			if (this.onSuccessInterceptor) {
+				const result = await this.onSuccessInterceptor(transformed);
+				return result !== undefined ? (result as T) : transformed;
+			}
 
-		const data = await res.json();
-		const sanitized = this.sanitizeNulls<T>(data);
-		const transformed = this.imageApi ? this.imageApi.autocompleteImagePaths(sanitized) : sanitized;
+			return transformed;
+		};
 
-		if (this.onSuccessInterceptor) {
-			const result = await this.onSuccessInterceptor(transformed);
-			return result !== undefined ? (result as T) : transformed;
-		}
-
-		return transformed;
+		if (this.retryManager) return this.retryManager.execute(attemptFetch);
+		return attemptFetch();
 	}
 }

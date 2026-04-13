@@ -37,6 +37,7 @@ const tmdb = new TMDB("your-api-key", {
 | `deduplication` | `boolean`                                                | Deduplicate concurrent identical requests. Defaults to `true`.                                     |
 | `interceptors`  | `{ request?: ..., response?: { onSuccess?, onError? } }` | Hook into the request/response lifecycle before or after each API call.                            |
 | `rate_limit`    | `boolean \| RateLimitOptions`                            | Queue requests to stay within TMDB's API rate limits. Disabled by default.                         |
+| `retry`         | `boolean \| RetryOptions`                                | Retry failed requests with exponential back-off. Disabled by default.                              |
 | `cache`         | `boolean \| CacheOptions`                                | Cache `GET` responses in memory with a configurable TTL. Disabled by default.                      |
 
 ---
@@ -235,6 +236,33 @@ const tmdb = new TMDB(apiKey, {
 ```
 
 See the [Rate Limiting guide](/docs/getting-started/options/rate-limiting) for full details.
+
+---
+
+### `retry`
+
+**Type:** `boolean | RetryOptions` · **Default:** `false`
+
+Enables automatic retry with exponential back-off for transient errors. When set, failed requests
+are retried up to `max_retries` times using a jittered exponential delay.
+
+- Pass `true` to use the defaults (3 retries, 500 ms base delay, 30 s cap).
+- Pass a `RetryOptions` object to customise retry count, delays, or supply a `shouldRetry` predicate.
+
+By default, only transient server-side errors are retried — HTTP 5xx responses and network
+errors. 4xx client errors are **never** retried.
+
+```ts
+// Default settings (3 retries)
+const tmdb = new TMDB(apiKey, { retry: true });
+
+// Custom options
+const tmdb = new TMDB(apiKey, {
+	retry: { max_retries: 5, base_delay_ms: 200 },
+});
+```
+
+See the [Retry guide](/docs/getting-started/options/retry) for full details.
 
 ---
 
