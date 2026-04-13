@@ -80,6 +80,33 @@ describe("paginate", () => {
 		expect(fetcher).not.toHaveBeenCalledWith(1);
 	});
 
+	it("throws RangeError for startPage = 0", async () => {
+		const fetcher = mockFetcher([[1]]);
+		await expect(async () => {
+			for await (const _page of paginate(fetcher, 0)) {
+				// should not reach here
+			}
+		}).rejects.toThrow(RangeError);
+	});
+
+	it("throws RangeError for startPage = 501 (exceeds TMDB max)", async () => {
+		const fetcher = mockFetcher([[1]]);
+		await expect(async () => {
+			for await (const _page of paginate(fetcher, 501)) {
+				// should not reach here
+			}
+		}).rejects.toThrow(RangeError);
+	});
+
+	it("throws RangeError for non-integer startPage", async () => {
+		const fetcher = mockFetcher([[1]]);
+		await expect(async () => {
+			for await (const _page of paginate(fetcher, 1.5)) {
+				// should not reach here
+			}
+		}).rejects.toThrow(RangeError);
+	});
+
 	it("handles empty results gracefully", async () => {
 		const fetcher = vi.fn(
 			async (_page: number): Promise<PaginatedResponse<number>> => ({

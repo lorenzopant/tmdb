@@ -1,4 +1,5 @@
 import type { PaginatedResponse } from "../types/common/pagination";
+import { Errors } from "../errors/messages";
 
 /** TMDB caps page numbers at 500 */
 const TMDB_MAX_PAGES = 500;
@@ -24,6 +25,9 @@ export async function* paginate<T>(
 	fetcher: (page: number) => Promise<PaginatedResponse<T>>,
 	startPage = 1,
 ): AsyncGenerator<PaginatedResponse<T>> {
+	if (!Number.isInteger(startPage) || startPage < 1 || startPage > TMDB_MAX_PAGES) {
+		throw new RangeError(Errors.INVALID_START_PAGE);
+	}
 	let page = startPage;
 	while (true) {
 		const response = await fetcher(page);
