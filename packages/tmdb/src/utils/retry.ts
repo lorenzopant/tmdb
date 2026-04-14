@@ -100,7 +100,7 @@ export class RetryManager {
 	/**
 	 * Computes the back-off delay for a given retry attempt.
 	 *
-	 * Uses full jitter: `delay = random(0, min(base * 2^(attempt-1), max))`.
+	 * `delay = random(0, min(base_delay_ms * 2^(attempt-1), max_delay_ms))`.
 	 * Full jitter spreads load better than deterministic exponential back-off
 	 * when many clients retry simultaneously.
 	 *
