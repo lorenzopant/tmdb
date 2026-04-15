@@ -217,7 +217,7 @@ export class ApiClient {
 		return sanitized as T;
 	}
 
-	private async handleError(res: Response, endpoint: string, method: "GET" | "POST" | "PUT" | "DELETE"): Promise<never> {
+	private async normalizeError(res: Response, endpoint: string, method: "GET" | "POST" | "PUT" | "DELETE"): Promise<TMDBError> {
 		let errorMessage = res.statusText;
 		let tmdbStatusCode: number = -1;
 
@@ -243,11 +243,13 @@ export class ApiClient {
 			errorMessage,
 		});
 
-		const error = new TMDBError(errorMessage, res.status, tmdbStatusCode);
+		return new TMDBError(errorMessage, res.status, tmdbStatusCode);
+	}
+
+	private async notifyErrorInterceptor(error: TMDBError): Promise<void> {
 		if (this.onErrorInterceptor) {
 			await this.onErrorInterceptor(error);
 		}
-		throw error;
 	}
 
 	/**
@@ -359,13 +361,19 @@ export class ApiClient {
 				throw error;
 			}
 
-			if (!res.ok) await this.handleError(res, effectiveEndpoint, method);
+			if (!res.ok) throw await this.normalizeError(res, effectiveEndpoint, method);
 			return res;
 		};
 
-		const res = this.retryManager
-			? await this.retryManager.execute(attemptFetch)
-			: await attemptFetch();
+		let res: Response;
+		try {
+			res = this.retryManager ? await this.retryManager.execute(attemptFetch) : await attemptFetch();
+		} catch (error) {
+			if (error instanceof TMDBError) {
+				await this.notifyErrorInterceptor(error);
+			}
+			throw error;
+		}
 
 		this.logger?.log({
 			type: "response",

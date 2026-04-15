@@ -226,6 +226,28 @@ describe("ApiClient retry", () => {
 		expect(globalThis.fetch).toHaveBeenCalledTimes(3);
 	});
 
+	it("does not call onError for transient retry failures that later succeed", async () => {
+		const onError = vi.fn();
+		const client = new ApiClient(token, {
+			retry: { max_retries: 3, base_delay_ms: 100 },
+			deduplication: false,
+			interceptors: {
+				response: { onError },
+			},
+		});
+
+		(globalThis.fetch as ReturnType<typeof vi.fn>)
+			.mockResolvedValueOnce(makeErrorResponse(503, "Service Unavailable"))
+			.mockResolvedValueOnce(makeResponse({ id: 1 }));
+
+		const promise = client.request("/movie/1");
+		await vi.runAllTimersAsync();
+		const result = await promise;
+
+		expect(result).toEqual({ id: 1 });
+		expect(onError).not.toHaveBeenCalled();
+	});
+
 	it("retries on network errors (fetch throws)", async () => {
 		const client = new ApiClient(token, {
 			retry: { max_retries: 2, base_delay_ms: 50 },
