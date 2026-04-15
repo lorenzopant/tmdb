@@ -33,11 +33,14 @@ export type RetryOptions = {
 	 * - Return `false` to stop retrying and re-throw immediately.
 	 * - Async predicates are awaited.
 	 *
-	 * The default predicate retries on transient server-side errors:
+	 * The default predicate retries known transient **network-level** failures only:
 	 * - `TMDBError` with `http_status_code >= 500`
-	 * - Any non-`TMDBError` exception (e.g. network / DNS failure)
+	 * - `TypeError` ("Failed to fetch" in browsers / Node fetch)
+	 * - `FetchError` (node-fetch network errors)
+	 * - `AbortError` (aborted fetches)
 	 *
-	 * 4xx client errors are **never** retried by default.
+	 * Non-retriable by default: 4xx `TMDBError`, `SyntaxError` (bad JSON), and
+	 * all other unknown error types.
 	 *
 	 * @param error - The error thrown by the last attempt.
 	 * @param attempt - The 1-indexed attempt number that just failed (1 = first retry after the initial failure).
@@ -49,7 +52,7 @@ export type RetryOptions = {
 	 *   retry: {
 	 *     shouldRetry: (error) => {
 	 *       if (error instanceof TMDBError) return error.http_status_code >= 429;
-	 *       return true; // network errors
+	 *       return error instanceof TypeError; // network errors only
 	 *     },
 	 *   },
 	 * });
@@ -62,11 +65,39 @@ const DEFAULT_MAX_RETRIES = 3;
 const DEFAULT_BASE_DELAY_MS = 500;
 const DEFAULT_MAX_DELAY_MS = 30_000;
 
+/**
+ * Returns `true` when the error is a known transient network-level failure.
+ *
+ * Retried:
+ * - `TMDBError` with `http_status_code >= 500`
+ * - `TypeError` — the standard "Failed to fetch" shape in browsers and Node >= 18
+ * - `FetchError` — thrown by node-fetch for network failures
+ * - `AbortError` — thrown when a fetch is aborted (e.g. timeout)
+ *
+ * Not retried:
+ * - `TMDBError` with `http_status_code < 500` (4xx client errors)
+ * - `SyntaxError` — malformed JSON in a response body; retrying won't fix it
+ * - All other error types — unknown, assumed non-transient
+ */
 function defaultShouldRetry(error: unknown): boolean {
 	if (error instanceof TMDBError) {
 		return error.http_status_code >= 500;
 	}
-	// Network / DNS / connection reset errors — always retry
+	if (error instanceof Error) {
+		switch (error.name) {
+			case "FetchError": // node-fetch network error
+			case "AbortError": // fetch timeout or abort
+				return true;
+			case "SyntaxError": // JSON parse error
+				// Don't retry on JSON parse errors, as they likely indicate an unexpected response format
+				return false;
+			case "TypeError": // e.g. "Failed to fetch" in some environments
+				// Retry on TypeError as it can indicate a network failure, but be aware this may also catch some programming errors
+				return true;
+			default:
+				return false; // Don't retry on other error types by default
+		}
+	}
 	return true;
 }
 

@@ -325,9 +325,11 @@ export class ApiClient {
 			endpoint: effectiveEndpoint,
 		});
 
-		// Each attempt acquires its own rate-limit slot and makes a fresh fetch.
-		// This closure is invoked once per attempt by the optional RetryManager.
-		const attemptFetch = async (): Promise<T> => {
+		// Retry boundary: only the fetch + HTTP-status check.
+		// JSON parsing and onSuccessInterceptor run *outside* the retried closure so
+		// that a SyntaxError from res.json() or a bug in onSuccess never causes a
+		// re-fetch (which would duplicate side-effectful mutations).
+		const attemptFetch = async (): Promise<Response> => {
 			// Acquire a rate-limit slot immediately before the fetch so interceptor
 			// errors or serialisation failures never consume budget unnecessarily.
 			if (this.rateLimiter) await this.rateLimiter.acquire();
@@ -358,29 +360,31 @@ export class ApiClient {
 			}
 
 			if (!res.ok) await this.handleError(res, effectiveEndpoint, method);
-
-			this.logger?.log({
-				type: "response",
-				method,
-				endpoint: effectiveEndpoint,
-				status: res.status,
-				statusText: res.statusText,
-				durationMs: Date.now() - startedAt,
-			});
-
-			const data = await res.json();
-			const sanitized = this.sanitizeNulls<T>(data);
-			const transformed = this.imageApi ? this.imageApi.autocompleteImagePaths(sanitized) : sanitized;
-
-			if (this.onSuccessInterceptor) {
-				const result = await this.onSuccessInterceptor(transformed);
-				return result !== undefined ? (result as T) : transformed;
-			}
-
-			return transformed;
+			return res;
 		};
 
-		if (this.retryManager) return this.retryManager.execute(attemptFetch);
-		return attemptFetch();
+		const res = this.retryManager
+			? await this.retryManager.execute(attemptFetch)
+			: await attemptFetch();
+
+		this.logger?.log({
+			type: "response",
+			method,
+			endpoint: effectiveEndpoint,
+			status: res.status,
+			statusText: res.statusText,
+			durationMs: Date.now() - startedAt,
+		});
+
+		const data = await res.json();
+		const sanitized = this.sanitizeNulls<T>(data);
+		const transformed = this.imageApi ? this.imageApi.autocompleteImagePaths(sanitized) : sanitized;
+
+		if (this.onSuccessInterceptor) {
+			const result = await this.onSuccessInterceptor(transformed);
+			return result !== undefined ? (result as T) : transformed;
+		}
+
+		return transformed;
 	}
 }

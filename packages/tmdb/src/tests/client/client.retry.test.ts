@@ -333,4 +333,51 @@ describe("ApiClient retry", () => {
 		// fetch called twice — once per attempt
 		expect(globalThis.fetch).toHaveBeenCalledTimes(2);
 	});
+
+	// ─── Regression: post-fetch errors must not trigger a re-fetch ──────────
+
+	it("does not retry when onSuccess interceptor throws after a 2xx response", async () => {
+		const client = new ApiClient(token, {
+			retry: { max_retries: 3, base_delay_ms: 10 },
+			deduplication: false,
+			interceptors: {
+				response: {
+					onSuccess: () => {
+						throw new Error("interceptor bug");
+					},
+				},
+			},
+		});
+
+		(globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(makeResponse({ id: 550 }));
+
+		// onSuccess throws → the error must propagate, not trigger a retry
+		await expect(client.request("/movie/550")).rejects.toThrow("interceptor bug");
+		// fetch was called exactly once — the successful response was NOT re-fetched
+		expect(globalThis.fetch).toHaveBeenCalledTimes(1);
+	});
+
+	it("does not retry when res.json() throws a SyntaxError after a 2xx response", async () => {
+		const client = new ApiClient(token, {
+			retry: { max_retries: 3, base_delay_ms: 10 },
+			deduplication: false,
+		});
+
+		const brokenJsonResponse: MockResponse = {
+			ok: true,
+			status: 200,
+			statusText: "OK",
+			url: "https://api.themoviedb.org/3/movie/550",
+			headers: { get: () => null },
+			json: async () => {
+				throw new SyntaxError("Unexpected token");
+			},
+		};
+
+		(globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(brokenJsonResponse);
+
+		await expect(client.request("/movie/550")).rejects.toThrow(SyntaxError);
+		// fetch was called exactly once — malformed JSON is not a transient network error
+		expect(globalThis.fetch).toHaveBeenCalledTimes(1);
+	});
 });
