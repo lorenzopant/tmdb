@@ -90,6 +90,7 @@ The documentation site (<https://lorenzopant-tmdb-docs.vercel.app>) includes:
 ## 🤝 Contributing
 
 Contributions are welcome! Please see the CONTRIBUTING.md file for guidelines on how to contribute to this project, including code style, testing, and documentation standards.
+This repo requires `Node.js 20+` (see root `package.json` `engines` and `.nvmrc`).
 To setup the development environment, run:
 
 ```bash
