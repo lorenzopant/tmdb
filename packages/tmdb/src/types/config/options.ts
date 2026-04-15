@@ -2,6 +2,7 @@ import { TMDBError } from "../../errors/tmdb";
 import type { CacheOptions } from "../../utils/cache";
 import type { TMDBLoggerFn } from "../../utils/logger";
 import type { RateLimitOptions } from "../../utils/rate-limiter";
+import type { RetryOptions } from "../../utils/retry";
 import { CountryISO3166_1 } from "./countries";
 import { ImagesConfig } from "./images";
 import { Language } from "./languages";
@@ -181,6 +182,40 @@ export type TMDBOptions = {
 	 * ```
 	 */
 	rate_limit?: boolean | RateLimitOptions;
+	/**
+	 * Automatic retry with exponential back-off for transient errors.
+	 *
+	 * - `true` — uses the defaults (3 retries, 500 ms base delay, 30 s cap).
+	 * - Pass a {@link RetryOptions} object to customise `max_retries`, `base_delay_ms`,
+	 *   `max_delay_ms`, and/or a `shouldRetry` predicate.
+	 *
+	 * By default only transient server-side errors are retried:
+	 * - HTTP 5xx responses (`TMDBError` with `http_status_code >= 500`)
+	 * - Network / DNS failures (non-`TMDBError` exceptions)
+	 *
+	 * 4xx client errors are **never** retried by default.
+	 *
+	 * @default false (disabled)
+	 *
+	 * @example
+	 * ```ts
+	 * // Enable with defaults (3 retries, exponential back-off)
+	 * const tmdb = new TMDB(token, { retry: true });
+	 *
+	 * // Custom retries with a custom predicate
+	 * const tmdb = new TMDB(token, {
+	 *   retry: {
+	 *     max_retries: 5,
+	 *     base_delay_ms: 200,
+	 *     shouldRetry: (error, attempt) => {
+	 *       if (error instanceof TMDBError) return error.http_status_code >= 500;
+	 *       return attempt <= 2;
+	 *     },
+	 *   },
+	 * });
+	 * ```
+	 */
+	retry?: boolean | RetryOptions;
 	/**
 	 * Enables in-memory TTL-based caching for GET requests.
 	 *

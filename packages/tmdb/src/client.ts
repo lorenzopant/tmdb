@@ -6,6 +6,8 @@ import { ResponseCache } from "./utils/cache";
 import type { CacheOptions } from "./utils/cache";
 import { RateLimiter } from "./utils/rate-limiter";
 import type { RateLimitOptions } from "./utils/rate-limiter";
+import { RetryManager } from "./utils/retry";
+import type { RetryOptions } from "./utils/retry";
 import { isJwt } from "./utils";
 import type {
 	RequestInterceptor,
@@ -27,6 +29,7 @@ export class ApiClient {
 	private inflightRequests: Map<string, Promise<unknown>> = new Map();
 	private deduplication: boolean;
 	private rateLimiter?: RateLimiter;
+	private retryManager?: RetryManager;
 	private requestInterceptors: RequestInterceptor[];
 	private onSuccessInterceptor?: ResponseSuccessInterceptor;
 	private onErrorInterceptor?: ResponseErrorInterceptor;
@@ -42,6 +45,7 @@ export class ApiClient {
 			deduplication?: boolean;
 			images?: ImagesConfig;
 			rate_limit?: boolean | RateLimitOptions;
+			retry?: boolean | RetryOptions;
 			cache?: boolean | CacheOptions;
 			interceptors?: {
 				request?: RequestInterceptor | RequestInterceptor[];
@@ -56,6 +60,10 @@ export class ApiClient {
 		if (options.rate_limit) {
 			const rlOpts = options.rate_limit === true ? {} : options.rate_limit;
 			this.rateLimiter = new RateLimiter(rlOpts);
+		}
+		if (options.retry) {
+			const retryOpts = options.retry === true ? {} : options.retry;
+			this.retryManager = new RetryManager(retryOpts);
 		}
 		if (options.cache) {
 			const cOpts = options.cache === true ? {} : options.cache;
@@ -209,7 +217,7 @@ export class ApiClient {
 		return sanitized as T;
 	}
 
-	private async handleError(res: Response, endpoint: string, method: "GET" | "POST" | "PUT" | "DELETE"): Promise<never> {
+	private async normalizeError(res: Response, endpoint: string, method: "GET" | "POST" | "PUT" | "DELETE"): Promise<TMDBError> {
 		let errorMessage = res.statusText;
 		let tmdbStatusCode: number = -1;
 
@@ -235,11 +243,13 @@ export class ApiClient {
 			errorMessage,
 		});
 
-		const error = new TMDBError(errorMessage, res.status, tmdbStatusCode);
+		return new TMDBError(errorMessage, res.status, tmdbStatusCode);
+	}
+
+	private async notifyErrorInterceptor(error: TMDBError): Promise<void> {
 		if (this.onErrorInterceptor) {
 			await this.onErrorInterceptor(error);
 		}
-		throw error;
 	}
 
 	/**
@@ -317,36 +327,53 @@ export class ApiClient {
 			endpoint: effectiveEndpoint,
 		});
 
-		// Acquire a rate-limit slot immediately before the fetch so interceptor
-		// errors or serialisation failures never consume budget unnecessarily.
-		if (this.rateLimiter) await this.rateLimiter.acquire();
+		// Retry boundary: only the fetch + HTTP-status check.
+		// JSON parsing and onSuccessInterceptor run *outside* the retried closure so
+		// that a SyntaxError from res.json() or a bug in onSuccess never causes a
+		// re-fetch (which would duplicate side-effectful mutations).
+		const attemptFetch = async (): Promise<Response> => {
+			// Acquire a rate-limit slot immediately before the fetch so interceptor
+			// errors or serialisation failures never consume budget unnecessarily.
+			if (this.rateLimiter) await this.rateLimiter.acquire();
+
+			let res: Response;
+			try {
+				res = await fetch(url.toString(), {
+					method,
+					headers: jwt
+						? {
+								Authorization: `Bearer ${this.accessToken}`,
+								"Content-Type": "application/json;charset=utf-8",
+							}
+						: {
+								"Content-Type": "application/json;charset=utf-8",
+							},
+					...(bodyJson !== undefined ? { body: bodyJson } : {}),
+				});
+			} catch (error) {
+				this.logger?.log({
+					type: "error",
+					method,
+					endpoint: effectiveEndpoint,
+					errorMessage: error instanceof Error ? error.message : String(error),
+					durationMs: Date.now() - startedAt,
+				});
+				throw error;
+			}
+
+			if (!res.ok) throw await this.normalizeError(res, effectiveEndpoint, method);
+			return res;
+		};
 
 		let res: Response;
 		try {
-			res = await fetch(url.toString(), {
-				method,
-				headers: jwt
-					? {
-							Authorization: `Bearer ${this.accessToken}`,
-							"Content-Type": "application/json;charset=utf-8",
-						}
-					: {
-							"Content-Type": "application/json;charset=utf-8",
-						},
-				...(bodyJson !== undefined ? { body: bodyJson } : {}),
-			});
+			res = this.retryManager ? await this.retryManager.execute(attemptFetch) : await attemptFetch();
 		} catch (error) {
-			this.logger?.log({
-				type: "error",
-				method,
-				endpoint: effectiveEndpoint,
-				errorMessage: error instanceof Error ? error.message : String(error),
-				durationMs: Date.now() - startedAt,
-			});
+			if (error instanceof TMDBError) {
+				await this.notifyErrorInterceptor(error);
+			}
 			throw error;
 		}
-
-		if (!res.ok) await this.handleError(res, effectiveEndpoint, method);
 
 		this.logger?.log({
 			type: "response",
