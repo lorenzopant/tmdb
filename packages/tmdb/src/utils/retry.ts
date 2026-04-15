@@ -12,16 +12,18 @@ export type RetryOptions = {
 	 *
 	 * The delay for attempt `n` (1-indexed) is:
 	 * ```
-	 * clamp(base_delay_ms * 2^(n-1), 0, max_delay_ms) + jitter
+	 * random(0, min(base_delay_ms * 2^(n-1), max_delay_ms))
 	 * ```
-	 * where `jitter` is a uniform random value in `[0, base_delay_ms)`.
+	 * This uses full jitter: each retry picks a uniform random delay between `0`
+	 * and the capped exponential back-off for that attempt.
 	 *
 	 * @default 500
 	 */
 	base_delay_ms?: number;
 	/**
 	 * Maximum delay in milliseconds between retry attempts.
-	 * The exponential component is clamped to this value before jitter is added.
+	 * The exponential back-off cap is clamped to this value before sampling the
+	 * full-jitter delay.
 	 * @default 30_000
 	 */
 	max_delay_ms?: number;
