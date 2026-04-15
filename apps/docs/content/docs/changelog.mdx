@@ -4,6 +4,57 @@ description: Latest updates and announcements
 icon: History
 ---
 
+## 🚀 1.21.0 - 15 April 2026
+
+#### ✨ New
+
+- **Pagination helpers** — four new exported utilities simplify working with any paginated TMDB endpoint: `paginate()` for lazy async iteration, `fetchAllPages()` for collecting every page into a flat array, `hasNextPage()` / `hasPreviousPage()` for UI navigation, and `getPageInfo()` for structured pagination metadata. `fetchAllPages()` also supports `maxPages` and `deduplicateBy` for safer bulk fetches on popularity-sorted endpoints where TMDB can return cross-page duplicates.
+
+```ts
+import { fetchAllPages, getPageInfo, paginate } from "@lorenzopant/tmdb";
+
+for await (const page of paginate((p) => tmdb.search.movies({ query: "batman", page: p }))) {
+	console.log(getPageInfo(page));
+}
+
+const movies = await fetchAllPages((p) => tmdb.movie_lists.now_playing({ page: p }), {
+	maxPages: 3,
+	deduplicateBy: (movie) => movie.id,
+});
+```
+
+- **Opt-in automatic retry with backoff** — new `retry` option automatically retries transient failures with full-jitter exponential backoff. Pass `true` for defaults (`max_retries: 3`, `base_delay_ms: 500`, `max_delay_ms: 30_000`) or provide a `RetryOptions` object with a custom `shouldRetry` predicate. By default, the client retries HTTP `5xx` responses and network/fetch failures, applies to both reads and mutations, and respects any configured rate limit budget.
+
+```ts
+import { TMDB, TMDBError } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB(token, { retry: true });
+
+const custom = new TMDB(token, {
+	retry: {
+		max_retries: 5,
+		base_delay_ms: 200,
+		shouldRetry: (error, attempt) => {
+			if (error instanceof TMDBError)
+				return error.http_status_code >= 500 || error.http_status_code === 429;
+			return attempt <= 2;
+		},
+	},
+});
+```
+
+#### 📦 Package
+
+- **Node.js 20+ is now required** — the repo and docs now target Node `>=20`, with `engines` updated in the workspace and a new root `.nvmrc` set to `20`.
+
+#### 📖 Docs
+
+- New [Pagination](/docs/getting-started/pagination) guide covering lazy iteration, full-page collection, deduplication, and page metadata helpers.
+- New [Retry](/docs/getting-started/options/retry) guide covering defaults, custom predicates, backoff behaviour, and interaction with rate limiting.
+- [Options](/docs/getting-started/options) page updated with the new `retry` option reference.
+
+---
+
 ## 🚀 1.20.2 - 13 April 2026
 
 #### ✨ New

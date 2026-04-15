@@ -125,7 +125,7 @@ The following features are planned to improve developer experience and extend th
 - [x] **Logger** — Log method name, URL, params, response status, and latency with optionally custom log functions
 - [x] **Request interceptors** — Hook into every request before it fires (e.g., inject custom headers, modify params)
 - [x] **Response interceptors** — Transform or inspect every response globally before it reaches the caller
-- [ ] **Automatic retry with backoff** — Retry failed requests (e.g., `429 Too Many Requests` or `5xx`) with configurable max retries and exponential backoff
+- [x] **Automatic retry with backoff** — Retry failed requests (e.g., `429 Too Many Requests` or `5xx`) with configurable max retries and exponential backoff
 
 ### ⚡ Performance
 
@@ -135,13 +135,12 @@ The following features are planned to improve developer experience and extend th
 
 ### 🛠️ Developer Ergonomics
 
-- [ ] **Pagination helpers** — Expose an `autoPaginate()` utility or async generator that fetches all pages transparently
+- [x] **Pagination helpers** — Expose an `autoPaginate()` utility or async generator that fetches all pages transparently
 - [x] **Image URL builder** — Helper to resolve TMDB image paths into full URLs (e.g., `tmdb.images.poster(path, "w500")`)
 - [x] **Language/region defaults** — Set `language` and `region` once at the client level instead of passing them on every call
 - [x] **Typed errors** — Structured `TMDBError` objects with `statusCode`, `statusMessage`, and original request context instead of raw HTTP errors
 - [x] **Image URL auto-enrichment** — Automatically convert image path fields (e.g., `poster_path`) into full URLs in responses
 - [ ] **Better discover query builder** - A typed, chainable builder `.withGenres().releasedAfter('2020').sortBy('popularity')` is far more ergonomic than passing raw param objects.
-
 
 > 💡 Have a feature request? Open an issue or submit a PR!
 
