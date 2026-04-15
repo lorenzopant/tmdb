@@ -34,10 +34,7 @@ async add_movie(params: ListMutationParams, body: ListMovieBody): Promise<ListMu
 import { TMDB } from "@lorenzopant/tmdb";
 
 const tmdb = new TMDB("your-api-key");
-const result = await tmdb.lists.add_movie(
-	{ list_id: 5861, session_id: "your-session-id" },
-	{ media_id: 550 },
-);
+const result = await tmdb.lists.add_movie({ list_id: 5861, session_id: "your-session-id" }, { media_id: 550 });
 
 console.log(result.status_code); // 12
 ```

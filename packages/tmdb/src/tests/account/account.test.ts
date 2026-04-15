@@ -18,10 +18,7 @@ describe("AccountAPI", () => {
 
 	describe("add_favorite", () => {
 		it("should call client.mutate with correct endpoint and body when adding", async () => {
-			await api.add_favorite(
-				{ account_id: 123 },
-				{ media_type: "movie", media_id: 550, favorite: true },
-			);
+			await api.add_favorite({ account_id: 123 }, { media_type: "movie", media_id: 550, favorite: true });
 			expect(clientMock.mutate).toHaveBeenCalledOnce();
 			expect(clientMock.mutate).toHaveBeenCalledWith(
 				"POST",
@@ -36,10 +33,7 @@ describe("AccountAPI", () => {
 		});
 
 		it("should call client.mutate with correct endpoint and body when removing", async () => {
-			await api.add_favorite(
-				{ account_id: 123 },
-				{ media_type: "movie", media_id: 550, favorite: false },
-			);
+			await api.add_favorite({ account_id: 123 }, { media_type: "movie", media_id: 550, favorite: false });
 			expect(clientMock.mutate).toHaveBeenCalledWith(
 				"POST",
 				"/account/123/favorite",
@@ -53,10 +47,7 @@ describe("AccountAPI", () => {
 		});
 
 		it("should pass session_id as a query param", async () => {
-			await api.add_favorite(
-				{ account_id: 123, session_id: "sess123" },
-				{ media_type: "tv", media_id: 1396, favorite: true },
-			);
+			await api.add_favorite({ account_id: 123, session_id: "sess123" }, { media_type: "tv", media_id: 1396, favorite: true });
 			expect(clientMock.mutate).toHaveBeenCalledWith(
 				"POST",
 				"/account/123/favorite",
@@ -72,18 +63,12 @@ describe("AccountAPI", () => {
 		it("should return the result from client.mutate", async () => {
 			const mockResponse: AccountMutationResponse = { status_code: 1, status_message: "Success." };
 			(clientMock.mutate as ReturnType<typeof vi.fn>).mockResolvedValue(mockResponse);
-			const result = await api.add_favorite(
-				{ account_id: 123 },
-				{ media_type: "movie", media_id: 550, favorite: true },
-			);
+			const result = await api.add_favorite({ account_id: 123 }, { media_type: "movie", media_id: 550, favorite: true });
 			expect(result).toEqual(mockResponse);
 		});
 
 		it("should support tv media_type", async () => {
-			await api.add_favorite(
-				{ account_id: 456 },
-				{ media_type: "tv", media_id: 1396, favorite: true },
-			);
+			await api.add_favorite({ account_id: 456 }, { media_type: "tv", media_id: 1396, favorite: true });
 			expect(clientMock.mutate).toHaveBeenCalledWith(
 				"POST",
 				"/account/456/favorite",
@@ -101,18 +86,12 @@ describe("AccountAPI", () => {
 				const error = new TMDBError("Authentication failed.", 401, 3);
 				(clientMock.mutate as ReturnType<typeof vi.fn>).mockRejectedValue(error);
 
-				await expect(
-					api.add_favorite(
-						{ account_id: 123 },
-						{ media_type: "movie", media_id: 550, favorite: true },
-					),
-				).rejects.toThrow(TMDBError);
+				await expect(api.add_favorite({ account_id: 123 }, { media_type: "movie", media_id: 550, favorite: true })).rejects.toThrow(
+					TMDBError,
+				);
 
 				await expect(
-					api.add_favorite(
-						{ account_id: 123 },
-						{ media_type: "movie", media_id: 550, favorite: true },
-					),
+					api.add_favorite({ account_id: 123 }, { media_type: "movie", media_id: 550, favorite: true }),
 				).rejects.toMatchObject({ http_status_code: 401, tmdb_status_code: 3 });
 			});
 
@@ -133,10 +112,7 @@ describe("AccountAPI", () => {
 				(clientMock.mutate as ReturnType<typeof vi.fn>).mockRejectedValue(error);
 
 				await expect(
-					api.add_favorite(
-						{ account_id: 99999 },
-						{ media_type: "movie", media_id: 550, favorite: true },
-					),
+					api.add_favorite({ account_id: 99999 }, { media_type: "movie", media_id: 550, favorite: true }),
 				).rejects.toMatchObject({ http_status_code: 404, tmdb_status_code: 34 });
 			});
 
@@ -148,10 +124,7 @@ describe("AccountAPI", () => {
 				(clientMock.mutate as ReturnType<typeof vi.fn>).mockRejectedValue(error);
 
 				await expect(
-					api.add_favorite(
-						{ account_id: 123 },
-						{ media_type: "movie", media_id: 550, favorite: true },
-					),
+					api.add_favorite({ account_id: 123 }, { media_type: "movie", media_id: 550, favorite: true }),
 				).rejects.toMatchObject({ http_status_code: 422, tmdb_status_code: 47 });
 			});
 
@@ -159,22 +132,16 @@ describe("AccountAPI", () => {
 				const error = new TypeError("Failed to fetch");
 				(clientMock.mutate as ReturnType<typeof vi.fn>).mockRejectedValue(error);
 
-				await expect(
-					api.add_favorite(
-						{ account_id: 123 },
-						{ media_type: "movie", media_id: 550, favorite: true },
-					),
-				).rejects.toThrow("Failed to fetch");
+				await expect(api.add_favorite({ account_id: 123 }, { media_type: "movie", media_id: 550, favorite: true })).rejects.toThrow(
+					"Failed to fetch",
+				);
 			});
 		});
 	});
 
 	describe("add_to_watchlist", () => {
 		it("should call client.mutate with correct endpoint and body when adding", async () => {
-			await api.add_to_watchlist(
-				{ account_id: 123 },
-				{ media_type: "movie", media_id: 550, watchlist: true },
-			);
+			await api.add_to_watchlist({ account_id: 123 }, { media_type: "movie", media_id: 550, watchlist: true });
 			expect(clientMock.mutate).toHaveBeenCalledOnce();
 			expect(clientMock.mutate).toHaveBeenCalledWith(
 				"POST",
@@ -185,10 +152,7 @@ describe("AccountAPI", () => {
 		});
 
 		it("should call client.mutate with correct endpoint and body when removing", async () => {
-			await api.add_to_watchlist(
-				{ account_id: 123 },
-				{ media_type: "movie", media_id: 550, watchlist: false },
-			);
+			await api.add_to_watchlist({ account_id: 123 }, { media_type: "movie", media_id: 550, watchlist: false });
 			expect(clientMock.mutate).toHaveBeenCalledWith(
 				"POST",
 				"/account/123/watchlist",
@@ -198,10 +162,7 @@ describe("AccountAPI", () => {
 		});
 
 		it("should pass session_id as a query param", async () => {
-			await api.add_to_watchlist(
-				{ account_id: 123, session_id: "sess123" },
-				{ media_type: "tv", media_id: 1396, watchlist: true },
-			);
+			await api.add_to_watchlist({ account_id: 123, session_id: "sess123" }, { media_type: "tv", media_id: 1396, watchlist: true });
 			expect(clientMock.mutate).toHaveBeenCalledWith(
 				"POST",
 				"/account/123/watchlist",
@@ -213,18 +174,12 @@ describe("AccountAPI", () => {
 		it("should return the result from client.mutate", async () => {
 			const mockResponse: AccountMutationResponse = { status_code: 1, status_message: "Success." };
 			(clientMock.mutate as ReturnType<typeof vi.fn>).mockResolvedValue(mockResponse);
-			const result = await api.add_to_watchlist(
-				{ account_id: 123 },
-				{ media_type: "movie", media_id: 550, watchlist: true },
-			);
+			const result = await api.add_to_watchlist({ account_id: 123 }, { media_type: "movie", media_id: 550, watchlist: true });
 			expect(result).toEqual(mockResponse);
 		});
 
 		it("should support tv media_type", async () => {
-			await api.add_to_watchlist(
-				{ account_id: 456 },
-				{ media_type: "tv", media_id: 1396, watchlist: true },
-			);
+			await api.add_to_watchlist({ account_id: 456 }, { media_type: "tv", media_id: 1396, watchlist: true });
 			expect(clientMock.mutate).toHaveBeenCalledWith(
 				"POST",
 				"/account/456/watchlist",
@@ -238,10 +193,7 @@ describe("AccountAPI", () => {
 				const error = new TMDBError("Authentication failed.", 401, 3);
 				(clientMock.mutate as ReturnType<typeof vi.fn>).mockRejectedValue(error);
 				await expect(
-					api.add_to_watchlist(
-						{ account_id: 123 },
-						{ media_type: "movie", media_id: 550, watchlist: true },
-					),
+					api.add_to_watchlist({ account_id: 123 }, { media_type: "movie", media_id: 550, watchlist: true }),
 				).rejects.toMatchObject({ http_status_code: 401, tmdb_status_code: 3 });
 			});
 
@@ -249,10 +201,7 @@ describe("AccountAPI", () => {
 				const error = new TMDBError("The input is not valid.", 422, 47);
 				(clientMock.mutate as ReturnType<typeof vi.fn>).mockRejectedValue(error);
 				await expect(
-					api.add_to_watchlist(
-						{ account_id: 123 },
-						{ media_type: "movie", media_id: 550, watchlist: true },
-					),
+					api.add_to_watchlist({ account_id: 123 }, { media_type: "movie", media_id: 550, watchlist: true }),
 				).rejects.toMatchObject({ http_status_code: 422, tmdb_status_code: 47 });
 			});
 		});
@@ -291,10 +240,7 @@ describe("AccountAPI", () => {
 		it("should use defaultOptions.language when not provided", async () => {
 			api = new AccountAPI(clientMock, { language: "it-IT" });
 			await api.favorite_movies({ account_id: 123 });
-			expect(clientMock.request).toHaveBeenCalledWith(
-				"/account/123/favorite/movies",
-				expect.objectContaining({ language: "it-IT" }),
-			);
+			expect(clientMock.request).toHaveBeenCalledWith("/account/123/favorite/movies", expect.objectContaining({ language: "it-IT" }));
 		});
 
 		it("should pass sort_by and session_id when provided", async () => {
@@ -323,10 +269,7 @@ describe("AccountAPI", () => {
 		it("should use defaultOptions.language when not provided", async () => {
 			api = new AccountAPI(clientMock, { language: "fr-FR" });
 			await api.favorite_tv({ account_id: 123 });
-			expect(clientMock.request).toHaveBeenCalledWith(
-				"/account/123/favorite/tv",
-				expect.objectContaining({ language: "fr-FR" }),
-			);
+			expect(clientMock.request).toHaveBeenCalledWith("/account/123/favorite/tv", expect.objectContaining({ language: "fr-FR" }));
 		});
 	});
 
@@ -362,10 +305,7 @@ describe("AccountAPI", () => {
 		it("should use defaultOptions.language when not provided", async () => {
 			api = new AccountAPI(clientMock, { language: "ja-JP" });
 			await api.watchlist_tv({ account_id: 456 });
-			expect(clientMock.request).toHaveBeenCalledWith(
-				"/account/456/watchlist/tv",
-				expect.objectContaining({ language: "ja-JP" }),
-			);
+			expect(clientMock.request).toHaveBeenCalledWith("/account/456/watchlist/tv", expect.objectContaining({ language: "ja-JP" }));
 		});
 	});
 
@@ -382,10 +322,7 @@ describe("AccountAPI", () => {
 		it("should use defaultOptions.language when not provided", async () => {
 			api = new AccountAPI(clientMock, { language: "pt-BR" });
 			await api.rated_movies({ account_id: 123 });
-			expect(clientMock.request).toHaveBeenCalledWith(
-				"/account/123/rated/movies",
-				expect.objectContaining({ language: "pt-BR" }),
-			);
+			expect(clientMock.request).toHaveBeenCalledWith("/account/123/rated/movies", expect.objectContaining({ language: "pt-BR" }));
 		});
 	});
 
@@ -402,10 +339,7 @@ describe("AccountAPI", () => {
 		it("should use defaultOptions.language when not provided", async () => {
 			api = new AccountAPI(clientMock, { language: "ko-KR" });
 			await api.rated_tv({ account_id: 123 });
-			expect(clientMock.request).toHaveBeenCalledWith(
-				"/account/123/rated/tv",
-				expect.objectContaining({ language: "ko-KR" }),
-			);
+			expect(clientMock.request).toHaveBeenCalledWith("/account/123/rated/tv", expect.objectContaining({ language: "ko-KR" }));
 		});
 	});
 

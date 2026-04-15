@@ -8,10 +8,9 @@ requests so they never exceed TMDB's API budget. It is **opt-in** — disabled b
 behaviour change for existing consumers.
 
 <Callout type="info">
-	TMDB's legacy hard limit of 40 requests per 10 seconds was disabled in December 2019. The current
-	limit sits at approximately 40 requests per second and may change at any time. Respect `429 Too
-	Many Requests` responses and back off accordingly. See the [TMDB rate limiting
-	docs](https://developer.themoviedb.org/docs/rate-limiting) for details.
+	TMDB's legacy hard limit of 40 requests per 10 seconds was disabled in December 2019. The current limit sits at approximately 40
+	requests per second and may change at any time. Respect `429 Too Many Requests` responses and back off accordingly. See the [TMDB rate
+	limiting docs](https://developer.themoviedb.org/docs/rate-limiting) for details.
 </Callout>
 
 ---
@@ -118,7 +117,6 @@ const movies = await Promise.all(movieIds.map((id) => tmdb.movies.details({ movi
 Without rate limiting the above would send hundreds of concurrent requests and risk a `429 Too Many Requests` response from TMDB. With `rate_limit: true` enabled, requests are paced to approximately 40 per second — no manual batching or `sleep()` calls needed.
 
 <Callout>
-	The limiter is **in-process only**. If your application runs multiple processes or workers that
-	share the same API key, each process maintains its own independent queue and the combined
-	throughput may still exceed TMDB's limit.
+	The limiter is **in-process only**. If your application runs multiple processes or workers that share the same API key, each process
+	maintains its own independent queue and the combined throughput may still exceed TMDB's limit.
 </Callout>
