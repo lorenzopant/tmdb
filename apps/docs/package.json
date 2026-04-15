@@ -2,6 +2,9 @@
 	"name": "docs",
 	"version": "0.0.0",
 	"private": true,
+	"engines": {
+		"node": ">=20"
+	},
 	"scripts": {
 		"build": "next build",
 		"clean": "rm -rf .next .source out build",
@@ -20,29 +23,29 @@
 	"dependencies": {
 		"@lorenzopant/tmdb": "workspace:*",
 		"@radix-ui/react-collapsible": "^1.1.12",
-		"@takumi-rs/image-response": "^0.73.1",
+		"@takumi-rs/image-response": "^1.0.9",
 		"@vercel/analytics": "^2.0.0",
 		"@vercel/speed-insights": "^2.0.0",
 		"class-variance-authority": "^0.7.1",
-		"framer-motion": "^12.34.3",
-		"fumadocs-core": "16.6.5",
-		"fumadocs-mdx": "14.2.8",
-		"fumadocs-typescript": "^5.1.4",
-		"fumadocs-ui": "16.6.5",
+		"framer-motion": "^12.38.0",
+		"fumadocs-core": "16.7.14",
+		"fumadocs-mdx": "14.2.13",
+		"fumadocs-typescript": "^5.2.4",
+		"fumadocs-ui": "16.7.14",
 		"lucide-react": "^1.7.0",
 		"next": "16.1.6",
-		"react": "^19.2.4",
-		"react-dom": "^19.2.4",
-		"tailwind-merge": "^3.4.1"
+		"react": "^19.2.5",
+		"react-dom": "^19.2.5",
+		"tailwind-merge": "^3.5.0"
 	},
 	"devDependencies": {
-		"@tailwindcss/postcss": "^4.1.18",
+		"@tailwindcss/postcss": "^4.2.2",
 		"@types/mdx": "^2.0.13",
 		"@types/node": "^25.2.3",
 		"@types/react": "^19.2.14",
 		"@types/react-dom": "^19.2.3",
 		"postcss": "^8.5.6",
-		"tailwindcss": "^4.1.18",
+		"tailwindcss": "^4.2.2",
 		"typescript": "^5.9.3"
 	}
 }

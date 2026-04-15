@@ -272,7 +272,7 @@ const lists = await tmdb.v4.lists.list({ account_id: "me" });
 
 ## Requirements
 
-- Node.js 18+
+- Node.js 20+
 - Works in frontend frameworks (React, Vue, Next.js) — **never expose your access token to the browser in production**
 
 ---

@@ -1,0 +1,245 @@
+---
+title: Pagination
+description: Helpers for working with paginated TMDB responses — lazy iteration, batch collection, and UI metadata.
+icon: ListOrdered
+---
+
+Every TMDB endpoint that returns lists uses offset pagination via a `page` parameter. The response
+always has the shape:
+
+```ts
+type PaginatedResponse<T> = {
+	page: number;
+	total_pages: number;
+	total_results: number;
+	results: T[];
+};
+```
+
+`@lorenzopant/tmdb` ships four standalone utilities that remove the boilerplate of working with
+paginated results. They are generic and work with every paginated method in the client.
+
+```ts
+import {
+	paginate,
+	fetchAllPages,
+	hasNextPage,
+	hasPreviousPage,
+	getPageInfo,
+} from "@lorenzopant/tmdb";
+```
+
+---
+
+## `paginate()`
+
+An async generator that lazily fetches one page at a time. The caller controls when to stop —
+ideal when you need to process or filter results without loading everything into memory first.
+
+```ts
+async function* paginate<T>(
+	fetcher: (page: number) => Promise<PaginatedResponse<T>>,
+	startPage?: number,
+): AsyncGenerator<PaginatedResponse<T>>
+```
+
+### Basic usage
+
+```ts
+for await (const page of paginate((p) => tmdb.search.movies({ query: "batman", page: p }))) {
+	console.log(`Page ${page.page} of ${page.total_pages}`);
+	console.log(page.results);
+}
+```
+
+### Early exit — stop as soon as you find what you need
+
+```ts
+for await (const page of paginate((p) => tmdb.search.movies({ query: "batman", page: p }))) {
+	const hit = page.results.find((m) => m.vote_average > 8.0);
+	if (hit) {
+		console.log(hit);
+		break; // stops fetching immediately — no wasted requests
+	}
+}
+```
+
+### Resuming from a checkpoint
+
+Pass `startPage` to resume mid-sequence, for example after a crash or for incremental syncs:
+
+```ts
+const lastSyncedPage = await db.getSyncCheckpoint(); // e.g. 42
+
+for await (const page of paginate(
+	(p) => tmdb.changes.movie_list({ page: p }),
+	lastSyncedPage + 1,
+)) {
+	await processChanges(page.results);
+}
+```
+
+### Syncing to a database in batches
+
+```ts
+for await (const page of paginate((p) => tmdb.discover.movie({ with_genres: "28", page: p }))) {
+	await db.movies.insertMany(page.results);
+}
+```
+
+---
+
+## `fetchAllPages()`
+
+Fetches all pages sequentially and returns a flat array of results. Use when you need everything
+at once and are comfortable with multiple sequential requests.
+
+```ts
+async function fetchAllPages<T>(
+	fetcher: (page: number) => Promise<PaginatedResponse<T>>,
+	options?: FetchAllPagesOptions<T>,
+): Promise<T[]>;
+```
+
+### Options
+
+| Name            | Type                   | Default | Description                                                                                           |
+| --------------- | ---------------------- | ------- | ----------------------------------------------------------------------------------------------------- |
+| `maxPages`      | `number`               | `500`   | Maximum pages to fetch. TMDB's hard cap is 500.                                                       |
+| `deduplicateBy` | `(item: T) => unknown` | —       | Key extractor for deduplication. See [note below](#duplicate-results-on-popularity-sorted-endpoints). |
+
+### Basic usage
+
+```ts
+const movies = await fetchAllPages((p) => tmdb.keywords.movies({ keyword_id: 9715, page: p }));
+```
+
+### Capping requests with `maxPages`
+
+Without a cap, `fetchAllPages` will follow `total_pages` up to the TMDB maximum of 500 pages
+(10 000 results). Use `maxPages` to constrain the total requests made:
+
+```ts
+const trending = await fetchAllPages(
+	(p) => tmdb.trending.movies({ time_window: "week", page: p }),
+	{ maxPages: 5 }, // at most 5 requests → up to 100 results
+);
+```
+
+### Duplicate results on popularity-sorted endpoints
+
+<Callout type="warn">
+	Some endpoints sort results by a **live popularity score** that changes between requests (e.g.
+	`movie_lists.now_playing`, `movie_lists.popular`, `tv_series_lists.popular`). A movie's rank can
+	shift between the time you fetch page 1 and page 2, causing the same item to appear on both page
+	boundaries. This is a known TMDB server-side behaviour — the API uses stateless offset pagination,
+	not cursors.
+</Callout>
+
+Use `deduplicateBy` to discard cross-page duplicates automatically:
+
+```ts
+const movies = await fetchAllPages((p) => tmdb.movie_lists.now_playing({ page: p }), {
+	maxPages: 3,
+	deduplicateBy: (m) => m.id,
+});
+```
+
+When two items share the same key, the **last occurrence wins** — the value is replaced with the
+most recently fetched one, but the item retains its original position in the result list.
+
+---
+
+## `hasNextPage()` / `hasPreviousPage()`
+
+Lightweight boolean checks for use in UI navigation and iteration logic.
+
+```ts
+function hasNextPage(response: Pick<PaginatedResponse<unknown>, "page" | "total_pages">): boolean;
+function hasPreviousPage(response: Pick<PaginatedResponse<unknown>, "page">): boolean;
+```
+
+Both accept any object with the required fields — you can pass a full `PaginatedResponse` or just
+the fields you need.
+
+```ts
+const data = await tmdb.movie_lists.popular({ page: currentPage });
+
+if (hasNextPage(data)) loadNextPage();
+if (hasPreviousPage(data)) loadPreviousPage();
+```
+
+### React pagination example
+
+```tsx
+const [page, setPage] = useState(1);
+const { data } = useQuery(["movies", page], () => tmdb.movie_lists.popular({ page }));
+
+return (
+	<>
+		{data?.results.map((m) => (
+			<MovieCard key={m.id} movie={m} />
+		))}
+		<button disabled={!data || !hasPreviousPage(data)} onClick={() => setPage((p) => p - 1)}>
+			Previous
+		</button>
+		<button disabled={!data || !hasNextPage(data)} onClick={() => setPage((p) => p + 1)}>
+			Next
+		</button>
+	</>
+);
+```
+
+---
+
+## `getPageInfo()`
+
+Extracts structured pagination metadata from any `PaginatedResponse`. Useful for building
+pagination controls or logging progress without reaching into the raw response shape.
+
+```ts
+function getPageInfo(response: PaginatedResponse<unknown>): PageInfo;
+```
+
+### `PageInfo`
+
+| Field          | Type      | Description                     |
+| -------------- | --------- | ------------------------------- |
+| `current`      | `number`  | Current page number.            |
+| `total`        | `number`  | Total number of pages.          |
+| `totalResults` | `number`  | Total results across all pages. |
+| `isFirst`      | `boolean` | `true` when on page 1.          |
+| `isLast`       | `boolean` | `true` when on the last page.   |
+
+```ts
+const info = getPageInfo(data);
+// { current: 3, total: 47, totalResults: 940, isFirst: false, isLast: false }
+```
+
+### Infinite scroll sentinel
+
+```ts
+const info = getPageInfo(lastResponse);
+if (!info.isLast) {
+	observer.observe(sentinelRef.current);
+}
+```
+
+---
+
+## Combining helpers
+
+`paginate` and `getPageInfo` compose naturally for progress logging and conditional stopping:
+
+```ts
+const collected: MovieResultItem[] = [];
+
+for await (const page of paginate((p) => tmdb.discover.movie({ with_genres: "28", page: p }))) {
+	const info = getPageInfo(page);
+	console.log(`Page ${info.current}/${info.total} — ${info.totalResults} total results`);
+
+	collected.push(...page.results);
+
+	if (collected.length >= 200 || info.isLast) break;
+}
+```
