@@ -1,0 +1,316 @@
+# @lorenzopant/tmdb
+
+`@lorenzopant/tmdb` is a fully typed TypeScript SDK for The Movie Database (TMDB) API. It wraps TMDB v3 endpoints in a single `TMDB` client and exposes TMDB v4 auth/account/list APIs through `tmdb.v4` when the client is created with a JWT bearer token.
+
+## Install
+
+```bash
+npm install @lorenzopant/tmdb
+```
+
+## Primary entrypoints
+
+```ts
+import { TMDB, TMDBError } from "@lorenzopant/tmdb";
+```
+
+Main public exports include:
+- `TMDB`
+- `TMDBv4`
+- `TMDBError`
+- Standalone endpoint classes such as `MoviesAPI`, `SearchAPI`, `GenresAPI`, `PeopleAPI`, `ListsAPI`, `AuthenticationAPI`, `V4AuthAPI`, `V4AccountAPI`, and `V4ListsAPI`
+- Package types via the root entrypoint and `@lorenzopant/tmdb/types`
+- Utility exports from `@lorenzopant/tmdb`, including pagination helpers and retry types
+
+## Quick start
+
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB(process.env.TMDB_ACCESS_TOKEN!, {
+	language: "en-US",
+	region: "US",
+});
+
+const movie = await tmdb.movies.details({ movie_id: 550 });
+console.log(movie.title);
+```
+
+## Constructor
+
+```ts
+const tmdb = new TMDB(accessToken, options?);
+```
+
+`accessToken` is required. Supported options include:
+- `language`: default ISO 639-1 language for requests
+- `region`: default ISO 3166-1 region
+- `timezone`: default timezone for supported TV queries
+- `images`: image URL behavior and image-language prioritization
+- `logger`: `true` for built-in logging or a custom logger function
+- `deduplication`: defaults to `true`
+- `interceptors`: request and response hooks
+- `rate_limit`: `true` or `{ max_requests, per_ms }`
+- `retry`: `true` or a `RetryOptions` object
+- `cache`: `true` or a cache options object
+
+Important defaults and constraints:
+- `deduplication` is on by default
+- `cache`, `retry`, and `rate_limit` are off by default
+- `tmdb.v4` requires a JWT bearer token and throws if the client was created with a non-JWT token
+- `tmdb.cache` is only available when caching is enabled
+
+## Namespaces
+
+The `TMDB` instance exposes modular namespaces that map closely to TMDB APIs:
+- `movies`
+- `movie_lists`
+- `tv_series`
+- `tv_lists`
+- `tv_seasons`
+- `tv_episodes`
+- `tv_episode_groups`
+- `search`
+- `discover`
+- `trending`
+- `people`
+- `people_lists`
+- `collections`
+- `companies`
+- `networks`
+- `genres`
+- `keywords`
+- `reviews`
+- `credits`
+- `configuration`
+- `changes`
+- `find`
+- `watch_providers`
+- `authentication`
+- `account`
+- `guest_sessions`
+- `lists`
+- `images`
+- `v4`
+
+The `tmdb.v4` namespace exposes:
+- `tmdb.v4.auth`
+- `tmdb.v4.account`
+- `tmdb.v4.lists`
+
+## Common usage patterns
+
+### Fetch a movie
+
+```ts
+const movie = await tmdb.movies.details({ movie_id: 550 });
+console.log(movie.title);
+```
+
+### Search
+
+```ts
+const results = await tmdb.search.movies({
+	query: "Inception",
+	page: 1,
+	language: "en-US",
+});
+```
+
+### Discover
+
+```ts
+const response = await tmdb.discover.movies({
+	with_genres: "28",
+	sort_by: "vote_average.desc",
+	"vote_count.gte": 1000,
+});
+```
+
+### TV series and seasons
+
+```ts
+const show = await tmdb.tv_series.details({ series_id: 1396 });
+const season = await tmdb.tv_seasons.details({
+	series_id: 1396,
+	season_number: 1,
+});
+```
+
+### Append related resources
+
+```ts
+const movie = await tmdb.movies.details({
+	movie_id: 550,
+	append_to_response: ["credits", "videos"],
+});
+
+console.log(movie.credits.cast[0]?.name);
+console.log(movie.videos.results[0]?.key);
+```
+
+### Build image URLs
+
+```ts
+const movie = await tmdb.movies.details({ movie_id: 550 });
+
+const posterUrl = tmdb.images.poster(movie.poster_path!, "w500");
+const backdropUrl = tmdb.images.backdrop(movie.backdrop_path!, "w1280");
+```
+
+### Auto-enrich image paths in API responses
+
+```ts
+const tmdb = new TMDB(token, {
+	images: {
+		autocomplete_paths: true,
+		default_image_sizes: { posters: "original" },
+	},
+});
+```
+
+### Paginate through any paginated endpoint
+
+```ts
+import { paginate, fetchAllPages, getPageInfo } from "@lorenzopant/tmdb";
+
+for await (const page of paginate((p) => tmdb.search.movies({ query: "batman", page: p }))) {
+	console.log(getPageInfo(page));
+}
+
+const movies = await fetchAllPages((p) => tmdb.movie_lists.now_playing({ page: p }), {
+	maxPages: 3,
+	deduplicateBy: (movie) => movie.id,
+});
+```
+
+### Retry transient failures
+
+```ts
+const tmdb = new TMDB(token, { retry: true });
+```
+
+Custom retry:
+
+```ts
+import { TMDB, TMDBError } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB(token, {
+	retry: {
+		max_retries: 5,
+		base_delay_ms: 200,
+		shouldRetry: (error, attempt) => {
+			if (error instanceof TMDBError) return error.http_status_code >= 500 || error.http_status_code === 429;
+			return attempt <= 2;
+		},
+	},
+});
+```
+
+### Enable in-memory caching
+
+```ts
+const tmdb = new TMDB(token, {
+	cache: {
+		ttl: 60_000,
+		max_size: 500,
+	},
+});
+
+tmdb.cache?.invalidate("/movie/now_playing");
+tmdb.cache?.clear();
+console.log(tmdb.cache?.size);
+```
+
+### Enable rate limiting
+
+```ts
+const tmdb = new TMDB(token, {
+	rate_limit: { max_requests: 20, per_ms: 1_000 },
+});
+```
+
+### Add interceptors
+
+```ts
+const tmdb = new TMDB(token, {
+	interceptors: {
+		request: (ctx) => ({
+			...ctx,
+			params: { ...ctx.params, include_adult: false },
+		}),
+		response: {
+			onError: (error) => {
+				console.error(error.message);
+			},
+		},
+	},
+});
+```
+
+### Handle errors
+
+```ts
+import { TMDB, TMDBError } from "@lorenzopant/tmdb";
+
+try {
+	await tmdb.movies.details({ movie_id: 0 });
+} catch (error) {
+	if (error instanceof TMDBError) {
+		console.error(error.message);
+		console.error(error.http_status_code);
+		console.error(error.tmdb_status_code);
+	}
+}
+```
+
+## v4 usage
+
+Use `tmdb.v4` only when the `TMDB` instance was created with a JWT bearer token.
+
+```ts
+const { request_token } = await tmdb.v4.auth.create_request_token({
+	redirect_to: "https://yourapp.com/callback",
+});
+
+const { access_token, account_id } = await tmdb.v4.auth.create_access_token({
+	request_token,
+});
+
+const profile = await tmdb.v4.account.details(account_id);
+
+const list = await tmdb.v4.lists.create({
+	name: "My list",
+	iso_639_1: "en",
+});
+```
+
+## Package behavior summary
+
+- Strong typing is a primary goal; endpoint params and responses are exported as TypeScript types
+- The client groups endpoints by domain instead of exposing a generic low-level fetch wrapper
+- Standalone endpoint classes are also exported if you do not want the full `TMDB` aggregator
+- Image URL helpers are available even when you do not call an API endpoint
+- Pagination helpers are exported separately and can wrap any paginated method
+- Cache only applies to `GET` requests
+- Response interceptors cannot suppress thrown `TMDBError` values
+
+## Best practices for AI agents and code generators
+
+- Prefer `new TMDB(token, options)` unless there is a strong reason to instantiate standalone endpoint classes
+- Use `tmdb.v4` only when you know the token is a JWT bearer token
+- When showing examples, prefer real namespace names from the package such as `movie_lists`, `tv_series`, `tv_lists`, and `watch_providers`
+- For bulk reads, consider `rate_limit`, `retry`, `cache`, and pagination helpers together
+- For image URLs, use `tmdb.images.poster(...)`, `backdrop(...)`, `profile(...)`, `logo(...)`, or `still(...)`
+- For localized data, set `language`, `region`, and `timezone` at the client level when appropriate
+
+## Documentation links
+
+- Docs home: https://lorenzopant-tmdb-docs.vercel.app/docs
+- Getting started: https://lorenzopant-tmdb-docs.vercel.app/docs/getting-started
+- Authentication guide: https://lorenzopant-tmdb-docs.vercel.app/docs/getting-started/authentication
+- Pagination guide: https://lorenzopant-tmdb-docs.vercel.app/docs/getting-started/pagination
+- Options reference: https://lorenzopant-tmdb-docs.vercel.app/docs/getting-started/options
+- API reference index: https://lorenzopant-tmdb-docs.vercel.app/docs/api-reference
+- Types index: https://lorenzopant-tmdb-docs.vercel.app/docs/types
+- Changelog: https://lorenzopant-tmdb-docs.vercel.app/docs/changelog

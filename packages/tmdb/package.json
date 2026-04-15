@@ -20,7 +20,9 @@
 	},
 	"files": [
 		"dist",
-		"README.md"
+		"README.md",
+		"llms.txt",
+		"llms-full.txt"
 	],
 	"type": "module",
 	"main": "dist/index.mjs",
