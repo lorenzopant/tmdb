@@ -210,7 +210,7 @@ describe("fetchAllPages", () => {
 		expect(result.map((r) => r.id)).toEqual([1, 2, 3]);
 	});
 
-	it("keeps last occurrence when key collides (Map insertion order)", async () => {
+	it("keeps last occurrence when key collides", async () => {
 		const fetcher = vi.fn(async (page: number): Promise<PaginatedResponse<{ id: number; page: number }>> => {
 			return { page, total_pages: 2, total_results: 2, results: [{ id: 1, page }] };
 		});
@@ -219,6 +219,30 @@ describe("fetchAllPages", () => {
 
 		expect(result).toHaveLength(1);
 		expect(result[0].page).toBe(2); // last occurrence wins
+	});
+
+	it("moves duplicate item to its most recently fetched position", async () => {
+		const fetcher = vi.fn(async (page: number): Promise<PaginatedResponse<{ id: number; label: string }>> => {
+			const pages = [
+				[
+					{ id: 1, label: "A-1" },
+					{ id: 2, label: "B" },
+				],
+				[
+					{ id: 3, label: "C" },
+					{ id: 1, label: "A-2" },
+				],
+			];
+			return { page, total_pages: 2, total_results: 4, results: pages[page - 1] };
+		});
+
+		const result = await fetchAllPages(fetcher, { deduplicateBy: (item) => item.id });
+
+		expect(result).toEqual([
+			{ id: 2, label: "B" },
+			{ id: 3, label: "C" },
+			{ id: 1, label: "A-2" },
+		]);
 	});
 
 	it("does not deduplicate when deduplicateBy is not provided", async () => {

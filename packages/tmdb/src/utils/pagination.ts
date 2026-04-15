@@ -50,6 +50,8 @@ export type FetchAllPagesOptions<T = unknown> = {
 	 * When provided, results are deduplicated using the returned key.
 	 * Useful for endpoints that use popularity-based sorting (e.g. `now_playing`),
 	 * where the same item can appear on multiple pages as rankings shift between requests.
+	 * When a duplicate reappears later, its later occurrence wins and is moved to that
+	 * most recently fetched position in the returned array.
 	 *
 	 * Defaults to `undefined` (no deduplication).
 	 *
@@ -93,7 +95,15 @@ export async function fetchAllPages<T>(
 		page++;
 	}
 	if (deduplicateBy) {
-		return [...new Map(results.map((item) => [deduplicateBy(item), item])).values()];
+		const deduplicated = new Map<unknown, T>();
+		for (const item of results) {
+			const key = deduplicateBy(item);
+			if (deduplicated.has(key)) {
+				deduplicated.delete(key);
+			}
+			deduplicated.set(key, item);
+		}
+		return [...deduplicated.values()];
 	}
 	return results;
 }
