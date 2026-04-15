@@ -67,6 +67,30 @@ describe("RetryManager", () => {
 		expect(fn).toHaveBeenCalledTimes(3);
 	});
 
+	it("retries on FetchError by default", async () => {
+		const manager = new RetryManager({ max_retries: 3 });
+		const fetchError = new Error("socket hang up");
+		fetchError.name = "FetchError";
+		const fn = vi.fn().mockRejectedValueOnce(fetchError).mockResolvedValueOnce("recovered");
+
+		const result = await manager.execute(fn, noopSleep);
+
+		expect(result).toBe("recovered");
+		expect(fn).toHaveBeenCalledTimes(2);
+	});
+
+	it("retries on AbortError by default", async () => {
+		const manager = new RetryManager({ max_retries: 3 });
+		const abortError = new Error("aborted");
+		abortError.name = "AbortError";
+		const fn = vi.fn().mockRejectedValueOnce(abortError).mockResolvedValueOnce("recovered");
+
+		const result = await manager.execute(fn, noopSleep);
+
+		expect(result).toBe("recovered");
+		expect(fn).toHaveBeenCalledTimes(2);
+	});
+
 	it("does NOT retry on 4xx TMDBError", async () => {
 		const manager = new RetryManager({ max_retries: 3 });
 		const fn = vi.fn().mockRejectedValue(new TMDBError("Not Found", 404));
@@ -79,6 +103,32 @@ describe("RetryManager", () => {
 		const fn = vi.fn().mockRejectedValue(new TMDBError("Unauthorized", 401));
 		await expect(manager.execute(fn, noopSleep)).rejects.toThrow("Unauthorized");
 		expect(fn).toHaveBeenCalledTimes(1);
+	});
+
+	it("does NOT retry on SyntaxError by default", async () => {
+		const manager = new RetryManager({ max_retries: 3 });
+		const fn = vi.fn().mockRejectedValue(new SyntaxError("Unexpected token"));
+
+		await expect(manager.execute(fn, noopSleep)).rejects.toThrow(SyntaxError);
+		expect(fn).toHaveBeenCalledTimes(1);
+	});
+
+	it("does NOT retry on generic Error by default", async () => {
+		const manager = new RetryManager({ max_retries: 3 });
+		const fn = vi.fn().mockRejectedValue(new Error("boom"));
+
+		await expect(manager.execute(fn, noopSleep)).rejects.toThrow("boom");
+		expect(fn).toHaveBeenCalledTimes(1);
+	});
+
+	it("retries non-Error thrown values by default", async () => {
+		const manager = new RetryManager({ max_retries: 3 });
+		const fn = vi.fn().mockRejectedValueOnce("transient").mockResolvedValueOnce("recovered");
+
+		const result = await manager.execute(fn, noopSleep);
+
+		expect(result).toBe("recovered");
+		expect(fn).toHaveBeenCalledTimes(2);
 	});
 
 	it("exhausts all retries and re-throws the last error", async () => {
@@ -130,6 +180,33 @@ describe("RetryManager", () => {
 		const result = await manager.execute(fn, noopSleep);
 		expect(result).toBe("ok");
 		expect(fn).toHaveBeenCalledTimes(2);
+	});
+
+	it("awaits sleep with computed delay before retrying", async () => {
+		const sleep = vi.fn().mockResolvedValue(undefined);
+		const randomSpy = vi.spyOn(Math, "random").mockReturnValue(0.5);
+		const manager = new RetryManager({ max_retries: 1, base_delay_ms: 100, max_delay_ms: 1_000 });
+		const fn = vi.fn().mockRejectedValueOnce(new TypeError("fetch failed")).mockResolvedValueOnce("ok");
+
+		const result = await manager.execute(fn, sleep);
+
+		expect(result).toBe("ok");
+		expect(sleep).toHaveBeenCalledTimes(1);
+		expect(sleep).toHaveBeenCalledWith(50);
+		randomSpy.mockRestore();
+	});
+
+	it("skips sleep when computed delay is zero", async () => {
+		const sleep = vi.fn().mockResolvedValue(undefined);
+		const randomSpy = vi.spyOn(Math, "random").mockReturnValue(0);
+		const manager = new RetryManager({ max_retries: 1, base_delay_ms: 100, max_delay_ms: 1_000 });
+		const fn = vi.fn().mockRejectedValueOnce(new TypeError("fetch failed")).mockResolvedValueOnce("ok");
+
+		const result = await manager.execute(fn, sleep);
+
+		expect(result).toBe("ok");
+		expect(sleep).not.toHaveBeenCalled();
+		randomSpy.mockRestore();
 	});
 
 	it("computes delay with full jitter (within [0, base * 2^(n-1)])", () => {
