@@ -8,10 +8,9 @@ requests are served from memory without hitting the network. It is **opt-in** �
 default, with no behaviour change for existing consumers.
 
 <Callout type="info">
-	The cache is **in-process only**. It is not shared across server instances, workers, or requests
-	in SSR environments. For persistent or shared caching, use the [`response.onSuccess`
-	interceptor](/docs/getting-started/options/interceptors) to integrate with your own caching layer
-	(Redis, LRU, etc.).
+	The cache is **in-process only**. It is not shared across server instances, workers, or requests in SSR environments. For persistent or
+	shared caching, use the [`response.onSuccess` interceptor](/docs/getting-started/options/interceptors) to integrate with your own
+	caching layer (Redis, LRU, etc.).
 </Callout>
 
 ---
@@ -155,10 +154,7 @@ const tmdb = new TMDB("your-api-key", {
 });
 
 // First call — fetches once (deduplication collapses concurrent siblings)
-const [a, b] = await Promise.all([
-	tmdb.movies.details({ movie_id: 550 }),
-	tmdb.movies.details({ movie_id: 550 }),
-]);
+const [a, b] = await Promise.all([tmdb.movies.details({ movie_id: 550 }), tmdb.movies.details({ movie_id: 550 })]);
 
 // Subsequent calls — served from cache, zero network activity
 const c = await tmdb.movies.details({ movie_id: 550 });
@@ -177,8 +173,6 @@ const c = await tmdb.movies.details({ movie_id: 550 });
 
 <Callout>
 	For shared or cross-process caching in Node.js servers, use the [`response.onSuccess`
-	interceptor](/docs/getting-started/options/interceptors) to write responses to an external store
-	(Redis, Memcached, etc.) and the [`request`
-	interceptor](/docs/getting-started/options/interceptors) to read from it before the request is
-	dispatched.
+	interceptor](/docs/getting-started/options/interceptors) to write responses to an external store (Redis, Memcached, etc.) and the
+	[`request` interceptor](/docs/getting-started/options/interceptors) to read from it before the request is dispatched.
 </Callout>

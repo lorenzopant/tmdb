@@ -49,16 +49,10 @@ import { TMDB } from "@lorenzopant/tmdb";
 const tmdb = new TMDB("your-access-token");
 
 // Add to favourites
-await tmdb.account.add_favorite(
-	{ account_id: 123 },
-	{ media_type: "movie", media_id: 550, favorite: true },
-);
+await tmdb.account.add_favorite({ account_id: 123 }, { media_type: "movie", media_id: 550, favorite: true });
 
 // Remove from favourites
-await tmdb.account.add_favorite(
-	{ account_id: 123 },
-	{ media_type: "movie", media_id: 550, favorite: false },
-);
+await tmdb.account.add_favorite({ account_id: 123 }, { media_type: "movie", media_id: 550, favorite: false });
 ```
 
 ## Related Types

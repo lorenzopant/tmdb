@@ -34,10 +34,7 @@ async remove_movie(params: ListMutationParams, body: ListMovieBody): Promise<Lis
 import { TMDB } from "@lorenzopant/tmdb";
 
 const tmdb = new TMDB("your-api-key");
-const result = await tmdb.lists.remove_movie(
-	{ list_id: 5861, session_id: "your-session-id" },
-	{ media_id: 550 },
-);
+const result = await tmdb.lists.remove_movie({ list_id: 5861, session_id: "your-session-id" }, { media_id: 550 });
 
 console.log(result.status_code); // 13
 ```

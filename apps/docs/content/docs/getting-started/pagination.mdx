@@ -20,13 +20,7 @@ type PaginatedResponse<T> = {
 paginated results. They are generic and work with every paginated method in the client.
 
 ```ts
-import {
-	paginate,
-	fetchAllPages,
-	hasNextPage,
-	hasPreviousPage,
-	getPageInfo,
-} from "@lorenzopant/tmdb";
+import { paginate, fetchAllPages, hasNextPage, hasPreviousPage, getPageInfo } from "@lorenzopant/tmdb";
 ```
 
 ---
@@ -71,10 +65,7 @@ Pass `startPage` to resume mid-sequence, for example after a crash or for increm
 ```ts
 const lastSyncedPage = await db.getSyncCheckpoint(); // e.g. 42
 
-for await (const page of paginate(
-	(p) => tmdb.changes.movie_list({ page: p }),
-	lastSyncedPage + 1,
-)) {
+for await (const page of paginate((p) => tmdb.changes.movie_list({ page: p }), lastSyncedPage + 1)) {
 	await processChanges(page.results);
 }
 ```
@@ -95,10 +86,7 @@ Fetches all pages sequentially and returns a flat array of results. Use when you
 at once and are comfortable with multiple sequential requests.
 
 ```ts
-async function fetchAllPages<T>(
-	fetcher: (page: number) => Promise<PaginatedResponse<T>>,
-	options?: FetchAllPagesOptions<T>,
-): Promise<T[]>;
+async function fetchAllPages<T>(fetcher: (page: number) => Promise<PaginatedResponse<T>>, options?: FetchAllPagesOptions<T>): Promise<T[]>;
 ```
 
 ### Options
@@ -129,11 +117,10 @@ const trending = await fetchAllPages(
 ### Duplicate results on popularity-sorted endpoints
 
 <Callout type="warn">
-	Some endpoints sort results by a **live popularity score** that changes between requests (e.g.
-	`movie_lists.now_playing`, `movie_lists.popular`, `tv_series_lists.popular`). A movie's rank can
-	shift between the time you fetch page 1 and page 2, causing the same item to appear on both page
-	boundaries. This is a known TMDB server-side behaviour — the API uses stateless offset pagination,
-	not cursors.
+	Some endpoints sort results by a **live popularity score** that changes between requests (e.g. `movie_lists.now_playing`,
+	`movie_lists.popular`, `tv_series_lists.popular`). A movie's rank can shift between the time you fetch page 1 and page 2, causing the
+	same item to appear on both page boundaries. This is a known TMDB server-side behaviour — the API uses stateless offset pagination, not
+	cursors.
 </Callout>
 
 Use `deduplicateBy` to discard cross-page duplicates automatically:

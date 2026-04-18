@@ -1,0 +1,63 @@
+# @lorenzopant/tmdb
+
+`@lorenzopant/tmdb` is a TypeScript-first SDK for The Movie Database (TMDB) API.
+
+Use this package when you need:
+- Fully typed TMDB API access from TypeScript
+- A single `TMDB` client with modular namespaces like `movies`, `tv_series`, `search`, and `discover`
+- Built-in helpers for images, pagination, caching, retry, rate limiting, and interceptors
+- Access to TMDB v4 auth/account/list APIs through `tmdb.v4` when using a JWT bearer token
+
+Install:
+```bash
+npm install @lorenzopant/tmdb
+```
+
+Basic usage:
+```ts
+import { TMDB } from "@lorenzopant/tmdb";
+
+const tmdb = new TMDB(process.env.TMDB_ACCESS_TOKEN!, {
+	language: "en-US",
+	region: "US",
+});
+
+const movie = await tmdb.movies.details({ movie_id: 550 });
+console.log(movie.title);
+```
+
+Main exports:
+- `TMDB`
+- `TMDBv4`
+- `TMDBError`
+- Standalone endpoint classes like `MoviesAPI`, `SearchAPI`, `PeopleAPI`, `ListsAPI`, and `V4ListsAPI`
+- Utility exports including pagination helpers and `RetryOptions`
+- All public request/response types via `@lorenzopant/tmdb` and `@lorenzopant/tmdb/types`
+
+Core namespaces on `TMDB`:
+- `movies`, `movie_lists`
+- `tv_series`, `tv_lists`, `tv_seasons`, `tv_episodes`, `tv_episode_groups`
+- `search`, `discover`, `trending`
+- `people`, `people_lists`
+- `collections`, `companies`, `networks`
+- `genres`, `keywords`, `reviews`, `credits`
+- `configuration`, `changes`, `find`, `watch_providers`
+- `authentication`, `account`, `guest_sessions`, `lists`
+- `images`
+- `v4`
+
+Important behavior:
+- Constructor signature: `new TMDB(accessToken, options?)`
+- `tmdb.v4` requires a JWT bearer token; it throws if the client was created with an API key
+- `cache`, `rate_limit`, and `retry` are opt-in
+- `deduplication` is enabled by default
+- `tmdb.cache` is available only when caching is enabled
+
+Useful docs:
+- Docs home: https://lorenzopant-tmdb-docs.vercel.app/docs
+- Getting started: https://lorenzopant-tmdb-docs.vercel.app/docs/getting-started
+- API reference: https://lorenzopant-tmdb-docs.vercel.app/docs/api-reference
+- Types: https://lorenzopant-tmdb-docs.vercel.app/docs/types
+- Changelog: https://lorenzopant-tmdb-docs.vercel.app/docs/changelog
+
+For fuller package guidance, examples, and AI-oriented reference, see `llms-full.txt`.
