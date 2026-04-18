@@ -8,7 +8,7 @@
 		"tmdb",
 		"typescript"
 	],
-	"homepage": "https://lorenzopant-tmdb-docs.vercel.app",
+	"homepage": "https://tmdb.lorenzopant.dev",
 	"bugs": {
 		"url": "https://github.com/lorenzopant/tmdb/issues"
 	},
