@@ -173,6 +173,8 @@ export type MovieExternalIDs = {
 	id: number;
 	/** IMDb identifier (e.g., "tt0133093"), null if not available */
 	imdb_id?: string;
+	/** Wikidata identifier (e.g., "Q190050"), null if not available */
+	wikidata_id?: string;
 	/** Facebook page identifier, null if not available */
 	facebook_id?: string;
 	/** Twitter/X handle, null if not available */

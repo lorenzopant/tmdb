@@ -63,6 +63,7 @@ describe("Movies (integration)", () => {
 		expect(external_ids).toBeDefined();
 		expect(external_ids.id).toBe(movie_id);
 		expect(external_ids.imdb_id).toBe("tt0137523");
+		expect(external_ids.wikidata_id).toBe("Q190050");
 	});
 
 	it("(MOVIE KEYWORDS) should get movie keywords", async () => {
