@@ -17,6 +17,7 @@ import {
 	TMDBQueryParams,
 	TranslationResults,
 	VideoResults,
+	WatchProvider,
 	WithLanguagePage,
 	WithParams,
 } from "./common";
@@ -98,7 +99,8 @@ export type MovieAppendToResponseNamespace =
 	| "reviews"
 	| "similar"
 	| "translations"
-	| "videos";
+	| "videos"
+	| "watch/providers";
 
 /**
  * Mapping of append-to-response keys to their return types
@@ -116,6 +118,7 @@ export type MovieAppendableMap = {
 	similar: MovieSimilar;
 	translations: MovieTranslations;
 	videos: MovieVideos;
+	"watch/providers": MovieWatchProviders;
 };
 
 /**
@@ -290,6 +293,15 @@ export type MovieTranslationData = {
  * Collection of videos (trailers, teasers, clips) for a movie
  */
 export type MovieVideos = VideoResults;
+
+// MARK: Watch Providers
+
+/**
+ * Watch provider availability for a movie across different countries
+ */
+export type MovieWatchProviders = {
+	results: Record<CountryISO3166_1, WatchProvider>;
+};
 
 // MARK: Parameters
 
