@@ -1,3 +1,5 @@
+import type { ImageCollectionKey } from "../common/images";
+
 // Image base URLs
 export const IMAGE_BASE_URL = "http://image.tmdb.org/t/p/";
 export const IMAGE_SECURE_BASE_URL = "https://image.tmdb.org/t/p/";
@@ -68,7 +70,29 @@ export type DefaultImageSizesConfig = {
  * // Prefer textless posters → English → any fallback
  * { posters: ["null", "en", "*"] }
  */
-export type ImageLanguagePriorityConfig = Partial<Record<"backdrops" | "logos" | "posters" | "profiles" | "stills", string[]>>;
+export type ImageLanguagePriorityConfig = Partial<
+	Record<"backdrops" | "logos" | "posters" | "profiles" | "stills", string[]>
+>;
+
+/**
+ * Fallback URL(s) used when an image path field is absent (`null` / `undefined`) in a TMDB
+ * API response and `autocompleteImagePaths` is applied.
+ *
+ * - **string** — one URL used for every image type
+ * - **object** — per-type URLs; any unspecified type keeps the original `null` / `undefined`
+ *
+ * @example
+ * // Single fallback for everything
+ * fallback_url: "/placeholder.png"
+ *
+ * @example
+ * // Different placeholders per type
+ * fallback_url: {
+ *   posters: "/poster-placeholder.png",
+ *   backdrops: "/backdrop-placeholder.png",
+ * }
+ */
+export type FallbackUrlConfig = string | Partial<Record<ImageCollectionKey, string>>;
 
 export type ImagesConfig = {
 	/**
@@ -128,4 +152,19 @@ export type ImagesConfig = {
 	 * // Equivalent to always passing: include_image_language: ["it", "null"]
 	 */
 	auto_include_image_language?: boolean;
+	/**
+	 * Fallback URL returned for image path fields that are absent (`null` / `undefined`) in the
+	 * API response.
+	 *
+	 * Works independently of `autocomplete_paths`. When set, the response traversal is activated
+	 * even if `autocomplete_paths` is `false`, but only null/undefined image paths are replaced —
+	 * existing relative paths are left as-is unless `autocomplete_paths` is also `true`.
+	 *
+	 * @example
+	 * fallback_url: "/placeholder.png"
+	 *
+	 * @example
+	 * fallback_url: { posters: "/poster-ph.png", backdrops: "/backdrop-ph.png" }
+	 */
+	fallback_url?: FallbackUrlConfig;
 };

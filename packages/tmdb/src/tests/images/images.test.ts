@@ -168,7 +168,10 @@ describe("ImageAPI", () => {
 
 		expect(imageAPI.autocompleteImagePaths(null)).toBeNull();
 		expect(imageAPI.autocompleteImagePaths("plain-string")).toBe("plain-string");
-		expect(imageAPI.autocompleteImagePaths(["plain-string", "/poster.jpg"])).toEqual(["plain-string", "/poster.jpg"]);
+		expect(imageAPI.autocompleteImagePaths(["plain-string", "/poster.jpg"])).toEqual([
+			"plain-string",
+			"/poster.jpg",
+		]);
 	});
 
 	test("should guard against prototype pollution via __proto__", () => {
@@ -366,5 +369,129 @@ describe("ImageAPI", () => {
 		expect(imageAPI.autocompleteImagePaths(date)).toBe(date);
 		expect(imageAPI.autocompleteImagePaths(instance)).toBe(instance);
 		expect(instance.poster_path).toBe("/poster.jpg");
+	});
+
+	describe("fallback_url", () => {
+		test("single string fallback replaces null/undefined image path fields", () => {
+			const imageAPI = new ImageAPI({ fallback_url: "/placeholder.png" });
+
+			const result = imageAPI.autocompleteImagePaths({
+				poster_path: null,
+				backdrop_path: undefined,
+				title: "Movie",
+			});
+
+			expect(result.poster_path).toBe("/placeholder.png");
+			expect(result.backdrop_path).toBe("/placeholder.png");
+			expect(result.title).toBe("Movie");
+		});
+
+		test("per-type object fallback applies only to configured types", () => {
+			const imageAPI = new ImageAPI({
+				fallback_url: { posters: "/poster-ph.png", backdrops: "/backdrop-ph.png" },
+			});
+
+			const result = imageAPI.autocompleteImagePaths({
+				poster_path: null,
+				backdrop_path: null,
+				logo_path: null,
+			});
+
+			expect(result.poster_path).toBe("/poster-ph.png");
+			expect(result.backdrop_path).toBe("/backdrop-ph.png");
+			// logo has no fallback configured — stays null
+			expect(result.logo_path).toBeNull();
+		});
+
+		test("fallback does not affect existing (non-null) paths in autocompleteImagePaths", () => {
+			const imageAPI = new ImageAPI({ fallback_url: "/placeholder.png" });
+
+			const result = imageAPI.autocompleteImagePaths({
+				poster_path: "/real-poster.jpg",
+				backdrop_path: null,
+			});
+
+			// autocompleteImagePaths always expands existing paths (that's its purpose)
+			expect(result.poster_path).toBe(`${IMAGE_SECURE_BASE_URL}w500/real-poster.jpg`);
+			expect(result.backdrop_path).toBe("/placeholder.png");
+		});
+
+		test("applyFallbacksOnly: replaces null paths without expanding existing ones", () => {
+			const imageAPI = new ImageAPI({ fallback_url: "/placeholder.png" });
+
+			const result = imageAPI.applyFallbacksOnly({
+				poster_path: "/real-poster.jpg",
+				backdrop_path: null,
+			});
+
+			// applyFallbacksOnly does NOT expand existing relative paths
+			expect(result.poster_path).toBe("/real-poster.jpg");
+			expect(result.backdrop_path).toBe("/placeholder.png");
+		});
+
+		test("fallback + autocomplete_paths expands existing paths AND substitutes null", () => {
+			const imageAPI = new ImageAPI({
+				autocomplete_paths: true,
+				fallback_url: "/placeholder.png",
+				default_image_sizes: { posters: "w500" },
+			});
+
+			const result = imageAPI.autocompleteImagePaths({
+				poster_path: "/real-poster.jpg",
+				backdrop_path: null,
+			});
+
+			expect(result.poster_path).toBe(`${IMAGE_SECURE_BASE_URL}w500/real-poster.jpg`);
+			expect(result.backdrop_path).toBe("/placeholder.png");
+		});
+
+		test("null file_path inside a collection uses fallback for that collection type", () => {
+			const imageAPI = new ImageAPI({
+				fallback_url: { posters: "/poster-ph.png", logos: "/logo-ph.png" },
+			});
+
+			const result = imageAPI.autocompleteImagePaths({
+				posters: [{ file_path: null, iso_639_1: "en" }],
+				logos: [{ file_path: undefined }],
+			});
+
+			expect(result.posters[0]?.file_path).toBe("/poster-ph.png");
+			expect(result.logos[0]?.file_path).toBe("/logo-ph.png");
+		});
+
+		test("null file_path in collection with no matching fallback stays null", () => {
+			const imageAPI = new ImageAPI({ fallback_url: { posters: "/poster-ph.png" } });
+
+			const result = imageAPI.autocompleteImagePaths({
+				backdrops: [{ file_path: null }],
+			});
+
+			expect(result.backdrops[0]?.file_path).toBeNull();
+		});
+
+		test("fallback is nested/recursive — applies inside nested objects", () => {
+			const imageAPI = new ImageAPI({ fallback_url: "/placeholder.png" });
+
+			const result = imageAPI.autocompleteImagePaths({
+				movie: { poster_path: null, title: "Inception" },
+			});
+
+			expect(result.movie.poster_path).toBe("/placeholder.png");
+			expect(result.movie.title).toBe("Inception");
+		});
+
+		test("non-image null fields are left untouched", () => {
+			const imageAPI = new ImageAPI({ fallback_url: "/placeholder.png" });
+
+			const result = imageAPI.autocompleteImagePaths({
+				overview: null,
+				tagline: null,
+				poster_path: null,
+			});
+
+			expect(result.overview).toBeNull();
+			expect(result.tagline).toBeNull();
+			expect(result.poster_path).toBe("/placeholder.png");
+		});
 	});
 });

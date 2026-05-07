@@ -1,5 +1,13 @@
 import { ImageCollectionKey, ImagesConfig } from "../types";
-import { BackdropSize, IMAGE_BASE_URL, IMAGE_SECURE_BASE_URL, LogoSize, PosterSize, ProfileSize, StillSize } from "../types/config/images";
+import {
+	BackdropSize,
+	IMAGE_BASE_URL,
+	IMAGE_SECURE_BASE_URL,
+	LogoSize,
+	PosterSize,
+	ProfileSize,
+	StillSize,
+} from "../types/config/images";
 import { isPlainObject } from "../utils";
 
 const IMAGE_PATH_BUILDERS = {
@@ -10,7 +18,18 @@ const IMAGE_PATH_BUILDERS = {
 	still_path: "still",
 } as const;
 
-const IMAGE_COLLECTION_BUILDERS: Record<ImageCollectionKey, keyof typeof IMAGE_PATH_BUILDERS | "logo_path"> = {
+const IMAGE_PATH_TO_COLLECTION: Record<keyof typeof IMAGE_PATH_BUILDERS, ImageCollectionKey> = {
+	backdrop_path: "backdrops",
+	logo_path: "logos",
+	poster_path: "posters",
+	profile_path: "profiles",
+	still_path: "stills",
+};
+
+const IMAGE_COLLECTION_BUILDERS: Record<
+	ImageCollectionKey,
+	keyof typeof IMAGE_PATH_BUILDERS | "logo_path"
+> = {
 	backdrops: "backdrop_path",
 	logos: "logo_path",
 	posters: "poster_path",
@@ -32,23 +51,38 @@ export class ImageAPI {
 		return `${baseUrl}${size}${path}`;
 	}
 
-	public backdrop(path: string, size: BackdropSize = this.options.default_image_sizes?.backdrops || "w780"): string {
+	public backdrop(
+		path: string,
+		size: BackdropSize = this.options.default_image_sizes?.backdrops || "w780",
+	): string {
 		return this.buildUrl(path, size);
 	}
 
-	public logo(path: string, size: LogoSize = this.options.default_image_sizes?.logos || "w185"): string {
+	public logo(
+		path: string,
+		size: LogoSize = this.options.default_image_sizes?.logos || "w185",
+	): string {
 		return this.buildUrl(path, size);
 	}
 
-	public poster(path: string, size: PosterSize = this.options.default_image_sizes?.posters || "w500"): string {
+	public poster(
+		path: string,
+		size: PosterSize = this.options.default_image_sizes?.posters || "w500",
+	): string {
 		return this.buildUrl(path, size);
 	}
 
-	public profile(path: string, size: ProfileSize = this.options.default_image_sizes?.profiles || "w185"): string {
+	public profile(
+		path: string,
+		size: ProfileSize = this.options.default_image_sizes?.profiles || "w185",
+	): string {
 		return this.buildUrl(path, size);
 	}
 
-	public still(path: string, size: StillSize = this.options.default_image_sizes?.still || "w300"): string {
+	public still(
+		path: string,
+		size: StillSize = this.options.default_image_sizes?.still || "w300",
+	): string {
 		return this.buildUrl(path, size);
 	}
 
@@ -68,10 +102,30 @@ export class ImageAPI {
 	 * - Non-plain objects (e.g. Date/class instances) are returned unchanged
 	 */
 	public autocompleteImagePaths<T>(value: T, collectionKey?: ImageCollectionKey): T {
+		return this.traverse(value, collectionKey, true);
+	}
+
+	/**
+	 * Traverses a response object substituting `null` / `undefined` image path fields with the
+	 * configured `fallback_url` without expanding existing relative paths to full URLs.
+	 *
+	 * Used internally by the client when `fallback_url` is set but `autocomplete_paths` is `false`.
+	 */
+	public applyFallbacksOnly<T>(value: T): T {
+		return this.traverse(value, undefined, false);
+	}
+
+	// MARK: Private methods
+
+	private traverse<T>(
+		value: T,
+		collectionKey: ImageCollectionKey | undefined,
+		expandPaths: boolean,
+	): T {
 		if (Array.isArray(value)) {
 			const priorities = collectionKey && this.options.image_language_priority?.[collectionKey];
 			const items = priorities ? this.sortByLanguagePriority(value, priorities) : value;
-			return items.map((entry) => this.autocompleteImagePaths(entry, collectionKey)) as T;
+			return items.map((entry) => this.traverse(entry, collectionKey, expandPaths)) as T;
 		}
 
 		if (!isPlainObject(value)) {
@@ -86,19 +140,31 @@ export class ImageAPI {
 				continue;
 			}
 
+			if (entry == null) {
+				if (Object.hasOwn(IMAGE_PATH_BUILDERS, key)) {
+					const collection = IMAGE_PATH_TO_COLLECTION[key as ImagePathKey];
+					transformed[key] = this.getFallbackForCollection(collection) ?? entry;
+					continue;
+				}
+				if (key === "file_path" && collectionKey) {
+					transformed[key] = this.getFallbackForCollection(collectionKey) ?? entry;
+					continue;
+				}
+				transformed[key] = entry;
+				continue;
+			}
+
 			if (typeof entry === "string") {
-				transformed[key] = this.transformPathValue(key, entry, collectionKey);
+				transformed[key] = expandPaths ? this.transformPathValue(key, entry, collectionKey) : entry;
 				continue;
 			}
 
 			const nextCollectionKey = this.isImageCollectionKey(key) ? key : collectionKey;
-			transformed[key] = this.autocompleteImagePaths(entry, nextCollectionKey);
+			transformed[key] = this.traverse(entry, nextCollectionKey, expandPaths);
 		}
 
 		return transformed as T;
 	}
-
-	// MARK: Private methods
 
 	/**
 	 * Reorders an image-item array according to a language priority list.
@@ -145,6 +211,13 @@ export class ImageAPI {
 		return Object.hasOwn(IMAGE_COLLECTION_BUILDERS, value);
 	}
 
+	private getFallbackForCollection(collection: ImageCollectionKey): string | undefined {
+		const fallback = this.options.fallback_url;
+		if (!fallback) return undefined;
+		if (typeof fallback === "string") return fallback;
+		return fallback[collection];
+	}
+
 	private isFullUrl(path: string): boolean {
 		return /^https?:\/\//.test(path);
 	}
@@ -152,13 +225,20 @@ export class ImageAPI {
 	private buildImageUrl(key: ImagePathKey, path: string): string {
 		const method = IMAGE_PATH_BUILDERS[key];
 		// Ensure method is a valid own property before dynamic dispatch
-		if (Object.hasOwn(this, method) || typeof (this as Record<string, unknown>)[method] !== "function") {
+		if (
+			Object.hasOwn(this, method) ||
+			typeof (this as Record<string, unknown>)[method] !== "function"
+		) {
 			// Fallback to the method lookup on the prototype (which is safe for hardcoded ImagePathKey values)
 		}
 		return (this[method] as (path: string) => string)(path);
 	}
 
-	private transformPathValue(key: string, value: string, collectionKey?: ImageCollectionKey): string {
+	private transformPathValue(
+		key: string,
+		value: string,
+		collectionKey?: ImageCollectionKey,
+	): string {
 		if (!value.startsWith("/") || this.isFullUrl(value)) return value;
 
 		if (Object.hasOwn(IMAGE_PATH_BUILDERS, key)) {
