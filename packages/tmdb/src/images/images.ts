@@ -123,7 +123,8 @@ export class ImageAPI {
 		expandPaths: boolean,
 	): T {
 		if (Array.isArray(value)) {
-			const priorities = collectionKey && this.options.image_language_priority?.[collectionKey];
+			const priorities =
+				expandPaths && collectionKey && this.options.image_language_priority?.[collectionKey];
 			const items = priorities ? this.sortByLanguagePriority(value, priorities) : value;
 			return items.map((entry) => this.traverse(entry, collectionKey, expandPaths)) as T;
 		}
@@ -213,7 +214,7 @@ export class ImageAPI {
 
 	private getFallbackForCollection(collection: ImageCollectionKey): string | undefined {
 		const fallback = this.options.fallback_url;
-		if (!fallback) return undefined;
+		if (fallback == null) return undefined;
 		if (typeof fallback === "string") return fallback;
 		return fallback[collection];
 	}

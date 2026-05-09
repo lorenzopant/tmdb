@@ -429,6 +429,28 @@ describe("ImageAPI", () => {
 			expect(result.backdrop_path).toBe("/placeholder.png");
 		});
 
+		test("applyFallbacksOnly: does NOT reorder collections even when image_language_priority is set", () => {
+			const imageAPI = new ImageAPI({
+				fallback_url: "/placeholder.png",
+				image_language_priority: { posters: ["null", "en", "*"] },
+			});
+
+			const posters = [
+				{ file_path: "/en.jpg", iso_639_1: "en" },
+				{ file_path: "/fr.jpg", iso_639_1: "fr" },
+				{ file_path: null, iso_639_1: null },
+			];
+
+			const result = imageAPI.applyFallbacksOnly({ posters });
+
+			// Order must be unchanged
+			expect(result.posters[0]?.iso_639_1).toBe("en");
+			expect(result.posters[1]?.iso_639_1).toBe("fr");
+			expect(result.posters[2]?.iso_639_1).toBeNull();
+			// But null file_path should still get the fallback
+			expect(result.posters[2]?.file_path).toBe("/placeholder.png");
+		});
+
 		test("fallback + autocomplete_paths expands existing paths AND substitutes null", () => {
 			const imageAPI = new ImageAPI({
 				autocomplete_paths: true,

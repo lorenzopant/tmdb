@@ -75,7 +75,7 @@ export class ApiClient {
 		this.onSuccessInterceptor = options.interceptors?.response?.onSuccess;
 		this.onErrorInterceptor = options.interceptors?.response?.onError;
 		this.imageApi =
-			options.images?.autocomplete_paths || options.images?.fallback_url
+			options.images?.autocomplete_paths || options.images?.fallback_url != null
 				? new ImageAPI(options.images)
 				: undefined;
 		this.imageOptions = options.images;
