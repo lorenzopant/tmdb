@@ -4,6 +4,25 @@ description: Latest updates and announcements
 icon: History
 ---
 
+## 🚀 1.21.3 - 9 May 2026
+
+#### ✨ New
+
+- **`fallback_url` image option** — provide a placeholder URL for image path fields that are `null` or `undefined` in API responses. Accepts a single string applied to all image types, or a per-type object (`posters`, `backdrops`, `logos`, `profiles`, `stills`) for different placeholders per category. Works independently of `autocomplete_paths` — existing non-null paths are left untouched unless `autocomplete_paths` is also enabled.
+
+```ts
+const tmdb = new TMDB(apiKey, {
+	images: {
+		fallback_url: {
+			posters: "/poster-placeholder.png",
+			backdrops: "/backdrop-placeholder.png",
+		},
+	},
+});
+```
+
+---
+
 ## 🚀 1.21.2 - 03 May 2026
 
 - 🎬 Added Wikidata ID to movie external ids
