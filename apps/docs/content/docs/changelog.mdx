@@ -4,6 +4,36 @@ description: Latest updates and announcements
 icon: History
 ---
 
+## 🚀 1.22.0 - 13 May 2026
+
+#### ✨ New
+
+- **MCP Server** — the docs site now exposes an [MCP (Model Context Protocol)](https://modelcontextprotocol.io) server at `/mcp`. Connect any MCP-compatible client — Claude Desktop, Claude Code, Cursor, VS Code, or Windsurf — to search and read the full documentation at inference time. No installation or API key required.
+
+```json
+{
+	"mcpServers": {
+		"tmdb-docs": {
+			"url": "https://tmdb.lorenzopantano.dev/mcp"
+		}
+	}
+}
+```
+
+Two tools are available: **`search_docs`** (search pages by title or description) and **`read_page`** (fetch full markdown content by slug).
+
+- **Per-page Markdown routes** — every docs page is now reachable as plain Markdown by appending `.md` or `.mdx` to the URL (e.g. `/docs/getting-started/authentication.md`). Returns `Content-Type: text/markdown` — useful for piping a single page into a prompt.
+
+- **`/llms-full.txt`** — all documentation pages concatenated into a single plain-text file. Each page title now includes its URL for grounding. Suitable for attaching to a prompt or seeding a RAG pipeline.
+
+- **`/llms.txt`** — updated to follow the [llmstxt.org](https://llmstxt.org) spec: structured H1 / blockquote / H2 navigation index that AI agents can fetch to discover available docs before deciding what to read.
+
+#### 📖 Docs
+
+- New [AI Integrations](/docs/getting-started/ai-integrations) guide covering MCP server setup for all major clients, per-page Markdown routes, and the full-text LLM endpoints.
+
+---
+
 ## 🚀 1.21.3 - 9 May 2026
 
 #### ✨ New
