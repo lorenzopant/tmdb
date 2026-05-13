@@ -1,0 +1,179 @@
+---
+title: AI Integrations
+description: Use the @lorenzopant/tmdb docs with AI assistants, MCP clients, and LLM tools.
+icon: Bot
+---
+
+The docs site ships several machine-readable endpoints that let AI assistants, MCP-compatible editors,
+and LLM toolchains consume the documentation directly — no scraping required.
+
+---
+
+## MCP Server
+
+An [MCP (Model Context Protocol)](https://modelcontextprotocol.io) server is available at `/mcp`.
+It exposes two tools that any MCP-compatible client (Claude Desktop, Cursor, VS Code Copilot, etc.)
+can call to search and read these docs at inference time.
+
+### Connecting
+
+Add the server URL to your client config. No installation or API key required.
+
+<Tabs items={["Claude Desktop", "Claude Code", "Cursor", "VS Code", "Windsurf"]}>
+<Tab value="Claude Desktop">
+Edit `~/Library/Application Support/Claude/claude_desktop_config.json`:
+
+```json
+{
+	"mcpServers": {
+		"tmdb-docs": {
+			"url": "https://tmdb.lorenzopantano.dev/mcp"
+		}
+	}
+}
+```
+
+Or use the CLI to add it in one command:
+
+```bash
+claude mcp add --transport http tmdb-docs https://tmdb.lorenzopantano.dev/mcp
+```
+
+</Tab>
+<Tab value="Claude Code">
+
+```bash
+claude mcp add --transport http tmdb-docs https://tmdb.lorenzopantano.dev/mcp
+```
+
+To add it only for the current project (stored in `.mcp.json`):
+
+```bash
+claude mcp add --transport http --scope project tmdb-docs https://tmdb.lorenzopantano.dev/mcp
+```
+
+</Tab>
+<Tab value="Cursor">
+In **Cursor Settings → MCP** add a new server, or edit `~/.cursor/mcp.json`:
+
+```json
+{
+	"mcpServers": {
+		"tmdb-docs": {
+			"url": "https://tmdb.lorenzopantano.dev/mcp"
+		}
+	}
+}
+```
+
+</Tab>
+<Tab value="VS Code">
+In your workspace or user `settings.json`:
+
+```json
+{
+	"mcp": {
+		"servers": {
+			"tmdb-docs": {
+				"type": "http",
+				"url": "https://tmdb.lorenzopantano.dev/mcp"
+			}
+		}
+	}
+}
+```
+
+Or via the CLI:
+
+```bash
+code --add-mcp '{"name":"tmdb-docs","url":"https://tmdb.lorenzopantano.dev/mcp"}'
+```
+
+</Tab>
+<Tab value="Windsurf">
+Edit `~/.codeium/windsurf/mcp_config.json`:
+
+```json
+{
+	"mcpServers": {
+		"tmdb-docs": {
+			"serverUrl": "https://tmdb.lorenzopantano.dev/mcp"
+		}
+	}
+}
+```
+
+</Tab>
+</Tabs>
+
+### Available Tools
+
+#### `search_docs`
+
+Search documentation pages by title or description. Returns up to 10 matches with their URL and description.
+
+| Parameter | Type   | Description     |
+| --------- | ------ | --------------- |
+| `query`   | string | The search term |
+
+**Example result:**
+
+```
+**Authentication** (/docs/getting-started/authentication)
+Learn how to authenticate with the TMDB API using a Bearer token or a v3 API key.
+
+**SSR / Server Components** (/docs/getting-started/ssr)
+How to use the client in Next.js Server Components and other server environments.
+```
+
+#### `read_page`
+
+Fetch the full markdown content of any documentation page by its path slug.
+
+| Parameter | Type   | Description                                      |
+| --------- | ------ | ------------------------------------------------ |
+| `path`    | string | Page path, e.g. `getting-started/authentication` |
+
+**Example call:**
+
+```json
+{ "path": "getting-started/authentication" }
+```
+
+The response is the full page content in Markdown, including all headings, code blocks, and tables.
+
+---
+
+## LLM-Friendly Text Routes
+
+Every documentation page is available as plain Markdown at two URL patterns, useful for feeding
+content directly into an LLM context window.
+
+### Per-page Markdown
+
+Append `.md` or `.mdx` to any docs URL:
+
+```
+/docs/getting-started/authentication.md
+/docs/getting-started/authentication.mdx
+```
+
+Both return `Content-Type: text/markdown` with the full page content.
+
+### Full Docs Dump
+
+`/llms-full.txt` returns all documentation pages concatenated into a single plain-text file — ready
+to paste into a context window or attach to a prompt.
+
+```bash
+curl https://tmdb.lorenzopantano.me/llms-full.txt
+```
+
+### Discovery File
+
+`/llms.txt` follows the [llmstxt.org](https://llmstxt.org) spec — a structured index of all pages
+that AI agents can fetch to discover what docs are available before deciding what to read.
+
+```bash
+curl https://tmdb.lorenzopantano.me/llms.txt
+```

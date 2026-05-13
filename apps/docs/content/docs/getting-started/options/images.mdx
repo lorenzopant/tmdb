@@ -263,15 +263,79 @@ const customImages = await tmdb.movies.images({
 ```
 
 <Callout>
-	Enable `auto_include_image_language` together with `image_language_priority` for a fully automatic setup: TMDB returns the right
-	language variants **and** the client orders them according to your priority list — all without any extra call-site code.
+	Enable `auto_include_image_language` together with `image_language_priority` for a fully automatic
+	setup: TMDB returns the right language variants **and** the client orders them according to your
+	priority list — all without any extra call-site code.
+</Callout>
+
+---
+
+### `fallback_url`
+
+**Type:** `string | Partial<Record<"backdrops" | "logos" | "posters" | "profiles" | "stills", string>>` · **Optional**
+
+A URL (or per-type map of URLs) returned in place of image path fields that are `null` or
+`undefined` in an API response.
+
+This option works **independently of `autocomplete_paths`**. When set, the client traverses every
+response to substitute missing image fields regardless of whether full URL expansion is enabled.
+Existing non-null paths are left untouched unless `autocomplete_paths` is also `true`.
+
+**Single fallback for all image types:**
+
+```ts
+const tmdb = new TMDB(apiKey, {
+	images: {
+		fallback_url: "/placeholder.png",
+	},
+});
+
+const movie = await tmdb.movies.details({ movie_id: 550 });
+// poster_path is null in the API response → replaced with "/placeholder.png"
+console.log(movie.poster_path); // "/placeholder.png"
+```
+
+**Per-type fallbacks:**
+
+```ts
+const tmdb = new TMDB(apiKey, {
+	images: {
+		fallback_url: {
+			posters: "/poster-placeholder.png",
+			backdrops: "/backdrop-placeholder.png",
+		},
+	},
+});
+
+// logo_path has no fallback configured → stays undefined
+// poster_path is null → replaced with "/poster-placeholder.png"
+```
+
+**Combined with `autocomplete_paths`:**
+
+```ts
+const tmdb = new TMDB(apiKey, {
+	images: {
+		autocomplete_paths: true,
+		fallback_url: "/placeholder.png",
+		default_image_sizes: { posters: "w500" },
+	},
+});
+
+const movie = await tmdb.movies.details({ movie_id: 550 });
+// Existing paths are expanded to full URLs, null paths use the fallback
+console.log(movie.poster_path); // "https://image.tmdb.org/t/p/w500/..."
+console.log(movie.backdrop_path); // "/placeholder.png" (was null)
+```
+
+<Callout>
+	`image_language_priority` sorting applies only when `autocomplete_paths` is enabled. When only
+	`fallback_url` is set, collection array order is preserved as returned by the API.
 </Callout>
 
 ---
 
 ### `default_image_sizes`
-
-**Type:** `Partial<DefaultImageSizesConfig>` · **Optional**
 
 Defines fallback sizes for each image type. These are applied whenever a size
 is not explicitly specified at call time. All keys are optional.

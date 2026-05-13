@@ -39,6 +39,16 @@ describe("Movies (integration)", () => {
 		expect(movie.reviews.results.length).toBeGreaterThanOrEqual(0);
 	});
 
+	it("(MOVIE DETAILS) should get movie details with watch providers appended to the response", async () => {
+		const movie_id = 550; // Fight Club
+		const movie = await tmdb.movies.details({ movie_id, append_to_response: "watch/providers" });
+		expect(movie).toBeDefined();
+		expect(movie.id).toBe(movie_id);
+		expect(movie["watch/providers"].results).toBeDefined();
+		expect(movie["watch/providers"].results["US"]).toBeDefined();
+		expect(movie["watch/providers"].results["US"].link).toBeDefined();
+	});
+
 	it("(MOVIE ALTERNATIVE TITLES) should get movie alternative titles", async () => {
 		const movie_id = 550; // Fight Club
 		const movie_titles = await tmdb.movies.alternative_titles({ movie_id });
@@ -63,6 +73,7 @@ describe("Movies (integration)", () => {
 		expect(external_ids).toBeDefined();
 		expect(external_ids.id).toBe(movie_id);
 		expect(external_ids.imdb_id).toBe("tt0137523");
+		expect(external_ids.wikidata_id).toBe("Q190050");
 	});
 
 	it("(MOVIE KEYWORDS) should get movie keywords", async () => {

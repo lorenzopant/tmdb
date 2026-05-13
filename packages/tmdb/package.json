@@ -1,6 +1,6 @@
 {
 	"name": "@lorenzopant/tmdb",
-	"version": "1.21.0",
+	"version": "1.21.3",
 	"description": "A completely type-safe The Movie Database (TMDB) API wrapper for typescript applications.",
 	"keywords": [
 		"api",
@@ -8,7 +8,7 @@
 		"tmdb",
 		"typescript"
 	],
-	"homepage": "https://lorenzopant-tmdb-docs.vercel.app",
+	"homepage": "https://tmdb.lorenzopant.dev",
 	"bugs": {
 		"url": "https://github.com/lorenzopant/tmdb/issues"
 	},

@@ -76,7 +76,8 @@ type MovieAppendToResponseNamespace =
 	| "reviews"
 	| "similar"
 	| "translations"
-	| "videos";
+	| "videos"
+	| "watch/providers";
 ```
 
 ---
@@ -120,6 +121,7 @@ Alias for [`Changes`](/docs/types/common#changes). Returns the change history fo
 	type={{
 		id: { type: "number", description: "TMDB movie identifier." },
 		imdb_id: { type: "string | null", description: 'IMDb identifier (e.g., "tt0133093").' },
+		wikidata_id: { type: "string | null", description: 'Wikidata identifier (e.g., "Q190050").' },
 		facebook_id: { type: "string | null", description: "Facebook page identifier." },
 		twitter_id: { type: "string | null", description: "Twitter/X handle." },
 		instagram_id: { type: "string | null", description: "Instagram handle." },
@@ -233,6 +235,20 @@ A [`TranslationResults<MovieTranslationData>`](/docs/types/common#translationres
 	type={{
 		id: { type: "number", description: "Movie identifier." },
 		results: { type: "VideoItem[]", description: "Array of video items (trailers, teasers, clips)." },
+	}}
+/>
+
+---
+
+### `MovieWatchProviders`
+
+<TypeTable
+	type={{
+		results: {
+			type: "Record<CountryISO3166_1, WatchProvider>",
+			description: "Watch providers grouped by country code",
+			required: true,
+		},
 	}}
 />
 
