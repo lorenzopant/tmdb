@@ -19,7 +19,7 @@ can call to search and read these docs at inference time.
 
 Add the server URL to your client config. No installation or API key required.
 
-<Tabs items={["Claude Desktop", "Cursor", "VS Code"]}>
+<Tabs items={["Claude Desktop", "Claude Code", "Cursor", "VS Code", "Windsurf"]}>
 <Tab value="Claude Desktop">
 Edit `~/Library/Application Support/Claude/claude_desktop_config.json`:
 
@@ -33,14 +33,35 @@ Edit `~/Library/Application Support/Claude/claude_desktop_config.json`:
 }
 ```
 
+Or use the CLI to add it in one command:
+
+```bash
+claude mcp add --transport http tmdb-docs https://tmdb.lorenzopantano.dev/mcp
+```
+
+</Tab>
+<Tab value="Claude Code">
+
+```bash
+claude mcp add --transport http tmdb-docs https://tmdb.lorenzopantano.dev/mcp
+```
+
+To add it only for the current project (stored in `.mcp.json`):
+
+```bash
+claude mcp add --transport http --scope project tmdb-docs https://tmdb.lorenzopantano.dev/mcp
+```
+
 </Tab>
 <Tab value="Cursor">
-In **Cursor Settings → MCP** add a new server:
+In **Cursor Settings → MCP** add a new server, or edit `~/.cursor/mcp.json`:
 
 ```json
 {
-	"tmdb-docs": {
-		"url": "https://tmdb.lorenzopantano.dev/mcp"
+	"mcpServers": {
+		"tmdb-docs": {
+			"url": "https://tmdb.lorenzopantano.dev/mcp"
+		}
 	}
 }
 ```
@@ -57,6 +78,26 @@ In your workspace or user `settings.json`:
 				"type": "http",
 				"url": "https://tmdb.lorenzopantano.dev/mcp"
 			}
+		}
+	}
+}
+```
+
+Or via the CLI:
+
+```bash
+code --add-mcp '{"name":"tmdb-docs","url":"https://tmdb.lorenzopantano.dev/mcp"}'
+```
+
+</Tab>
+<Tab value="Windsurf">
+Edit `~/.codeium/windsurf/mcp_config.json`:
+
+```json
+{
+	"mcpServers": {
+		"tmdb-docs": {
+			"serverUrl": "https://tmdb.lorenzopantano.dev/mcp"
 		}
 	}
 }

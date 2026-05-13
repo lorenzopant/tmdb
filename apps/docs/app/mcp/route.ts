@@ -84,9 +84,15 @@ async function handleRequest(request: Request): Promise<Response> {
 
 	const server = createServer();
 	await server.connect(transport);
-	const response = await transport.handleRequest(request);
-	await server.close();
-	return response;
+	try {
+		return await transport.handleRequest(request);
+	} finally {
+		try {
+			await server.close();
+		} catch {
+			// ignore close errors so they don't mask the original error/response
+		}
+	}
 }
 
 export async function GET(request: Request): Promise<Response> {
