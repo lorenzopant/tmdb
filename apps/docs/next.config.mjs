@@ -4,11 +4,15 @@ const withMDX = createMDX();
 
 /** @type {import('next').NextConfig} */
 const config = {
-	serverExternalPackages: ["@takumi-rs/image-response"],
+	serverExternalPackages: ["@takumi-rs/image-response", "@modelcontextprotocol/sdk"],
 
 	reactStrictMode: true,
 	async rewrites() {
 		return [
+			{
+				source: "/docs/:path*.md",
+				destination: "/llms.mdx/docs/:path*",
+			},
 			{
 				source: "/docs/:path*.mdx",
 				destination: "/llms.mdx/docs/:path*",
