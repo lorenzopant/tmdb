@@ -17,7 +17,7 @@ This monorepo is organized into multiple packages (names and paths may vary slig
 
 - **Docs app** (`apps/docs`) 📖  
    A Fumadocs-powered documentation site deployed at:  
-   <https://lorenzopant-tmdb-docs.vercel.app>  
+   <https://tmdb.lorenzopant.dev>  
   This site includes guides, API reference, and type documentation for the SDK.
 
 The monorepo is managed with modern tooling (e.g. pnpm / Turborepo / changesets, depending on the repo configuration).
