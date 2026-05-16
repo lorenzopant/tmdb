@@ -87,6 +87,30 @@ The documentation site (<https://lorenzopant-tmdb-docs.vercel.app>) includes:
 - **API Reference**: Detailed reference for every endpoint, with parameters, return types, and examples.
 - **Type Documentation**: Reference for all TypeScript types used in the SDK.
 
+## 🤖 MCP Server
+
+The documentation site exposes a [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server, letting AI assistants (Claude, Cursor, Copilot, etc.) query the `@lorenzopant/tmdb` docs directly.
+
+**Endpoint:** `https://tmdb.lorenzopant.dev/mcp`
+
+### Configuration
+
+Add the server to your MCP client config:
+
+```json
+{
+	"mcpServers": {
+		"tmdb-docs": {
+			"url": "https://tmdb.lorenzopant.dev/mcp"
+		}
+	}
+}
+```
+
+Once connected, your AI assistant can search and read the full SDK documentation without leaving the chat.
+
+---
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please see the CONTRIBUTING.md file for guidelines on how to contribute to this project, including code style, testing, and documentation standards.
