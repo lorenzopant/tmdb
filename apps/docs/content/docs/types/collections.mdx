@@ -13,6 +13,10 @@ import { TypeTable } from "fumadocs-ui/components/type-table";
 
 ## `CollectionItem`
 
+<Callout type="warn">
+  **Breaking change in v1.22.2** — fields were previously typed as `name` and `original_name` (matching the incorrect TMDB API docs). The actual API returns `title` and `original_title`. Rename any access of `.name` → `.title` and `.original_name` → `.original_title` on `CollectionItem` values.
+</Callout>
+
 <AutoTypeTable path="collections.ts" name="CollectionItem" />
 
 ## `CollectionImages`
