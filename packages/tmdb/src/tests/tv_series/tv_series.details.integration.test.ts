@@ -41,4 +41,58 @@ describe("TV Series Details (integration)", () => {
 		expect(show.translations).toBeDefined();
 		expect(show.videos).toBeDefined();
 	});
+
+	it("(DETAILS + append: aggregate_credits) should include aggregate_credits", async () => {
+		const show = await tmdb.tv_series.details({ series_id: 1396, append_to_response: ["aggregate_credits"] });
+		expect(show.aggregate_credits).toBeDefined();
+		expect(Array.isArray(show.aggregate_credits.cast)).toBe(true);
+		expect(Array.isArray(show.aggregate_credits.crew)).toBe(true);
+		expect(show.aggregate_credits.cast.length).toBeGreaterThan(0);
+	});
+
+	it("(DETAILS + append: alternative_titles) should include alternative_titles", async () => {
+		const show = await tmdb.tv_series.details({ series_id: 1396, append_to_response: ["alternative_titles"] });
+		expect(show.alternative_titles).toBeDefined();
+		expect(Array.isArray(show.alternative_titles.results)).toBe(true);
+		expect(show.alternative_titles.results.length).toBeGreaterThan(0);
+	});
+
+	it("(DETAILS + append: content_ratings) should include content_ratings", async () => {
+		const show = await tmdb.tv_series.details({ series_id: 1396, append_to_response: ["content_ratings"] });
+		expect(show.content_ratings).toBeDefined();
+		expect(Array.isArray(show.content_ratings.results)).toBe(true);
+		expect(show.content_ratings.results.length).toBeGreaterThan(0);
+	});
+
+	it("(DETAILS + append: episode_groups) should include episode_groups", async () => {
+		const show = await tmdb.tv_series.details({ series_id: 1399, append_to_response: ["episode_groups"] });
+		expect(show.episode_groups).toBeDefined();
+		expect(Array.isArray(show.episode_groups.results)).toBe(true);
+		expect(show.episode_groups.results.length).toBeGreaterThan(0);
+	});
+
+	it("(DETAILS + append: lists) should include lists", async () => {
+		const show = await tmdb.tv_series.details({ series_id: 1399, append_to_response: ["lists"] });
+		expect(show.lists).toBeDefined();
+		expect(Array.isArray(show.lists.results)).toBe(true);
+	});
+
+	it("(DETAILS + append: reviews) should include reviews", async () => {
+		const show = await tmdb.tv_series.details({ series_id: 1399, append_to_response: ["reviews"] });
+		expect(show.reviews).toBeDefined();
+		expect(Array.isArray(show.reviews.results)).toBe(true);
+		expect(show.reviews.results.length).toBeGreaterThan(0);
+	});
+
+	it("(DETAILS + append: screened_theatrically) should include screened_theatrically", async () => {
+		const show = await tmdb.tv_series.details({ series_id: 1399, append_to_response: ["screened_theatrically"] });
+		expect(show.screened_theatrically).toBeDefined();
+		expect(Array.isArray(show.screened_theatrically.results)).toBe(true);
+	});
+
+	it("(DETAILS + append: watch/providers) should include watch_providers", async () => {
+		const show = await tmdb.tv_series.details({ series_id: 1399, append_to_response: ["watch/providers"] });
+		expect(show["watch/providers"]).toBeDefined();
+		expect(show["watch/providers"].results).toBeDefined();
+	});
 });

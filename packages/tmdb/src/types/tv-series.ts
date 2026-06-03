@@ -25,6 +25,7 @@ import { NetworkItem } from "./networks";
 import { VideoItem } from "./common";
 import { Language, LanguageISO6391, Timezone } from "./config";
 import { TVSeriesResultItem } from "./search";
+import { MediaWatchProviders } from "./common/media";
 import { Prettify } from "./utility";
 
 // MARK: Details
@@ -144,27 +145,43 @@ export type TVSeasonItem = {
  * These allow fetching additional related data in a single API request.
  */
 export type TVAppendToResponseNamespace =
+	| "aggregate_credits"
+	| "alternative_titles"
+	| "content_ratings"
 	| "credits"
+	| "episode_groups"
 	| "external_ids"
 	| "images"
 	| "keywords"
+	| "lists"
 	| "recommendations"
+	| "reviews"
+	| "screened_theatrically"
 	| "similar"
 	| "translations"
-	| "videos";
+	| "videos"
+	| "watch/providers";
 
 /**
  * Maps append-to-response keys to their corresponding response types.
  */
 export type TVAppendableMap = {
+	aggregate_credits: TVAggregateCredits;
+	alternative_titles: TVAlternativeTitles;
+	content_ratings: TVContentRatings;
 	credits: TVCredits;
+	episode_groups: TVEpisodeGroups;
 	external_ids: TVExternalIDs;
 	images: TVImages;
 	keywords: TVKeywords;
+	lists: TVSeriesLists;
 	recommendations: TVRecommendations;
+	reviews: TVReviews;
+	screened_theatrically: TVScreenedTheatrically;
 	similar: TVSimilar;
 	translations: TVTranslations;
 	videos: TVVideos;
+	"watch/providers": MediaWatchProviders;
 };
 
 /**
