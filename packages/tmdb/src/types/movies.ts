@@ -22,7 +22,7 @@ import {
 	WithParams,
 } from "./common";
 import { CountryISO3166_1, Language, LanguageISO6391 } from "./config";
-import { ReleaseType } from "./enums";
+import { MovieReleaseType } from "./enums";
 import { MovieResultItem } from "./search";
 import { Prettify } from "./utility";
 
@@ -245,7 +245,7 @@ export type MovieReleaseDate = {
 	/** Release date and time in ISO 8601 format */
 	release_date: string;
 	/** Type of release (1=Premiere, 2=Theatrical (limited), 3=Theatrical, 4=Digital, 5=Physical, 6=TV) */
-	type: ReleaseType | number;
+	type: MovieReleaseType | number;
 	/** Additional notes about this release */
 	note: string;
 	/** Content descriptors (currently unused by TMDB) */

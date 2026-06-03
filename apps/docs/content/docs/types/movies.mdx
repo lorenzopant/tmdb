@@ -187,13 +187,13 @@ See [`MovieResultItem`](/docs/types/search#movieresultitem).
 		certification: { type: "string", description: 'Age certification/rating (e.g., "PG-13", "R").' },
 		iso_639_1: { type: "string", description: "ISO 639-1 language code." },
 		release_date: { type: "string", description: "Release date and time in ISO 8601 format." },
-		type: { type: "ReleaseType | number", description: "Type of release. See ReleaseType enum." },
+		type: { type: "MovieReleaseType | number", description: "Type of release. See MovieReleaseType enum." },
 		note: { type: "string", description: "Additional notes about this release." },
 		descriptors: { type: "unknown[]", description: "Content descriptors (currently unused by TMDB)." },
 	}}
 />
 
-See [`ReleaseType`](/docs/types/enums#releasetype).
+See [`MovieReleaseType`](/docs/types/enums#moviereleasetype).
 
 ---
 

@@ -1,4 +1,4 @@
-export enum ReleaseType {
+export enum MovieReleaseType {
 	Premiere = 1,
 	TheatricalLimited = 2,
 	Theatrical = 3,
