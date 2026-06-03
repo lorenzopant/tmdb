@@ -36,8 +36,10 @@ console.log(show.name); // "Breaking Bad"
 // With appended data
 const show = await tmdb.tv_series.details({
 	series_id: 1396,
-	append_to_response: ["credits", "videos", "keywords"],
+	append_to_response: ["credits", "videos", "content_ratings", "watch/providers"],
 });
 console.log(show.credits.cast);
 console.log(show.videos.results);
+console.log(show.content_ratings.results);
+console.log(show["watch/providers"].results);
 ```
