@@ -18,8 +18,11 @@ export class TrendingAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/trending-all
 	 */
 	async all(params: TrendingParams): Promise<PaginatedResponse<TrendingAllResult>> {
-		const { time_window, language = this.defaultOptions.language } = params;
-		return this.client.request<PaginatedResponse<TrendingAllResult>>(`${ENDPOINTS.TRENDING.ALL}/${time_window}`, { language });
+		const { time_window, language = this.defaultOptions.language, ...rest } = params;
+		return this.client.request<PaginatedResponse<TrendingAllResult>>(
+			`${ENDPOINTS.TRENDING.ALL}/${time_window}`,
+			{ language, ...rest },
+		);
 	}
 
 	/**
@@ -30,8 +33,11 @@ export class TrendingAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/trending-movies
 	 */
 	async movies(params: TrendingParams): Promise<PaginatedResponse<TrendingMovieResult>> {
-		const { time_window, language = this.defaultOptions.language } = params;
-		return this.client.request<PaginatedResponse<TrendingMovieResult>>(`${ENDPOINTS.TRENDING.MOVIE}/${time_window}`, { language });
+		const { time_window, language = this.defaultOptions.language, ...rest } = params;
+		return this.client.request<PaginatedResponse<TrendingMovieResult>>(
+			`${ENDPOINTS.TRENDING.MOVIE}/${time_window}`,
+			{ language, ...rest },
+		);
 	}
 
 	/**
@@ -42,8 +48,11 @@ export class TrendingAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/trending-tv
 	 */
 	async tv(params: TrendingParams): Promise<PaginatedResponse<TrendingTVResult>> {
-		const { time_window, language = this.defaultOptions.language } = params;
-		return this.client.request<PaginatedResponse<TrendingTVResult>>(`${ENDPOINTS.TRENDING.TV}/${time_window}`, { language });
+		const { time_window, language = this.defaultOptions.language, ...rest } = params;
+		return this.client.request<PaginatedResponse<TrendingTVResult>>(
+			`${ENDPOINTS.TRENDING.TV}/${time_window}`,
+			{ language, ...rest },
+		);
 	}
 
 	/**
@@ -54,7 +63,10 @@ export class TrendingAPI extends TMDBAPIBase {
 	 * @reference https://developer.themoviedb.org/reference/trending-people
 	 */
 	async people(params: TrendingParams): Promise<PaginatedResponse<TrendingPersonResult>> {
-		const { time_window, language = this.defaultOptions.language } = params;
-		return this.client.request<PaginatedResponse<TrendingPersonResult>>(`${ENDPOINTS.TRENDING.PERSON}/${time_window}`, { language });
+		const { time_window, language = this.defaultOptions.language, ...rest } = params;
+		return this.client.request<PaginatedResponse<TrendingPersonResult>>(
+			`${ENDPOINTS.TRENDING.PERSON}/${time_window}`,
+			{ language, ...rest },
+		);
 	}
 }

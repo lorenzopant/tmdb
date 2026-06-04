@@ -18,6 +18,7 @@ async all(params: TrendingParams): Promise<PaginatedResponse<TrendingAllResult>>
 | ------------- | --------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------- |
 | `time_window` | [`TrendingTimeWindow`](/docs/types/trending#trendingtimewindow) | ✅       | Time window for trending data. `"day"` covers the last 24 hours, `"week"` covers the last 7 days. |
 | `language`    | [`Language`](/docs/types/options/language#language)             | ❌       | Language for localized results. Defaults to `en-US`.                                              |
+| `page`        | `number`                                                        | ❌       | Page number. Defaults to `1`.                                                                     |
 
 ## Returns
 

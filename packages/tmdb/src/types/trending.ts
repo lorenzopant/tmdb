@@ -13,6 +13,8 @@ export type TrendingParams = {
 	time_window: TrendingTimeWindow;
 	/** Language for localised results (ISO 639-1 + ISO 3166-1, e.g. `"en-US"`). */
 	language?: Language;
+	/** Page number. Defaults to 1. */
+	page?: number;
 };
 
 /**
