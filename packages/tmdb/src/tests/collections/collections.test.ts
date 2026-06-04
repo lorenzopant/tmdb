@@ -43,6 +43,31 @@ describe("CollectionsAPI", () => {
 			const result = await collectionsAPI.details({ collection_id: 10 });
 			expect(result).toEqual(fakeResponse);
 		});
+
+		it("should surface title and original_title (not name/original_name) on CollectionItem parts", async () => {
+			const fakePart = {
+				id: 1,
+				title: "Star Wars: Episode IV - A New Hope",
+				original_title: "Star Wars",
+				media_type: "movie",
+				overview: "",
+				poster_path: null,
+				backdrop_path: null,
+				adult: false,
+				original_language: "en",
+				genre_ids: [],
+				popularity: 1,
+				release_date: "1977-05-25",
+				video: false,
+				vote_average: 8.6,
+				vote_count: 10000,
+			};
+			const fakeResponse = { id: 10, name: "Star Wars Collection", parts: [fakePart] };
+			(clientMock.request as ReturnType<typeof vi.fn>).mockResolvedValue(fakeResponse);
+			const result = await collectionsAPI.details({ collection_id: 10 });
+			expect(result.parts[0].title).toBe("Star Wars: Episode IV - A New Hope");
+			expect(result.parts[0].original_title).toBe("Star Wars");
+		});
 	});
 
 	describe("images", () => {

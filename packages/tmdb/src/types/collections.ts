@@ -28,17 +28,13 @@ export type Collection = {
 
 /**
  * Represents a single media item within a collection.
- * Extends {@link MovieResultItem} by replacing `title` and `original_title`
- * with their localization-agnostic equivalents, and adding a `media_type` discriminator.
- * Hopefully both tv and movies use name and original name instead of title.
+ * Extends {@link MovieResultItem} with a `media_type` discriminator.
+ * Despite what the TMDB API docs show, the actual API response uses `title` and
+ * `original_title` (not `name`/`original_name`) for items in the `parts` array.
  */
-export type CollectionItem = Omit<MovieResultItem, "title" | "original_title"> & {
+export type CollectionItem = MovieResultItem & {
 	/** The type of media (e.g. `"movie"` or `"tv"`), used as a discriminator */
 	media_type: MediaType;
-	/** Display name of the media item */
-	name: string;
-	/** Name of the media item in its original language */
-	original_name: string;
 };
 
 /**

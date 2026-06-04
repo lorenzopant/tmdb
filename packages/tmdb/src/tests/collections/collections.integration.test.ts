@@ -16,6 +16,17 @@ describe("Collections API", () => {
 		expect(Array.isArray(collection.parts)).toBe(true);
 	});
 
+	it("(DETAILS) parts items should have title and original_title, not name/original_name", async () => {
+		// Harry Potter Collection (id: 1241) — different from the Star Wars fixture used elsewhere
+		const collection = await tmdb.collections.details({ collection_id: 1241, language: "en" });
+		expect(collection.parts.length).toBeGreaterThan(0);
+		const part = collection.parts[0];
+		expect(part.title).toBeDefined();
+		expect(part.original_title).toBeDefined();
+		expect((part as Record<string, unknown>).name).toBeUndefined();
+		expect((part as Record<string, unknown>).original_name).toBeUndefined();
+	});
+
 	it("(DETAILS) should fetch collection details with language", async () => {
 		const collection = await tmdb.collections.details({ collection_id: 10, language: "en" });
 		expect(collection.id).toBe(10);
