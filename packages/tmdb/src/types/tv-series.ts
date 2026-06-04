@@ -137,6 +137,8 @@ export type TVSeasonItem = {
 	poster_path?: string;
 	/** The season number within the TV show */
 	season_number: number;
+	/** The average vote score for the season */
+	vote_average: number;
 };
 
 /**
