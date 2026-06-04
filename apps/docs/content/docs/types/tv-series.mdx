@@ -35,15 +35,26 @@ Union of all valid keys that can be passed to `append_to_response`.
 
 ```ts
 type TVAppendToResponseNamespace =
+	| "aggregate_credits"
+	| "alternative_titles"
+	| "changes"
+	| "content_ratings"
 	| "credits"
+	| "episode_groups"
 	| "external_ids"
 	| "images"
 	| "keywords"
+	| "lists"
 	| "recommendations"
+	| "reviews"
+	| "screened_theatrically"
 	| "similar"
 	| "translations"
-	| "videos";
+	| "videos"
+	| "watch/providers";
 ```
+
+> **Note:** `watch/providers` uses a slash because it maps to the `/tv/{series_id}/watch/providers` sub-path. Access the appended data with `show["watch/providers"]`.
 
 ---
 
