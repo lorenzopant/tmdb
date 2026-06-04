@@ -19,7 +19,10 @@ export class TrendingAPI extends TMDBAPIBase {
 	 */
 	async all(params: TrendingParams): Promise<PaginatedResponse<TrendingAllResult>> {
 		const { time_window, language = this.defaultOptions.language, ...rest } = params;
-		return this.client.request<PaginatedResponse<TrendingAllResult>>(`${ENDPOINTS.TRENDING.ALL}/${time_window}`, { language, ...rest });
+		return this.client.request<PaginatedResponse<TrendingAllResult>>(
+			`${ENDPOINTS.TRENDING.ALL}/${time_window}`,
+			{ language, ...rest },
+		);
 	}
 
 	/**
@@ -31,7 +34,10 @@ export class TrendingAPI extends TMDBAPIBase {
 	 */
 	async movies(params: TrendingParams): Promise<PaginatedResponse<TrendingMovieResult>> {
 		const { time_window, language = this.defaultOptions.language, ...rest } = params;
-		return this.client.request<PaginatedResponse<TrendingMovieResult>>(`${ENDPOINTS.TRENDING.MOVIE}/${time_window}`, { language, ...rest });
+		return this.client.request<PaginatedResponse<TrendingMovieResult>>(
+			`${ENDPOINTS.TRENDING.MOVIE}/${time_window}`,
+			{ language, ...rest },
+		);
 	}
 
 	/**
@@ -43,7 +49,10 @@ export class TrendingAPI extends TMDBAPIBase {
 	 */
 	async tv(params: TrendingParams): Promise<PaginatedResponse<TrendingTVResult>> {
 		const { time_window, language = this.defaultOptions.language, ...rest } = params;
-		return this.client.request<PaginatedResponse<TrendingTVResult>>(`${ENDPOINTS.TRENDING.TV}/${time_window}`, { language, ...rest });
+		return this.client.request<PaginatedResponse<TrendingTVResult>>(
+			`${ENDPOINTS.TRENDING.TV}/${time_window}`,
+			{ language, ...rest },
+		);
 	}
 
 	/**
@@ -55,6 +64,9 @@ export class TrendingAPI extends TMDBAPIBase {
 	 */
 	async people(params: TrendingParams): Promise<PaginatedResponse<TrendingPersonResult>> {
 		const { time_window, language = this.defaultOptions.language, ...rest } = params;
-		return this.client.request<PaginatedResponse<TrendingPersonResult>>(`${ENDPOINTS.TRENDING.PERSON}/${time_window}`, { language, ...rest });
+		return this.client.request<PaginatedResponse<TrendingPersonResult>>(
+			`${ENDPOINTS.TRENDING.PERSON}/${time_window}`,
+			{ language, ...rest },
+		);
 	}
 }
