@@ -27,7 +27,7 @@ describe("TrendingAPI", () => {
 
 		it("should pass the language param as a query param", async () => {
 			await trendingAPI.all({ time_window: "day", language: "fr-FR" });
-			expect(clientMock.request).toHaveBeenCalledWith("/trending/all/day", { language: "fr-FR", page: undefined });
+			expect(clientMock.request).toHaveBeenCalledWith("/trending/all/day", { language: "fr-FR" });
 		});
 
 		it("should pass the page param as a query param", async () => {
@@ -63,7 +63,7 @@ describe("TrendingAPI", () => {
 
 		it("should pass the language param as a query param", async () => {
 			await trendingAPI.movies({ time_window: "day", language: "es-ES" });
-			expect(clientMock.request).toHaveBeenCalledWith("/trending/movie/day", { language: "es-ES", page: undefined });
+			expect(clientMock.request).toHaveBeenCalledWith("/trending/movie/day", { language: "es-ES" });
 		});
 
 		it("should pass the page param as a query param", async () => {
@@ -104,7 +104,7 @@ describe("TrendingAPI", () => {
 
 		it("should pass the language param as a query param", async () => {
 			await trendingAPI.tv({ time_window: "day", language: "ja-JP" });
-			expect(clientMock.request).toHaveBeenCalledWith("/trending/tv/day", { language: "ja-JP", page: undefined });
+			expect(clientMock.request).toHaveBeenCalledWith("/trending/tv/day", { language: "ja-JP" });
 		});
 
 		it("should pass the page param as a query param", async () => {
@@ -139,7 +139,7 @@ describe("TrendingAPI", () => {
 
 		it("should pass the language param as a query param", async () => {
 			await trendingAPI.people({ time_window: "week", language: "ko-KR" });
-			expect(clientMock.request).toHaveBeenCalledWith("/trending/person/week", { language: "ko-KR", page: undefined });
+			expect(clientMock.request).toHaveBeenCalledWith("/trending/person/week", { language: "ko-KR" });
 		});
 
 		it("should pass the page param as a query param", async () => {
