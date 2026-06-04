@@ -12,6 +12,8 @@ describe("TV Series Details (integration)", () => {
 		expect(show.id).toBe(1396);
 		expect(typeof show.name).toBe("string");
 		expect(show.number_of_seasons).toBeGreaterThan(0);
+		expect(Array.isArray(show.seasons)).toBe(true);
+		expect(typeof show.seasons![0].vote_average).toBe("number");
 	});
 
 	it("(DETAILS + appends: credits, external_ids) should include credits and external ids", async () => {
