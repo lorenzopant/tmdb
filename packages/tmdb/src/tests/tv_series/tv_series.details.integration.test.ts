@@ -2,18 +2,48 @@ import { TMDB } from "../../tmdb";
 import { beforeAll, describe, expect, it } from "vitest";
 
 const token = process.env.TMDB_BEARER_TOKEN;
-if (!token) throw new Error("TMDB_BEARER_TOKEN is not set, please set it in your enviroment variables.");
+if (!token)
+	throw new Error("TMDB_BEARER_TOKEN is not set, please set it in your enviroment variables.");
 
 const tmdb = new TMDB(token, { language: "en-US", region: "US", timezone: "Europe/Rome" });
 
 describe("TV Series Details (integration)", () => {
-	let show1396: Awaited<ReturnType<typeof tmdb.tv_series.details<["aggregate_credits", "alternative_titles", "content_ratings"]>>>;
-	let show1399: Awaited<ReturnType<typeof tmdb.tv_series.details<["episode_groups", "lists", "reviews", "screened_theatrically", "watch/providers"]>>>;
+	let show1396: Awaited<
+		ReturnType<
+			typeof tmdb.tv_series.details<
+				["aggregate_credits", "alternative_titles", "content_ratings", "changes"]
+			>
+		>
+	>;
+	let show1399: Awaited<
+		ReturnType<
+			typeof tmdb.tv_series.details<
+				["episode_groups", "lists", "reviews", "screened_theatrically", "watch/providers"]
+			>
+		>
+	>;
 
 	beforeAll(async () => {
 		[show1396, show1399] = await Promise.all([
-			tmdb.tv_series.details({ series_id: 1396, append_to_response: ["aggregate_credits", "alternative_titles", "content_ratings"] }),
-			tmdb.tv_series.details({ series_id: 1399, append_to_response: ["episode_groups", "lists", "reviews", "screened_theatrically", "watch/providers"] }),
+			tmdb.tv_series.details({
+				series_id: 1396,
+				append_to_response: [
+					"aggregate_credits",
+					"alternative_titles",
+					"content_ratings",
+					"changes",
+				],
+			}),
+			tmdb.tv_series.details({
+				series_id: 1399,
+				append_to_response: [
+					"episode_groups",
+					"lists",
+					"reviews",
+					"screened_theatrically",
+					"watch/providers",
+				],
+			}),
 		]);
 	});
 
@@ -25,16 +55,24 @@ describe("TV Series Details (integration)", () => {
 	});
 
 	it("(DETAILS + appends: credits, external_ids) should include credits and external ids", async () => {
-		const show = await tmdb.tv_series.details({ series_id: 1396, append_to_response: ["credits", "external_ids"] });
+		const show = await tmdb.tv_series.details({
+			series_id: 1396,
+			append_to_response: ["credits", "external_ids"],
+		});
 		expect(show.external_ids).toBeDefined();
-		expect(typeof show.external_ids.imdb_id === "string" || show.external_ids.imdb_id === null).toBe(true);
+		expect(
+			typeof show.external_ids.imdb_id === "string" || show.external_ids.imdb_id === null,
+		).toBe(true);
 		expect(show.credits).toBeDefined();
 		expect(Array.isArray(show.credits.cast)).toBe(true);
 		expect(show.credits.cast.length).toBeGreaterThan(0);
 	});
 
 	it("(DETAILS + appends: images, videos) should include media collections", async () => {
-		const show = await tmdb.tv_series.details({ series_id: 1396, append_to_response: ["images", "videos"] });
+		const show = await tmdb.tv_series.details({
+			series_id: 1396,
+			append_to_response: ["images", "videos"],
+		});
 		expect(show.images).toBeDefined();
 		expect(Array.isArray(show.images.posters)).toBe(true);
 		expect(show.videos).toBeDefined();
@@ -63,6 +101,12 @@ describe("TV Series Details (integration)", () => {
 		expect(show1396.alternative_titles).toBeDefined();
 		expect(Array.isArray(show1396.alternative_titles.results)).toBe(true);
 		expect(show1396.alternative_titles.results.length).toBeGreaterThan(0);
+	});
+
+	it("(DETAILS + append: changes) should include changes", () => {
+		expect(show1396.changes).toBeDefined();
+		expect(Array.isArray(show1396.changes.changes)).toBe(true);
+		expect(show1396.changes.changes.length).toBeGreaterThan(0);
 	});
 
 	it("(DETAILS + append: content_ratings) should include content_ratings", () => {
