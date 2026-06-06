@@ -1,6 +1,6 @@
 import { WatchMonetizationType } from "./common";
 import { CountryISO3166_1, Language, LanguageISO6391 } from "./config";
-import { ReleaseType } from "./enums";
+import { MovieReleaseType } from "./enums";
 import { LiteralUnion, Prettify } from "./utility";
 
 /**
@@ -139,7 +139,7 @@ export type DiscoverMovieParams = Prettify<
 		with_cast?: DiscoverFilterExpression<number>;
 		with_crew?: DiscoverFilterExpression<number>;
 		with_people?: DiscoverFilterExpression<number>;
-		with_release_type?: DiscoverFilterExpression<ReleaseType>;
+		with_release_type?: DiscoverFilterExpression<MovieReleaseType>;
 		"with_runtime.gte"?: number;
 		"with_runtime.lte"?: number;
 		year?: number;

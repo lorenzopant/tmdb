@@ -40,7 +40,7 @@ Parameters for [`discover.movie()`](/docs/api-reference/discover/movie).
 		without_keywords: { type: "DiscoverFilterExpression<number>", description: "Exclude keyword IDs." },
 		with_companies: { type: "DiscoverFilterExpression<number>", description: "Filter by production company IDs." },
 		without_companies: { type: "DiscoverFilterExpression<number>", description: "Exclude production company IDs." },
-		with_release_type: { type: "DiscoverFilterExpression<ReleaseType>", description: "Filter by TMDB release types." },
+		with_release_type: { type: "DiscoverFilterExpression<MovieReleaseType>", description: "Filter by TMDB release types." },
 		"with_runtime.gte": { type: "number", description: "Minimum runtime in minutes." },
 		"with_runtime.lte": { type: "number", description: "Maximum runtime in minutes." },
 		"vote_average.gte": { type: "number", description: "Minimum average vote." },
@@ -229,5 +229,5 @@ A simplified TV series object returned by [`discover.tv()`](/docs/api-reference/
 
 - [`MovieResultItem`](/docs/types/search#movieresultitem)
 - [`WatchMonetizationType`](/docs/types/common#watchmonetizationtype)
-- [`ReleaseType`](/docs/types/enums#releasetype)
+- [`MovieReleaseType`](/docs/types/enums#moviereleasetype)
 - [`PaginatedResponse`](/docs/types/common#paginatedresponset)

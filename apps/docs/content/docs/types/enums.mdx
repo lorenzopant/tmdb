@@ -5,10 +5,10 @@ description: Enumerated values used across TMDB API responses.
 
 Enumerated constants used in TMDB API responses to represent typed numeric values.
 
-## `ReleaseType`
+## `MovieReleaseType`
 
 Represents the type of a movie release as defined by TMDB.
-Used in [`MovieReleaseDate.type`](/docs/types/movies#moviereleasedate).
+Used in [`MovieReleaseDate.type`](/docs/types/movies#moviereleasedate) and [`DiscoverMovieParams.with_release_type`](/docs/types/discover#discovermovieparams).
 
 | Value | Name                | Description                                                                  |
 | ----- | ------------------- | ---------------------------------------------------------------------------- |
@@ -20,9 +20,9 @@ Used in [`MovieReleaseDate.type`](/docs/types/movies#moviereleasedate).
 | `6`   | `TV`                | Television broadcast premiere.                                               |
 
 ```ts
-import { ReleaseType } from "@lorenzopant/tmdb";
+import { MovieReleaseType } from "@lorenzopant/tmdb";
 
-if (releaseDate.type === ReleaseType.Theatrical) {
+if (releaseDate.type === MovieReleaseType.Theatrical) {
 	console.log("Wide theatrical release");
 }
 ```
