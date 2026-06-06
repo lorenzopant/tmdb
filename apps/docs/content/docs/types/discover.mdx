@@ -162,43 +162,6 @@ type DiscoverTVSortBy =
 
 ---
 
-## Discover Enums
-
-### `DiscoverTVStatus`
-
-Numeric values accepted by TMDB's `with_status` TV discover filter.
-
-<TypeTable
-	type={{
-		ReturningSeries: { type: "0", description: "Returning series status." },
-		Planned: { type: "1", description: "Planned status." },
-		InProduction: { type: "2", description: "In production status." },
-		Ended: { type: "3", description: "Ended status." },
-		Canceled: { type: "4", description: "Canceled status." },
-		Pilot: { type: "5", description: "Pilot status." },
-	}}
-/>
-
----
-
-### `DiscoverTVType`
-
-Numeric values accepted by TMDB's `with_type` TV discover filter.
-
-<TypeTable
-	type={{
-		Documentary: { type: "0", description: "Documentary type." },
-		News: { type: "1", description: "News type." },
-		Miniseries: { type: "2", description: "Miniseries type." },
-		Reality: { type: "3", description: "Reality type." },
-		Scripted: { type: "4", description: "Scripted type." },
-		TalkShow: { type: "5", description: "Talk show type." },
-		Video: { type: "6", description: "Video type." },
-	}}
-/>
-
----
-
 ## Result Items
 
 ### `DiscoverTVResultItem`
@@ -230,4 +193,6 @@ A simplified TV series object returned by [`discover.tv()`](/docs/api-reference/
 - [`MovieResultItem`](/docs/types/search#movieresultitem)
 - [`WatchMonetizationType`](/docs/types/common#watchmonetizationtype)
 - [`MovieReleaseType`](/docs/types/enums#moviereleasetype)
+- [`DiscoverTVStatus`](/docs/types/enums#discovertvstatus)
+- [`DiscoverTVType`](/docs/types/enums#discovertvtype)
 - [`PaginatedResponse`](/docs/types/common#paginatedresponset)

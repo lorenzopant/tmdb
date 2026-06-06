@@ -5,6 +5,8 @@ description: Enumerated values used across TMDB API responses.
 
 Enumerated constants used in TMDB API responses to represent typed numeric values.
 
+These are exported as `const` objects (not TypeScript `enum`s). Named access works the same way (`MovieReleaseType.Theatrical`), and each has a companion `*Label` map for numeric → human-readable string lookups.
+
 ## `MovieReleaseType`
 
 Represents the type of a movie release as defined by TMDB.
@@ -20,9 +22,91 @@ Used in [`MovieReleaseDate.type`](/docs/types/movies#moviereleasedate) and [`Dis
 | `6`   | `TV`                | Television broadcast premiere.                                               |
 
 ```ts
-import { MovieReleaseType } from "@lorenzopant/tmdb";
+import { MovieReleaseType, MovieReleaseTypeLabel } from "@lorenzopant/tmdb";
 
 if (releaseDate.type === MovieReleaseType.Theatrical) {
 	console.log("Wide theatrical release");
 }
+
+// Human-readable label from a numeric value
+MovieReleaseTypeLabel[releaseDate.type]; // e.g. "Theatrical"
+```
+
+---
+
+## `DiscoverTVStatus`
+
+Numeric status values accepted by TMDB's `with_status` TV discover filter.
+Used in [`DiscoverTVParams.with_status`](/docs/types/discover#discovertvparams).
+
+| Value | Name              | Description          |
+| ----- | ----------------- | -------------------- |
+| `0`   | `ReturningSeries` | Currently airing.    |
+| `1`   | `Planned`         | Not yet in production. |
+| `2`   | `InProduction`    | Currently in production. |
+| `3`   | `Ended`           | Series has ended.    |
+| `4`   | `Canceled`        | Series was canceled. |
+| `5`   | `Pilot`           | Pilot stage only.    |
+
+```ts
+import { DiscoverTVStatus, DiscoverTVStatusLabel } from "@lorenzopant/tmdb";
+
+tmdb.discover.tv({ with_status: DiscoverTVStatus.ReturningSeries });
+
+// Human-readable label from a numeric value
+DiscoverTVStatusLabel[series.status]; // e.g. "Returning Series"
+```
+
+---
+
+## `DiscoverTVType`
+
+Numeric type values accepted by TMDB's `with_type` TV discover filter.
+Used in [`DiscoverTVParams.with_type`](/docs/types/discover#discovertvparams).
+
+| Value | Name          | Description      |
+| ----- | ------------- | ---------------- |
+| `0`   | `Documentary` | Documentary.     |
+| `1`   | `News`        | News program.    |
+| `2`   | `Miniseries`  | Miniseries.      |
+| `3`   | `Reality`     | Reality show.    |
+| `4`   | `Scripted`    | Scripted series. |
+| `5`   | `TalkShow`    | Talk show.       |
+| `6`   | `Video`       | Video.           |
+
+```ts
+import { DiscoverTVType, DiscoverTVTypeLabel } from "@lorenzopant/tmdb";
+
+tmdb.discover.tv({ with_type: DiscoverTVType.Scripted });
+
+// Human-readable label from a numeric value
+DiscoverTVTypeLabel[series.type]; // e.g. "Scripted"
+```
+
+---
+
+## `TVEpisodeGroupType`
+
+Identifies the grouping strategy used by a TV episode group.
+Used in [`TVEpisodeGroupDetails.type`](/docs/types/tv-episode-groups#tvepisodegroupdetails).
+
+| Value | Name              | Description                        |
+| ----- | ----------------- | ---------------------------------- |
+| `1`   | `OriginalAirDate` | Grouped by original air date.      |
+| `2`   | `Absolute`        | Absolute episode ordering.         |
+| `3`   | `Dvd`             | DVD release ordering.              |
+| `4`   | `Digital`         | Digital release ordering.          |
+| `5`   | `StoryArc`        | Grouped by story arc.              |
+| `6`   | `Production`      | Production ordering.               |
+| `7`   | `TV`              | TV broadcast ordering.             |
+
+```ts
+import { TVEpisodeGroupType, TVEpisodeGroupTypeLabel } from "@lorenzopant/tmdb";
+
+if (group.type === TVEpisodeGroupType.OriginalAirDate) {
+	console.log("Ordered by air date");
+}
+
+// Human-readable label from a numeric value
+TVEpisodeGroupTypeLabel[group.type]; // e.g. "Original Air Date"
 ```
