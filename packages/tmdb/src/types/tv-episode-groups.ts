@@ -1,3 +1,4 @@
+import { TVEpisodeGroupType } from "./enums";
 import { NetworkItem } from "./networks";
 import { TVEpisode } from "./tv-episodes";
 
@@ -48,19 +49,6 @@ export type TVEpisodeGroupEpisode = Omit<TVEpisode, "guest_stars" | "runtime"> &
 	/** Path to the episode still image, if available */
 	still_path?: string;
 };
-
-/**
- * Supported episode group type identifiers.
- */
-export enum TVEpisodeGroupType {
-	OriginalAirDate = 1,
-	Absolute = 2,
-	Dvd = 3,
-	Digital = 4,
-	StoryArc = 5,
-	Production = 6,
-	TV = 7,
-}
 
 export type TVEpisodeGroupParams = {
 	/** Episode group identifier */
