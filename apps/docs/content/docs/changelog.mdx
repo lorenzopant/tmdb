@@ -4,6 +4,28 @@ description: Latest updates and announcements
 icon: History
 ---
 
+## 🚀 1.22.2 - 6 June 2026
+
+#### ✨ New
+
+- **Enum label maps** — all enum-style constants now ship a companion `*Labels` map (e.g. `MovieStatusLabels`, `MediaTypeLabels`) for mapping a value to its human-readable display string. Enums have been replaced with `as const` objects for better tree-shaking and compatibility with non-TypeScript consumers.
+
+#### 🐞 Bug Fixes
+
+- `TVSeasonItem` was missing the `vote_average` field ([#127](https://github.com/lorenzopant/tmdb/pull/127))
+- `MovieReleaseType` was not exported and was incorrectly named `ReleaseType` ([#126](https://github.com/lorenzopant/tmdb/pull/126))
+- `TVAppendToResponseNamespace` was missing several valid `append_to_response` values ([#124](https://github.com/lorenzopant/tmdb/pull/124))
+- `CollectionItem` had incorrect field names — corrected to `title` and `original_title` ([#125](https://github.com/lorenzopant/tmdb/pull/125))
+- Trending endpoints now forward the `page` parameter correctly; previously `page: undefined` was passed to the client when omitted ([#123](https://github.com/lorenzopant/tmdb/pull/123))
+
+#### 📖 Docs
+
+- Consolidated all enum and const-object documentation into a single [Enums](/docs/types/enums) page
+- Fixed broken anchor link to `DiscoverMovieParams` in the enums docs
+- Updated `TVAppendToResponseNamespace` reference and usage examples
+
+---
+
 ## 🚀 1.22.1 - 15 May 2026
 
 #### 📦 Package
