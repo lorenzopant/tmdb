@@ -28,7 +28,19 @@
 		"oxfmt": "^0.43.0",
 		"oxlint": "^1.58.0",
 		"oxlint-tsgolint": "^0.18.1",
-		"turbo": "2.9.1"
+		"turbo": "2.9.16"
+	},
+	"pnpm": {
+		"overrides": {
+			"minimatch": ">=10.2.3",
+			"picomatch": ">=4.0.4",
+			"defu": ">=6.1.5",
+			"brace-expansion": ">=5.0.6",
+			"yaml": ">=2.8.3",
+			"postcss": ">=8.5.10",
+			"hono": ">=4.12.21",
+			"qs": ">=6.15.2"
+		}
 	},
 	"packageManager": "pnpm@9.15.9",
 	"engines": {
