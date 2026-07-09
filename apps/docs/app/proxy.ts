@@ -14,3 +14,10 @@ export default function proxy(request: NextRequest) {
 
 	return NextResponse.next();
 }
+
+// Only run on /docs/* — the only paths where markdown negotiation applies.
+// Without a matcher the proxy runs as an Edge Function on every request
+// (static assets, RSC prefetches, og, api, favicon), each a billed no-op.
+export const config = {
+	matcher: ["/docs/:path*"],
+};

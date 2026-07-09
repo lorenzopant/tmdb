@@ -3,6 +3,8 @@ import { source } from "@/lib/source";
 import { notFound } from "next/navigation";
 
 export const revalidate = false;
+// Unknown slugs 404 statically; no Serverless Function for bot-probed paths.
+export const dynamicParams = false;
 
 export async function GET(_req: Request, { params }: RouteContext<"/llms.mdx/docs/[[...slug]]">) {
 	const { slug } = await params;
