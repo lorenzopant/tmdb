@@ -23,14 +23,18 @@ describe("TV Series (integration)", () => {
 		expect(show.id).toBe(1396);
 		expect(Array.isArray(show.cast)).toBe(true);
 		expect(Array.isArray(show.crew)).toBe(true);
-		expect(show.cast[0].name).toBe("Bryan Cranston");
+		expect(show.cast.some((member) => member.name === "Bryan Cranston")).toBe(true);
 	});
 
 	it("(ALTERNATIVE TITLES) should get alternative titles for a tv show", async () => {
 		const show = await tmdb.tv_series.alternative_titles({ series_id: 1396 });
 		expect(show.id).toBe(1396);
 		expect(Array.isArray(show.results)).toBe(true);
-		expect(show.results[1].title).toBe("Breaking Bad: A Química do Mal");
+		expect(show.results.length).toBeGreaterThan(0);
+		// Alternative titles are community-editable — order and contents change
+		// over time — so assert entry shape, not a specific title at a fixed index.
+		expect(typeof show.results[0].title).toBe("string");
+		expect(typeof show.results[0].iso_3166_1).toBe("string");
 	});
 
 	it("(CHANGES) should get changes for a tv show", async () => {
@@ -41,21 +45,26 @@ describe("TV Series (integration)", () => {
 	it("(CONTENT RATINGS) should get content ratings for a tv show", async () => {
 		const show = await tmdb.tv_series.content_ratings({ series_id: 1396 });
 		expect(Array.isArray(show.results)).toBe(true);
-		expect(show.results[0].iso_3166_1).toBe("DE");
-		expect(show.results[0].rating).toBe("16");
+		// Ratings are region-keyed and editable; find by ISO code instead of
+		// assuming a fixed index, and assert the rating shape not its value.
+		const de = show.results.find((r) => r.iso_3166_1 === "DE");
+		expect(de).toBeDefined();
+		expect(typeof de?.rating).toBe("string");
 	});
 
 	it("(CREDITS) should get credits for a tv show", async () => {
 		const show = await tmdb.tv_series.credits({ series_id: 1396 });
 		expect(Array.isArray(show.cast)).toBe(true);
-		expect(show.cast[0].name).toBe("Bryan Cranston");
+		expect(show.cast.some((member) => member.name === "Bryan Cranston")).toBe(true);
 	});
 
 	it("(EPISODE GROUPS) should get episode groups for a tv show", async () => {
 		const show = await tmdb.tv_series.episode_groups({ series_id: 1399 });
 		expect(Array.isArray(show.results)).toBe(true);
-		expect(show.results[0].episode_count).toBe(102);
-		expect(show.results[0].network.name).toBe("HBO");
+		expect(show.results.length).toBeGreaterThan(0);
+		// Episode groups are community-created; counts and ordering change, so
+		// assert shape across entries rather than a fixed group's contents.
+		expect(show.results.every((group) => typeof group.episode_count === "number")).toBe(true);
 	});
 
 	it("(EXTERNAL IDS) should get external ids for a tv show", async () => {
@@ -72,10 +81,12 @@ describe("TV Series (integration)", () => {
 	});
 
 	it("(IMAGES LANGUAGE) should get images for a tv show including specified language", async () => {
-		const show = await tmdb.tv_series.images({ series_id: 1399, include_image_language: "es-ES" });
+		const show = await tmdb.tv_series.images({ series_id: 1399, include_image_language: ["es-ES"] });
 		expect(Array.isArray(show.backdrops)).toBe(true);
 		expect(Array.isArray(show.posters)).toBe(true);
-		expect(show.backdrops[0].iso_639_1).toBe("es");
+		// include_image_language should surface Spanish images; assert one exists
+		// rather than assuming it lands at a fixed index.
+		expect(show.backdrops.some((b) => b.iso_639_1 === "es")).toBe(true);
 	});
 
 	it("(KEYWORDS) should get keywords for a tv show", async () => {
@@ -92,8 +103,10 @@ describe("TV Series (integration)", () => {
 	it("(LISTS) should get tv show lists", async () => {
 		const show = await tmdb.tv_series.lists({ series_id: 1399 });
 		expect(Array.isArray(show.results)).toBe(true);
-		expect(show.results[0].item_count).toBeGreaterThan(0);
-		expect(show.results[0].iso_3166_1).toBe("IT");
+		expect(show.results.length).toBeGreaterThan(0);
+		// Public lists containing the show churn constantly; assert entry shape
+		// instead of a specific list's region/size at a fixed index.
+		expect(show.results.every((list) => typeof list.id === "number")).toBe(true);
 	});
 
 	it("(RECOMMENDATIONS) should get tv show recommendations", async () => {
@@ -105,7 +118,10 @@ describe("TV Series (integration)", () => {
 	it("(REVIEWS) should get tv show reviews", async () => {
 		const show = await tmdb.tv_series.reviews({ series_id: 1399, language: "en-US" });
 		expect(Array.isArray(show.results)).toBe(true);
-		expect(show.results[0].id).toBe("58aa82f09251416f92006a3a");
+		expect(show.results.length).toBeGreaterThan(0);
+		// Reviews are user content (added/removed/reordered); assert shape, not a
+		// specific review id at a fixed index.
+		expect(typeof show.results[0].id).toBe("string");
 	});
 
 	it("(SCREENED THEATRICALLY) should get tv episodes screened thetrically", async () => {
@@ -122,15 +138,26 @@ describe("TV Series (integration)", () => {
 	it("(TRANSLATIONS) should get tv shows translations", async () => {
 		const show = await tmdb.tv_series.translations({ series_id: 1399 });
 		expect(Array.isArray(show.translations)).toBe(true);
-		expect(show.translations[0].iso_3166_1).toBe("US");
-		expect(show.translations[1].data.tagline).toBe("Das Lied von Eis und Feuer");
+		// Translations are unordered and editable; find by language code and
+		// assert the field shape rather than an exact value at a fixed index.
+		const german = show.translations.find((t) => t.iso_639_1 === "de");
+		expect(german).toBeDefined();
+		// data.* fields are all optional (may be absent even when the translation
+		// exists), so assert the required wrapper fields, not a translated value.
+		expect(typeof german?.iso_3166_1).toBe("string");
+		expect(typeof german?.name).toBe("string");
+		expect(typeof german?.english_name).toBe("string");
+		expect(german?.data).toBeDefined();
 	});
 
 	it("(VIDEOS) should get tv shows videos", async () => {
 		const show = await tmdb.tv_series.videos({ series_id: 1399 });
 		expect(Array.isArray(show.results)).toBe(true);
-		expect(show.results[0].site).toBe("YouTube");
-		expect(show.results[0].official).toBe(true);
+		expect(show.results.length).toBeGreaterThan(0);
+		// Videos are added/reordered over time; assert entry shape rather than a
+		// specific video's platform/flag at a fixed index.
+		expect(typeof show.results[0].site).toBe("string");
+		expect(typeof show.results[0].key).toBe("string");
 	});
 
 	it("(WATCH PROVIDERS) should get tv shows watch providers", async () => {
