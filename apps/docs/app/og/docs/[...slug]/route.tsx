@@ -4,6 +4,8 @@ import { ImageResponse } from "@takumi-rs/image-response";
 import { generate as DefaultImage } from "fumadocs-ui/og/takumi";
 
 export const revalidate = false;
+// Unknown slugs 404 statically; no Serverless Function for bot-probed paths.
+export const dynamicParams = false;
 
 export async function GET(_req: Request, { params }: RouteContext<"/og/docs/[...slug]">) {
 	const { slug } = await params;

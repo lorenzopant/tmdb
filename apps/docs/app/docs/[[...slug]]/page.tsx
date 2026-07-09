@@ -37,6 +37,10 @@ export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
 	);
 }
 
+// Unknown slugs (bot/scanner probes) return a static 404 instead of spinning
+// up a Serverless Function to render notFound(). Real pages are all prebuilt.
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
 	return source.generateParams();
 }
