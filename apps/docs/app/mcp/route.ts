@@ -95,16 +95,43 @@ async function handleRequest(request: Request): Promise<Response> {
 	}
 }
 
-export async function GET(request: Request): Promise<Response> {
-	return handleRequest(request);
+// Stateless MCP endpoint: only POST (JSON-RPC request/response) is supported.
+// GET (server-to-client SSE stream) and DELETE (session teardown) have no
+// meaning without sessions, so reject them *before* constructing the MCP
+// server to avoid the per-request cost. Returning 405 instead of 200 also tells
+// spec-compliant clients that no SSE stream is offered, so they fall back to
+// POST-only instead of looping reconnects on a stream that never stays open.
+function methodNotAllowed(): Response {
+	return new Response(
+		JSON.stringify({
+			jsonrpc: "2.0",
+			error: {
+				code: -32000,
+				message: "Method not allowed: this MCP endpoint is stateless. Use POST.",
+			},
+			id: null,
+		}),
+		{
+			status: 405,
+			headers: {
+				"Content-Type": "application/json",
+				Allow: "POST, OPTIONS",
+				"Access-Control-Allow-Origin": "*",
+			},
+		},
+	);
+}
+
+export async function GET(): Promise<Response> {
+	return methodNotAllowed();
 }
 
 export async function POST(request: Request): Promise<Response> {
 	return handleRequest(request);
 }
 
-export async function DELETE(request: Request): Promise<Response> {
-	return handleRequest(request);
+export async function DELETE(): Promise<Response> {
+	return methodNotAllowed();
 }
 
 export async function OPTIONS(): Promise<Response> {
@@ -112,7 +139,7 @@ export async function OPTIONS(): Promise<Response> {
 		status: 204,
 		headers: {
 			"Access-Control-Allow-Origin": "*",
-			"Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
+			"Access-Control-Allow-Methods": "POST, OPTIONS",
 			"Access-Control-Allow-Headers": "Content-Type, Accept, Mcp-Session-Id, MCP-Protocol-Version",
 		},
 	});
