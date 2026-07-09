@@ -36,14 +36,27 @@ describe("Search (integration)", () => {
 	});
 
 	it("(SEARCH MOVIE) should allow explicit params to override default options", async () => {
-		const tmdb = new TMDB(token, { language: "it", region: "IT" });
+		// Capture the outgoing request params via a request interceptor so we can
+		// assert the override contract on the request itself — localized response
+		// content is too volatile to prove which language was actually sent.
+		let capturedParams: Record<string, unknown> | undefined;
+		const tmdb = new TMDB(token, {
+			language: "it",
+			region: "IT",
+			interceptors: {
+				request: (ctx) => {
+					capturedParams = ctx.params;
+				},
+			},
+		});
 		const movies = await tmdb.search.movies({ query: "Fight Club", language: "en" });
 
-		expect(movies.page).toBe(1);
-		expect(movies.total_results).toBeGreaterThan(0);
-		expect(movies.results.length).toBeGreaterThan(0);
+		// Explicit language wins over the constructor default...
+		expect(capturedParams?.language).toBe("en");
+		// ...while an un-overridden default (region) is preserved.
+		expect(capturedParams?.region).toBe("IT");
 
-		// Fight Club (id 550) should be present regardless of ranking.
+		// Sanity check the live response: Fight Club (id 550) should be present.
 		expect(movies.results.some((m) => m.id === 550)).toBe(true);
 	});
 

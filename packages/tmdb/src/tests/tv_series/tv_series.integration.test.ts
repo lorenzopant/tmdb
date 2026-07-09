@@ -142,7 +142,12 @@ describe("TV Series (integration)", () => {
 		// assert the field shape rather than an exact value at a fixed index.
 		const german = show.translations.find((t) => t.iso_639_1 === "de");
 		expect(german).toBeDefined();
-		expect(typeof german?.data.tagline).toBe("string");
+		// data.* fields are all optional (may be absent even when the translation
+		// exists), so assert the required wrapper fields, not a translated value.
+		expect(typeof german?.iso_3166_1).toBe("string");
+		expect(typeof german?.name).toBe("string");
+		expect(typeof german?.english_name).toBe("string");
+		expect(german?.data).toBeDefined();
 	});
 
 	it("(VIDEOS) should get tv shows videos", async () => {

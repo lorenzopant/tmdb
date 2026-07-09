@@ -67,7 +67,11 @@ describe("TV Seasons API", () => {
 	it("(TRANSLATIONS) should get translations for a tv season", async () => {
 		const results = await tmdb.tv_seasons.translations({ ...params });
 		expect(Array.isArray(results.translations)).toBe(true);
-		expect(results.translations[0].data.name).toBeDefined();
+		expect(results.translations.length).toBeGreaterThan(0);
+		// data.* fields are optional; assert the required translation wrapper shape.
+		expect(typeof results.translations[0].iso_639_1).toBe("string");
+		expect(typeof results.translations[0].name).toBe("string");
+		expect(results.translations[0].data).toBeDefined();
 	});
 
 	it("(VIDEOS) should get videos for a tv season", async () => {
