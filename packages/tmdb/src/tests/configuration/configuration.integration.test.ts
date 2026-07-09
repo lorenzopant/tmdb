@@ -38,14 +38,18 @@ describe("Configuration API", () => {
 	it("(COUNTRIES) should get list of countries used in TMDB", async () => {
 		const countries = await tmdb.configuration.countries();
 		expect(countries.length).toBeGreaterThan(0);
-		expect(countries[0].iso_3166_1).toBe("AD");
+		// Don't depend on list ordering; assert the country is present by ISO code.
+		expect(countries.some((c) => c.iso_3166_1 === "AD")).toBe(true);
 	});
 
 	it("(COUNTRIES) should get list of countries used in TMDB with specifed language", async () => {
 		const countries = await tmdb.configuration.countries({ language: "it-IT" });
 		expect(countries.length).toBeGreaterThan(1);
-		expect(countries[1]).toBeDefined();
-		expect(countries[1].native_name).toBe("Emirati Arabi Uniti");
+		// Find by ISO code instead of a fixed index; the localized native_name
+		// for AE (Italian) is the meaningful assertion here.
+		const ae = countries.find((c) => c.iso_3166_1 === "AE");
+		expect(ae).toBeDefined();
+		expect(ae?.native_name).toBe("Emirati Arabi Uniti");
 	});
 
 	it("(JOBS) should get list of jobs used in TMDB", async () => {

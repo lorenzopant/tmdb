@@ -64,7 +64,8 @@ describe("Movies (integration)", () => {
 		expect(credits.id).toBe(movie_id);
 		expect(credits.cast.length).toBeGreaterThan(0);
 		expect(credits.crew.length).toBeGreaterThan(0);
-		expect(credits.cast[0].name).toBe("Edward Norton");
+		// Billing order can change; assert the actor is present rather than first.
+		expect(credits.cast.some((member) => member.name === "Edward Norton")).toBe(true);
 	});
 
 	it("(MOVIE EXTERNAL IDS) should get movie external IDs", async () => {
@@ -91,8 +92,11 @@ describe("Movies (integration)", () => {
 		const changes = await tmdb.movies.changes({ movie_id, start_date, end_date });
 		expect(changes).toBeDefined();
 		expect(changes.changes).toBeDefined();
-		expect(changes.changes[0].key).toBe("images");
-		expect(changes.changes[0].items.length).toBeGreaterThan(0);
+		// The change feed is unordered; find the "images" change rather than
+		// assuming it is first.
+		const imagesChange = changes.changes.find((c) => c.key === "images");
+		expect(imagesChange).toBeDefined();
+		expect(imagesChange!.items.length).toBeGreaterThan(0);
 	});
 
 	it("(MOVIE IMAGES) should get movie images", async () => {

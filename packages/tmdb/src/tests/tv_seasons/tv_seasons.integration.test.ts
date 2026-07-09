@@ -36,7 +36,7 @@ describe("TV Seasons API", () => {
 		expect(credits.id).toBeDefined();
 		expect(Array.isArray(credits.cast)).toBe(true);
 		expect(Array.isArray(credits.crew)).toBe(true);
-		expect(credits.cast[0].name).toBe("Bryan Cranston");
+		expect(credits.cast.some((member) => member.name === "Bryan Cranston")).toBe(true);
 	});
 
 	it("(CHANGES) should get changes for a tv season", async () => {
