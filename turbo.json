@@ -18,7 +18,7 @@
 			"cache": false
 		},
 		"lint:check": {
-			"dependsOn": ["^lint:check"],
+			"dependsOn": ["^build", "^lint:check"],
 			"cache": false
 		},
 		"format": {
@@ -42,7 +42,7 @@
 			"cache": false
 		},
 		"typecheck": {
-			"dependsOn": ["^typecheck"],
+			"dependsOn": ["^build", "^typecheck"],
 			"cache": false
 		}
 	}
