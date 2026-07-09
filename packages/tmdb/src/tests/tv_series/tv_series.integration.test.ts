@@ -81,7 +81,7 @@ describe("TV Series (integration)", () => {
 	});
 
 	it("(IMAGES LANGUAGE) should get images for a tv show including specified language", async () => {
-		const show = await tmdb.tv_series.images({ series_id: 1399, include_image_language: "es-ES" });
+		const show = await tmdb.tv_series.images({ series_id: 1399, include_image_language: ["es-ES"] });
 		expect(Array.isArray(show.backdrops)).toBe(true);
 		expect(Array.isArray(show.posters)).toBe(true);
 		// include_image_language should surface Spanish images; assert one exists
