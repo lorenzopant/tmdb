@@ -62,8 +62,8 @@ export type PersonResultItem = {
 	popularity: number;
 	/** Path to person's profile image */
 	profile_path?: string;
-	/** List of notable movies or TV shows the person is known for */
-	known_for: KnownForItem[];
+	/** List of notable movies or TV shows the person is known for. Not returned by every endpoint (e.g. trending) */
+	known_for?: KnownForItem[];
 };
 
 /**
@@ -74,6 +74,8 @@ export type PersonResultItem = {
  * It is a partial representation of the TVDetails type.
  */
 export type TVSeriesResultItem = {
+	/** Whether the series is marked as adult content. */
+	adult: boolean;
 	/** Relative path to the backdrop image for the series (nullable on some responses). */
 	backdrop_path?: string;
 	/** First air date of the series (YYYY-MM-DD). */
@@ -94,6 +96,8 @@ export type TVSeriesResultItem = {
 	popularity: number;
 	/** Relative path to the poster image for the series (nullable on some responses). */
 	poster_path?: string;
+	/** Whether the series is flagged as softcore content. */
+	softcore: boolean;
 	/** Average vote score for the series. */
 	vote_average: number;
 	/** Total number of votes the series has received. */
@@ -126,6 +130,8 @@ export type MovieResultItem = {
 	genre_ids: number[];
 	/** Popularity score calculated by TMDB */
 	popularity: number;
+	/** Whether the movie is flagged as softcore content */
+	softcore: boolean;
 	/** Release date in ISO 8601 format (YYYY-MM-DD) */
 	release_date: string;
 	/** Whether a video is available on TMDB */

@@ -42,12 +42,14 @@ export type TVEpisodeGroupDetailsItem = {
 
 /**
  * A simplified TV episode item returned in episode group details.
+ * Unlike a standalone episode, grouped episodes have no `crew`, but do carry
+ * their `order` within the group and the parent show's `show_id`.
  */
-export type TVEpisodeGroupEpisode = Omit<TVEpisode, "guest_stars" | "runtime"> & {
-	/** Production code for the episode, if available */
-	production_code?: string;
-	/** Path to the episode still image, if available */
-	still_path?: string;
+export type TVEpisodeGroupEpisode = Omit<TVEpisode, "guest_stars" | "crew"> & {
+	/** Display order of the episode within the group */
+	order: number;
+	/** Unique identifier of the parent TV show */
+	show_id: number;
 };
 
 export type TVEpisodeGroupParams = {

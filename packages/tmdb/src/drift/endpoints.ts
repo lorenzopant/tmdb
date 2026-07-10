@@ -244,7 +244,7 @@ export const CALLS = defineCalls([
 					"images",
 					"translations",
 					"videos",
-					"watch_providers",
+					"watch/providers",
 				],
 			}),
 	},

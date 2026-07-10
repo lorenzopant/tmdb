@@ -14,7 +14,10 @@ export type CreditDetailsParams = CreditBaseParam & WithLanguage;
 /**
  * Person data attached to a credit details response.
  */
-export type CreditDetailsPerson = Omit<Credit, "credit_id">;
+export type CreditDetailsPerson = Omit<Credit, "credit_id"> & {
+	/** Media type discriminator. */
+	media_type: "person";
+};
 
 type CreditDetailsMediaBase = {
 	/** Indicates whether the title is marked for adult content. */
@@ -35,6 +38,8 @@ type CreditDetailsMediaBase = {
 	poster_path?: string;
 	/** Popularity score. */
 	popularity: number;
+	/** Whether the media is flagged as softcore content. */
+	softcore: boolean;
 	/** Average vote score. */
 	vote_average: number;
 	/** Total vote count. */
