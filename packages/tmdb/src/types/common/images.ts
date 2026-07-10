@@ -15,6 +15,8 @@ export type ImageItem = {
 	height: number;
 	/** ISO 639-1 language code if image contains text, null otherwise */
 	iso_639_1?: string;
+	/** ISO 3166-1 country code the image is tagged for, if any */
+	iso_3166_1?: string;
 	/** Relative path to the image file (append to base URL) */
 	file_path: string;
 	/** Average user rating for this image */
@@ -59,8 +61,8 @@ export type OrganizationImage = Omit<ImageItem, "iso_639_1"> & {
  * type PersonImagesResult = ImagesResult<"profiles">;
  */
 export type ImagesResult<T, K extends ImageCollectionKey> = {
-	/** The unique TMDB identifier of the entity. */
-	id: number;
+	/** The unique TMDB identifier of the entity. Absent when fetched via `append_to_response` rather than standalone. */
+	id?: number;
 } & {
 	[P in K]: T[];
 };

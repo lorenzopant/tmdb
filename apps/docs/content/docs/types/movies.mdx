@@ -156,7 +156,8 @@ Alias for [`Changes`](/docs/types/common#changes). Returns the change history fo
 
 ### `MovieRecommendations`
 
-A [`PaginatedResponse<MovieResultItem>`](/docs/types/common#paginatedresponset) of recommended movies.
+A [`PaginatedResponse<MovieResultItem>`](/docs/types/common#paginatedresponset) of recommended
+movies, with an optional `media_type: "movie"` discriminator on each item.
 
 See [`MovieResultItem`](/docs/types/search#movieresultitem).
 
@@ -199,7 +200,8 @@ See [`MovieReleaseType`](/docs/types/enums#moviereleasetype).
 
 ### `MovieReviews`
 
-A [`PaginatedResponse<Review>`](/docs/types/common#paginatedresponset) of user reviews.
+A [`PaginatedResponse<Review>`](/docs/types/common#paginatedresponset) of user reviews, plus an
+`id` field with the movie identifier.
 
 ---
 
@@ -247,6 +249,25 @@ A [`TranslationResults<MovieTranslationData>`](/docs/types/common#translationres
 		results: {
 			type: "Record<CountryISO3166_1, WatchProvider>",
 			description: "Watch providers grouped by country code",
+			required: true,
+		},
+	}}
+/>
+
+---
+
+### `MovieDateRangeList`
+
+Returned by [`now_playing()`](/docs/api-reference/movie-lists/now-playing) and
+[`upcoming()`](/docs/api-reference/movie-lists/upcoming) — a
+[`PaginatedResponse<MovieResultItem>`](/docs/types/common#paginatedresponset) extended with the
+release-date window the list was queried over.
+
+<TypeTable
+	type={{
+		dates: {
+			type: "{ maximum: string; minimum: string }",
+			description: "The release-date window this list was queried over.",
 			required: true,
 		},
 	}}

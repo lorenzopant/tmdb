@@ -34,10 +34,10 @@ export class KeywordsAPI extends TMDBAPIBase {
 	 * @param include_adult Include adult titles in results
 	 * @reference https://developer.themoviedb.org/reference/keyword-movies
 	 */
-	async movies(params: KeywordMoviesParams): Promise<PaginatedResponse<MovieResultItem>> {
+	async movies(params: KeywordMoviesParams): Promise<PaginatedResponse<MovieResultItem> & { id: number }> {
 		const { keyword_id, ...rest } = params;
 		const endpoint = `${this.keywordPath(keyword_id)}${ENDPOINTS.KEYWORDS.MOVIES}`;
 		const requestParams = this.withLanguage(rest);
-		return this.client.request<PaginatedResponse<MovieResultItem>>(endpoint, requestParams);
+		return this.client.request<PaginatedResponse<MovieResultItem> & { id: number }>(endpoint, requestParams);
 	}
 }

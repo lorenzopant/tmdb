@@ -75,7 +75,8 @@ export type PersonChanges = Changes;
  * External identifiers linked to a person.
  */
 export type PersonExternalIDs = {
-	id: number;
+	/** Absent when fetched via `append_to_response` rather than standalone. */
+	id?: number;
 	freebase_mid?: string;
 	freebase_id?: string;
 	imdb_id?: string;
@@ -115,7 +116,8 @@ export type PersonMovieCrewCredit = MovieResultItem & {
  * Movie credits for a person.
  */
 export type PersonMovieCredits = {
-	id: number;
+	/** Absent when fetched via `append_to_response` rather than standalone. */
+	id?: number;
 	cast: PersonMovieCastCredit[];
 	crew: PersonMovieCrewCredit[];
 };
@@ -127,6 +129,8 @@ export type PersonTVCastCredit = TVSeriesResultItem & {
 	character: string;
 	credit_id: string;
 	episode_count: number;
+	/** Air date of this person's first credited episode for the show */
+	first_credit_air_date?: string;
 };
 
 /**
@@ -136,6 +140,8 @@ export type PersonTVCrewCredit = TVSeriesResultItem & {
 	credit_id: string;
 	department: string;
 	episode_count: number;
+	/** Air date of this person's first credited episode for the show */
+	first_credit_air_date?: string;
 	job: string;
 };
 
@@ -143,7 +149,8 @@ export type PersonTVCrewCredit = TVSeriesResultItem & {
  * TV credits for a person.
  */
 export type PersonTVCredits = {
-	id: number;
+	/** Absent when fetched via `append_to_response` rather than standalone. */
+	id?: number;
 	cast: PersonTVCastCredit[];
 	crew: PersonTVCrewCredit[];
 };
@@ -162,7 +169,8 @@ export type PersonCombinedCrewCredit = (PersonMovieCrewCredit & { media_type: "m
  * Combined credits for a person.
  */
 export type PersonCombinedCredits = {
-	id: number;
+	/** Absent when fetched via `append_to_response` rather than standalone. */
+	id?: number;
 	cast: PersonCombinedCastCredit[];
 	crew: PersonCombinedCrewCredit[];
 };
@@ -186,7 +194,8 @@ export type PersonTaggedImage = ImageItem & {
  * Paginated tagged images for a person.
  */
 export type PersonTaggedImages = PaginatedResponse<PersonTaggedImage> & {
-	id: number;
+	/** Absent when fetched via `append_to_response` rather than standalone. */
+	id?: number;
 };
 
 /**
@@ -195,6 +204,8 @@ export type PersonTaggedImages = PaginatedResponse<PersonTaggedImage> & {
 export type PersonTranslationData = {
 	biography?: string;
 	name?: string;
+	/** Whether this is the primary translation for the language */
+	primary?: boolean;
 };
 
 /**

@@ -9,7 +9,10 @@
 	"overrides": [
 		{
 			"files": ["src/tests/**/*.test.ts", "src/tests/**/*.integration.test.ts"],
-			"plugins": ["eslint", "import", "node", "oxc", "promise", "typescript", "unicorn", "vitest"]
+			"plugins": ["eslint", "import", "node", "oxc", "promise", "typescript", "unicorn", "vitest"],
+			"rules": {
+				"typescript/unbound-method": "off"
+			}
 		}
 	]
 }

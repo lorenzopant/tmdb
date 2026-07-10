@@ -97,8 +97,8 @@ export type Credit = {
  * Represents a cast member in a movie or TV show.
  */
 export type Cast = Credit & {
-	// ** The unique identifier for the cast credit
-	cast_id: number;
+	// ** The unique identifier for the cast credit (movie credits only — TV credits don't return this)
+	cast_id?: number;
 	// ** The character played by the cast member
 	character: string;
 	// ** The order of the cast member in the credits
@@ -165,8 +165,8 @@ export type AlternativeTitle = {
 };
 
 export type VideoResults = {
-	/** Media identifier */
-	id: number | string;
+	/** Media identifier. Absent when this resource is fetched via `append_to_response` rather than standalone. */
+	id?: number | string;
 	/** Array of video items */
 	results: VideoItem[];
 };
@@ -214,6 +214,8 @@ type BaseKnownForItem = {
 	poster_path?: string;
 	genre_ids: number[];
 	popularity: number;
+	/** Whether the item is flagged as softcore content */
+	softcore: boolean;
 	vote_average: number;
 	vote_count: number;
 };
@@ -306,7 +308,8 @@ export type ReviewAuthorDetails = {
 
 /** Collection of translations for a media item (object with `id` and `translations`). */
 export type TranslationResults<T> = {
-	id: number | string;
+	/** Absent when this resource is fetched via `append_to_response` rather than standalone. */
+	id?: number | string;
 	translations: Translation<T>[];
 };
 
@@ -330,8 +333,8 @@ export type Translation<T = unknown> = {
  * Watch provider availability by country
  */
 export type MediaWatchProviders = {
-	/** Movie/TV show identifier */
-	id: number;
+	/** Movie/TV show identifier. Absent when fetched via `append_to_response` rather than standalone. */
+	id?: number;
 	/** Watch providers grouped by country code */
 	results: Record<CountryISO3166_1, WatchProvider>;
 };
@@ -342,8 +345,12 @@ export type MediaWatchProviders = {
 export type WatchProvider = {
 	/** URL to watch/purchase the movie */
 	link: string;
+	/** Ad-supported (free with ads) providers */
+	ads?: WatchProviderItem[];
 	/** Streaming providers (subscription required) */
 	flatrate?: WatchProviderItem[];
+	/** Free (no ads, no subscription) providers */
+	free?: WatchProviderItem[];
 	/** Rental providers */
 	rent?: WatchProviderItem[];
 	/** Purchase providers */

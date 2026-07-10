@@ -31,11 +31,11 @@ export class TMDBLogger {
 			this.logger(entry);
 		} catch (error) {
 			// Avoid breaking requests if the logger throws.
-			console.warn(`TMDB logger error: ${error}`);
+			console.warn(`TMDB logger error: ${String(error)}`);
 		}
 	}
 
-	private static defaultLogger(entry: TMDBLoggerEntry): void {
+	private static readonly defaultLogger = (entry: TMDBLoggerEntry): void => {
 		const prefix = "🎬 [tmdb]";
 		const timestamp = new Date().toISOString();
 
@@ -54,5 +54,5 @@ export class TMDBLogger {
 		const statusPart = entry.status != null ? `${entry.status} ${entry.statusText}` : "NETWORK ERROR";
 		const tmdbPart = entry.tmdbStatusCode != null ? ` (tmdb: ${entry.tmdbStatusCode})` : "";
 		console.log(`${prefix} ${timestamp} ❌ ${entry.method} ${statusPart} ${entry.endpoint} - ${entry.errorMessage}${tmdbPart}\n`);
-	}
+	};
 }

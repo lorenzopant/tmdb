@@ -46,6 +46,8 @@ export type TVSeasonEpisode = TVEpisodeItem & {
 export type TVSeason = {
 	/** ISO 8601 date when the season first aired */
 	air_date?: string;
+	/** Legacy MongoDB identifier for the season */
+	_id?: string;
 	/** Array of episodes in this season */
 	episodes: TVSeasonEpisode[];
 	/** Unique TMDB identifier for the season */
@@ -75,7 +77,7 @@ export type TVSeasonAppendToResponseNamespace =
 	| "images"
 	| "translations"
 	| "videos"
-	| "watch_providers";
+	| "watch/providers";
 
 /**
  * Maps append-to-response keys to their corresponding response types.
@@ -87,7 +89,7 @@ export type TVSeasonAppendableMap = {
 	images: TVSeasonImages;
 	translations: TVSeasonTranslations;
 	videos: TVSeasonVideos;
-	watch_providers: MediaWatchProviders;
+	"watch/providers": MediaWatchProviders;
 };
 
 /**
@@ -112,8 +114,8 @@ export type TVSeasonChanges = import("./common").Changes;
 
 /** Credits (cast & crew) for a TV season, mirroring the series-level credits shape. */
 export type TVSeasonCredits = {
-	/** TMDB unique identifier */
-	id: number;
+	/** TMDB unique identifier. Absent when fetched via `append_to_response` rather than standalone. */
+	id?: number;
 	/** Cast members */
 	cast: Cast[];
 	/** Crew members */

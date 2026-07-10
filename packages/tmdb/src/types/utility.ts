@@ -9,6 +9,9 @@ export type Prettify<T> = T extends object ? (T extends infer O ? { [K in keyof 
 /** Keep literal suggestions but allow any string */
 export type LiteralUnion<T extends string> = T | (string & {});
 
+/** Keep literal suggestions but allow any number */
+export type LiteralUnionNumber<T extends number> = T | (number & {});
+
 /**
  * Type guard checks for KnowForItems (tv or movie)
  * @returns

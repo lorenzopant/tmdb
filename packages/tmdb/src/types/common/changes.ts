@@ -44,4 +44,6 @@ export type ChangeResultItem = {
 	id: number;
 	/** Whether the movie, tv show or person is marked as adult content */
 	adult: boolean;
+	/** Whether the movie or tv show is flagged as softcore content */
+	softcore: boolean;
 };

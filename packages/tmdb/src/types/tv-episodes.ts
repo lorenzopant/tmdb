@@ -2,7 +2,7 @@ import { Cast, Crew, DateRange, ImageItem, ImagesResult, TranslationResults, Vid
 import { Language } from "./config";
 import { TVSeasonBaseParams } from "./tv-seasons";
 import { TVExternalIDs } from "./tv-series";
-import { Prettify } from "./utility";
+import { LiteralUnion, Prettify } from "./utility";
 
 /**
  * Represents a single episode of a TV series from the TMDB API.
@@ -15,6 +15,8 @@ export type TVEpisode = {
 	crew: Crew[];
 	/** Sequential number of this episode within its season (1-based) */
 	episode_number: number;
+	/** Episode type reported by TMDB (e.g., "standard", "finale") */
+	episode_type?: LiteralUnion<"standard" | "finale">;
 	/** Array of guest stars appearing in this episode (subset of cast without `cast_id`) */
 	guest_stars: Omit<Cast, "cast_id">[];
 	/** Episode title or name */
@@ -63,7 +65,8 @@ export type TVEpisodeDetailsWithAppends<T extends readonly TVEpisodeAppendToResp
 };
 
 export type TVEpisodeCredits = {
-	id: number | string;
+	/** Absent when fetched via `append_to_response` rather than standalone. */
+	id?: number | string;
 	cast: Omit<Cast, "cast_id">[];
 	crew: Crew[];
 	guest_stars: Omit<Cast, "cast_id">[];

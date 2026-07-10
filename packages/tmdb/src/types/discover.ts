@@ -45,6 +45,7 @@ export type DiscoverTVSortBy =
  * A TV result item as returned by discover endpoints.
  */
 export type DiscoverTVResultItem = {
+	adult: boolean;
 	backdrop_path?: string;
 	first_air_date: string;
 	genre_ids: number[];
@@ -56,6 +57,7 @@ export type DiscoverTVResultItem = {
 	overview: string;
 	popularity: number;
 	poster_path?: string;
+	softcore: boolean;
 	vote_average: number;
 	vote_count: number;
 };
@@ -66,7 +68,7 @@ export type DiscoverTVResultItem = {
  *
  * The API expects these values serialized as query strings, not arrays.
  */
-export type DiscoverFilterExpression<T extends string | number = string | number> = T | `${T}` | string;
+export type DiscoverFilterExpression<T extends string | number = string | number> = T | string;
 
 type DiscoverBaseParams = {
 	include_adult?: boolean;

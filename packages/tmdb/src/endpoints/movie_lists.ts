@@ -1,6 +1,6 @@
 import { MovieResultItem, PaginatedResponse } from "../types";
 import { ENDPOINTS } from "../routes";
-import { MovieListParams } from "../types/movies";
+import { MovieDateRangeList, MovieListParams } from "../types/movies";
 import { TMDBAPIBase } from "./base";
 
 export class MovieListsAPI extends TMDBAPIBase {
@@ -28,8 +28,8 @@ export class MovieListsAPI extends TMDBAPIBase {
 	 * @param page Page (Defaults to 1)
 	 * @param region ISO-3166-1 code
 	 */
-	async now_playing(params: MovieListParams = {}): Promise<PaginatedResponse<MovieResultItem>> {
-		return this.fetch_movie_list(ENDPOINTS.MOVIES.NOW_PLAYING, params);
+	async now_playing(params: MovieListParams = {}): Promise<MovieDateRangeList> {
+		return this.client.request<MovieDateRangeList>(ENDPOINTS.MOVIES.DETAILS + ENDPOINTS.MOVIES.NOW_PLAYING, this.withDefaults(params));
 	}
 
 	/**
@@ -67,7 +67,7 @@ export class MovieListsAPI extends TMDBAPIBase {
 	 * @param page Page (Defaults to 1)
 	 * @param region ISO-3166-1 code
 	 */
-	async upcoming(params: MovieListParams = {}): Promise<PaginatedResponse<MovieResultItem>> {
-		return this.fetch_movie_list(ENDPOINTS.MOVIES.UPCOMING, params);
+	async upcoming(params: MovieListParams = {}): Promise<MovieDateRangeList> {
+		return this.client.request<MovieDateRangeList>(ENDPOINTS.MOVIES.DETAILS + ENDPOINTS.MOVIES.UPCOMING, this.withDefaults(params));
 	}
 }

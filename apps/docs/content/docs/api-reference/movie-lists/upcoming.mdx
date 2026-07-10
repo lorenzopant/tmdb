@@ -7,7 +7,7 @@ Returns a paginated list of movies that are scheduled for upcoming theatrical re
 Results are filtered by region when a `region` parameter is provided.
 
 ```ts
-async upcoming(params?: MovieListParams): Promise<PaginatedResponse<MovieResultItem>>
+async upcoming(params?: MovieListParams): Promise<MovieDateRangeList>
 ```
 
 > **TMDB Reference:** [Movie Upcoming](https://developer.themoviedb.org/reference/movie-upcoming-list)
@@ -22,8 +22,9 @@ async upcoming(params?: MovieListParams): Promise<PaginatedResponse<MovieResultI
 
 ## Returns
 
-A [`PaginatedResponse<MovieResultItem>`](/docs/types/common#paginatedresponset) containing
-an array of [`MovieResultItem`](/docs/types/search#movieresultitem) objects.
+A [`MovieDateRangeList`](/docs/types/movies#moviedaterangelist) — a
+[`PaginatedResponse<MovieResultItem>`](/docs/types/common#paginatedresponset) plus a `dates`
+field reporting the release-date window this list was queried over.
 
 ## Example
 
@@ -40,5 +41,6 @@ const italian = await tmdb.movieLists.upcoming({ language: "it-IT", region: "IT"
 ## Types
 
 - [MovieListParams](/docs/types/movies#movielistparams)
+- [MovieDateRangeList](/docs/types/movies#moviedaterangelist)
 - [PaginatedResponse](/docs/types/common#paginatedresponset)
 - [MovieResultItem](/docs/types/search#movieresultitem)

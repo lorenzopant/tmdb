@@ -26,7 +26,7 @@ import { VideoItem } from "./common";
 import { Language, LanguageISO6391, Timezone } from "./config";
 import { TVSeriesResultItem } from "./search";
 import { MediaWatchProviders } from "./common/media";
-import { Prettify } from "./utility";
+import { LiteralUnion, Prettify } from "./utility";
 
 // MARK: Details
 
@@ -34,10 +34,12 @@ import { Prettify } from "./utility";
  * Represent the detailed information about a TV show.
  */
 export type TVSeriesDetails = {
+	/** Whether the TV show is marked as adult content */
+	adult: boolean;
 	/** The path to the backdrop image, or null if not available */
 	backdrop_path?: string;
 	/** Array of creators who developed the TV show */
-	created_by: Pick<Credit, "id" | "credit_id" | "gender" | "name" | "profile_path">[];
+	created_by: Pick<Credit, "id" | "credit_id" | "gender" | "name" | "original_name" | "profile_path">[];
 	/** Array of typical episode runtimes in minutes */
 	episode_run_time: number[];
 	/** The date the first episode aired */
@@ -84,10 +86,14 @@ export type TVSeriesDetails = {
 	production_countries?: ProductionCountry[];
 	/** Array of all seasons in the TV show */
 	seasons?: TVSeasonItem[];
+	/** Whether the TV show is flagged as softcore content */
+	softcore: boolean;
 	/** Array of languages spoken in the TV show with full names */
 	spoken_languages?: SpokenLanguage[];
 	/** The current status of the TV show (e.g., "Returning Series", "Ended") */
 	status?: string;
+	/** TV show tagline/slogan, null if not available */
+	tagline?: string;
 	/** The type of TV show (e.g., "Scripted", "Documentary", "Reality") */
 	type?: string;
 	/** The average rating score for the TV show (0-10 scale) */
@@ -111,6 +117,8 @@ export type TVEpisodeItem = {
 	air_date?: string;
 	/** The episode number within its season */
 	episode_number: number;
+	/** Episode type reported by TMDB (e.g., "standard", "finale") */
+	episode_type?: LiteralUnion<"standard" | "finale">;
 	/** The production code used internally during filming */
 	production_code?: string;
 	/** The runtime of the episode in minutes */
@@ -203,8 +211,8 @@ export type TVDetailsWithAppends<T extends readonly TVAppendToResponseNamespace[
  * Aggregate credits for a TV show, including cast and crew across all seasons and episodes.
  */
 export type TVAggregateCredits = {
-	/** TMDB unique identifier for the TV show. */
-	id: number;
+	/** TMDB unique identifier for the TV show. Absent when fetched via `append_to_response` rather than standalone. */
+	id?: number;
 	/** List of all the known cast for the TV show. */
 	cast: TVAggregateCreditsCastItem[];
 	/** List of all the known crew members for the TV show. */
@@ -265,8 +273,8 @@ export type TVCreditJob = {
  * Alternative titles for a tv show in different countries/languages
  */
 export type TVAlternativeTitles = {
-	/** Movie identifier */
-	id: number;
+	/** TV show identifier. Absent when fetched via `append_to_response` rather than standalone. */
+	id?: number;
 	/** Array of alternative titles */
 	results: AlternativeTitle[];
 };
@@ -278,6 +286,8 @@ export type TVSeriesChanges = Changes;
 // MARK: Content Ratings
 
 export type TVContentRatings = {
+	/** TMDB unique identifier for the TV show. Absent when fetched via `append_to_response` rather than standalone. */
+	id?: number;
 	results: ContentRating[];
 };
 
@@ -289,8 +299,8 @@ export type TVContentRatings = {
  * you should use the aggregate_credits method.
  */
 export type TVCredits = {
-	/** TMDB unique identifier for the TV show. */
-	id: number;
+	/** TMDB unique identifier for the TV show. Absent when fetched via `append_to_response` rather than standalone. */
+	id?: number;
 	/** List of all the known cast for the TV show. */
 	cast: Cast[];
 	/** List of all the known crew members for the TV show. */
@@ -303,8 +313,8 @@ export type TVCredits = {
  * Collection of episode groups for a TV series
  */
 export type TVEpisodeGroups = {
-	/** TV series identifier */
-	id: number;
+	/** TV series identifier. Absent when fetched via `append_to_response` rather than standalone. */
+	id?: number;
 	/** Array of episode group items */
 	results: TVEpisodeGroupItem[];
 };
@@ -323,8 +333,8 @@ export type TVEpisodeGroupItem = {
 	id: string;
 	/** Name of the episode group */
 	name: string;
-	/** Network that created or distributed this episode grouping */
-	network: NetworkItem;
+	/** Network that created or distributed this episode grouping, if any */
+	network: NetworkItem | null;
 	/** Type of grouping (1=Original air date, 2=Absolute, 3=DVD, 4=Digital, 5=Story arc, 6=Production, 7=TV) */
 	type: number;
 };
@@ -335,8 +345,8 @@ export type TVEpisodeGroupItem = {
  * External platform identifiers for a TV series
  */
 export type TVExternalIDs = {
-	/** TV series identifier in TMDB */
-	id: number;
+	/** TV series identifier in TMDB. Absent when fetched via `append_to_response` rather than standalone. */
+	id?: number;
 	/** IMDb identifier (e.g., "tt0944947"), null if not available */
 	imdb_id?: string;
 	/** Freebase MID identifier (deprecated), null if not available */
@@ -363,14 +373,7 @@ export type TVExternalIDs = {
  * Images related to a TV show.
  * Contains backdrops, logos, posters and stills.
  */
-export type TVImages = ImagesResult<TVImageItem, "backdrops" | "logos" | "posters">;
-
-/**
- * Image items for TVShows have an undocumented "iso_3166_1" property
- * I decided to put it anyway as an optional property,
- * but only for tv shows images.
- */
-export type TVImageItem = ImageItem & { iso_3166_1?: string };
+export type TVImages = ImagesResult<ImageItem, "backdrops" | "logos" | "posters">;
 
 // MARK: Keywords
 
@@ -378,8 +381,8 @@ export type TVImageItem = ImageItem & { iso_3166_1?: string };
  * List of keywords related to the TV show.
  */
 export type TVKeywords = {
-	/** TMDB unique identifier for the TV show. */
-	id: number;
+	/** TMDB unique identifier for the TV show. Absent when fetched via `append_to_response` rather than standalone. */
+	id?: number;
 	/** List of keywords related to the TV show. */
 	results: Keyword[];
 };
@@ -391,7 +394,10 @@ export type TVKeywords = {
  * Combines a standard `PaginatedResponse<TVSeriesListItem>` with an `id` field
  * that uniquely identifies the tv show.
  */
-export type TVSeriesLists = PaginatedResponse<TVSeriesListItem> & { id: number };
+export type TVSeriesLists = PaginatedResponse<TVSeriesListItem> & {
+	/** Absent when fetched via `append_to_response` rather than standalone. */
+	id?: number;
+};
 
 /**
  * Represents a single TV series list entry as returned by the TMDB API.
@@ -406,9 +412,9 @@ export type TVSeriesListItem = {
 	/** The total number of items (TV series) currently in this list. */
 	item_count: number;
 	/** The primary language of the list content as an ISO 639-1 code (e.g. `"en"`). */
-	iso_639_1: string | LanguageISO6391;
+	iso_639_1: LiteralUnion<LanguageISO6391>;
 	/** The country associated with the list as an ISO 3166-1 alpha-2 code (e.g. `"US"`). */
-	iso_3166_1: string | CountryISO3166_1;
+	iso_3166_1: LiteralUnion<CountryISO3166_1>;
 	/** The display name of the list. */
 	name: string;
 	/** Path to the list's poster image on the TMDB CDN. Combine with a base URL to get the full image path. */
@@ -418,14 +424,17 @@ export type TVSeriesListItem = {
 // MARK: Reccomendations
 
 /** List of TV shows that are recommended for a TV show. */
-export type TVRecommendations = PaginatedResponse<TVSeriesResultItem>;
+export type TVRecommendations = PaginatedResponse<TVSeriesResultItem & { media_type?: "tv" }>;
 
 // MARK: Reviews
 
 /**
  * Paginated list of user reviews for a tv show
  */
-export type TVReviews = PaginatedResponse<Review>;
+export type TVReviews = PaginatedResponse<Review> & {
+	/** TV show identifier. Absent when fetched via `append_to_response` rather than standalone. */
+	id?: number;
+};
 
 // MARK: Screened Theatrically
 
@@ -433,8 +442,8 @@ export type TVReviews = PaginatedResponse<Review>;
  * Represents the response for TV episodes that have been screened theatrically.
  */
 export type TVScreenedTheatrically = {
-	/** The unique identifier of the TV series. */
-	id: number;
+	/** The unique identifier of the TV series. Absent when fetched via `append_to_response` rather than standalone. */
+	id?: number;
 	/** The list of episodes that received a theatrical screening. */
 	results: TVScreeningItem[];
 };
@@ -482,8 +491,8 @@ export type TVTranslationData = {
 
 /** List of videos related to a TV show. */
 export type TVVideos = {
-	/** TMDB unique identifier for the TV show. */
-	id: number;
+	/** TMDB unique identifier for the TV show. Absent when fetched via `append_to_response` rather than standalone. */
+	id?: number;
 
 	/** List of video results. */
 	results: VideoItem[];

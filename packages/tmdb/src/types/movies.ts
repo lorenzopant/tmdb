@@ -24,7 +24,7 @@ import {
 import { CountryISO3166_1, Language, LanguageISO6391 } from "./config";
 import { MovieReleaseType } from "./enums";
 import { MovieResultItem } from "./search";
-import { Prettify } from "./utility";
+import { LiteralUnionNumber, Prettify } from "./utility";
 
 /**
  * Complete movie details with metadata, production info, and statistics
@@ -32,6 +32,8 @@ import { Prettify } from "./utility";
 export type MovieDetails = {
 	/** Whether the movie is marked as adult content */
 	adult: boolean;
+	/** Whether the movie is flagged as softcore content */
+	softcore: boolean;
 	/** Path to backdrop image, null if not available */
 	backdrop_path?: string;
 	/** Collection the movie belongs to (e.g., "The Lord of the Rings Collection"), null if standalone */
@@ -142,8 +144,8 @@ export type MovieDetailsWithAppends<T extends readonly MovieAppendToResponseName
  * Alternative titles for a movie in different countries/languages
  */
 export type MovieAlternativeTitles = {
-	/** Movie identifier */
-	id: number;
+	/** Movie identifier. Absent when fetched via `append_to_response` rather than standalone. */
+	id?: number;
 	/** Array of alternative titles */
 	titles: AlternativeTitle[];
 };
@@ -158,8 +160,8 @@ export type MovieChanges = Changes;
  * Cast and crew credits for a movie
  */
 export type MovieCredits = {
-	/** Movie identifier */
-	id: number;
+	/** Movie identifier. Absent when fetched via `append_to_response` rather than standalone. */
+	id?: number;
 	/** Array of cast members (actors) */
 	cast: Cast[];
 	/** Array of crew members (directors, writers, etc.) */
@@ -172,8 +174,8 @@ export type MovieCredits = {
  * External platform identifiers for a movie
  */
 export type MovieExternalIDs = {
-	/** Movie identifier in TMDB */
-	id: number;
+	/** Movie identifier in TMDB. Absent when fetched via `append_to_response` rather than standalone. */
+	id?: number;
 	/** IMDb identifier (e.g., "tt0133093"), null if not available */
 	imdb_id?: string;
 	/** Wikidata identifier (e.g., "Q190050"), null if not available */
@@ -199,8 +201,8 @@ export type MovieImages = ImagesResult<ImageItem, "backdrops" | "logos" | "poste
  * Keywords/tags associated with a movie
  */
 export type MovieKeywords = {
-	/** Movie identifier */
-	id: number;
+	/** Movie identifier. Absent when fetched via `append_to_response` rather than standalone. */
+	id?: number;
 	/** Array of keyword objects */
 	keywords: Keyword[];
 };
@@ -210,7 +212,7 @@ export type MovieKeywords = {
 /**
  * Paginated list of recommended movies based on this movie
  */
-export type MovieRecommendations = PaginatedResponse<MovieResultItem>;
+export type MovieRecommendations = PaginatedResponse<MovieResultItem & { media_type?: "movie" }>;
 
 // MARK: Release Dates
 
@@ -218,8 +220,8 @@ export type MovieRecommendations = PaginatedResponse<MovieResultItem>;
  * Release dates and certifications across different countries
  */
 export type MovieReleaseDates = {
-	/** Movie identifier */
-	id: number;
+	/** Movie identifier. Absent when fetched via `append_to_response` rather than standalone. */
+	id?: number;
 	/** Array of release date results grouped by country */
 	results: MovieReleaseDateResult[];
 };
@@ -245,7 +247,7 @@ export type MovieReleaseDate = {
 	/** Release date and time in ISO 8601 format */
 	release_date: string;
 	/** Type of release (1=Premiere, 2=Theatrical (limited), 3=Theatrical, 4=Digital, 5=Physical, 6=TV) */
-	type: MovieReleaseType | number;
+	type: LiteralUnionNumber<MovieReleaseType>;
 	/** Additional notes about this release */
 	note: string;
 	/** Content descriptors (currently unused by TMDB) */
@@ -257,7 +259,10 @@ export type MovieReleaseDate = {
 /**
  * Paginated list of user reviews for a movie
  */
-export type MovieReviews = PaginatedResponse<Review>;
+export type MovieReviews = PaginatedResponse<Review> & {
+	/** Movie identifier. Absent when fetched via `append_to_response` rather than standalone. */
+	id?: number;
+};
 
 // MARK: Similar
 
@@ -311,6 +316,21 @@ export type MovieWatchProviders = {
  * Parameters for movie list endpoints (popular, top rated, now playing, upcoming).
  */
 export type MovieListParams = TMDBQueryParams;
+
+/**
+ * Paginated movie list response for endpoints that also report the queried release-date window
+ * (`now_playing` and `upcoming`).
+ */
+export type MovieDateRangeList = PaginatedResponse<MovieResultItem> & {
+	/** The release-date window this list was queried over */
+	dates: {
+		/** Latest release date included in this list */
+		maximum: string;
+		/** Earliest release date included in this list */
+		minimum: string;
+	};
+};
+
 /**
  * Almost every query within the Movie domain
  * will take this required param to identify the movie.
