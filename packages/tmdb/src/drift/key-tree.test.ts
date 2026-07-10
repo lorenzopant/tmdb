@@ -140,4 +140,41 @@ describe("keyTree (unit)", () => {
 			"certifications.{}[].order",
 		]);
 	});
+
+	it("records value/original_value as leaves without descending into their contents", () => {
+		const value = {
+			changes: [
+				{
+					key: "images",
+					items: [
+						{
+							id: "abc",
+							action: "added",
+							time: "2024-12-20 00:00:00 UTC",
+							value: { poster: { file_path: "/x.jpg", iso_639_1: "en" } },
+							original_value: { poster: { file_path: "/y.jpg", iso_639_1: "en" } },
+						},
+					],
+				},
+			],
+		};
+
+		expect(keyTree(value)).toEqual([
+			"changes",
+			"changes[].items",
+			"changes[].items[].action",
+			"changes[].items[].id",
+			"changes[].items[].original_value",
+			"changes[].items[].time",
+			"changes[].items[].value",
+			"changes[].key",
+		]);
+	});
+
+	it("is blind to new/changed nested fields inside value/original_value (TMDB varies these per change kind)", () => {
+		const before = { value: { poster: { file_path: "/x.jpg" } } };
+		const after = { value: { title_logo: { file_path: "/x.jpg", iso_639_1: "en" } } };
+
+		expect(keyTree(before)).toEqual(keyTree(after));
+	});
 });
