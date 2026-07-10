@@ -6,10 +6,11 @@
 
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
 import { buildTypeTrees } from "../src/drift/type-tree";
 
-const packageRoot = resolve(import.meta.dirname, "..");
+const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const outFile = resolve(packageRoot, "src/drift/__generated__/type-tree.json");
 
 const trees = buildTypeTrees(resolve(packageRoot, "tsconfig.json"));
