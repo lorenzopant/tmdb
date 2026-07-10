@@ -4,6 +4,23 @@ description: Latest updates and announcements
 icon: History
 ---
 
+## 🚀 1.23.0 - 10 July 2026
+
+#### ✨ New
+
+- **Schema drift detection** — a new `test:drift` suite calls 116 live TMDB endpoint shapes on a schedule and diffs the actual response against the declared TS types, so a field TMDB adds/renames/removes gets caught automatically instead of surfacing as a silent runtime surprise for consumers ([#135](https://github.com/lorenzopant/tmdb/pull/135)).
+- TMDB rolled out a `softcore` boolean alongside `adult` across movie/TV objects — now modeled on the relevant types ([#136](https://github.com/lorenzopant/tmdb/pull/136))
+
+#### 🐞 Bug Fixes
+
+- Added `iso_3166_1` to image entries, `episode_type` to episodes, and `ads`/`free` watch-provider tiers — fields TMDB already returns that the types didn't declare ([#136](https://github.com/lorenzopant/tmdb/pull/136))
+- **`append_to_response` sub-resources drifted on `id`** — every appended sub-resource (`credits`, `images`, `translations`, `videos`, `external_ids`, etc.) omits its own `id` when embedded via `append_to_response` but includes it as a standalone endpoint; the shared types required `id` unconditionally. `id` is now optional on those shared types instead of forking standalone/appended variants ([#136](https://github.com/lorenzopant/tmdb/pull/136))
+- TV credits no longer require `cast_id` (movie-only field, now optional); TV season `append_to_response` now uses `watch/providers` (was `watch_providers`); TV episode-group entries now correctly omit `crew` and include `order`/`show_id`; `movie_lists.now_playing()`/`upcoming()` now type the `dates` window TMDB adds to those two lists only ([#136](https://github.com/lorenzopant/tmdb/pull/136))
+- `tv_episodes.changes()` now correctly forwards `start_date`/`end_date` — previously the date range was silently dropped ([#136](https://github.com/lorenzopant/tmdb/pull/136))
+- `ChangeItem.value`/`original_value` (from `.changes()` endpoints) are deliberately untyped since their shape varies per change key and TMDB documents no schema for them — the drift check now treats them as opaque instead of false-flagging every new nested field TMDB introduces as drift ([#137](https://github.com/lorenzopant/tmdb/pull/137))
+
+---
+
 ## 🚀 1.22.2 - 6 June 2026
 
 #### ✨ New
