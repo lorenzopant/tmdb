@@ -1,0 +1,13 @@
+{
+	// Standalone project for build/dev scripts. The package tsconfig sets `rootDir: "src"`, so these
+	// files can't live in it — without this, the IDE opens them in an inferred project with the wrong
+	// module resolution and no Node types (`node:fs`, `node:path`, `import.meta.dirname` all error).
+	"extends": "../tsconfig.json",
+	"compilerOptions": {
+		// Package root: the scripts import from ../src, so both must sit under rootDir.
+		"rootDir": "..",
+		"noEmit": true,
+		"types": ["node"]
+	},
+	"include": ["."]
+}

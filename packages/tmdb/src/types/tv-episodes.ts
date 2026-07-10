@@ -1,4 +1,4 @@
-import { Cast, Crew, ImageItem, ImagesResult, TranslationResults, VideoResults, WithLanguage, WithParams } from "./common";
+import { Cast, Crew, DateRange, ImageItem, ImagesResult, TranslationResults, VideoResults, WithLanguage, WithParams } from "./common";
 import { Language } from "./config";
 import { TVSeasonBaseParams } from "./tv-seasons";
 import { TVExternalIDs } from "./tv-series";
@@ -98,6 +98,9 @@ export type TVEpisodeBaseParams = TVSeasonBaseParams & {
 export type TVEpisodeId = {
 	episode_id: string | number;
 };
+
+/** Parameters for the episode changes endpoint. */
+export type TVEpisodeChangesParams = TVEpisodeId & Prettify<WithParams<"page"> & DateRange>;
 
 /**
  * Parameters for fetching TV episode details with optional additional data appended.

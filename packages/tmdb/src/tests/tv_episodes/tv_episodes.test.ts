@@ -51,10 +51,19 @@ describe("TVEpisodesAPI", () => {
 	});
 
 	describe("changes", () => {
-		it("should call client.request with the correct endpoint and params", async () => {
+		it("should call client.request with the correct endpoint and date range params", async () => {
+			await tvEpisodesAPI.changes({ episode_id: 62085, start_date: "2024-01-01", end_date: "2024-01-14" });
+			expect(clientMock.request).toHaveBeenCalledOnce();
+			expect(clientMock.request).toHaveBeenCalledWith("/tv/episode/62085/changes", {
+				start_date: "2024-01-01",
+				end_date: "2024-01-14",
+			});
+		});
+
+		it("should call client.request with no query params when none are provided", async () => {
 			await tvEpisodesAPI.changes({ episode_id: 62085 });
 			expect(clientMock.request).toHaveBeenCalledOnce();
-			expect(clientMock.request).toHaveBeenCalledWith("/tv/episode/62085/changes");
+			expect(clientMock.request).toHaveBeenCalledWith("/tv/episode/62085/changes", {});
 		});
 	});
 

@@ -45,12 +45,14 @@
 		"lint": "oxlint .",
 		"lint:check": "oxlint --type-aware --type-check .",
 		"test": "pnpm run test:unit",
-		"test:unit": "vitest run --exclude '**/*.integration.test.ts'",
+		"test:unit": "vitest run --exclude '**/*.integration.test.ts' --exclude '**/*.drift.test.ts'",
 		"test:integration": "vitest run integration",
+		"test:drift": "tsx scripts/gen-type-tree.ts && vitest run drift --coverage.enabled=false",
+		"gen:type-tree": "tsx scripts/gen-type-tree.ts",
 		"test:watch": "vitest",
 		"test:ui": "vitest --ui",
 		"test:coverage": "vitest --coverage",
-		"typecheck": "tsc --noEmit"
+		"typecheck": "tsc --noEmit && tsc -p scripts/tsconfig.json"
 	},
 	"devDependencies": {
 		"@types/node": "^25.5.0",
