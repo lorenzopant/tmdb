@@ -12,6 +12,7 @@
 		"test": "pnpm run test:unit",
 		"test:unit": "turbo run test:unit",
 		"test:integration": "turbo run test:integration",
+		"test:drift": "turbo run test:drift",
 		"test:coverage": "turbo run test:coverage",
 		"test:watch": "pnpm --filter @lorenzopant/tmdb run test:watch",
 		"test:ui": "pnpm --filter @lorenzopant/tmdb run test:ui",

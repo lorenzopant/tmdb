@@ -1,0 +1,105 @@
+name: Schema Drift
+
+on:
+  schedule:
+    # Every Monday at 14:00 UTC
+    - cron: "0 14 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  schema-drift:
+    runs-on: ubuntu-latest
+    env:
+      TMDB_BEARER_TOKEN: ${{ secrets.TMDB_BEARER_TOKEN }}
+      TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup action
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+          run_install: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run schema drift tests
+        id: drift
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          pnpm run test:drift 2>&1 | tee drift-output.txt
+
+      - name: Open or update drift issue
+        if: steps.drift.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require("fs");
+
+            const output = fs.readFileSync("drift-output.txt", "utf8");
+            const tail = output.split("\n").slice(-200).join("\n");
+            const title = "TMDB schema drift detected";
+            const body = [
+              "The scheduled schema-drift check (`pnpm run test:drift`) failed, which means TMDB added, removed, or renamed a property on one of the covered API response shapes.",
+              "",
+              "Tail of the drift output (the snapshot diff below shows the exact new/removed property paths):",
+              "",
+              "```",
+              tail,
+              "```",
+              "",
+              "Please review the diff, add the new property to the corresponding hand-written type in `packages/tmdb/src/types`, and re-bless the baseline once the type update is in:",
+              "",
+              "```",
+              "pnpm --filter @lorenzopant/tmdb run test:drift -u",
+              "```",
+            ].join("\n");
+
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "open",
+              per_page: 100,
+            });
+
+            const existing = issues.find((issue) => issue.title === title);
+
+            if (existing) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.number,
+                body,
+              });
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.number,
+                body: "Schema drift detected again on a scheduled run — issue body updated with the latest diff.",
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+              });
+            }
+
+      - name: Fail job if drift was detected
+        if: steps.drift.outcome == 'failure'
+        run: exit 1

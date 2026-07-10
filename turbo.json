@@ -37,6 +37,10 @@
 			"dependsOn": ["^test:integration"],
 			"cache": false
 		},
+		"test:drift": {
+			"dependsOn": ["^test:drift"],
+			"cache": false
+		},
 		"test:coverage": {
 			"dependsOn": ["^test:coverage"],
 			"cache": false
