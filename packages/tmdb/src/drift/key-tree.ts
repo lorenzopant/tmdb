@@ -15,6 +15,16 @@ const DYNAMIC_KEY_PATTERNS: RegExp[] = [
 
 const DYNAMIC_KEY_SEGMENT = "{}";
 
+/**
+ * `ChangeItem.value` / `ChangeItem.original_value` (src/types/common/changes.ts) hold whatever
+ * payload TMDB's change-tracking endpoints attach for a given `key` (images, videos, cast,
+ * episode groups, ...). TMDB documents no schema for these and the shape varies by `key` — and
+ * by the day, as TMDB ships new change kinds. The type deliberately leaves them as `object | string`;
+ * `keyTree` must stop at the same boundary or every new/changed nested field reads as drift.
+ * These names are used nowhere else in src/types (verified via grep), so matching by name is safe.
+ */
+const OPAQUE_KEYS = new Set(["value", "original_value"]);
+
 function isPlainObject(value: unknown): value is Record<string, unknown> {
 	return typeof value === "object" && value !== null && !Array.isArray(value);
 }
@@ -47,6 +57,7 @@ function walk(value: unknown, prefix: string, paths: Set<string>): void {
 			const segment = isDynamicKey(key) ? DYNAMIC_KEY_SEGMENT : key;
 			const path = prefix ? `${prefix}.${segment}` : segment;
 			paths.add(path);
+			if (OPAQUE_KEYS.has(key)) continue;
 			walk(value[key], path, paths);
 		}
 		return;
