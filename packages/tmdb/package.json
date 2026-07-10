@@ -52,7 +52,7 @@
 		"test:watch": "vitest",
 		"test:ui": "vitest --ui",
 		"test:coverage": "vitest --coverage",
-		"typecheck": "tsc --noEmit"
+		"typecheck": "tsc --noEmit && tsc -p scripts/tsconfig.json"
 	},
 	"devDependencies": {
 		"@types/node": "^25.5.0",
