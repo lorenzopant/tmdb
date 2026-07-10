@@ -335,7 +335,10 @@ export const CALLS: { label: string; call: (t: TMDB) => Promise<unknown> }[] = [
 			}),
 	},
 
-	{ label: "tv_episodes.changes", call: (t) => t.tv_episodes.changes({ episode_id: EPISODE_ID }) },
+	{
+		label: "tv_episodes.changes",
+		call: (t) => t.tv_episodes.changes({ episode_id: EPISODE_ID, start_date: "2024-12-20", end_date: "2024-12-24" }),
+	},
 
 	// --- tv_episode_groups ---
 	{

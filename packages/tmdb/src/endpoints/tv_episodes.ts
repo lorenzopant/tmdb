@@ -4,12 +4,12 @@ import {
 	TVEpisode,
 	TVEpisodeAppendToResponseNamespace,
 	TVEpisodeBaseParams,
+	TVEpisodeChangesParams,
 	TVEpisodeCredits,
 	TVEpisodeCreditsParams,
 	TVEpisodeDetailsParams,
 	TVEpisodeDetailsWithAppends,
 	TVEpisodeExternalIDs,
-	TVEpisodeId,
 	TVEpisodeImages,
 	TVEpisodeImagesParams,
 	TVEpisodeTranslations,
@@ -53,9 +53,7 @@ export class TVEpisodesAPI extends TMDBAPIBase {
 	 * GET - https://api.themoviedb.org/3/tv/episode/{episode_id}/changes
 	 *
 	 * Get the changes for a TV episode. By default only the last 24 hours are returned.
-	 * ACCORDING TO TMDB DOCS:
 	 * You can query up to 14 days in a single query by using the start_date and end_date query parameters.
-	 * BUT NO start_date or end_date query params are specified in the documentation
 	 *
 	 * NOTE: TV show changes are a little different than movie changes in that there are some edits
 	 * on seasons and episodes that will create a top level change entry at the show level.
@@ -64,12 +62,16 @@ export class TVEpisodesAPI extends TMDBAPIBase {
 	 * You can use the season changes and episode changes methods to look these up individually.
 	 *
 	 * @param episode_id The ID of the TV episode.
+	 * @param start_date Filter changes by start date (ISO 8601 format, e.g. "2024-01-01").
+	 * @param end_date Filter changes by end date (ISO 8601 format, e.g. "2024-01-14").
+	 * @param page The page of results to return.
 	 * @returns A promise that resolves to the TV episode changes history.
 	 * @reference https://developer.themoviedb.org/reference/tv-episode-changes-by-id
 	 */
-	async changes(params: TVEpisodeId): Promise<Changes> {
-		const endpoint = `${ENDPOINTS.TV_SERIES.DETAILS}${ENDPOINTS.TV_EPISODES.DETAILS}/${params.episode_id}${ENDPOINTS.TV_EPISODES.CHANGES}`;
-		return this.client.request(endpoint);
+	async changes(params: TVEpisodeChangesParams): Promise<Changes> {
+		const { episode_id, ...rest } = params;
+		const endpoint = `${ENDPOINTS.TV_SERIES.DETAILS}${ENDPOINTS.TV_EPISODES.DETAILS}/${episode_id}${ENDPOINTS.TV_EPISODES.CHANGES}`;
+		return this.client.request(endpoint, { ...rest });
 	}
 
 	/**
