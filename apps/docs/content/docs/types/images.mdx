@@ -69,7 +69,7 @@ A generic image result type. Use the type parameter to specify which image colle
 ```ts
 export type MovieImages = ImagesResult<ImageItem, "backdrops" | "logos" | "posters">;
 
-export type TVSeriesImages = ImagesResult<TVImageItem, "backdrops" | "logos" | "posters">;
+export type TVSeriesImages = ImagesResult<ImageItem, "backdrops" | "logos" | "posters">;
 
 export type CompanyImages = ImagesResult<OrganizationImage, "logos">;
 ```
