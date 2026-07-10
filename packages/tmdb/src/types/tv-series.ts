@@ -412,9 +412,9 @@ export type TVSeriesListItem = {
 	/** The total number of items (TV series) currently in this list. */
 	item_count: number;
 	/** The primary language of the list content as an ISO 639-1 code (e.g. `"en"`). */
-	iso_639_1: string | LanguageISO6391;
+	iso_639_1: LiteralUnion<LanguageISO6391>;
 	/** The country associated with the list as an ISO 3166-1 alpha-2 code (e.g. `"US"`). */
-	iso_3166_1: string | CountryISO3166_1;
+	iso_3166_1: LiteralUnion<CountryISO3166_1>;
 	/** The display name of the list. */
 	name: string;
 	/** Path to the list's poster image on the TMDB CDN. Combine with a base URL to get the full image path. */

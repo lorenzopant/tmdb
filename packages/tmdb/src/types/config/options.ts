@@ -65,7 +65,7 @@ export type RequestInterceptor = (
  * });
  * ```
  */
-export type ResponseSuccessInterceptor = (data: unknown) => unknown | void | Promise<unknown | void>;
+export type ResponseSuccessInterceptor = (data: unknown) => unknown | Promise<unknown>;
 
 /**
  * Called after a TMDB API error has been normalised into a {@link TMDBError}.

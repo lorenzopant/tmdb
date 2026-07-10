@@ -99,9 +99,12 @@ export class ApiClient {
 	 * Serializes request params once so URL construction and deduplication keys stay aligned.
 	 * `undefined` values are intentionally skipped because they are not sent to TMDB.
 	 */
-	private serializeParams(params: Record<string, unknown | undefined>): Array<[string, string]> {
+	private serializeParams(params: Record<string, unknown>): Array<[string, string]> {
 		return Object.entries(params).flatMap(([key, value]) => {
 			if (value === undefined) return [];
+			// Query param values are always primitives or arrays (never plain objects) — arrays
+			// rely on Array#toString's comma-join for TMDB's comma-separated list params.
+			// oxlint-disable-next-line typescript/no-base-to-string
 			return [[key, String(value)]];
 		});
 	}
@@ -117,7 +120,7 @@ export class ApiClient {
 	 * call triggers a fresh fetch. Deduplication can be disabled globally via
 	 * `TMDBOptions.deduplication = false`.
 	 */
-	async request<T>(endpoint: string, params: Record<string, unknown | undefined> = {}): Promise<T> {
+	async request<T>(endpoint: string, params: Record<string, unknown> = {}): Promise<T> {
 		// Run interceptors first so the cache/dedup key is derived from the request
 		// that will actually be sent — not the raw pre-interceptor values.
 		const ctx = await this.runRequestInterceptors({
@@ -246,7 +249,7 @@ export class ApiClient {
 				tmdbStatusCode = err.status_code || -1;
 			}
 		} catch (error) {
-			console.error(`Unknown error: ${error}`);
+			console.error(`Unknown error: ${String(error)}`);
 			// If response is not JSON, fallback to HTTP status text
 		}
 
@@ -286,7 +289,7 @@ export class ApiClient {
 		method: "GET" | "POST" | "PUT" | "DELETE",
 		endpoint: string,
 		body?: Record<string, unknown>,
-		params: Record<string, unknown | undefined> = {},
+		params: Record<string, unknown> = {},
 	): Promise<T> {
 		return this.execute<T>(method, endpoint, params, body);
 	}
@@ -302,7 +305,7 @@ export class ApiClient {
 	private async execute<T>(
 		method: "GET" | "POST" | "PUT" | "DELETE",
 		endpoint: string,
-		params: Record<string, unknown | undefined>,
+		params: Record<string, unknown>,
 		body?: Record<string, unknown>,
 		/** Pass `true` when the caller has already applied request interceptors. */
 		interceptorsAlreadyApplied = false,

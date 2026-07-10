@@ -68,7 +68,7 @@ export type DiscoverTVResultItem = {
  *
  * The API expects these values serialized as query strings, not arrays.
  */
-export type DiscoverFilterExpression<T extends string | number = string | number> = T | `${T}` | string;
+export type DiscoverFilterExpression<T extends string | number = string | number> = T | string;
 
 type DiscoverBaseParams = {
 	include_adult?: boolean;

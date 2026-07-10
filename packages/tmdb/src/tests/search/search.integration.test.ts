@@ -107,7 +107,7 @@ describe("Search (integration)", () => {
 		// Anchor to Brad Pitt's stable id; known_for ordering reranks by popularity.
 		const brad = persons.results.find((p) => p.id === 287);
 		expect(brad).toBeDefined();
-		expect(brad!.known_for.length).toBeGreaterThan(0);
+		expect(brad!.known_for?.length).toBeGreaterThan(0);
 	});
 
 	it("(SEARCH TV SERIES) should search for a TV series", async () => {
