@@ -117,7 +117,8 @@ optional `iso_3166_1` field as movie/person images.
 
 ### `TVRecommendations`
 
-A [`PaginatedResponse<TVSeriesResultItem>`](/docs/types/search#tvseriesresultitem) of recommended TV shows.
+A [`PaginatedResponse<TVSeriesResultItem>`](/docs/types/search#tvseriesresultitem) of recommended
+TV shows, with an optional `media_type: "tv"` discriminator on each item.
 See [`PaginatedResponse`](/docs/types/common#paginatedresponset).
 
 ---
@@ -131,7 +132,8 @@ See [`PaginatedResponse`](/docs/types/common#paginatedresponset).
 
 ### `TVReviews`
 
-A [`PaginatedResponse<Review>`](/docs/types/common#review) of user reviews.
+A [`PaginatedResponse<Review>`](/docs/types/common#review) of user reviews, plus an `id` field
+with the TV show identifier.
 See [`PaginatedResponse`](/docs/types/common#paginatedresponset).
 
 ---

@@ -170,6 +170,7 @@ A simplified TV series object returned by [`discover.tv()`](/docs/api-reference/
 
 <TypeTable
 	type={{
+		adult: { type: "boolean", description: "Whether the series is marked as adult content." },
 		backdrop_path: { type: "string | null", description: "Path to the backdrop image." },
 		first_air_date: { type: "string", description: "First air date in ISO 8601 format (YYYY-MM-DD)." },
 		genre_ids: { type: "number[]", description: "Genre IDs associated with the series." },
@@ -181,6 +182,7 @@ A simplified TV series object returned by [`discover.tv()`](/docs/api-reference/
 		overview: { type: "string", description: "Plot synopsis or overview." },
 		popularity: { type: "number", description: "Popularity score calculated by TMDB." },
 		poster_path: { type: "string | null", description: "Path to the poster image." },
+		softcore: { type: "boolean", description: "Whether the series is flagged as softcore content." },
 		vote_average: { type: "number", description: "Average vote score." },
 		vote_count: { type: "number", description: "Total number of votes." },
 	}}

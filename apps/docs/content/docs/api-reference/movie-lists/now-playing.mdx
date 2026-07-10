@@ -7,7 +7,7 @@ Returns a paginated list of movies currently playing in theatres. Results are fi
 by region when a `region` parameter is provided.
 
 ```ts
-async now_playing(params?: MovieListParams): Promise<PaginatedResponse<MovieResultItem>>
+async now_playing(params?: MovieListParams): Promise<MovieDateRangeList>
 ```
 
 > **TMDB Reference:** [Movie Now Playing](https://developer.themoviedb.org/reference/movie-now-playing-list)
@@ -22,8 +22,9 @@ async now_playing(params?: MovieListParams): Promise<PaginatedResponse<MovieResu
 
 ## Returns
 
-A [`PaginatedResponse<MovieResultItem>`](/docs/types/common#paginatedresponset) containing
-an array of [`MovieResultItem`](/docs/types/search#movieresultitem) objects.
+A [`MovieDateRangeList`](/docs/types/movies#moviedaterangelist) — a
+[`PaginatedResponse<MovieResultItem>`](/docs/types/common#paginatedresponset) plus a `dates`
+field reporting the release-date window this list was queried over.
 
 ## Example
 
@@ -47,5 +48,6 @@ const italian = await tmdb.movieLists.now_playing({ language: "it-IT", region: "
 ## Types
 
 - [MovieListParams](/docs/types/movies#movielistparams)
+- [MovieDateRangeList](/docs/types/movies#moviedaterangelist)
 - [PaginatedResponse](/docs/types/common#paginatedresponset)
 - [MovieResultItem](/docs/types/search#movieresultitem)

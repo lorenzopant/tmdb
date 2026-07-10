@@ -67,6 +67,7 @@ Top-level response returned by [`find.by_id()`](/docs/api-reference/find/by-id).
 	type={{
 		adult: { type: "boolean", description: "Whether the movie is marked as adult content." },
 		backdrop_path: { type: "string | null", description: "Path to the backdrop image." },
+		genre_ids: { type: "number[]", description: "Genre IDs associated with the movie." },
 		id: { type: "number", description: "Unique TMDB movie identifier." },
 		media_type: { type: '"movie"', description: "Media type discriminator." },
 		original_language: { type: "string", description: "Original language code." },
@@ -75,6 +76,7 @@ Top-level response returned by [`find.by_id()`](/docs/api-reference/find/by-id).
 		popularity: { type: "number", description: "Popularity score calculated by TMDB." },
 		poster_path: { type: "string | null", description: "Path to the poster image." },
 		release_date: { type: "string", description: "Release date in ISO 8601 format (YYYY-MM-DD)." },
+		softcore: { type: "boolean", description: "Whether the movie is flagged as softcore content." },
 		title: { type: "string", description: "Localized movie title." },
 		video: { type: "boolean", description: "Whether the movie has an associated video." },
 		vote_average: { type: "number", description: "Average vote score." },
@@ -109,6 +111,7 @@ Top-level response returned by [`find.by_id()`](/docs/api-reference/find/by-id).
 		adult: { type: "boolean", description: "Whether the series is marked as adult content." },
 		backdrop_path: { type: "string | null", description: "Path to the backdrop image." },
 		first_air_date: { type: "string", description: "First air date in ISO 8601 format (YYYY-MM-DD)." },
+		genre_ids: { type: "number[]", description: "Genre IDs associated with the series." },
 		id: { type: "number", description: "Unique TMDB TV series identifier." },
 		media_type: { type: '"tv"', description: "Media type discriminator." },
 		name: { type: "string", description: "Localized TV series name." },
@@ -118,6 +121,7 @@ Top-level response returned by [`find.by_id()`](/docs/api-reference/find/by-id).
 		overview: { type: "string", description: "Plot synopsis/overview." },
 		popularity: { type: "number", description: "Popularity score calculated by TMDB." },
 		poster_path: { type: "string | null", description: "Path to the poster image." },
+		softcore: { type: "boolean", description: "Whether the series is flagged as softcore content." },
 		vote_average: { type: "number", description: "Average vote score." },
 		vote_count: { type: "number", description: "Total number of votes." },
 	}}
