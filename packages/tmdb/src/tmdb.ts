@@ -127,6 +127,7 @@ export class TMDB {
 			deduplication: options.deduplication,
 			images: options.images,
 			rate_limit: options.rate_limit,
+			retry: options.retry,
 			cache: options.cache,
 			interceptors: options.interceptors,
 		});

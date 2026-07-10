@@ -9,7 +9,10 @@ import { keyTree } from "./key-tree";
 const token = process.env.TMDB_BEARER_TOKEN;
 if (!token) throw new Error("TMDB_BEARER_TOKEN is not set, please set it in your enviroment variables.");
 
-const tmdb = new TMDB(token);
+// Drift is a large batch of live HTTP calls run on a schedule. Enable
+// rate_limit + retry so transient failures / 429s don't surface as noisy,
+// false-positive drift alerts.
+const tmdb = new TMDB(token, { rate_limit: true, retry: true });
 
 // A green run without this line could silently hide missing coverage — make the
 // count visible so a shrinking CALLS list doesn't slip by unnoticed.
