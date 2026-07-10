@@ -4,6 +4,14 @@ description: Latest updates and announcements
 icon: History
 ---
 
+## 🚀 1.24.0 - 10 July 2026
+
+#### ✨ New
+
+- **`ImageAPI` now exported from the package root** — `ImageAPI` never required an access token internally (it only builds URLs off the static `image.tmdb.org` base), but it wasn't part of the public API surface, forcing consumers to construct a full `TMDB` instance just to build a poster/backdrop/profile URL. You can now do `new ImageAPI().poster(path)` directly, with no token needed ([#138](https://github.com/lorenzopant/tmdb/pull/138)).
+
+---
+
 ## 🚀 1.23.0 - 10 July 2026
 
 #### ✨ New
