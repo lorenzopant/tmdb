@@ -19,7 +19,7 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
 	return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function isDynamicKey(key: string): boolean {
+export function isDynamicKey(key: string): boolean {
 	return DYNAMIC_KEY_PATTERNS.some((pattern) => pattern.test(key));
 }
 
@@ -68,4 +68,54 @@ export function keyTree(value: unknown): string[] {
 	const paths = new Set<string>();
 	walk(value, "", paths);
 	return [...paths].sort();
+}
+
+/**
+ * Result of comparing a live API key-tree against the key-tree derived from our TS types.
+ * The types are the source of truth: drift is any disagreement between what the API sends
+ * NOW and what the types declare.
+ */
+export type ShapeDiff = {
+	/** Paths the live API returned that our types do NOT declare — types are out of date, add them. */
+	apiOnly: string[];
+	/** REQUIRED type paths the live API did NOT return — API dropped/renamed a field, or the type is wrong. */
+	removed: string[];
+};
+
+/**
+ * Diffs a live-response key-tree (`keyTree(res)`) against a type-derived tree
+ * (`{ path -> effectiveOptional }`, produced by `typeKeyTree`).
+ *
+ * Asymmetric by design:
+ * - Every `apiOnly` path is drift (the API sends a field the types don't know about).
+ * - A type-only path is drift ONLY when it is required. An OPTIONAL type path absent from the
+ *   live sample is normal (TMDB simply didn't populate it for the chosen fixture id), not drift.
+ */
+export function diffShape(apiPaths: string[], typeTree: Record<string, boolean>): ShapeDiff {
+	const typePaths = new Set(Object.keys(typeTree));
+	const api = new Set(apiPaths);
+	const apiOnly = apiPaths.filter((path) => !typePaths.has(path));
+
+	// A required type path missing from the live response is only real drift if its container was
+	// actually OBSERVED — i.e. some sibling path exists under the same object/array. When a fixture
+	// returns an empty array or omits an object entirely (e.g. `changes` with no changes in the date
+	// range, or `find` with only movie_results populated), the container is unobservable and its
+	// declared children must NOT be reported as removed.
+	const observed = (container: string): boolean =>
+		container === "" ||
+		apiPaths.some(
+			(path) =>
+				path === container ||
+				(path.startsWith(container) &&
+					(path[container.length] === "." || path[container.length] === "[")),
+		);
+
+	const removed = Object.keys(typeTree).filter((path) => {
+		if (typeTree[path]) return false; // effectively optional → ignore when the API omits it
+		if (api.has(path)) return false; // present in the live response → fine
+		const dot = path.lastIndexOf(".");
+		return observed(dot < 0 ? "" : path.slice(0, dot));
+	});
+
+	return { apiOnly, removed };
 }

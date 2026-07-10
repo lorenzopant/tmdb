@@ -54,19 +54,19 @@ jobs:
             const tail = output.split("\n").slice(-200).join("\n");
             const title = "TMDB schema drift detected";
             const body = [
-              "The scheduled schema-drift check (`pnpm run test:drift`) failed, which means TMDB added, removed, or renamed a property on one of the covered API response shapes.",
+              "The scheduled schema-drift check (`pnpm run test:drift`) failed, which means the live TMDB API response and our hand-written types in `packages/tmdb/src/types` disagree.",
               "",
-              "Tail of the drift output (the snapshot diff below shows the exact new/removed property paths):",
+              "The baseline is derived FROM the types (`scripts/gen-type-tree.ts`), so each failure is one of:",
+              "- `+ path` — the API returns a field the types don't declare → add it to the corresponding type.",
+              "- `- path` — a required type field the API no longer returns → the API renamed/removed it, or the type is wrong.",
+              "",
+              "Tail of the drift output (exact property paths per endpoint):",
               "",
               "```",
               tail,
               "```",
               "",
-              "Please review the diff, add the new property to the corresponding hand-written type in `packages/tmdb/src/types`, and re-bless the baseline once the type update is in:",
-              "",
-              "```",
-              "pnpm --filter @lorenzopant/tmdb run test:drift -u",
-              "```",
+              "Fix by updating the types in `packages/tmdb/src/types` to match the API. `pnpm run test:drift` regenerates the type-derived baseline and re-checks — there is no separate bless step.",
             ].join("\n");
 
             // Paginate: a single page (per_page: 100) misses the existing

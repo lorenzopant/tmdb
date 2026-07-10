@@ -65,13 +65,27 @@ const TV_SERIES_APPEND_ALL = [
 ] as const;
 
 /**
+ * Identity helper that PRESERVES each row's concrete `call` return type instead of widening
+ * it to `Promise<unknown>`. The `const` type parameter keeps the inferred `Promise<T>` per row,
+ * which lets `type-tree.ts` (ts-morph) read each endpoint's real declared response type off the
+ * arrow function. `t` is still typed as `TMDB` via the constraint, so no per-row annotation is
+ * needed. Do NOT add an explicit `CALLS: {...}[]` annotation — it would erase the return types
+ * again and the type-tree extractor would see `unknown`.
+ */
+const defineCalls = <
+	const T extends readonly { label: string; call: (t: TMDB) => Promise<unknown> }[],
+>(
+	calls: T,
+): T => calls;
+
+/**
  * One row per distinct response SHAPE for every read endpoint the library exposes.
- * `label` is unique and stable — it feeds the test title, which keys the snapshot file.
+ * `label` is unique and stable — it feeds the test title AND keys the type-tree JSON.
  *
  * Auth/session-scoped namespaces are intentionally excluded (they need a user session/JWT
  * and can't run unattended): `account`, `authentication`, `guest_sessions`, `lists`, `v4`.
  */
-export const CALLS: { label: string; call: (t: TMDB) => Promise<unknown> }[] = [
+export const CALLS = defineCalls([
 	// --- movies ---
 	{ label: "movies.details", call: (t) => t.movies.details({ movie_id: MOVIE_ID }) },
 	{
@@ -456,4 +470,4 @@ export const CALLS: { label: string; call: (t: TMDB) => Promise<unknown> }[] = [
 	{ label: "people.tagged_images", call: (t) => t.people.tagged_images({ person_id: PERSON_ID }) },
 	{ label: "people.translations", call: (t) => t.people.translations({ person_id: PERSON_ID }) },
 	{ label: "people.tv_credits", call: (t) => t.people.tv_credits({ person_id: PERSON_ID }) },
-];
+]);
