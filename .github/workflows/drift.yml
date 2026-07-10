@@ -69,7 +69,10 @@ jobs:
               "```",
             ].join("\n");
 
-            const { data: issues } = await github.rest.issues.listForRepo({
+            // Paginate: a single page (per_page: 100) misses the existing
+            // issue once the repo has >100 open issues, which would spawn a
+            // duplicate drift issue on every run.
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
               owner: context.repo.owner,
               repo: context.repo.repo,
               state: "open",
