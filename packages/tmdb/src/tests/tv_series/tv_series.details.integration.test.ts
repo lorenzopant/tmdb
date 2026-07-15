@@ -108,7 +108,10 @@ describe("TV Series Details (integration)", () => {
 	it("(DETAILS + append: changes) should include changes", () => {
 		expect(show1396.changes).toBeDefined();
 		expect(Array.isArray(show1396.changes.changes)).toBe(true);
-		expect(show1396.changes.changes.length).toBeGreaterThan(0);
+		// `changes` reports edits within a default ~24h window, so the array is
+		// legitimately empty on days with no edits. Assert the contract (shape),
+		// not a non-zero count, which depends on volatile live TMDB activity.
+		expect(show1396.changes.changes.length).toBeGreaterThanOrEqual(0);
 	});
 
 	it("(DETAILS + append: content_ratings) should include content_ratings", () => {
