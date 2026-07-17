@@ -244,6 +244,23 @@ const tmdb = new TMDB(token, {
 });
 ```
 
+#### Standalone image URL builder
+
+Only need the image URL builder and not the rest of the SDK? Import `ImageAPI` from the
+`@lorenzopant/tmdb/image` subpath. It ships as its own ~3.4 kB bundle with no TMDB client and no
+endpoint code, so you don't pull in the full SDK:
+
+```typescript
+import { ImageAPI } from "@lorenzopant/tmdb/image";
+
+const images = new ImageAPI({ secure_images_url: true });
+
+const posterUrl = images.poster("/abc123.jpg", "w500");
+const backdropUrl = images.backdrop("/def456.jpg", "w1280");
+```
+
+`ImageAPI` needs no API token — it only builds URLs from paths.
+
 ### Error handling
 
 ```typescript
