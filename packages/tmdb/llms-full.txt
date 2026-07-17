@@ -169,6 +169,19 @@ const tmdb = new TMDB(token, {
 });
 ```
 
+### Standalone image URL builder (no SDK client)
+
+Import `ImageAPI` from the `@lorenzopant/tmdb/image` subpath when you only need to build image URLs
+and don't want to pull in the TMDB client or endpoint code. It ships as its own ~3.4 kB bundle and
+requires no API token.
+
+```ts
+import { ImageAPI } from "@lorenzopant/tmdb/image";
+
+const images = new ImageAPI({ secure_images_url: true });
+const posterUrl = images.poster("/abc123.jpg", "w500");
+```
+
 ### Paginate through any paginated endpoint
 
 ```ts

@@ -3,6 +3,7 @@ import { defineConfig } from "tsdown";
 export default defineConfig({
 	entry: {
 		index: "src/index.ts",
+		image: "src/image.ts",
 	},
 	format: ["esm"],
 	dts: true,

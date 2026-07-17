@@ -33,6 +33,7 @@ Main exports:
 - Standalone endpoint classes like `MoviesAPI`, `SearchAPI`, `PeopleAPI`, `ListsAPI`, and `V4ListsAPI`
 - Utility exports including pagination helpers and `RetryOptions`
 - All public request/response types via `@lorenzopant/tmdb` and `@lorenzopant/tmdb/types`
+- `ImageAPI` standalone via `@lorenzopant/tmdb/image` — image URL builder as its own ~3.4 kB bundle, no TMDB client or endpoint code (use when you need only image URL building)
 
 Core namespaces on `TMDB`:
 - `movies`, `movie_lists`

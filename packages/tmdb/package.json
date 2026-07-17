@@ -25,12 +25,17 @@
 		"llms-full.txt"
 	],
 	"type": "module",
+	"sideEffects": false,
 	"main": "dist/index.mjs",
 	"types": "dist/index.d.mts",
 	"exports": {
 		".": {
 			"import": "./dist/index.mjs",
 			"types": "./dist/index.d.mts"
+		},
+		"./image": {
+			"import": "./dist/image.mjs",
+			"types": "./dist/image.d.mts"
 		},
 		"./types": {
 			"import": "./dist/index.mjs",
