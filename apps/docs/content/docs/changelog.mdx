@@ -4,6 +4,12 @@ description: Latest updates and announcements
 icon: History
 ---
 
+## 🚀 1.25.0 - 17 July 2026
+
+#### ✨ New
+
+- **Standalone `@lorenzopant/tmdb/image` subpath export** — import just the image URL builder without pulling in the `TMDB` client or any endpoint code: `import { ImageAPI } from "@lorenzopant/tmdb/image"`. It ships as its own ~3.4 kB bundle (vs the ~59 kB package root) and needs no access token. The package is now also marked `"sideEffects": false`, so bundler consumers can tree-shake the main entry too ([#141](https://github.com/lorenzopant/tmdb/pull/141)).
+
 ## 🚀 1.24.0 - 10 July 2026
 
 #### ✨ New
