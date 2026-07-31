@@ -1,4 +1,6 @@
+/* oxlint-disable jsx-a11y/prefer-tag-over-role */
 "use client";
+
 import { useMemo, useState } from "react";
 import { Check, ChevronDown, Copy, ExternalLinkIcon } from "lucide-react";
 import { cn } from "@/lib/cn";

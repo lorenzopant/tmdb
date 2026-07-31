@@ -1,4 +1,5 @@
 import { TMDB } from "@lorenzopant/tmdb";
+import Image from "next/image";
 import { cache } from "react";
 
 const COLUMN_COUNT = 9;
@@ -56,7 +57,7 @@ function PosterColumn({ posters, reverse, duration }: { posters: string[]; rever
 				}}
 			>
 				{loop.map((src, index) => (
-					<img
+					<Image
 						key={`${src}-${index}`}
 						src={src}
 						alt=""
