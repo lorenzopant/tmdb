@@ -4,9 +4,12 @@ const withMDX = createMDX();
 
 /** @type {import('next').NextConfig} */
 const config = {
-	serverExternalPackages: ["@takumi-rs/image-response", "@modelcontextprotocol/sdk"],
+	serverExternalPackages: ["@takumi-rs/image-response", "@takumi-rs/core", "takumi-js", "@modelcontextprotocol/sdk"],
 
 	reactStrictMode: true,
+	experimental: {
+		useTypeScriptCli: true,
+	},
 	async rewrites() {
 		return [
 			{
