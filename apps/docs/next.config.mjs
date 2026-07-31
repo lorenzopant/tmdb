@@ -6,6 +6,16 @@ const withMDX = createMDX();
 const config = {
 	serverExternalPackages: ["@takumi-rs/image-response", "@takumi-rs/core", "takumi-js", "@modelcontextprotocol/sdk"],
 
+	images: {
+		remotePatterns: [
+			{
+				protocol: "https",
+				hostname: "image.tmdb.org",
+				pathname: "/t/p/**",
+			},
+		],
+	},
+
 	reactStrictMode: true,
 	experimental: {
 		useTypeScriptCli: true,
