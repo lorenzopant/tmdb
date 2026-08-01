@@ -21,8 +21,13 @@ export function isPlainObject(value: unknown): value is Record<string, unknown> 
 
 // MARK: Images
 
-/** Utility type guard to check if an object has a poster_path property */
-export function hasPosterPath(data: unknown): data is { poster_path: string } {
+/**
+ * Utility type guard to check if an object has a poster_path property.
+ * Narrows to `T & { poster_path: string }` so the input type survives — this keeps
+ * the guard usable in `Array.prototype.filter`, whose narrowing overload requires
+ * the predicate type to extend the element type.
+ */
+export function hasPosterPath<T>(data: T): data is T & { poster_path: string } {
 	return (
 		typeof data === "object" &&
 		data !== null &&
@@ -31,8 +36,8 @@ export function hasPosterPath(data: unknown): data is { poster_path: string } {
 	);
 }
 
-/** Utility type guard to check if an object has a backdrop_path property */
-export function hasBackdropPath(data: unknown): data is { backdrop_path: string } {
+/** Utility type guard to check if an object has a backdrop_path property. Narrows to `T & { backdrop_path: string }`. */
+export function hasBackdropPath<T>(data: T): data is T & { backdrop_path: string } {
 	return (
 		typeof data === "object" &&
 		data !== null &&
@@ -41,8 +46,8 @@ export function hasBackdropPath(data: unknown): data is { backdrop_path: string 
 	);
 }
 
-/** Utility type guard to check if an object has a profile_path property */
-export function hasProfilePath(data: unknown): data is { profile_path: string } {
+/** Utility type guard to check if an object has a profile_path property. Narrows to `T & { profile_path: string }`. */
+export function hasProfilePath<T>(data: T): data is T & { profile_path: string } {
 	return (
 		typeof data === "object" &&
 		data !== null &&
@@ -51,8 +56,8 @@ export function hasProfilePath(data: unknown): data is { profile_path: string } 
 	);
 }
 
-/** Utility type guard to check if an object has a still_path property */
-export function hasStillPath(data: unknown): data is { still_path: string } {
+/** Utility type guard to check if an object has a still_path property. Narrows to `T & { still_path: string }`. */
+export function hasStillPath<T>(data: T): data is T & { still_path: string } {
 	return (
 		typeof data === "object" &&
 		data !== null &&
@@ -61,8 +66,8 @@ export function hasStillPath(data: unknown): data is { still_path: string } {
 	);
 }
 
-/** Utility type guard to check if an object has a logo_path property */
-export function hasLogoPath(data: unknown): data is { logo_path: string } {
+/** Utility type guard to check if an object has a logo_path property. Narrows to `T & { logo_path: string }`. */
+export function hasLogoPath<T>(data: T): data is T & { logo_path: string } {
 	return (
 		typeof data === "object" && data !== null && "logo_path" in data && typeof (data as Record<string, unknown>).logo_path === "string"
 	);
