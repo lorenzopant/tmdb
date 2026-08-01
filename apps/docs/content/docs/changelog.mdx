@@ -4,6 +4,12 @@ description: Latest updates and announcements
 icon: History
 ---
 
+## 🚀 1.25.2 - 1 August 2026
+
+#### 🐞 Bug Fixes
+
+- **Image path type guards now preserve the input type** — [`hasPosterPath`](/docs/types/utility#hasposterpath), [`hasBackdropPath`](/docs/types/utility#hasbackdroppath), [`hasProfilePath`](/docs/types/utility#hasprofilepath), [`hasStillPath`](/docs/types/utility#hasstillpath) and [`hasLogoPath`](/docs/types/utility#haslogopath) narrowed to a bare `{ poster_path: string }` instead of intersecting with the value they were given. `Array.prototype.filter` only applies its narrowing overload when the predicate type extends the element type, so `movies.filter(hasPosterPath)` silently fell back to `Movie[]` and `poster_path` stayed `string | undefined` — the guards did nothing in the position they're most useful. They are now generic and narrow to `T & { poster_path: string }`, so filtering yields `(Movie & { poster_path: string })[]` with every other field intact. Passing an `unknown` value still works exactly as before, since `unknown & { poster_path: string }` collapses to `{ poster_path: string }`. Non-breaking: every previously valid call site keeps compiling and gets the same or a more precise type ([#143](https://github.com/lorenzopant/tmdb/pull/143)).
+
 ## 🚀 1.25.1 - 31 July 2026
 
 #### 📦 Package
