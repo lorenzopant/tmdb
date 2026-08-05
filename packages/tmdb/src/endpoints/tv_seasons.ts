@@ -41,15 +41,18 @@ export class TVSeasonsAPI extends TMDBAPIBase {
 	 * @param season_number The season number within the TV show.
 	 * @param append_to_response A comma-separated list of the fields to include in the response.
 	 * @param language The language to use for the response.
+	 * @param include_image_language Extra languages for an appended `images` block. `language`
+	 * alone filters it down to that language's tagged images only — pass `["null", "en"]` or
+	 * similar to get untagged and English-tagged posters back.
 	 * @returns A promise that resolves to the TV season details.
 	 * @reference https://developer.themoviedb.org/reference/tv-season-details
 	 */
 	async details<T extends readonly TVSeasonAppendToResponseNamespace[] = []>(
 		params: Omit<TVSeasonDetailsParams, "append_to_response"> & { append_to_response?: T },
 	): Promise<T extends [] ? TVSeason : TVSeasonDetailsWithAppends<T>> {
-		const { language = this.defaultOptions.language, append_to_response, ...rest } = params;
-		const endpoint = this.seasonPath(rest);
-		return this.client.request(endpoint, { language, append_to_response });
+		const { language = this.defaultOptions.language, series_id, season_number, ...rest } = params;
+		const endpoint = this.seasonPath({ series_id, season_number });
+		return this.client.request(endpoint, this.injectImageLanguageForAppends({ language, ...rest }));
 	}
 
 	/**

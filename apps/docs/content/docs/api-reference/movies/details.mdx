@@ -15,11 +15,33 @@ async details<T extends readonly MovieAppendToResponseNamespace[] = []>(
 
 ## Parameters
 
-| Name                 | Type                                                                                    | Required | Description                                          |
-| -------------------- | --------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------- |
-| `movie_id`           | `number`                                                                                | ✅       | TMDB movie identifier.                               |
-| `append_to_response` | [`MovieAppendToResponseNamespace[]`](/docs/types/movies#movieappendtoresponsenamespace) | ❌       | Sub-resources to append to the response.             |
-| `language`           | [`Language`](/docs/types/options/language#language)                                     | ❌       | Language for localized results. Defaults to `en-US`. |
+| Name                     | Type                                                                                    | Required | Description                                                                 |
+| ------------------------ | --------------------------------------------------------------------------------------- | -------- | --------------------------------------------------------------------------- |
+| `movie_id`               | `number`                                                                                | ✅       | TMDB movie identifier.                                                      |
+| `append_to_response`     | [`MovieAppendToResponseNamespace[]`](/docs/types/movies#movieappendtoresponsenamespace) | ❌       | Sub-resources to append to the response.                                    |
+| `language`               | [`Language`](/docs/types/options/language#language)                                     | ❌       | Language for localized results. Defaults to `en-US`.                        |
+| `include_image_language` | `(Language \| "null")[]`                                                                | ❌       | Extra languages for an appended `images` block. Serialized comma-separated. |
+
+<Callout type="warn">
+	When you append `images` **and** pass a `language`, TMDB treats the language as a filter on the appended block and
+	returns only images tagged with it. Logos are always language-tagged and most backdrops are untagged, so both come back
+	empty. Pass `include_image_language` to get them:
+
+```ts
+const movie = await tmdb.movies.details({
+	movie_id: 550,
+	language: "it-IT",
+	append_to_response: ["images"],
+	include_image_language: ["null", "en"], // untagged + English
+});
+// 68 posters, 87 backdrops, 23 logos
+// without include_image_language: 3 posters, 0 backdrops, 0 logos
+```
+
+Use `"null"` for untagged images (textless posters, most backdrops), and pair it with at least one real language code —
+`["null"]` alone still returns zero logos.
+
+</Callout>
 
 ## Returns
 

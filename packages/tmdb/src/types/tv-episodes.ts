@@ -109,7 +109,19 @@ export type TVEpisodeChangesParams = TVEpisodeId & Prettify<WithParams<"page"> &
  * Parameters for fetching TV episode details with optional additional data appended.
  */
 export type TVEpisodeDetailsParams = Prettify<
-	TVEpisodeBaseParams & { append_to_response?: TVEpisodeAppendToResponseNamespace[] } & WithParams<"language">
+	TVEpisodeBaseParams & {
+		append_to_response?: TVEpisodeAppendToResponseNamespace[];
+		/**
+		 * Languages to include images for in an appended `images` block. Pass an array — it is
+		 * serialized as a comma-separated list (e.g. `["en", "null"]`). Use `"null"` to include
+		 * untagged images.
+		 *
+		 * Only meaningful together with `append_to_response: ["images"]`. Without it, `language`
+		 * acts as a filter on the appended block and TMDB returns only stills tagged with that
+		 * language — episode stills are mostly untagged, so the block usually comes back empty.
+		 */
+		include_image_language?: (Language | "null")[];
+	} & WithParams<"language">
 >;
 
 /** Parameters for tv episode credits endpoint */

@@ -15,13 +15,32 @@ async details<T extends readonly TVEpisodeAppendToResponseNamespace[] = []>(
 
 ## Parameters
 
-| Name                 | Type                                                                                                 | Required | Description                                          |
-| -------------------- | ---------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------- |
-| `series_id`          | `number`                                                                                             | ✅       | TMDB TV series identifier.                           |
-| `season_number`      | `number`                                                                                             | ✅       | Season number within the TV series.                  |
-| `episode_number`     | `number`                                                                                             | ✅       | Episode number within the season.                    |
-| `append_to_response` | [`TVEpisodeAppendToResponseNamespace[]`](/docs/types/tv-episodes#tvepisodeappendtoresponsenamespace) | ❌       | Sub-resources to append to the response.             |
-| `language`           | [`Language`](/docs/types/options/language#language)                                                  | ❌       | Language for localized results. Defaults to `en-US`. |
+| Name                     | Type                                                                                                 | Required | Description                                                                 |
+| ------------------------ | ---------------------------------------------------------------------------------------------------- | -------- | --------------------------------------------------------------------------- |
+| `series_id`              | `number`                                                                                             | ✅       | TMDB TV series identifier.                                                  |
+| `season_number`          | `number`                                                                                             | ✅       | Season number within the TV series.                                         |
+| `episode_number`         | `number`                                                                                             | ✅       | Episode number within the season.                                           |
+| `append_to_response`     | [`TVEpisodeAppendToResponseNamespace[]`](/docs/types/tv-episodes#tvepisodeappendtoresponsenamespace) | ❌       | Sub-resources to append to the response.                                    |
+| `language`               | [`Language`](/docs/types/options/language#language)                                                  | ❌       | Language for localized results. Defaults to `en-US`.                        |
+| `include_image_language` | `(Language \| "null")[]`                                                                             | ❌       | Extra languages for an appended `images` block. Serialized comma-separated. |
+
+<Callout type="warn">
+	When you append `images` **and** pass a `language`, TMDB treats the language as a filter on the appended block. Episode
+	stills are mostly untagged, so the block usually comes back empty — pass `include_image_language` with `"null"`:
+
+```ts
+const episode = await tmdb.tv_episodes.details({
+	series_id: 1396,
+	season_number: 1,
+	episode_number: 1,
+	language: "it-IT",
+	append_to_response: ["images"],
+	include_image_language: ["null", "en"], // untagged + English
+});
+// 6 stills — without include_image_language: 0
+```
+
+</Callout>
 
 ## Returns
 

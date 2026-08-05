@@ -78,4 +78,22 @@ export abstract class TMDBAPIBase {
 		if (!langs.length) return params;
 		return { ...params, include_image_language: langs } as T;
 	}
+
+	/**
+	 * {@link injectImageLanguage} scoped to `details()` calls.
+	 *
+	 * A details request only carries an images block when `append_to_response`
+	 * asks for one, so the derived `include_image_language` is injected only in
+	 * that case — otherwise every details call would grow a query param TMDB
+	 * ignores, changing cache/dedup keys for no benefit.
+	 *
+	 * An explicit `include_image_language` on the call site is passed through
+	 * untouched either way.
+	 */
+	protected injectImageLanguageForAppends<T extends { append_to_response?: unknown }>(params: T): T {
+		const append = params.append_to_response;
+		const appends = Array.isArray(append) ? append : append === undefined ? [] : [append];
+		if (!appends.includes("images")) return params;
+		return this.injectImageLanguage(params);
+	}
 }

@@ -50,6 +50,9 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	 * @param series_id The ID of the TV series.
 	 * @param append_to_response A comma-separated list of the fields to include in the response.
 	 * @param language The language to use for the response.
+	 * @param include_image_language Extra languages for an appended `images` block. `language`
+	 * alone filters it down to that language's tagged images only, which drops every logo and
+	 * untagged backdrop — pass `["null", "en"]` or similar to get them back.
 	 * @returns A promise that resolves to the TV series details.
 	 * @reference https://developer.themoviedb.org/reference/tv-series-details
 	 */
@@ -58,7 +61,7 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	): Promise<T extends [] ? TVSeriesDetails : TVDetailsWithAppends<T>> {
 		const { language = this.defaultOptions.language, series_id, ...rest } = params;
 		const endpoint = this.seriesPath(series_id);
-		return this.client.request(endpoint, { language, ...rest });
+		return this.client.request(endpoint, this.injectImageLanguageForAppends({ language, ...rest }));
 	}
 
 	/**

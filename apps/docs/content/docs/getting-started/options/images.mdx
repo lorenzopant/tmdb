@@ -236,11 +236,19 @@ When `true`, the client automatically derives `include_image_language` from the 
 declared in `image_language_priority` and injects it into every `.images()` request. This ensures
 TMDB actually returns the language variants the priority config expects to sort.
 
+It also applies to `.details()` calls that ask for an images block via
+`append_to_response: ["images"]` — the appended block needs the same parameter to return logos and
+untagged artwork. Details calls that don't append images are left alone, since TMDB would ignore the
+parameter there.
+
 The injected value is the union of all language codes across all configured collections, with `"*"`
 excluded (it has no meaning as an HTTP query parameter). An explicit `include_image_language` at the
 call site always takes precedence.
 
 Requires `image_language_priority` to be configured; has no effect without it.
+
+Person images are unaffected — TMDB profile images carry no language tag, so neither
+`people.images()` nor `people.details()` accepts `include_image_language`.
 
 ```ts
 const tmdb = new TMDB(apiKey, {
@@ -260,12 +268,17 @@ const customImages = await tmdb.movies.images({
 	movie_id: 550,
 	include_image_language: ["fr", "null"],
 });
+
+// Also injected when details() appends an images block
+const movie = await tmdb.movies.details({ movie_id: 550, append_to_response: ["images"] });
+
+// Not injected here — no images block was requested
+const plain = await tmdb.movies.details({ movie_id: 550, append_to_response: ["credits"] });
 ```
 
 <Callout>
-	Enable `auto_include_image_language` together with `image_language_priority` for a fully automatic
-	setup: TMDB returns the right language variants **and** the client orders them according to your
-	priority list — all without any extra call-site code.
+	Enable `auto_include_image_language` together with `image_language_priority` for a fully automatic setup: TMDB returns the right
+	language variants **and** the client orders them according to your priority list — all without any extra call-site code.
 </Callout>
 
 ---
@@ -329,8 +342,8 @@ console.log(movie.backdrop_path); // "/placeholder.png" (was null)
 ```
 
 <Callout>
-	`image_language_priority` sorting applies only when `autocomplete_paths` is enabled. When only
-	`fallback_url` is set, collection array order is preserved as returned by the API.
+	`image_language_priority` sorting applies only when `autocomplete_paths` is enabled. When only `fallback_url` is set, collection array
+	order is preserved as returned by the API.
 </Callout>
 
 ---

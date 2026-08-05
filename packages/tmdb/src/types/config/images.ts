@@ -70,9 +70,7 @@ export type DefaultImageSizesConfig = {
  * // Prefer textless posters → English → any fallback
  * { posters: ["null", "en", "*"] }
  */
-export type ImageLanguagePriorityConfig = Partial<
-	Record<"backdrops" | "logos" | "posters" | "profiles" | "stills", string[]>
->;
+export type ImageLanguagePriorityConfig = Partial<Record<"backdrops" | "logos" | "posters" | "profiles" | "stills", string[]>>;
 
 /**
  * Fallback URL(s) used when an image path field is absent (`null` / `undefined`) in a TMDB
@@ -134,11 +132,18 @@ export type ImagesConfig = {
 	 * request — so TMDB returns the language variants that the priority config expects
 	 * to sort.
 	 *
+	 * Also applies to `.details()` calls that request an images block via
+	 * `append_to_response: ["images"]`. It is *not* injected into details calls that
+	 * don't append images, since TMDB would ignore it there.
+	 *
 	 * The injected value is the union of all language codes across all configured
 	 * collections, with `"*"` excluded (it has no meaning as an HTTP parameter).
 	 * An explicit `include_image_language` on the call site always takes precedence.
 	 *
 	 * Requires `image_language_priority` to be set; has no effect without it.
+	 *
+	 * Note: `person.images()` and person details take no `include_image_language` —
+	 * TMDB profile images carry no language tag — so this setting does not affect them.
 	 *
 	 * @default false
 	 *

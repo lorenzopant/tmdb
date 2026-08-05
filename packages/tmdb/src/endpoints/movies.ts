@@ -52,15 +52,18 @@ export class MoviesAPI extends TMDBAPIBase {
 	 * @param movie_id The ID of the movie.
 	 * @param append_to_response A comma-separated list of the fields to include in the response.
 	 * @param language The language to use for the response.
+	 * @param include_image_language Extra languages for an appended `images` block. `language`
+	 * alone filters it down to that language's tagged images only, which drops every logo and
+	 * untagged backdrop — pass `["null", "en"]` or similar to get them back.
 	 * @returns A promise that resolves to the movie details.
 	 * @reference https://developer.themoviedb.org/reference/movie-details
 	 */
 	async details<T extends readonly MovieAppendToResponseNamespace[] = []>(
 		params: MovieDetailsParams & { append_to_response?: T[number] | T },
 	): Promise<T extends [] ? MovieDetails : MovieDetailsWithAppends<T>> {
-		const { language = this.defaultOptions.language, movie_id, append_to_response } = params;
+		const { language = this.defaultOptions.language, movie_id, ...rest } = params;
 		const endpoint = this.moviePath(movie_id);
-		return this.client.request(endpoint, { language, append_to_response });
+		return this.client.request(endpoint, this.injectImageLanguageForAppends({ language, ...rest }));
 	}
 
 	/**
