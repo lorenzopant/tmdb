@@ -4,6 +4,17 @@ description: Latest updates and announcements
 icon: History
 ---
 
+## 🚀 1.25.3 - 7 August 2026
+
+#### 🐞 Bug Fixes
+
+- **`include_image_language` now works on `details()` calls that append images** — the parameter is what makes an appended `images` block usable: with only `language` set, TMDB filters the block down to images tagged with that language, which drops every logo (logos are always language-tagged) and every untagged backdrop. It was neither typed nor sent, and the failure was silent — an empty `logos` array is indistinguishable from a title that genuinely has no logo. [`movies.details()`](/docs/api-reference/movies/details), [`tv_seasons.details()`](/docs/api-reference/tv-seasons/details) and [`tv_episodes.details()`](/docs/api-reference/tv-episodes/details) destructured a fixed set of keys and forwarded only those, discarding the value before it reached the client; [`tv_series.details()`](/docs/api-reference/tv-series/details) already forwarded it and was a type-only gap. For Fight Club at `language=it-IT`, `movies.details()` went from 3 posters / 0 backdrops / 0 logos to 68 / 87 / 23 — matching what the same URL returns via `curl` ([#144](https://github.com/lorenzopant/tmdb/pull/144)).
+- `include_image_language?: (Language | "null")[]` added to `MovieDetailsParams`, `TVDetailsParams`, `TVSeasonDetailsParams` and `TVEpisodeDetailsParams`. `PersonDetailsParams` deliberately does not get it — TMDB profile images carry no language tag, so the parameter has no effect there ([#144](https://github.com/lorenzopant/tmdb/pull/144)).
+
+#### ✨ New
+
+- **[`auto_include_image_language`](/docs/getting-started/options/images#auto_include_image_language) now covers appended image blocks** — previously it only applied to `.images()` calls, so a consumer who configured `image_language_priority` still got empty logos on every `append_to_response: ["images"]`. It is injected only when the request actually appends images, so details calls that don't ask for images keep an unchanged query string and cache key ([#144](https://github.com/lorenzopant/tmdb/pull/144)).
+
 ## 🚀 1.25.2 - 1 August 2026
 
 #### 🐞 Bug Fixes
