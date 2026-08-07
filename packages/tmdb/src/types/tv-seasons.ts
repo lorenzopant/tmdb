@@ -155,7 +155,19 @@ export type TVSeasonVideos = VideoResults;
 
 /** Parameters for the season details endpoint. */
 export type TVSeasonDetailsParams = Prettify<
-	TVSeasonBaseParams & { append_to_response?: TVSeasonAppendToResponseNamespace[] } & WithParams<"language">
+	TVSeasonBaseParams & {
+		append_to_response?: TVSeasonAppendToResponseNamespace[];
+		/**
+		 * Languages to include images for in an appended `images` block. Pass an array — it is
+		 * serialized as a comma-separated list (e.g. `["en", "null"]`). Use `"null"` to include
+		 * untagged images.
+		 *
+		 * Only meaningful together with `append_to_response: ["images"]`. Without it, `language`
+		 * acts as a filter on the appended block and TMDB returns only posters tagged with that
+		 * language.
+		 */
+		include_image_language?: (Language | "null")[];
+	} & WithParams<"language">
 >;
 
 /** Parameters for the season aggregate credits endpoint. */

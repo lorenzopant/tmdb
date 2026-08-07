@@ -37,15 +37,18 @@ export class TVEpisodesAPI extends TMDBAPIBase {
 	 * @param episode_number The number of the episode within the season
 	 * @param append_to_response A comma-separated list of the fields to include in the response.
 	 * @param language The language to use for the response.
+	 * @param include_image_language Extra languages for an appended `images` block. `language`
+	 * alone filters it down to that language's tagged stills only — pass `["null", "en"]` or
+	 * similar to get untagged stills back.
 	 * @returns A promise that resolves to the TV episode .
 	 * @reference https://developer.themoviedb.org/reference/tv-episode-details
 	 */
 	async details<T extends readonly TVEpisodeAppendToResponseNamespace[] = []>(
 		params: TVEpisodeDetailsParams & { append_to_response?: T[number] | T },
 	): Promise<T extends [] ? TVEpisode : TVEpisodeDetailsWithAppends<T>> {
-		const { language = this.defaultOptions.language, append_to_response, ...rest } = params;
-		const endpoint = this.episodePath(rest);
-		return this.client.request(endpoint, { language, append_to_response });
+		const { language = this.defaultOptions.language, series_id, season_number, episode_number, ...rest } = params;
+		const endpoint = this.episodePath({ series_id, season_number, episode_number });
+		return this.client.request(endpoint, this.injectImageLanguageForAppends({ language, ...rest }));
 	}
 
 	/**

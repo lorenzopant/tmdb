@@ -200,10 +200,9 @@ export type TVAppendableMap = {
  * TV show details with additional appended data based on the requested namespaces.
  * @template T - Array of append-to-response namespace keys to include
  */
-export type TVDetailsWithAppends<T extends readonly TVAppendToResponseNamespace[]> =
-	TVSeriesDetails & {
-		[K in T[number]]: TVAppendableMap[K];
-	};
+export type TVDetailsWithAppends<T extends readonly TVAppendToResponseNamespace[]> = TVSeriesDetails & {
+	[K in T[number]]: TVAppendableMap[K];
+};
 
 // MARK: Aggreate Credits
 
@@ -516,7 +515,19 @@ export type TVSeriesListParams = Prettify<WithLanguagePage & { timezone?: Timezo
  * Parameters for fetching TV show details with optional additional data appended.
  */
 export type TVDetailsParams = Prettify<
-	TVBaseParam & { append_to_response?: TVAppendToResponseNamespace[] } & WithParams<"language">
+	TVBaseParam & {
+		append_to_response?: TVAppendToResponseNamespace[];
+		/**
+		 * Languages to include images for in an appended `images` block. Pass an array — it is
+		 * serialized as a comma-separated list (e.g. `["en", "null"]`). Use `"null"` to include
+		 * untagged images.
+		 *
+		 * Only meaningful together with `append_to_response: ["images"]`. Without it, `language`
+		 * acts as a filter on the appended block and TMDB returns only images tagged with that
+		 * language — no logos (which are always language-tagged) and no untagged backdrops.
+		 */
+		include_image_language?: (Language | "null")[];
+	} & WithParams<"language">
 >;
 
 /**

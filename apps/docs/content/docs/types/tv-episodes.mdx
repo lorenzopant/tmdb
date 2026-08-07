@@ -102,6 +102,10 @@ Alias for [`VideoResults`](/docs/types/common#videoresults).
 		episode_number: { type: "number", required: true, description: "Episode number within the season." },
 		append_to_response: { type: "TVEpisodeAppendToResponseNamespace[]", description: "Sub-resources to append to the response." },
 		language: { type: "Language", description: "Language for localized results.", default: "en-US" },
+		include_image_language: {
+			type: '(Language | "null")[]',
+			description: 'Extra languages for an appended `images` block. Use "null" for untagged images. Serialized comma-separated.',
+		},
 	}}
 />
 

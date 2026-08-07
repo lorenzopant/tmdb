@@ -343,6 +343,16 @@ type MovieBaseParam = { movie_id: number };
 export type MovieDetailsParams = Prettify<
 	MovieBaseParam & {
 		append_to_response?: MovieAppendToResponseNamespace | MovieAppendToResponseNamespace[];
+		/**
+		 * Languages to include images for in an appended `images` block. Pass an array — it is
+		 * serialized as a comma-separated list (e.g. `["en", "null"]`). Use `"null"` to include
+		 * untagged images.
+		 *
+		 * Only meaningful together with `append_to_response: ["images"]`. Without it, `language`
+		 * acts as a filter on the appended block and TMDB returns only images tagged with that
+		 * language — no logos (which are always language-tagged) and no untagged backdrops.
+		 */
+		include_image_language?: (Language | "null")[];
 	} & WithParams<"language">
 >;
 

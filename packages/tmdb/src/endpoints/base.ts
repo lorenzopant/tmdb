@@ -78,4 +78,29 @@ export abstract class TMDBAPIBase {
 		if (!langs.length) return params;
 		return { ...params, include_image_language: langs } as T;
 	}
+
+	/**
+	 * {@link injectImageLanguage} scoped to `details()` calls.
+	 *
+	 * A details request only carries an images block when `append_to_response`
+	 * asks for one, so the derived `include_image_language` is injected only in
+	 * that case — otherwise every details call would grow a query param TMDB
+	 * ignores, changing cache/dedup keys for no benefit.
+	 *
+	 * An explicit `include_image_language` on the call site is passed through
+	 * untouched either way.
+	 */
+	protected injectImageLanguageForAppends<T extends { append_to_response?: unknown }>(params: T): T {
+		const append = params.append_to_response;
+		const entries = Array.isArray(append) ? append : append === undefined ? [] : [append];
+
+		// TMDB takes append_to_response as a comma-separated list and the endpoint JSDoc
+		// documents it that way, so "credits,images" has to resolve the same as
+		// ["credits", "images"]. Array entries are split too — an array holding a joined
+		// string is just as valid on the wire. Non-string entries can never be "images".
+		const appends = entries.flatMap((entry) => (typeof entry === "string" ? entry.split(",").map((name) => name.trim()) : []));
+
+		if (!appends.includes("images")) return params;
+		return this.injectImageLanguage(params);
+	}
 }

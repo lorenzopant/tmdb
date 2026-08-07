@@ -15,11 +15,30 @@ async details<T extends readonly TVAppendToResponseNamespace[] = []>(
 
 ## Parameters
 
-| Name                 | Type                                                                                 | Required | Description                                          |
-| -------------------- | ------------------------------------------------------------------------------------ | -------- | ---------------------------------------------------- |
-| `series_id`          | `number`                                                                             | ✅       | TMDB TV series identifier.                           |
-| `append_to_response` | [`TVAppendToResponseNamespace[]`](/docs/types/tv-series#tvappendtoresponsenamespace) | ❌       | Sub-resources to append to the response.             |
-| `language`           | [`Language`](/docs/types/options/language#language)                                  | ❌       | Language for localized results. Defaults to `en-US`. |
+| Name                     | Type                                                                                 | Required | Description                                                                 |
+| ------------------------ | ------------------------------------------------------------------------------------ | -------- | --------------------------------------------------------------------------- |
+| `series_id`              | `number`                                                                             | ✅       | TMDB TV series identifier.                                                  |
+| `append_to_response`     | [`TVAppendToResponseNamespace[]`](/docs/types/tv-series#tvappendtoresponsenamespace) | ❌       | Sub-resources to append to the response.                                    |
+| `language`               | [`Language`](/docs/types/options/language#language)                                  | ❌       | Language for localized results. Defaults to `en-US`.                        |
+| `include_image_language` | `(Language \| "null")[]`                                                             | ❌       | Extra languages for an appended `images` block. Serialized comma-separated. |
+
+<Callout type="warn">
+	When you append `images` **and** pass a `language`, TMDB treats the language as a filter on the appended block and
+	returns only images tagged with it — often nothing at all. Pass `include_image_language` to get logos and untagged
+	backdrops:
+
+```ts
+const show = await tmdb.tv_series.details({
+	series_id: 1396,
+	language: "it-IT",
+	append_to_response: ["images"],
+	include_image_language: ["null", "en"], // untagged + English
+});
+// 108 posters, 124 backdrops, 9 logos
+// without include_image_language: 0 / 0 / 0
+```
+
+</Callout>
 
 ## Returns
 
