@@ -6,6 +6,7 @@ import { PeopleAPI } from "../../endpoints/people";
 import { TVEpisodesAPI } from "../../endpoints/tv_episodes";
 import { TVSeasonsAPI } from "../../endpoints/tv_seasons";
 import { TVSeriesAPI } from "../../endpoints/tv_series";
+import { TMDBOptions } from "../../types/config";
 
 /**
  * `include_image_language` is required to get logos, untagged backdrops or textless
@@ -107,15 +108,15 @@ describe("include_image_language on details() with append_to_response", () => {
 	});
 
 	describe("auto_include_image_language", () => {
-		const options = {
+		const options: TMDBOptions = {
 			images: {
 				auto_include_image_language: true,
 				image_language_priority: { posters: ["it", "null", "*"], backdrops: ["en"] },
 			},
-		} as const;
+		};
 
 		it("is derived for a details call that appends images", async () => {
-			await new MoviesAPI(clientMock, { ...options }).details({
+			await new MoviesAPI(clientMock, options).details({
 				movie_id: 550,
 				append_to_response: ["images", "credits"],
 			});
@@ -124,7 +125,7 @@ describe("include_image_language on details() with append_to_response", () => {
 		});
 
 		it("is derived when append_to_response is the bare string form", async () => {
-			await new MoviesAPI(clientMock, { ...options }).details({ movie_id: 550, append_to_response: "images" });
+			await new MoviesAPI(clientMock, options).details({ movie_id: 550, append_to_response: "images" });
 			expect(params().include_image_language).toEqual(expect.arrayContaining(["it", "null", "en"]));
 		});
 
@@ -135,7 +136,7 @@ describe("include_image_language on details() with append_to_response", () => {
 		// used to silently skip the injection.
 		describe("comma-separated append_to_response", () => {
 			it("is derived from a joined string", async () => {
-				await new MoviesAPI(clientMock, { ...options }).details({
+				await new MoviesAPI(clientMock, options).details({
 					movie_id: 550,
 					append_to_response: "credits,images" as never,
 				});
@@ -143,7 +144,7 @@ describe("include_image_language on details() with append_to_response", () => {
 			});
 
 			it("tolerates whitespace around the entries", async () => {
-				await new MoviesAPI(clientMock, { ...options }).details({
+				await new MoviesAPI(clientMock, options).details({
 					movie_id: 550,
 					append_to_response: " credits , images " as never,
 				});
@@ -151,7 +152,7 @@ describe("include_image_language on details() with append_to_response", () => {
 			});
 
 			it("is derived from an array holding a joined string", async () => {
-				await new MoviesAPI(clientMock, { ...options }).details({
+				await new MoviesAPI(clientMock, options).details({
 					movie_id: 550,
 					append_to_response: ["credits,images"] as never,
 				});
@@ -159,7 +160,7 @@ describe("include_image_language on details() with append_to_response", () => {
 			});
 
 			it("is not derived when the joined string has no images entry", async () => {
-				await new MoviesAPI(clientMock, { ...options }).details({
+				await new MoviesAPI(clientMock, options).details({
 					movie_id: 550,
 					append_to_response: "credits,videos" as never,
 				});
@@ -167,7 +168,7 @@ describe("include_image_language on details() with append_to_response", () => {
 			});
 
 			it("does not match a namespace that merely contains 'images'", async () => {
-				await new MoviesAPI(clientMock, { ...options }).details({
+				await new MoviesAPI(clientMock, options).details({
 					movie_id: 550,
 					append_to_response: "images_extra,credits" as never,
 				});
@@ -175,7 +176,7 @@ describe("include_image_language on details() with append_to_response", () => {
 			});
 
 			it("forwards the joined string to the client untouched", async () => {
-				await new MoviesAPI(clientMock, { ...options }).details({
+				await new MoviesAPI(clientMock, options).details({
 					movie_id: 550,
 					append_to_response: "credits,images" as never,
 				});
@@ -184,17 +185,17 @@ describe("include_image_language on details() with append_to_response", () => {
 		});
 
 		it("is not derived when the call does not append images", async () => {
-			await new MoviesAPI(clientMock, { ...options }).details({ movie_id: 550, append_to_response: ["credits"] });
+			await new MoviesAPI(clientMock, options).details({ movie_id: 550, append_to_response: ["credits"] });
 			expect(params().include_image_language).toBeUndefined();
 		});
 
 		it("is not derived when there is no append_to_response at all", async () => {
-			await new MoviesAPI(clientMock, { ...options }).details({ movie_id: 550 });
+			await new MoviesAPI(clientMock, options).details({ movie_id: 550 });
 			expect(params().include_image_language).toBeUndefined();
 		});
 
 		it("does not override an explicit call-site value", async () => {
-			await new MoviesAPI(clientMock, { ...options }).details({
+			await new MoviesAPI(clientMock, options).details({
 				movie_id: 550,
 				append_to_response: ["images"],
 				include_image_language: ["fr", "null"],
@@ -203,13 +204,13 @@ describe("include_image_language on details() with append_to_response", () => {
 		});
 
 		it("applies to tv, season and episode details too", async () => {
-			await new TVSeriesAPI(clientMock, { ...options }).details({ series_id: 1396, append_to_response: ["images"] });
-			await new TVSeasonsAPI(clientMock, { ...options }).details({
+			await new TVSeriesAPI(clientMock, options).details({ series_id: 1396, append_to_response: ["images"] });
+			await new TVSeasonsAPI(clientMock, options).details({
 				series_id: 1396,
 				season_number: 1,
 				append_to_response: ["images"],
 			});
-			await new TVEpisodesAPI(clientMock, { ...options }).details({
+			await new TVEpisodesAPI(clientMock, options).details({
 				series_id: 1396,
 				season_number: 1,
 				episode_number: 1,
@@ -221,7 +222,7 @@ describe("include_image_language on details() with append_to_response", () => {
 		});
 
 		it("is not derived for people.details — TMDB profile images carry no language tag", async () => {
-			await new PeopleAPI(clientMock, { ...options }).details({ person_id: 287, append_to_response: ["images"] });
+			await new PeopleAPI(clientMock, options).details({ person_id: 287, append_to_response: ["images"] });
 			expect(params().include_image_language).toBeUndefined();
 		});
 	});
