@@ -92,7 +92,14 @@ export abstract class TMDBAPIBase {
 	 */
 	protected injectImageLanguageForAppends<T extends { append_to_response?: unknown }>(params: T): T {
 		const append = params.append_to_response;
-		const appends = Array.isArray(append) ? append : append === undefined ? [] : [append];
+		const entries = Array.isArray(append) ? append : append === undefined ? [] : [append];
+
+		// TMDB takes append_to_response as a comma-separated list and the endpoint JSDoc
+		// documents it that way, so "credits,images" has to resolve the same as
+		// ["credits", "images"]. Array entries are split too — an array holding a joined
+		// string is just as valid on the wire. Non-string entries can never be "images".
+		const appends = entries.flatMap((entry) => (typeof entry === "string" ? entry.split(",").map((name) => name.trim()) : []));
+
 		if (!appends.includes("images")) return params;
 		return this.injectImageLanguage(params);
 	}

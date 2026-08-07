@@ -128,6 +128,61 @@ describe("include_image_language on details() with append_to_response", () => {
 			expect(params().include_image_language).toEqual(expect.arrayContaining(["it", "null", "en"]));
 		});
 
+		// TMDB accepts append_to_response as a comma-separated list and the endpoint JSDoc
+		// documents it that way, so a joined string has to behave like the array form.
+		// The param types only allow single namespaces or arrays of them, so reaching this
+		// path takes a cast — but JS consumers and `as never` escape hatches do it, and it
+		// used to silently skip the injection.
+		describe("comma-separated append_to_response", () => {
+			it("is derived from a joined string", async () => {
+				await new MoviesAPI(clientMock, { ...options }).details({
+					movie_id: 550,
+					append_to_response: "credits,images" as never,
+				});
+				expect(params().include_image_language).toEqual(expect.arrayContaining(["it", "null", "en"]));
+			});
+
+			it("tolerates whitespace around the entries", async () => {
+				await new MoviesAPI(clientMock, { ...options }).details({
+					movie_id: 550,
+					append_to_response: " credits , images " as never,
+				});
+				expect(params().include_image_language).toEqual(expect.arrayContaining(["it", "null", "en"]));
+			});
+
+			it("is derived from an array holding a joined string", async () => {
+				await new MoviesAPI(clientMock, { ...options }).details({
+					movie_id: 550,
+					append_to_response: ["credits,images"] as never,
+				});
+				expect(params().include_image_language).toEqual(expect.arrayContaining(["it", "null", "en"]));
+			});
+
+			it("is not derived when the joined string has no images entry", async () => {
+				await new MoviesAPI(clientMock, { ...options }).details({
+					movie_id: 550,
+					append_to_response: "credits,videos" as never,
+				});
+				expect(params().include_image_language).toBeUndefined();
+			});
+
+			it("does not match a namespace that merely contains 'images'", async () => {
+				await new MoviesAPI(clientMock, { ...options }).details({
+					movie_id: 550,
+					append_to_response: "images_extra,credits" as never,
+				});
+				expect(params().include_image_language).toBeUndefined();
+			});
+
+			it("forwards the joined string to the client untouched", async () => {
+				await new MoviesAPI(clientMock, { ...options }).details({
+					movie_id: 550,
+					append_to_response: "credits,images" as never,
+				});
+				expect(params().append_to_response).toBe("credits,images");
+			});
+		});
+
 		it("is not derived when the call does not append images", async () => {
 			await new MoviesAPI(clientMock, { ...options }).details({ movie_id: 550, append_to_response: ["credits"] });
 			expect(params().include_image_language).toBeUndefined();
