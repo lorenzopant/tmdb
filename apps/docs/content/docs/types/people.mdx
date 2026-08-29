@@ -23,13 +23,45 @@ import { TypeTable } from "fumadocs-ui/components/type-table";
 
 <AutoTypeTable path="people.ts" name="PersonMovieCredits" />
 
+### `PersonMovieCastCredit`
+
+<AutoTypeTable path="people.ts" name="PersonMovieCastCredit" />
+
+### `PersonMovieCrewCredit`
+
+<AutoTypeTable path="people.ts" name="PersonMovieCrewCredit" />
+
 ## `PersonTVCredits`
 
 <AutoTypeTable path="people.ts" name="PersonTVCredits" />
 
+### `PersonTVCastCredit`
+
+<AutoTypeTable path="people.ts" name="PersonTVCastCredit" />
+
+### `PersonTVCrewCredit`
+
+<AutoTypeTable path="people.ts" name="PersonTVCrewCredit" />
+
 ## `PersonCombinedCredits`
 
 <AutoTypeTable path="people.ts" name="PersonCombinedCredits" />
+
+### `PersonCombinedCastCredit`
+
+A discriminated union of the `cast` items in `PersonCombinedCredits`. Each item includes a `media_type` field to distinguish between entity types.
+
+```ts
+type PersonCombinedCastCredit = (PersonMovieCastCredit & { media_type: "movie" }) | (PersonTVCastCredit & { media_type: "tv" });
+```
+
+### `PersonCombinedCrewCredit`
+
+A discriminated union of the `crew` items in `PersonCombinedCredits`. Each item includes a `media_type` field to distinguish between entity types.
+
+```ts
+type PersonCombinedCrewCredit = (PersonMovieCrewCredit & { media_type: "movie" }) | (PersonTVCrewCredit & { media_type: "tv" });
+```
 
 ## `PersonTaggedImages`
 
