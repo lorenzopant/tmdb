@@ -19,3 +19,10 @@ const series = await tmdb.discover.tv({ sort_by: "vote_average.desc" });
 
 - [`movie()`](/docs/api-reference/discover/movie) — Discover movies using filters such as release dates, certifications, cast, watch providers, and sort order.
 - [`tv()`](/docs/api-reference/discover/tv) — Discover TV series using filters such as air dates, status, type, networks, watch providers, and sort order.
+
+## Building query parameters
+
+Many discover filters (`with_genres`, `vote_average.gte`/`.lte`, etc.) expect a serialized
+comma/pipe string or a `.gte`/`.lte` key pair rather than a plain value. See the
+[Discover Query Builder](/docs/getting-started/discover-query-builder) guide for standalone
+helper functions and fluent builder classes that construct these params for you.
