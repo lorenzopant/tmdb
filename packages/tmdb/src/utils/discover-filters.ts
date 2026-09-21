@@ -9,10 +9,10 @@ import type { DiscoverMovieParams, DiscoverTVParams } from "../types/discover";
  *
  * @example
  * ```ts
- * and(28, 12); // "28,12"
+ * and([28, 12]); // "28,12"
  * ```
  */
-export function and(...values: (string | number)[]): string {
+export function and(values: (string | number)[]): string {
 	return values.join(",");
 }
 
@@ -25,10 +25,10 @@ export function and(...values: (string | number)[]): string {
  *
  * @example
  * ```ts
- * or(28, 12); // "28|12"
+ * or([28, 12]); // "28|12"
  * ```
  */
-export function or(...values: (string | number)[]): string {
+export function or(values: (string | number)[]): string {
 	return values.join("|");
 }
 

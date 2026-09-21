@@ -14,7 +14,7 @@ describe("DiscoverMovieQueryBuilder", () => {
 	});
 
 	it("accumulates chained filters into one params object", () => {
-		const params = new DiscoverMovieQueryBuilder().withGenres("or", 28, 12).voteAverage({ gte: 6 }).sortBy("popularity.desc").build();
+		const params = new DiscoverMovieQueryBuilder().withGenres("or", [28, 12]).voteAverage({ gte: 6 }).sortBy("popularity.desc").build();
 
 		expect(params).toEqual({
 			with_genres: "28|12",
@@ -24,37 +24,37 @@ describe("DiscoverMovieQueryBuilder", () => {
 	});
 
 	it("returns a shallow copy from build() so later chaining doesn't mutate a prior result", () => {
-		const builder = new DiscoverMovieQueryBuilder().withGenres("and", 28);
+		const builder = new DiscoverMovieQueryBuilder().withGenres("and", [28]);
 		const first = builder.build();
 		(first as Record<string, unknown>).with_genres = "mutated";
 
-		const second = builder.withKeywords("and", 1).build();
+		const second = builder.withKeywords("and", [1]).build();
 
 		expect(second.with_genres).toBe("28");
 	});
 
 	it("joins with_genres with commas for AND and pipes for OR", () => {
-		expect(new DiscoverMovieQueryBuilder().withGenres("and", 28, 12).build()).toEqual({ with_genres: "28,12" });
-		expect(new DiscoverMovieQueryBuilder().withGenres("or", 28, 12).build()).toEqual({ with_genres: "28|12" });
+		expect(new DiscoverMovieQueryBuilder().withGenres("and", [28, 12]).build()).toEqual({ with_genres: "28,12" });
+		expect(new DiscoverMovieQueryBuilder().withGenres("or", [28, 12]).build()).toEqual({ with_genres: "28|12" });
 	});
 
 	it("without_genres accepts no mode and always joins with commas", () => {
-		expect(new DiscoverMovieQueryBuilder().withoutGenres(27, 53).build()).toEqual({ without_genres: "27,53" });
+		expect(new DiscoverMovieQueryBuilder().withoutGenres([27, 53]).build()).toEqual({ without_genres: "27,53" });
 	});
 
 	it("withKeywords/withoutKeywords mirror the genres AND/OR + AND-only behavior", () => {
-		expect(new DiscoverMovieQueryBuilder().withKeywords("or", 1, 2).build()).toEqual({ with_keywords: "1|2" });
-		expect(new DiscoverMovieQueryBuilder().withoutKeywords(3, 4).build()).toEqual({ without_keywords: "3,4" });
+		expect(new DiscoverMovieQueryBuilder().withKeywords("or", [1, 2]).build()).toEqual({ with_keywords: "1|2" });
+		expect(new DiscoverMovieQueryBuilder().withoutKeywords([3, 4]).build()).toEqual({ without_keywords: "3,4" });
 	});
 
 	it("withCompanies/withoutCompanies mirror the genres AND/OR + AND-only behavior", () => {
-		expect(new DiscoverMovieQueryBuilder().withCompanies("or", 1, 2).build()).toEqual({ with_companies: "1|2" });
-		expect(new DiscoverMovieQueryBuilder().withoutCompanies(3, 4).build()).toEqual({ without_companies: "3,4" });
+		expect(new DiscoverMovieQueryBuilder().withCompanies("or", [1, 2]).build()).toEqual({ with_companies: "1|2" });
+		expect(new DiscoverMovieQueryBuilder().withoutCompanies([3, 4]).build()).toEqual({ without_companies: "3,4" });
 	});
 
 	it("withWatchProviders/withoutWatchProviders mirror the genres AND/OR + AND-only behavior", () => {
-		expect(new DiscoverMovieQueryBuilder().withWatchProviders("or", 8, 9).build()).toEqual({ with_watch_providers: "8|9" });
-		expect(new DiscoverMovieQueryBuilder().withoutWatchProviders(8).build()).toEqual({ without_watch_providers: "8" });
+		expect(new DiscoverMovieQueryBuilder().withWatchProviders("or", [8, 9]).build()).toEqual({ with_watch_providers: "8|9" });
+		expect(new DiscoverMovieQueryBuilder().withoutWatchProviders([8]).build()).toEqual({ without_watch_providers: "8" });
 	});
 
 	it("sets scalar shared fields", () => {
@@ -78,7 +78,10 @@ describe("DiscoverMovieQueryBuilder", () => {
 	});
 
 	it("sets vote count bounds and watch monetization types", () => {
-		const params = new DiscoverMovieQueryBuilder().voteCount({ gte: 100 }).withWatchMonetizationTypes("or", "flatrate", "free").build();
+		const params = new DiscoverMovieQueryBuilder()
+			.voteCount({ gte: 100 })
+			.withWatchMonetizationTypes("or", ["flatrate", "free"])
+			.build();
 
 		expect(params).toEqual({
 			"vote_count.gte": 100,
@@ -96,7 +99,7 @@ describe("DiscoverMovieQueryBuilder", () => {
 			.region("US")
 			.year(2020)
 			.primaryReleaseYear(2020)
-			.withReleaseType("or", 2, 3)
+			.withReleaseType("or", [2, 3])
 			.includeVideo(true)
 			.build();
 
@@ -120,7 +123,7 @@ describe("DiscoverMovieQueryBuilder", () => {
 		clientMock.request = vi.fn();
 		const discoverAPI = new DiscoverAPI(clientMock, {});
 
-		const params = new DiscoverMovieQueryBuilder().withGenres("or", 28, 12).voteAverage({ gte: 6 }).build();
+		const params = new DiscoverMovieQueryBuilder().withGenres("or", [28, 12]).voteAverage({ gte: 6 }).build();
 		await discoverAPI.movie(params);
 
 		expect(clientMock.request).toHaveBeenCalledWith("/discover/movie", {
@@ -156,9 +159,9 @@ describe("DiscoverTVQueryBuilder", () => {
 			.includeNullFirstAirDates(true)
 			.screenedTheatrically(false)
 			.timezone("Europe/Rome")
-			.withNetworks("or", 213)
-			.withStatus("and", 0)
-			.withType("or", 4, 0)
+			.withNetworks("or", [213])
+			.withStatus("and", [0])
+			.withType("or", [4, 0])
 			.build();
 
 		expect(params).toEqual({
@@ -176,7 +179,7 @@ describe("DiscoverTVQueryBuilder", () => {
 	});
 
 	it("feeds build() output straight into DiscoverAPI.tv() unchanged", async () => {
-		const params = new DiscoverTVQueryBuilder().withNetworks("or", 213).voteAverage({ gte: 7 }).build();
+		const params = new DiscoverTVQueryBuilder().withNetworks("or", [213]).voteAverage({ gte: 7 }).build();
 		await discoverAPI.tv(params);
 
 		expect(clientMock.request).toHaveBeenCalledWith("/discover/tv", {

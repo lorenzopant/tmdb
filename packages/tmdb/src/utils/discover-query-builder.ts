@@ -5,7 +5,7 @@ import { DiscoverTVStatus, DiscoverTVType, MovieReleaseType } from "../types/enu
 import { and, DiscoverDateRange, DiscoverRange, or } from "./discover-filters";
 
 function joinByMode(mode: "and" | "or", values: (string | number)[]): string {
-	return mode === "or" ? or(...values) : and(...values);
+	return mode === "or" ? or(values) : and(values);
 }
 
 abstract class DiscoverQueryBuilderBase<TParams extends Record<string, unknown>, TSortBy extends string> {
@@ -23,43 +23,43 @@ abstract class DiscoverQueryBuilderBase<TParams extends Record<string, unknown>,
 	}
 
 	/** Filters to genres matching all (`"and"`) or any (`"or"`) of the given IDs (`with_genres`). */
-	withGenres(mode: "and" | "or", ...ids: number[]): this {
+	withGenres(mode: "and" | "or", ids: number[]): this {
 		return this.set("with_genres", joinByMode(mode, ids));
 	}
 
 	/** Excludes results matching any of the given genre IDs (`without_genres`, AND-only on TMDB). */
-	withoutGenres(...ids: number[]): this {
-		return this.set("without_genres", and(...ids));
+	withoutGenres(ids: number[]): this {
+		return this.set("without_genres", and(ids));
 	}
 
 	/** Filters to keywords matching all (`"and"`) or any (`"or"`) of the given IDs (`with_keywords`). */
-	withKeywords(mode: "and" | "or", ...ids: number[]): this {
+	withKeywords(mode: "and" | "or", ids: number[]): this {
 		return this.set("with_keywords", joinByMode(mode, ids));
 	}
 
 	/** Excludes results matching any of the given keyword IDs (`without_keywords`, AND-only on TMDB). */
-	withoutKeywords(...ids: number[]): this {
-		return this.set("without_keywords", and(...ids));
+	withoutKeywords(ids: number[]): this {
+		return this.set("without_keywords", and(ids));
 	}
 
 	/** Filters to production companies matching all (`"and"`) or any (`"or"`) of the given IDs (`with_companies`). */
-	withCompanies(mode: "and" | "or", ...ids: number[]): this {
+	withCompanies(mode: "and" | "or", ids: number[]): this {
 		return this.set("with_companies", joinByMode(mode, ids));
 	}
 
 	/** Excludes results matching any of the given production company IDs (`without_companies`, AND-only on TMDB). */
-	withoutCompanies(...ids: number[]): this {
-		return this.set("without_companies", and(...ids));
+	withoutCompanies(ids: number[]): this {
+		return this.set("without_companies", and(ids));
 	}
 
 	/** Filters to watch providers matching all (`"and"`) or any (`"or"`) of the given IDs (`with_watch_providers`). */
-	withWatchProviders(mode: "and" | "or", ...ids: number[]): this {
+	withWatchProviders(mode: "and" | "or", ids: number[]): this {
 		return this.set("with_watch_providers", joinByMode(mode, ids));
 	}
 
 	/** Excludes results matching any of the given watch provider IDs (`without_watch_providers`, AND-only on TMDB). */
-	withoutWatchProviders(...ids: number[]): this {
-		return this.set("without_watch_providers", and(...ids));
+	withoutWatchProviders(ids: number[]): this {
+		return this.set("without_watch_providers", and(ids));
 	}
 
 	/** Sets the watch provider region (`watch_region`) used to resolve `with_watch_providers`/`without_watch_providers`. */
@@ -78,7 +78,7 @@ abstract class DiscoverQueryBuilderBase<TParams extends Record<string, unknown>,
 	}
 
 	/** Filters to watch monetization types matching all (`"and"`) or any (`"or"`) of the given values (`with_watch_monetization_types`). */
-	withWatchMonetizationTypes(mode: "and" | "or", ...types: WatchMonetizationType[]): this {
+	withWatchMonetizationTypes(mode: "and" | "or", types: WatchMonetizationType[]): this {
 		return this.set("with_watch_monetization_types", joinByMode(mode, types));
 	}
 
@@ -129,7 +129,7 @@ abstract class DiscoverQueryBuilderBase<TParams extends Record<string, unknown>,
  * @example
  * ```ts
  * const params = new DiscoverMovieQueryBuilder()
- *   .withGenres("or", 28, 12)
+ *   .withGenres("or", [28, 12])
  *   .voteAverage({ gte: 6 })
  *   .sortBy("popularity.desc")
  *   .build();
@@ -179,7 +179,7 @@ export class DiscoverMovieQueryBuilder extends DiscoverQueryBuilderBase<Discover
 	}
 
 	/** Filters to release types matching all (`"and"`) or any (`"or"`) of the given values (`with_release_type`). */
-	withReleaseType(mode: "and" | "or", ...types: MovieReleaseType[]): this {
+	withReleaseType(mode: "and" | "or", types: MovieReleaseType[]): this {
 		return this.set("with_release_type", joinByMode(mode, types));
 	}
 
@@ -200,7 +200,7 @@ export class DiscoverMovieQueryBuilder extends DiscoverQueryBuilderBase<Discover
  * @example
  * ```ts
  * const params = new DiscoverTVQueryBuilder()
- *   .withNetworks("or", 213)
+ *   .withNetworks("or", [213])
  *   .voteAverage({ gte: 7 })
  *   .sortBy("popularity.desc")
  *   .build();
@@ -240,17 +240,17 @@ export class DiscoverTVQueryBuilder extends DiscoverQueryBuilderBase<DiscoverTVP
 	}
 
 	/** Filters to networks matching all (`"and"`) or any (`"or"`) of the given IDs (`with_networks`). */
-	withNetworks(mode: "and" | "or", ...ids: number[]): this {
+	withNetworks(mode: "and" | "or", ids: number[]): this {
 		return this.set("with_networks", joinByMode(mode, ids));
 	}
 
 	/** Filters to statuses matching all (`"and"`) or any (`"or"`) of the given values (`with_status`). */
-	withStatus(mode: "and" | "or", ...statuses: DiscoverTVStatus[]): this {
+	withStatus(mode: "and" | "or", statuses: DiscoverTVStatus[]): this {
 		return this.set("with_status", joinByMode(mode, statuses));
 	}
 
 	/** Filters to types matching all (`"and"`) or any (`"or"`) of the given values (`with_type`). */
-	withType(mode: "and" | "or", ...types: DiscoverTVType[]): this {
+	withType(mode: "and" | "or", types: DiscoverTVType[]): this {
 		return this.set("with_type", joinByMode(mode, types));
 	}
 }

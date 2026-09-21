@@ -19,37 +19,37 @@ import {
 
 describe("and", () => {
 	it("joins multiple values with commas", () => {
-		expect(and(28, 12)).toBe("28,12");
+		expect(and([28, 12])).toBe("28,12");
 	});
 
 	it("returns a single value unchanged", () => {
-		expect(and(28)).toBe("28");
+		expect(and([28])).toBe("28");
 	});
 
 	it("returns an empty string for no values", () => {
-		expect(and()).toBe("");
+		expect(and([])).toBe("");
 	});
 
 	it("accepts mixed string and number values", () => {
-		expect(and("US", 28)).toBe("US,28");
+		expect(and(["US", 28])).toBe("US,28");
 	});
 });
 
 describe("or", () => {
 	it("joins multiple values with pipes", () => {
-		expect(or(28, 12)).toBe("28|12");
+		expect(or([28, 12])).toBe("28|12");
 	});
 
 	it("returns a single value unchanged", () => {
-		expect(or(28)).toBe("28");
+		expect(or([28])).toBe("28");
 	});
 
 	it("returns an empty string for no values", () => {
-		expect(or()).toBe("");
+		expect(or([])).toBe("");
 	});
 
 	it("accepts mixed string and number values", () => {
-		expect(or("flatrate", 8)).toBe("flatrate|8");
+		expect(or(["flatrate", 8])).toBe("flatrate|8");
 	});
 });
 

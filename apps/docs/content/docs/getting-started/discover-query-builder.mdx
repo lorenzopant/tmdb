@@ -26,10 +26,10 @@ import { and, or, voteAverage, DiscoverMovieQueryBuilder, DiscoverTVQueryBuilder
 `and()` and `or()` join values into the string TMDB expects:
 
 ```ts
-and(28, 12); // "28,12" — match ALL genres
-or(28, 12); // "28|12" — match ANY genre
+and([28, 12]); // "28,12" — match ALL genres
+or([28, 12]); // "28|12" — match ANY genre
 
-await tmdb.discover.movie({ with_genres: or(28, 12) });
+await tmdb.discover.movie({ with_genres: or([28, 12]) });
 ```
 
 A set of range functions build the `.gte`/`.lte` key pairs, omitting whichever bound you don't
@@ -64,10 +64,10 @@ const params: DiscoverMovieParams = {};
 for (const [key, value] of url.searchParams) {
 	switch (key) {
 		case "genres":
-			params.with_genres = or(...mapGenreIds(value));
+			params.with_genres = or(mapGenreIds(value));
 			break;
 		case "excludeKeywords":
-			params.without_keywords = and(...mapKeywordIds(value));
+			params.without_keywords = and(mapKeywordIds(value));
 			break;
 		case "minRating":
 			Object.assign(params, voteAverage({ gte: Number(value) }));
@@ -88,8 +88,8 @@ the plain params object, then pass it to `discover.movie()`/`discover.tv()`:
 
 ```ts
 const params = new DiscoverMovieQueryBuilder()
-	.withGenres("or", 28, 12)
-	.withoutKeywords(818)
+	.withGenres("or", [28, 12])
+	.withoutKeywords([818])
 	.voteAverage({ gte: 6 })
 	.runtime({ lte: 150 })
 	.sortBy("popularity.desc")
@@ -100,7 +100,7 @@ const movies = await tmdb.discover.movie(params);
 
 ```ts
 const series = await tmdb.discover.tv(
-	new DiscoverTVQueryBuilder().withNetworks("or", 213).withStatus("and", 0).voteAverage({ gte: 7 }).sortBy("popularity.desc").build(),
+	new DiscoverTVQueryBuilder().withNetworks("or", [213]).withStatus("and", [0]).voteAverage({ gte: 7 }).sortBy("popularity.desc").build(),
 );
 ```
 
