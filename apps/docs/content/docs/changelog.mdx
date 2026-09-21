@@ -4,6 +4,16 @@ description: Latest updates and announcements
 icon: History
 ---
 
+## 🚀 1.26.0 - 21 September 2026
+
+#### ✨ New
+
+- **Discover query builder** — [`and()`/`or()`](/docs/getting-started/discover-query-builder) standalone helpers plus range builders (`voteAverage`, `voteCount`, `runtime`, `primaryReleaseDate`, `releaseDate`, `certification`, `airDate`, `firstAirDate`) for constructing TMDB's comma/pipe filter expressions and `.gte`/`.lte` bounds without hand-building strings. New [`DiscoverMovieQueryBuilder`](/docs/getting-started/discover-query-builder)/`DiscoverTVQueryBuilder` fluent classes built on the same functions — call `.build()` and pass the result straight into [`discover.movie()`](/docs/api-reference/discover/movie)/[`discover.tv()`](/docs/api-reference/discover/tv).
+
+#### 📖 Docs
+
+- New [Discover Query Builder](/docs/getting-started/discover-query-builder) guide, linked from the [Discover API reference](/docs/api-reference/discover).
+
 ## 🚀 1.25.4 - 29 August 2026
 
 #### 📦 Package

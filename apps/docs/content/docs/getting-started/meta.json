@@ -1,11 +1,3 @@
 {
-	"pages": [
-		"index",
-		"authentication",
-		"features",
-		"pagination",
-		"options",
-		"ssr",
-		"ai-integrations"
-	]
+	"pages": ["index", "authentication", "features", "pagination", "discover-query-builder", "options", "ssr", "ai-integrations"]
 }

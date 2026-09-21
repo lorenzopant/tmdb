@@ -1,0 +1,115 @@
+---
+title: Discover Query Builder
+description: Construct TMDB discover filter params — comma/pipe AND/OR expressions and range bounds — without hand-building strings.
+icon: SlidersHorizontal
+---
+
+TMDB's [`discover.movie()`](/docs/api-reference/discover/movie) and [`discover.tv()`](/docs/api-reference/discover/tv)
+endpoints accept dozens of filter params. Several of them (`with_genres`, `with_keywords`,
+`with_companies`, `with_watch_providers`, `with_watch_monetization_types`, and their `without_*`
+counterparts) expect a serialized string — comma-separated for AND, pipe-separated for OR — and
+several others (`vote_average.gte`/`.lte`, `with_runtime.gte`/`.lte`, `primary_release_date.gte`/`.lte`,
+etc.) are really a `{ gte, lte }` range split across two dotted keys.
+
+`@lorenzopant/tmdb` ships two layers to build these params: standalone functions for dynamic,
+data-driven construction, and fluent builder classes for a fixed call chain. Both produce the same
+plain `DiscoverMovieParams`/`DiscoverTVParams` object you already pass to `discover.movie()`/`discover.tv()`.
+
+```ts
+import { and, or, voteAverage, DiscoverMovieQueryBuilder, DiscoverTVQueryBuilder } from "@lorenzopant/tmdb";
+```
+
+---
+
+## Functional core
+
+`and()` and `or()` join values into the string TMDB expects:
+
+```ts
+and([28, 12]); // "28,12" — match ALL genres
+or([28, 12]); // "28|12" — match ANY genre
+
+await tmdb.discover.movie({ with_genres: or([28, 12]) });
+```
+
+A set of range functions build the `.gte`/`.lte` key pairs, omitting whichever bound you don't
+pass:
+
+```ts
+voteAverage({ gte: 6 }); // { "vote_average.gte": 6 }
+
+await tmdb.discover.movie({
+	...voteAverage({ gte: 6, lte: 8 }),
+	...runtime({ lte: 120 }),
+});
+```
+
+Available range functions: `voteAverage`, `voteCount` (shared), `runtime`, `primaryReleaseDate`,
+`releaseDate`, `certification` (movie-only), `airDate`, `firstAirDate` (TV-only).
+
+<Callout type="info">
+	`without_genres`, `without_keywords`, `without_companies`, and `without_watch_providers` only support comma-separated (AND) exclusion on
+	TMDB's API — there's no pipe/OR variant, so `and()` is the only function you need there.
+</Callout>
+
+### Dynamic construction
+
+Because these are plain functions returning plain objects, they slot directly into code that
+builds params from an arbitrary source — a URL's search params, a form, or your own internal
+filter vocabulary mapped to TMDB's:
+
+```ts
+const params: DiscoverMovieParams = {};
+
+for (const [key, value] of url.searchParams) {
+	switch (key) {
+		case "genres":
+			params.with_genres = or(mapGenreIds(value));
+			break;
+		case "excludeKeywords":
+			params.without_keywords = and(mapKeywordIds(value));
+			break;
+		case "minRating":
+			Object.assign(params, voteAverage({ gte: Number(value) }));
+			break;
+	}
+}
+
+const movies = await tmdb.discover.movie(params);
+```
+
+---
+
+## `DiscoverMovieQueryBuilder` / `DiscoverTVQueryBuilder`
+
+Thin, chainable sugar over the same functions above, for call sites written as a fixed sequence
+of filters. Every chain method is named after the real TMDB param it sets. Call `.build()` to get
+the plain params object, then pass it to `discover.movie()`/`discover.tv()`:
+
+```ts
+const params = new DiscoverMovieQueryBuilder()
+	.withGenres("or", [28, 12])
+	.withoutKeywords([818])
+	.voteAverage({ gte: 6 })
+	.runtime({ lte: 150 })
+	.sortBy("popularity.desc")
+	.build();
+
+const movies = await tmdb.discover.movie(params);
+```
+
+```ts
+const series = await tmdb.discover.tv(
+	new DiscoverTVQueryBuilder().withNetworks("or", [213]).withStatus("and", [0]).voteAverage({ gte: 7 }).sortBy("popularity.desc").build(),
+);
+```
+
+`DiscoverMovieQueryBuilder` and `DiscoverTVQueryBuilder` each only expose the methods valid for
+their endpoint — movie-only filters like `.runtime()` or `.certification()` don't exist on
+`DiscoverTVQueryBuilder`, and TV-only filters like `.withNetworks()` or `.airDate()` don't exist on
+`DiscoverMovieQueryBuilder`.
+
+<Callout type="info">
+	Builders don't replace `discover.movie()`/`discover.tv()` — they only build the params object. There's no implicit `.build()`; call it
+	explicitly before passing the result to the endpoint.
+</Callout>
