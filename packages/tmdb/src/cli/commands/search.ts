@@ -1,8 +1,7 @@
 import type { PaginatedResponse } from "../../types/common/pagination";
-import type { MovieResultItem, MultiSearchResultItem, PersonResultItem, TVSeriesResultItem } from "../../types/search";
 import { positiveIntFlag, stringFlag } from "../args";
 import { CliUsageError, type CliCommand } from "../command";
-import { EMPTY, formatJson, formatRating, formatTable, formatYear, styleRating, type Style, type TableColumn } from "../output";
+import { mixedRow, movieRow, personRow, printResults, tvRow, type ResultRow } from "../results";
 
 const SEARCH_TYPES = ["multi", "movie", "tv", "person"] as const;
 type SearchType = (typeof SEARCH_TYPES)[number];
@@ -22,55 +21,6 @@ Examples:
   tmdb search inception
   tmdb search "breaking bad" --type tv
   tmdb search dune --type movie --year 2021 --json`;
-
-type Row = { id: number; type: "movie" | "tv" | "person"; title: string; year: string; rating: string };
-
-const movieRow = (item: MovieResultItem): Row => ({
-	id: item.id,
-	type: "movie",
-	title: item.title,
-	year: formatYear(item.release_date),
-	rating: formatRating(item.vote_average, item.vote_count),
-});
-
-const tvRow = (item: TVSeriesResultItem): Row => ({
-	id: item.id,
-	type: "tv",
-	title: item.name,
-	year: formatYear(item.first_air_date),
-	rating: formatRating(item.vote_average, item.vote_count),
-});
-
-const personRow = (item: PersonResultItem): Row => ({
-	id: item.id,
-	type: "person",
-	title: item.known_for_department ? `${item.name} (${item.known_for_department})` : item.name,
-	year: EMPTY,
-	rating: EMPTY,
-});
-
-function multiRow(item: MultiSearchResultItem): Row {
-	switch (item.media_type) {
-		case "movie":
-			return movieRow(item);
-		case "tv":
-			return tvRow(item);
-		case "person":
-			return personRow(item);
-	}
-}
-
-const TYPE_COLOR = { movie: "cyan", tv: "magenta", person: "yellow" } as const;
-
-function columns(style: Style): TableColumn[] {
-	return [
-		{ header: "ID", align: "right", style: (padded) => style.dim(padded) },
-		{ header: "TYPE", style: (padded, raw) => style[TYPE_COLOR[raw as Row["type"]]](padded) },
-		{ header: "TITLE", maxWidth: 60 },
-		{ header: "YEAR" },
-		{ header: "RATING", align: "right", style: (padded, raw) => styleRating(style, padded, raw) },
-	];
-}
 
 function parseType(value: string | undefined): SearchType {
 	if (value === undefined) return "multi";
@@ -95,7 +45,8 @@ export const searchCommand: CliCommand = {
 		year: { type: "string", short: "y" },
 		page: { type: "string", short: "p" },
 	},
-	async run({ positionals, flags, json, io, style, getClient }) {
+	async run(ctx) {
+		const { positionals, flags, getClient } = ctx;
 		const query = positionals.join(" ").trim();
 		if (!query) throw new CliUsageError("Missing search query. Usage: tmdb search <query>");
 
@@ -105,7 +56,7 @@ export const searchCommand: CliCommand = {
 		const tmdb = await getClient();
 
 		let response: PaginatedResponse<unknown>;
-		let rows: Row[];
+		let rows: ResultRow[];
 		switch (type) {
 			case "movie": {
 				const res = await tmdb.search.movies({ query, page, primary_release_year: year });
@@ -128,31 +79,11 @@ export const searchCommand: CliCommand = {
 			}
 			case "multi": {
 				const res = await tmdb.search.multi({ query, page });
-				[response, rows] = [res, res.results.map(multiRow)];
+				[response, rows] = [res, res.results.map(mixedRow)];
 				break;
 			}
 		}
 
-		if (json) {
-			io.stdout(formatJson(response));
-			return;
-		}
-
-		if (rows.length === 0) {
-			io.stdout(`No results for "${query}".`);
-			return;
-		}
-
-		io.stdout(
-			formatTable(
-				columns(style),
-				rows.map((row) => [String(row.id), row.type, row.title, row.year, row.rating]),
-				style,
-			),
-		);
-
-		const footer = `Page ${response.page} of ${response.total_pages} · ${response.total_results} results`;
-		const next = response.page < response.total_pages ? ` · next: --page ${response.page + 1}` : "";
-		io.stdout(style.dim(`\n${footer}${next}`));
+		printResults(ctx, response, rows, `No results for "${query}".`);
 	},
 };

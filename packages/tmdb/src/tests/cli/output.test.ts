@@ -6,6 +6,7 @@ import { describe, expect, it } from "vitest";
 import {
 	colorEnabled,
 	createStyle,
+	displayWidth,
 	formatCount,
 	formatDetail,
 	formatJson,
@@ -14,6 +15,7 @@ import {
 	formatTable,
 	formatVotes,
 	formatYear,
+	padDisplay,
 	plural,
 	styleRating,
 	truncateText,
@@ -190,5 +192,38 @@ describe("detail formatters", () => {
 	it("formatDetail() omits an empty list section", () => {
 		const text = formatDetail({ title: "X", meta: [], facts: [], list: { title: "Cast", rows: [] }, url: "u" }, createStyle(false));
 		expect(text).toBe("X\n\nu");
+	});
+});
+
+describe("display width", () => {
+	it("counts CJK characters as two columns and ignores ANSI codes and combining marks", () => {
+		expect(displayWidth("abc")).toBe(3);
+		expect(displayWidth("河北彩花")).toBe(8);
+		expect(displayWidth(createStyle(true).red("abc"))).toBe(3);
+		expect(displayWidth("e\u0301")).toBe(1);
+	});
+
+	it("padDisplay() pads by display width", () => {
+		expect(padDisplay("河北", 6)).toBe("河北  ");
+		expect(padDisplay("7", 3, "right")).toBe("  7");
+	});
+
+	it("formatTable() keeps columns aligned with wide characters", () => {
+		const table = formatTable(
+			[{ header: "NAME" }, { header: "X" }],
+			[
+				["河北彩花", "1"],
+				["Brad Pitt", "2"],
+			],
+			createStyle(false),
+		);
+		const [header, cjk, latin] = table.split("\n");
+		expect(displayWidth(cjk?.slice(0, cjk.lastIndexOf("1")) ?? "")).toBe(displayWidth(latin?.slice(0, latin.lastIndexOf("2")) ?? ""));
+		expect(header).toBe("NAME       X");
+	});
+
+	it("formatTable() truncates wide text without splitting a character", () => {
+		const table = formatTable([{ header: "T", maxWidth: 5 }], [["河北彩花"]], createStyle(false));
+		expect(table.split("\n")[1]).toBe("河北…");
 	});
 });

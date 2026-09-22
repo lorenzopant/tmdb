@@ -31,14 +31,55 @@ export type TableColumn = {
 	style?: (padded: string, raw: string) => string;
 };
 
-/** Visible width of a string, ignoring ANSI escape codes. */
-function visibleWidth(text: string): number {
-	return stripVTControlCharacters(text).length;
+/** Code point ranges rendered two columns wide in terminals (East Asian Wide/Fullwidth, emoji). */
+const WIDE_RANGES: [number, number][] = [
+	[0x1100, 0x115f],
+	[0x2e80, 0x303e],
+	[0x3041, 0x33ff],
+	[0x3400, 0x4dbf],
+	[0x4e00, 0x9fff],
+	[0xa000, 0xa4cf],
+	[0xac00, 0xd7a3],
+	[0xf900, 0xfaff],
+	[0xfe30, 0xfe4f],
+	[0xff00, 0xff60],
+	[0xffe0, 0xffe6],
+	[0x1f300, 0x1f64f],
+	[0x1f900, 0x1f9ff],
+	[0x20000, 0x3fffd],
+];
+
+/** Terminal columns taken by one code point: 0 for combining marks, 2 for wide characters, 1 otherwise. */
+function charWidth(codePoint: number): number {
+	if ((codePoint >= 0x0300 && codePoint <= 0x036f) || codePoint === 0x200d || (codePoint >= 0xfe00 && codePoint <= 0xfe0f)) return 0;
+	return WIDE_RANGES.some(([start, end]) => codePoint >= start && codePoint <= end) ? 2 : 1;
 }
 
+/** Terminal display width of a string, ignoring ANSI escape codes and counting wide (CJK) characters as 2 columns. */
+export function displayWidth(text: string): number {
+	let width = 0;
+	for (const char of stripVTControlCharacters(text)) width += charWidth(char.codePointAt(0) ?? 0);
+	return width;
+}
+
+/** Pads plain text to `width` display columns. */
+export function padDisplay(text: string, width: number, align: "left" | "right" = "left"): string {
+	const padding = " ".repeat(Math.max(0, width - displayWidth(text)));
+	return align === "right" ? padding + text : text + padding;
+}
+
+/** Truncates plain text to at most `maxWidth` display columns, ending with `…`. */
 function truncate(text: string, maxWidth: number | undefined): string {
-	if (maxWidth === undefined || text.length <= maxWidth) return text;
-	return `${text.slice(0, maxWidth - 1)}…`;
+	if (maxWidth === undefined || displayWidth(text) <= maxWidth) return text;
+	let out = "";
+	let width = 0;
+	for (const char of text) {
+		const w = charWidth(char.codePointAt(0) ?? 0);
+		if (width + w > maxWidth - 1) break;
+		out += char;
+		width += w;
+	}
+	return `${out}…`;
 }
 
 /**
@@ -47,9 +88,9 @@ function truncate(text: string, maxWidth: number | undefined): string {
  */
 export function formatTable(columns: TableColumn[], rows: string[][], style: Style): string {
 	const cells = rows.map((row) => row.map((cell, i) => truncate(cell, columns[i]?.maxWidth)));
-	const widths = columns.map((column, i) => Math.max(column.header.length, ...cells.map((row) => visibleWidth(row[i] ?? ""))));
+	const widths = columns.map((column, i) => Math.max(column.header.length, ...cells.map((row) => displayWidth(row[i] ?? ""))));
 
-	const pad = (text: string, i: number) => (columns[i]?.align === "right" ? text.padStart(widths[i] ?? 0) : text.padEnd(widths[i] ?? 0));
+	const pad = (text: string, i: number) => padDisplay(text, widths[i] ?? 0, columns[i]?.align);
 
 	const header = columns.map((column, i) => style.bold(pad(column.header, i))).join("  ");
 	const body = cells.map((row) =>
@@ -161,8 +202,8 @@ export function formatDetail(view: DetailView, style: Style, width = MAX_WIDTH):
 	if (view.body) blocks.push(wrapText(view.body, width));
 
 	if (view.list && view.list.rows.length > 0) {
-		const leftWidth = Math.max(...view.list.rows.map(([left]) => left.length));
-		const rows = view.list.rows.map(([left, right]) => `  ${left.padEnd(leftWidth)}  ${style.dim(right)}`.trimEnd());
+		const leftWidth = Math.max(...view.list.rows.map(([left]) => displayWidth(left)));
+		const rows = view.list.rows.map(([left, right]) => `  ${padDisplay(left, leftWidth)}  ${style.dim(right)}`.trimEnd());
 		blocks.push([style.bold(view.list.title), ...rows].join("\n"));
 	}
 
