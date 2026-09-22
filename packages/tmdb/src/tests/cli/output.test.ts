@@ -3,7 +3,23 @@ import { stripVTControlCharacters } from "node:util";
 
 import { describe, expect, it } from "vitest";
 
-import { colorEnabled, createStyle, formatJson, formatRating, formatTable, formatYear, styleRating } from "../../cli/output";
+import {
+	colorEnabled,
+	createStyle,
+	formatCount,
+	formatDetail,
+	formatJson,
+	formatRating,
+	formatRuntime,
+	formatTable,
+	formatVotes,
+	formatYear,
+	plural,
+	styleRating,
+	truncateText,
+	withYear,
+	wrapText,
+} from "../../cli/output";
 
 describe("colorEnabled()", () => {
 	it("follows the TTY by default", () => {
@@ -91,5 +107,88 @@ describe("formatters", () => {
 
 	it("formatJson() pretty-prints", () => {
 		expect(formatJson({ a: 1 })).toBe('{\n  "a": 1\n}');
+	});
+});
+
+describe("detail formatters", () => {
+	it("formatRuntime() renders hours and minutes", () => {
+		expect(formatRuntime(148)).toBe("2h 28m");
+		expect(formatRuntime(120)).toBe("2h 00m");
+		expect(formatRuntime(45)).toBe("45m");
+		expect(formatRuntime(0)).toBeUndefined();
+		expect(formatRuntime(undefined)).toBeUndefined();
+	});
+
+	it("formatCount() and plural() use stable en-US separators", () => {
+		expect(formatCount(40234)).toBe("40,234");
+		expect(plural(1, "season")).toBe("1 season");
+		expect(plural(1200, "episode")).toBe("1,200 episodes");
+	});
+
+	it("formatVotes() omits unrated entries", () => {
+		expect(formatVotes(8.369, 40234)).toBe("★ 8.4/10 (40,234 votes)");
+		expect(formatVotes(7, 1)).toBe("★ 7.0/10 (1 vote)");
+		expect(formatVotes(0, 0)).toBeUndefined();
+	});
+
+	it("withYear() appends the year only when known", () => {
+		expect(withYear("Inception", "2010-07-15")).toBe("Inception (2010)");
+		expect(withYear("Untitled", "")).toBe("Untitled");
+	});
+
+	it("truncateText() cuts at a word boundary", () => {
+		expect(truncateText("short", 10)).toBe("short");
+		expect(truncateText("the quick brown fox jumps", 12)).toBe("the quick…");
+	});
+
+	it("wrapText() wraps to width and keeps paragraphs", () => {
+		expect(wrapText("aaa bbb ccc ddd", 7)).toBe("aaa bbb\nccc ddd");
+		expect(wrapText("one\n\ntwo", 80)).toBe("one\n\ntwo");
+		expect(wrapText("supercalifragilistic word", 5)).toBe("supercalifragilistic\nword");
+	});
+
+	it("formatDetail() renders header, facts, body, list and url, skipping empty parts", () => {
+		const text = formatDetail(
+			{
+				title: "Inception (2010)",
+				subtitle: "Your mind is the scene of the crime.",
+				meta: ["Action", undefined, "2h 28m"],
+				facts: [
+					["Directed by", "Christopher Nolan"],
+					["Status", undefined],
+				],
+				body: "A thief.",
+				list: {
+					title: "Cast",
+					rows: [
+						["Leonardo DiCaprio", "Dom Cobb"],
+						["Tom Hardy", "Eames"],
+					],
+				},
+				url: "https://www.themoviedb.org/movie/27205",
+			},
+			createStyle(false),
+		);
+		expect(text).toBe(
+			[
+				"Inception (2010)",
+				"Your mind is the scene of the crime.",
+				"Action · 2h 28m",
+				"Directed by Christopher Nolan",
+				"",
+				"A thief.",
+				"",
+				"Cast",
+				"  Leonardo DiCaprio  Dom Cobb",
+				"  Tom Hardy          Eames",
+				"",
+				"https://www.themoviedb.org/movie/27205",
+			].join("\n"),
+		);
+	});
+
+	it("formatDetail() omits an empty list section", () => {
+		const text = formatDetail({ title: "X", meta: [], facts: [], list: { title: "Cast", rows: [] }, url: "u" }, createStyle(false));
+		expect(text).toBe("X\n\nu");
 	});
 });

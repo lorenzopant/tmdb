@@ -37,6 +37,7 @@ export function createContext(overrides: Partial<CliContext> = {}): CliContext {
 		json: false,
 		io: createIO().io,
 		style: createStyle(false),
+		width: 100,
 		env: {},
 		configPath: "/nonexistent/tmdb/config.json",
 		getClient: vi.fn(),

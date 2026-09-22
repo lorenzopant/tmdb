@@ -4,7 +4,7 @@ import { parseCliArgs, peekCommand } from "./args";
 import { CliUsageError, type CliCommand, type CliIO } from "./command";
 import { COMMANDS } from "./commands";
 import { configPath as defaultConfigPath, resolveToken } from "./config";
-import { colorEnabled, createStyle } from "./output";
+import { colorEnabled, createStyle, MAX_WIDTH } from "./output";
 
 async function readProcessStdin(): Promise<string> {
 	const chunks: Buffer[] = [];
@@ -18,6 +18,7 @@ const defaultIO: CliIO = {
 	readStdin: readProcessStdin,
 	stdoutIsTTY: process.stdout.isTTY ?? false,
 	stderrIsTTY: process.stderr.isTTY ?? false,
+	stdoutColumns: process.stdout.columns,
 };
 
 export type RunOptions = {
@@ -100,6 +101,7 @@ export async function run(argv: string[], options: RunOptions = {}): Promise<num
 			json: args.json,
 			io,
 			style: createStyle(colorEnabled(env, io.stdoutIsTTY)),
+			width: Math.min(io.stdoutColumns || MAX_WIDTH, MAX_WIDTH),
 			env,
 			configPath,
 			tokenFlag: args.token,

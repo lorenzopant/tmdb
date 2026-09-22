@@ -11,6 +11,8 @@ export type CliIO = {
 	/** Whether stdout / stderr are interactive terminals (drives color output). */
 	stdoutIsTTY: boolean;
 	stderrIsTTY: boolean;
+	/** Terminal width of stdout, when known. */
+	stdoutColumns?: number;
 };
 
 /** Context handed to every command's `run()`. */
@@ -24,6 +26,8 @@ export type CliContext = {
 	io: CliIO;
 	/** Chalk instance for stdout; colors are disabled when piped or when `NO_COLOR` is set. */
 	style: Style;
+	/** Line width for wrapped text: the terminal width, capped at 100 columns. */
+	width: number;
 	env: NodeJS.ProcessEnv;
 	/** Absolute path of the config file. */
 	configPath: string;

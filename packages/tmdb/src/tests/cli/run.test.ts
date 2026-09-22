@@ -5,7 +5,7 @@ import { join } from "node:path";
 
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
-import { parseCliArgs, peekCommand, positiveIntFlag } from "../../cli/args";
+import { parseCliArgs, parseIdArg, peekCommand, positiveIntFlag } from "../../cli/args";
 import { CliUsageError, type CliContext } from "../../cli/command";
 import { formatHelp, run } from "../../cli/run";
 import { TMDB } from "../../tmdb";
@@ -54,6 +54,16 @@ describe("positiveIntFlag()", () => {
 		expect(positiveIntFlag({ page: "3" }, "page")).toBe(3);
 		expect(positiveIntFlag({}, "page")).toBeUndefined();
 		for (const bad of ["0", "-1", "1.5", "two"]) expect(() => positiveIntFlag({ page: bad }, "page")).toThrow(CliUsageError);
+	});
+});
+
+describe("parseIdArg()", () => {
+	it("returns a single positive integer id", () => {
+		expect(parseIdArg(["550"], "tmdb movie <id>")).toBe(550);
+	});
+
+	it.each([[[]], [["abc"]], [["0"]], [["-5"]], [["550", "extra"]]])("rejects %j", (positionals) => {
+		expect(() => parseIdArg(positionals, "tmdb movie <id>")).toThrow(CliUsageError);
 	});
 });
 

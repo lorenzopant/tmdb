@@ -91,3 +91,18 @@ export function positiveIntFlag(flags: CliFlags, name: string): number | undefin
 	if (!/^\d+$/.test(value) || Number(value) < 1) throw new CliUsageError(`--${name} must be a positive integer, got "${value}".`);
 	return Number(value);
 }
+
+/**
+ * Parses the single `<id>` positional of a details command.
+ *
+ * @throws {CliUsageError} When missing, not a positive integer, or followed by extra arguments.
+ */
+export function parseIdArg(positionals: string[], usage: string): number {
+	const [raw, ...extra] = positionals;
+	if (raw === undefined) throw new CliUsageError(`Missing id. Usage: ${usage}`);
+	if (extra.length > 0) throw new CliUsageError(`Unexpected arguments: ${extra.join(" ")}. Usage: ${usage}`);
+	if (!/^\d+$/.test(raw) || Number(raw) < 1) {
+		throw new CliUsageError(`Id must be a positive integer, got "${raw}". Find ids with \`tmdb search\`.`);
+	}
+	return Number(raw);
+}
