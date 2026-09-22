@@ -1,8 +1,10 @@
 import { TMDB } from "../tmdb";
-import { parseCliArgs } from "./args";
+import type { Language } from "../types/config/languages";
+import { parseCliArgs, peekCommand } from "./args";
 import { CliUsageError, type CliCommand, type CliIO } from "./command";
 import { COMMANDS } from "./commands";
 import { configPath as defaultConfigPath, resolveToken } from "./config";
+import { colorEnabled, createStyle } from "./output";
 
 async function readProcessStdin(): Promise<string> {
 	const chunks: Buffer[] = [];
@@ -14,6 +16,8 @@ const defaultIO: CliIO = {
 	stdout: (text) => process.stdout.write(`${text}\n`),
 	stderr: (text) => process.stderr.write(`${text}\n`),
 	readStdin: readProcessStdin,
+	stdoutIsTTY: process.stdout.isTTY ?? false,
+	stderrIsTTY: process.stderr.isTTY ?? false,
 };
 
 export type RunOptions = {
@@ -35,9 +39,11 @@ export function formatHelp(commands: CliCommand[]): string {
 	}
 	lines.push(
 		"Options:",
-		"  --token <token>  TMDB Bearer token or v3 API key (overrides env and config)",
-		"  -h, --help       Show help",
-		"  -v, --version    Show version",
+		"  --token <token>      TMDB Bearer token or v3 API key (overrides env and config)",
+		"  -l, --language <l>   Response language, e.g. en-US, it-IT",
+		"  --json               Print the raw API response as JSON",
+		"  -h, --help           Show help",
+		"  -v, --version        Show version",
 		"",
 	);
 	lines.push("Run `tmdb <command> --help` for command-specific usage.");
@@ -54,22 +60,24 @@ export function formatHelp(commands: CliCommand[]): string {
 export async function run(argv: string[], options: RunOptions = {}): Promise<number> {
 	const { io = defaultIO, commands = COMMANDS, env = process.env } = options;
 	const configPath = options.configPath ?? defaultConfigPath(env);
+	const errStyle = createStyle(colorEnabled(env, io.stderrIsTTY));
 
 	try {
-		const args = parseCliArgs(argv);
+		const name = peekCommand(argv);
+		const command = name === undefined ? undefined : commands.find((c) => c.name === name);
+		if (name !== undefined && !command) throw new CliUsageError(`Unknown command "${name}".`);
+
+		const args = parseCliArgs(argv, command?.options);
 
 		if (args.version) {
 			io.stdout(__TMDB_VERSION__);
 			return 0;
 		}
 
-		if (!args.command) {
+		if (!command) {
 			io.stdout(formatHelp(commands));
 			return 0;
 		}
-
-		const command = commands.find((c) => c.name === args.command);
-		if (!command) throw new CliUsageError(`Unknown command "${args.command}".`);
 
 		if (args.help) {
 			io.stdout(command.usage);
@@ -83,17 +91,28 @@ export async function run(argv: string[], options: RunOptions = {}): Promise<num
 					"No TMDB credential found. Run `tmdb config set-token <token>`, set TMDB_BEARER_TOKEN (or TMDB_API_KEY), or pass --token.",
 				);
 			}
-			return new TMDB(resolved.token);
+			return new TMDB(resolved.token, args.language ? { language: args.language as Language } : {});
 		};
 
-		await command.run({ positionals: args.positionals, io, env, configPath, tokenFlag: args.token, getClient });
+		await command.run({
+			positionals: args.positionals,
+			flags: args.flags,
+			json: args.json,
+			io,
+			style: createStyle(colorEnabled(env, io.stdoutIsTTY)),
+			env,
+			configPath,
+			tokenFlag: args.token,
+			getClient,
+		});
 		return 0;
 	} catch (error) {
+		const prefix = errStyle.red.bold("Error:");
 		if (error instanceof CliUsageError) {
-			io.stderr(`Error: ${error.message}\nRun \`tmdb --help\` for usage.`);
+			io.stderr(`${prefix} ${error.message}\n${errStyle.dim("Run `tmdb --help` for usage.")}`);
 			return 2;
 		}
-		io.stderr(`Error: ${error instanceof Error ? error.message : String(error)}`);
+		io.stderr(`${prefix} ${error instanceof Error ? error.message : String(error)}`);
 		return 1;
 	}
 }

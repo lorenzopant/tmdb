@@ -1,4 +1,6 @@
 import type { TMDB } from "../tmdb";
+import type { CliFlags, CliOptions } from "./args";
+import type { Style } from "./output";
 
 /** Input/output sinks used by the CLI. Injected so commands can be tested without touching the real process streams. */
 export type CliIO = {
@@ -6,13 +8,22 @@ export type CliIO = {
 	stderr: (text: string) => void;
 	/** Reads all of stdin as text (used for `tmdb config set-token -`). */
 	readStdin: () => Promise<string>;
+	/** Whether stdout / stderr are interactive terminals (drives color output). */
+	stdoutIsTTY: boolean;
+	stderrIsTTY: boolean;
 };
 
 /** Context handed to every command's `run()`. */
 export type CliContext = {
 	/** Positional arguments after the command name. */
 	positionals: string[];
+	/** All parsed flags, including the command's own {@link CliCommand.options}. */
+	flags: CliFlags;
+	/** `--json`: print the raw API response instead of formatted output. */
+	json: boolean;
 	io: CliIO;
+	/** Chalk instance for stdout; colors are disabled when piped or when `NO_COLOR` is set. */
+	style: Style;
 	env: NodeJS.ProcessEnv;
 	/** Absolute path of the config file. */
 	configPath: string;
@@ -35,6 +46,8 @@ export type CliCommand = {
 	summary: string;
 	/** Usage block shown in `tmdb <name> --help`. */
 	usage: string;
+	/** Command-specific flags, merged with the global ones. */
+	options?: CliOptions;
 	run: (ctx: CliContext) => Promise<void>;
 };
 
