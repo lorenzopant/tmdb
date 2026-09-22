@@ -18,6 +18,9 @@
 		"type": "git",
 		"url": "git+https://github.com/lorenzopant/tmdb"
 	},
+	"bin": {
+		"tmdb": "./dist/cli.mjs"
+	},
 	"files": [
 		"dist",
 		"README.md",
