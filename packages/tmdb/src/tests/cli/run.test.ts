@@ -5,7 +5,7 @@ import { join } from "node:path";
 
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
-import { parseCliArgs, parseIdArg, peekCommand, positiveIntFlag } from "../../cli/args";
+import { parseCliArgs, parseIdArg, parseListArg, peekCommand, positiveIntFlag, regionFlag, rejectListFlags } from "../../cli/args";
 import { CliUsageError, type CliContext } from "../../cli/command";
 import { formatHelp, run } from "../../cli/run";
 import { TMDB } from "../../tmdb";
@@ -64,6 +64,47 @@ describe("parseIdArg()", () => {
 
 	it.each([[[]], [["abc"]], [["0"]], [["-5"]], [["550", "extra"]]])("rejects %j", (positionals) => {
 		expect(() => parseIdArg(positionals, "tmdb movie <id>")).toThrow(CliUsageError);
+	});
+});
+
+describe("parseListArg()", () => {
+	const LISTS = ["popular", "top_rated"] as const;
+
+	it("returns undefined for ids and missing positionals", () => {
+		expect(parseListArg(["550"], LISTS, "movie")).toBeUndefined();
+		expect(parseListArg([], LISTS, "movie")).toBeUndefined();
+	});
+
+	it("matches list names case-insensitively, with dashes or underscores", () => {
+		expect(parseListArg(["popular"], LISTS, "movie")).toBe("popular");
+		expect(parseListArg(["Top-Rated"], LISTS, "movie")).toBe("top_rated");
+	});
+
+	it("rejects unknown words, naming the valid lists", () => {
+		expect(() => parseListArg(["popularr"], LISTS, "movie")).toThrow(/Unknown list "popularr".*popular, top_rated/);
+	});
+
+	it("rejects extra arguments after a list name", () => {
+		expect(() => parseListArg(["popular", "extra"], LISTS, "movie")).toThrow(CliUsageError);
+	});
+});
+
+describe("rejectListFlags()", () => {
+	it("passes when no list flag is set", () => {
+		expect(() => rejectListFlags({ json: true }, ["page"], "x")).not.toThrow();
+	});
+
+	it("uses singular and plural verbs", () => {
+		expect(() => rejectListFlags({ page: "2" }, ["page", "region"], "x")).toThrow("--page only applies to lists, e.g. x.");
+		expect(() => rejectListFlags({ page: "2", region: "IT" }, ["page", "region"], "x")).toThrow("--page, --region only apply to lists");
+	});
+});
+
+describe("regionFlag()", () => {
+	it("uppercases two-letter codes and rejects anything else", () => {
+		expect(regionFlag({ region: "it" })).toBe("IT");
+		expect(regionFlag({})).toBeUndefined();
+		for (const bad of ["ITA", "I", "1T"]) expect(() => regionFlag({ region: bad })).toThrow(CliUsageError);
 	});
 });
 

@@ -1,19 +1,34 @@
 import type { TVSeriesDetails } from "../../types/tv-series";
-import { parseIdArg } from "../args";
-import type { CliCommand } from "../command";
+import { parseIdArg, parseListArg, positiveIntFlag, rejectListFlags } from "../args";
+import type { CliCommand, CliContext } from "../command";
 import { formatDetail, formatJson, formatVotes, plural, TMDB_WEB_URL } from "../output";
+import { printResults, tvRow } from "../results";
+
+const TV_LISTS = ["airing_today", "on_the_air", "popular", "top_rated"] as const;
+type TVList = (typeof TV_LISTS)[number];
 
 const usage = `Usage: tmdb tv <id> [options]
+       tmdb tv <list> [options]
 
-Show a TV series' details, creators, networks and main cast across all seasons.
+Show a TV series' details, creators, networks and main cast across all seasons — or one of TMDB's curated TV lists.
+
+Lists:
+  airing_today  Episodes airing today
+  on_the_air    Episodes airing in the next 7 days
+  popular       Most popular right now
+  top_rated     Highest rated of all time
+  (dashes work too: top-rated, on-the-air)
 
 Options:
+  -p, --page <n>      Results page (lists only)
   -l, --language <l>  Response language, e.g. it-IT
-  --json              Print the raw API response (details + aggregate credits)
+  --json              Print the raw API response
 
 Examples:
   tmdb tv 1396
   tmdb tv 1396 --json | jq '.number_of_episodes'
+  tmdb tv top-rated
+  tmdb tv airing_today -p 2
 
 Find ids with \`tmdb search <query> --type tv\`.`;
 
@@ -32,13 +47,35 @@ function titleWithYears(series: TVSeriesDetails): string {
 	return last && last !== first ? `${series.name} (${first}–${last})` : `${series.name} (${first})`;
 }
 
-/** `tmdb tv <id>` — wraps `tmdb.tv_series.details` with `append_to_response: ["aggregate_credits"]`. */
+const LIST_TITLES: Record<TVList, string> = {
+	airing_today: "airing today",
+	on_the_air: "on the air",
+	popular: "popular",
+	top_rated: "top rated",
+};
+
+/** `tmdb tv <list>` — wraps `tmdb.tv_lists.*`. */
+async function runList(ctx: CliContext, list: TVList): Promise<void> {
+	const tmdb = await ctx.getClient();
+	const response = await tmdb.tv_lists[list]({ page: positiveIntFlag(ctx.flags, "page") });
+	printResults(ctx, response, response.results.map(tvRow), `No ${LIST_TITLES[list]} TV series found.`);
+}
+
+/** `tmdb tv <id|list>` — details via `tmdb.tv_series.details` (+ aggregate credits), or a curated list via `tmdb.tv_lists`. */
 export const tvCommand: CliCommand = {
 	name: "tv",
-	summary: "Show TV series details and cast",
+	summary: "Show TV series details, or a list (popular, top_rated…)",
 	usage,
-	async run({ positionals, json, io, style, width, getClient }) {
-		const id = parseIdArg(positionals, "tmdb tv <id>");
+	options: {
+		page: { type: "string", short: "p" },
+	},
+	async run(ctx) {
+		const { positionals, flags, json, io, style, width, getClient } = ctx;
+		const list = parseListArg(positionals, TV_LISTS, "tv");
+		if (list) return runList(ctx, list);
+
+		rejectListFlags(flags, ["page"], "`tmdb tv popular --page 2`");
+		const id = parseIdArg(positionals, "tmdb tv <id|list>");
 		const tmdb = await getClient();
 		const series = await tmdb.tv_series.details({ series_id: id, append_to_response: ["aggregate_credits"] });
 

@@ -106,3 +106,45 @@ export function parseIdArg(positionals: string[], usage: string): number {
 	}
 	return Number(raw);
 }
+
+/**
+ * For commands that take either an `<id>` or a list name (`tmdb movie 550` vs `tmdb movie popular`):
+ * returns the list name when the first positional is one (`top-rated` and `top_rated` both match),
+ * or `undefined` when it looks like an id.
+ *
+ * @throws {CliUsageError} On an unknown word, or extra arguments after a list name.
+ */
+export function parseListArg<T extends string>(positionals: string[], lists: readonly T[], command: string): T | undefined {
+	const [raw, ...extra] = positionals;
+	if (raw === undefined || /^\d+$/.test(raw) || raw.startsWith("-")) return undefined;
+	const name = raw.toLowerCase().replace(/-/g, "_");
+	if (!(lists as readonly string[]).includes(name)) {
+		throw new CliUsageError(`Unknown list "${raw}". Use an id or one of: ${lists.join(", ")}. Usage: tmdb ${command} <id|list>`);
+	}
+	if (extra.length > 0) throw new CliUsageError(`Unexpected arguments: ${extra.join(" ")}. Usage: tmdb ${command} ${name}`);
+	return name as T;
+}
+
+/**
+ * Rejects list-only flags in details mode, where they would otherwise be silently ignored.
+ *
+ * @param example - Shown after the error, e.g. `` `tmdb movie popular --page 2` ``.
+ * @throws {CliUsageError} When any of `names` was passed.
+ */
+export function rejectListFlags(flags: CliFlags, names: string[], example: string): void {
+	const passed = names.filter((name) => flags[name] !== undefined).map((name) => `--${name}`);
+	if (passed.length === 0) return;
+	throw new CliUsageError(`${passed.join(", ")} ${passed.length === 1 ? "only applies" : "only apply"} to lists, e.g. ${example}.`);
+}
+
+/**
+ * Parses a two-letter ISO 3166-1 country code (e.g. `--region it` → `"IT"`).
+ *
+ * @throws {CliUsageError} When the value is not two letters.
+ */
+export function regionFlag(flags: CliFlags, name = "region"): string | undefined {
+	const value = stringFlag(flags, name);
+	if (value === undefined) return undefined;
+	if (!/^[a-z]{2}$/i.test(value)) throw new CliUsageError(`--${name} must be a two-letter country code (e.g. US, IT), got "${value}".`);
+	return value.toUpperCase();
+}
