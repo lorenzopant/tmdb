@@ -9,11 +9,14 @@ export type ParsedCliArgs = {
 	positionals: string[];
 	help: boolean;
 	version: boolean;
+	/** Access token passed via `--token`. */
+	token?: string;
 };
 
 const GLOBAL_OPTIONS = {
 	help: { type: "boolean", short: "h" },
 	version: { type: "boolean", short: "v" },
+	token: { type: "string" },
 } as const;
 
 /**
@@ -25,7 +28,7 @@ export function parseCliArgs(argv: string[]): ParsedCliArgs {
 	try {
 		const { values, positionals } = parseArgs({ args: argv, options: GLOBAL_OPTIONS, allowPositionals: true, strict: true });
 		const [command, ...rest] = positionals;
-		return { command, positionals: rest, help: values.help ?? false, version: values.version ?? false };
+		return { command, positionals: rest, help: values.help ?? false, version: values.version ?? false, token: values.token };
 	} catch (error) {
 		throw new CliUsageError(error instanceof Error ? error.message : String(error));
 	}
