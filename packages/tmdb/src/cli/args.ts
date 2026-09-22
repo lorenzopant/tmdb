@@ -148,3 +148,31 @@ export function regionFlag(flags: CliFlags, name = "region"): string | undefined
 	if (!/^[a-z]{2}$/i.test(value)) throw new CliUsageError(`--${name} must be a two-letter country code (e.g. US, IT), got "${value}".`);
 	return value.toUpperCase();
 }
+
+/**
+ * Parses `--append` / `-a` for details commands: comma-separated and/or repeated
+ * (`-a credits,videos` or `-a credits -a videos`). Dashes are accepted for underscores (`alternative-titles`).
+ *
+ * @param valid - The endpoint's `append_to_response` namespaces.
+ * @returns Unique namespaces in the order given; empty when the flag is absent.
+ * @throws {CliUsageError} On an unknown namespace.
+ */
+export function appendFlag<T extends string>(flags: CliFlags, valid: readonly T[]): T[] {
+	const raw = flags.append;
+	const values = (Array.isArray(raw) ? raw : [raw]).filter((value): value is string => typeof value === "string");
+	const names = values
+		.flatMap((value) => value.split(","))
+		.map((name) => name.trim().toLowerCase().replace(/-/g, "_"))
+		.filter(Boolean);
+
+	const unknown = names.filter((name) => !(valid as readonly string[]).includes(name));
+	if (unknown.length > 0) {
+		throw new CliUsageError(
+			`Unknown --append value${unknown.length > 1 ? "s" : ""}: ${unknown.join(", ")}. Available: ${valid.join(", ")}.`,
+		);
+	}
+	return [...new Set(names)] as T[];
+}
+
+/** Flag definition for `--append`, shared by the details commands. */
+export const APPEND_OPTION = { append: { type: "string", short: "a", multiple: true } } as const satisfies CliOptions;

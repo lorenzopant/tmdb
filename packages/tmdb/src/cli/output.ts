@@ -237,3 +237,18 @@ export function truncateText(text: string, max: number): string {
 
 /** Base URL of TMDB entity pages. */
 export const TMDB_WEB_URL = "https://www.themoviedb.org";
+
+/**
+ * Note printed under a detail view about `append_to_response` data:
+ * - appends that were fetched but aren't part of the text view point to `--json`
+ * - with no appends at all, a tip on how to add the ones the view can render
+ *
+ * @param appended - Namespaces requested with `--append`.
+ * @param rendered - Namespaces the text view knows how to show.
+ * @returns The dimmed note, or `undefined` when there is nothing to say.
+ */
+export function formatAppendNote(style: Style, appended: string[], rendered: readonly string[], tip: string): string | undefined {
+	if (appended.length === 0) return style.dim(`Tip: ${tip}`);
+	const hidden = appended.filter((name) => !rendered.includes(name));
+	return hidden.length > 0 ? style.dim(`Also fetched: ${hidden.join(", ")} — see them with --json.`) : undefined;
+}

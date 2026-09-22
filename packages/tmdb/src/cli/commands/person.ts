@@ -1,19 +1,45 @@
-import type { PersonCombinedCastCredit, PersonCombinedCrewCredit } from "../../types/people";
-import { parseIdArg } from "../args";
+import type {
+	PersonAppendToResponseNamespace,
+	PersonCombinedCastCredit,
+	PersonCombinedCredits,
+	PersonCombinedCrewCredit,
+	PersonDetails,
+} from "../../types/people";
+import { APPEND_OPTION, appendFlag, parseIdArg } from "../args";
 import type { CliCommand } from "../command";
-import { formatDetail, formatJson, TMDB_WEB_URL, truncateText, withYear } from "../output";
+import { formatAppendNote, formatDetail, formatJson, TMDB_WEB_URL, truncateText, withYear } from "../output";
+
+/** Every `append_to_response` namespace of `/person/{id}`. `satisfies Record<…>` makes the compiler flag additions to the SDK union. */
+const PERSON_APPENDS = Object.keys({
+	changes: true,
+	combined_credits: true,
+	external_ids: true,
+	images: true,
+	movie_credits: true,
+	tagged_images: true,
+	translations: true,
+	tv_credits: true,
+} satisfies Record<PersonAppendToResponseNamespace, true>) as PersonAppendToResponseNamespace[];
+
+/** Appends the text view renders; the rest are only visible with `--json`. */
+const RENDERED_APPENDS = ["combined_credits"] as const;
 
 const usage = `Usage: tmdb person <id> [options]
 
-Show a person's details, short biography and best-known credits.
+Show a person's details and short biography.
+Details are exactly what TMDB's /person/{id} returns; add more data with --append.
 
 Options:
+  -a, --append <list> Extra data in the same request, comma-separated:
+                      ${PERSON_APPENDS.join(", ")}
+                      "combined_credits" adds their best-known movies and shows to the view.
   -l, --language <l>  Response language (affects the biography), e.g. it-IT
-  --json              Print the raw API response (details + combined credits)
+  --json              Print the raw API response
 
 Examples:
   tmdb person 6193
-  tmdb person 525 --json | jq '.combined_credits.crew | length'
+  tmdb person 6193 --append combined_credits
+  tmdb person 525 -a external_ids --json | jq '.external_ids.imdb_id'
 
 Find ids with \`tmdb search <query> --type person\`.`;
 
@@ -46,15 +72,20 @@ function knownFor(department: string | undefined, cast: PersonCombinedCastCredit
 	return [...unique.values()].sort((a, b) => b.vote_count - a.vote_count).slice(0, KNOWN_FOR_LIMIT);
 }
 
-/** `tmdb person <id>` — wraps `tmdb.people.details` with `append_to_response: ["combined_credits"]`. */
+/** `tmdb person <id>` — wraps `tmdb.people.details`; appends only via `--append`. */
 export const personCommand: CliCommand = {
 	name: "person",
-	summary: "Show person details and known-for credits",
+	summary: "Show person details",
 	usage,
-	async run({ positionals, json, io, style, width, getClient }) {
+	options: APPEND_OPTION,
+	async run({ positionals, flags, json, io, style, width, getClient }) {
 		const id = parseIdArg(positionals, "tmdb person <id>");
+		const appends = appendFlag(flags, PERSON_APPENDS);
 		const tmdb = await getClient();
-		const person = await tmdb.people.details({ person_id: id, append_to_response: ["combined_credits"] });
+		// Only send append_to_response when asked for, so the default request is exactly GET /person/{id}.
+		const person: PersonDetails & { combined_credits?: PersonCombinedCredits } = await tmdb.people.details(
+			appends.length > 0 ? { person_id: id, append_to_response: appends } : { person_id: id },
+		);
 
 		if (json) {
 			io.stdout(formatJson(person));
@@ -66,7 +97,9 @@ export const personCommand: CliCommand = {
 				? `${person.birthday} – ${person.deathday}`
 				: `Born ${person.birthday}`
 			: undefined;
-		const credits = knownFor(person.known_for_department, person.combined_credits.cast, person.combined_credits.crew);
+		const credits = person.combined_credits
+			? knownFor(person.known_for_department, person.combined_credits.cast, person.combined_credits.crew)
+			: [];
 
 		io.stdout(
 			formatDetail(
@@ -85,5 +118,7 @@ export const personCommand: CliCommand = {
 				width,
 			),
 		);
+		const note = formatAppendNote(style, appends, RENDERED_APPENDS, "--append combined_credits adds their best-known credits.");
+		if (note) io.stdout(note);
 	},
 };

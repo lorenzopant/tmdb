@@ -84,21 +84,61 @@ const director = {
 	},
 };
 
-function setup(client: Record<string, unknown>, positionals: string[], json = false) {
+function setup(client: Record<string, unknown>, positionals: string[], json = false, flags: Record<string, string | string[]> = {}) {
 	const { io, stdout } = createIO();
-	const ctx = createContext({ positionals, json, io, getClient: fakeClient(client) });
+	const ctx = createContext({ positionals, flags, json, io, getClient: fakeClient(client) });
 	return { ctx, stdout };
 }
 
 describe("tmdb movie", () => {
-	it("requests details with credits appended", async () => {
+	it("requests plain details by default, without append_to_response", async () => {
 		const details = vi.fn().mockResolvedValue(movie);
 		await movieCommand.run(setup({ movies: { details } }, ["27205"]).ctx);
-		expect(details).toHaveBeenCalledWith({ movie_id: 27205, append_to_response: ["credits"] });
+		expect(details).toHaveBeenCalledWith({ movie_id: 27205 });
 	});
 
-	it("renders title, tagline, meta, director, top 5 cast and url", async () => {
-		const { ctx, stdout } = setup({ movies: { details: vi.fn().mockResolvedValue(movie) } }, ["27205"]);
+	it("forwards --append values (comma-separated, repeated, dashed) as append_to_response", async () => {
+		const details = vi.fn().mockResolvedValue(movie);
+		await movieCommand.run(
+			setup({ movies: { details } }, ["27205"], false, { append: ["credits,videos", "alternative-titles", "credits"] }).ctx,
+		);
+		expect(details).toHaveBeenCalledWith({ movie_id: 27205, append_to_response: ["credits", "videos", "alternative_titles"] });
+	});
+
+	it("renders no director or cast without credits, and a tip on how to add them", async () => {
+		const { credits: _credits, ...plain } = movie;
+		const { ctx, stdout } = setup({ movies: { details: vi.fn().mockResolvedValue(plain) } }, ["27205"]);
+		await movieCommand.run(ctx);
+		expect(stdout[0]).toContain("Inception (2010)");
+		expect(stdout[0]).not.toContain("Directed by");
+		expect(stdout[0]).not.toContain("Cast");
+		expect(stdout[1]).toBe("Tip: --append credits adds the director and cast.");
+	});
+
+	it("points to --json for appends the view does not render", async () => {
+		const { ctx, stdout } = setup({ movies: { details: vi.fn().mockResolvedValue(movie) } }, ["27205"], false, {
+			append: ["credits,videos"],
+		});
+		await movieCommand.run(ctx);
+		expect(stdout[1]).toBe("Also fetched: videos — see them with --json.");
+	});
+
+	it("rejects unknown --append values and --append on lists before calling the API", async () => {
+		const details = vi.fn();
+		const popular = vi.fn();
+		const client = { movies: { details }, movie_lists: { popular } };
+		await expect(movieCommand.run(setup(client, ["27205"], false, { append: ["creditz"] }).ctx)).rejects.toThrow(
+			/Unknown --append value: creditz. Available: alternative_titles/,
+		);
+		await expect(movieCommand.run(setup(client, ["popular"], false, { append: ["credits"] }).ctx)).rejects.toThrow(
+			"--append only applies to details",
+		);
+		expect(details).not.toHaveBeenCalled();
+		expect(popular).not.toHaveBeenCalled();
+	});
+
+	it("renders title, tagline, meta, director, top 5 cast and url with credits appended", async () => {
+		const { ctx, stdout } = setup({ movies: { details: vi.fn().mockResolvedValue(movie) } }, ["27205"], false, { append: ["credits"] });
 		await movieCommand.run(ctx);
 		const text = stdout[0] ?? "";
 		expect(text).toContain("Inception (2010)\nYour mind is the scene of the crime.\nAction · 2h 28m · ★ 8.4/10 (40,234 votes)");
@@ -124,14 +164,48 @@ describe("tmdb movie", () => {
 });
 
 describe("tmdb tv", () => {
-	it("requests details with aggregate credits appended", async () => {
+	it("requests plain details by default, and forwards --append", async () => {
 		const details = vi.fn().mockResolvedValue(series);
 		await tvCommand.run(setup({ tv_series: { details } }, ["1396"]).ctx);
-		expect(details).toHaveBeenCalledWith({ series_id: 1396, append_to_response: ["aggregate_credits"] });
+		expect(details).toHaveBeenCalledWith({ series_id: 1396 });
+
+		await tvCommand.run(setup({ tv_series: { details } }, ["1396"], false, { append: ["aggregate_credits,content_ratings"] }).ctx);
+		expect(details).toHaveBeenLastCalledWith({ series_id: 1396, append_to_response: ["aggregate_credits", "content_ratings"] });
+	});
+
+	it("shows no cast and a tip without credits", async () => {
+		const { aggregate_credits: _credits, ...plain } = series;
+		const { ctx, stdout } = setup({ tv_series: { details: vi.fn().mockResolvedValue(plain) } }, ["1396"]);
+		await tvCommand.run(ctx);
+		expect(stdout[0]).toContain("Created by Vince Gilligan");
+		expect(stdout[0]).not.toContain("Cast");
+		expect(stdout[1]).toBe("Tip: --append aggregate_credits adds the cast.");
+	});
+
+	it("falls back to latest-season credits when only credits is appended", async () => {
+		const { aggregate_credits: _aggregate, ...plain } = series;
+		const withCredits = { ...plain, credits: { cast: [{ name: "Bryan Cranston", character: "Walter White" }], crew: [] } };
+		const { ctx, stdout } = setup({ tv_series: { details: vi.fn().mockResolvedValue(withCredits) } }, ["1396"], false, {
+			append: ["credits"],
+		});
+		await tvCommand.run(ctx);
+		const cast = (stdout[0] ?? "").slice((stdout[0] ?? "").indexOf("Cast"));
+		expect(cast).toContain("Cast\n  Bryan Cranston  Walter White");
+		expect(cast).not.toContain("episode");
+	});
+
+	it("rejects --append on lists", async () => {
+		const popular = vi.fn();
+		await expect(tvCommand.run(setup({ tv_lists: { popular } }, ["popular"], false, { append: ["credits"] }).ctx)).rejects.toThrow(
+			"--append only applies to details",
+		);
+		expect(popular).not.toHaveBeenCalled();
 	});
 
 	it("renders the year range, seasons, creators, networks and cast with episode counts", async () => {
-		const { ctx, stdout } = setup({ tv_series: { details: vi.fn().mockResolvedValue(series) } }, ["1396"]);
+		const { ctx, stdout } = setup({ tv_series: { details: vi.fn().mockResolvedValue(series) } }, ["1396"], false, {
+			append: ["aggregate_credits"],
+		});
 		await tvCommand.run(ctx);
 		const text = stdout[0] ?? "";
 		expect(text).toContain("Breaking Bad (2008–2013)");
@@ -150,10 +224,30 @@ describe("tmdb tv", () => {
 });
 
 describe("tmdb person", () => {
-	it("requests details with combined credits appended", async () => {
+	it("requests plain details by default, and forwards --append", async () => {
 		const details = vi.fn().mockResolvedValue(director);
 		await personCommand.run(setup({ people: { details } }, ["525"]).ctx);
-		expect(details).toHaveBeenCalledWith({ person_id: 525, append_to_response: ["combined_credits"] });
+		expect(details).toHaveBeenCalledWith({ person_id: 525 });
+
+		await personCommand.run(setup({ people: { details } }, ["525"], false, { append: ["combined_credits", "external_ids"] }).ctx);
+		expect(details).toHaveBeenLastCalledWith({ person_id: 525, append_to_response: ["combined_credits", "external_ids"] });
+	});
+
+	it("shows no known-for list and a tip without combined credits", async () => {
+		const { combined_credits: _credits, ...plain } = director;
+		const { ctx, stdout } = setup({ people: { details: vi.fn().mockResolvedValue(plain) } }, ["525"]);
+		await personCommand.run(ctx);
+		expect(stdout[0]).toContain("Christopher Nolan");
+		expect(stdout[0]).not.toContain("Known for");
+		expect(stdout[1]).toBe("Tip: --append combined_credits adds their best-known credits.");
+	});
+
+	it("rejects unknown --append values before calling the API", async () => {
+		const details = vi.fn();
+		await expect(personCommand.run(setup({ people: { details } }, ["525"], false, { append: ["credits"] }).ctx)).rejects.toThrow(
+			/Unknown --append value: credits. Available: changes, combined_credits/,
+		);
+		expect(details).not.toHaveBeenCalled();
 	});
 
 	it("lists own-department crew credits for non-actors, deduplicated and ranked by votes", async () => {

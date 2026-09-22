@@ -1,16 +1,57 @@
-import type { TVSeriesDetails } from "../../types/tv-series";
-import { parseIdArg, parseListArg, positiveIntFlag, rejectListFlags } from "../args";
-import type { CliCommand, CliContext } from "../command";
-import { formatDetail, formatJson, formatVotes, plural, TMDB_WEB_URL } from "../output";
+import type { TVAggregateCredits, TVAppendToResponseNamespace, TVCredits, TVSeriesDetails } from "../../types/tv-series";
+import { APPEND_OPTION, appendFlag, parseIdArg, parseListArg, positiveIntFlag, rejectListFlags } from "../args";
+import { CliUsageError, type CliCommand, type CliContext } from "../command";
+import { formatAppendNote, formatDetail, formatJson, formatVotes, plural, TMDB_WEB_URL } from "../output";
 import { printResults, tvRow } from "../results";
 
 const TV_LISTS = ["airing_today", "on_the_air", "popular", "top_rated"] as const;
 type TVList = (typeof TV_LISTS)[number];
 
+/** Every `append_to_response` namespace of `/tv/{id}`. `satisfies Record<…>` makes the compiler flag additions to the SDK union. */
+const TV_APPENDS = Object.keys({
+	aggregate_credits: true,
+	alternative_titles: true,
+	changes: true,
+	content_ratings: true,
+	credits: true,
+	episode_groups: true,
+	external_ids: true,
+	images: true,
+	keywords: true,
+	lists: true,
+	recommendations: true,
+	reviews: true,
+	screened_theatrically: true,
+	similar: true,
+	translations: true,
+	videos: true,
+	"watch/providers": true,
+} satisfies Record<TVAppendToResponseNamespace, true>) as TVAppendToResponseNamespace[];
+
+/** Appends the text view renders; the rest are only visible with `--json`. */
+const RENDERED_APPENDS = ["aggregate_credits", "credits"] as const;
+
+type SeriesWithCredits = TVSeriesDetails & { aggregate_credits?: TVAggregateCredits; credits?: TVCredits };
+
+/**
+ * Cast rows for the view: `aggregate_credits` (every season, with episode counts) when present,
+ * otherwise `credits` (the latest season's cast), otherwise nothing.
+ */
+function castRows(series: SeriesWithCredits): [string, string][] | undefined {
+	if (series.aggregate_credits) {
+		return series.aggregate_credits.cast.slice(0, CAST_LIMIT).map((member) => {
+			const character = member.roles[0]?.character || "—";
+			return [member.name, `${character} · ${plural(member.total_episode_count, "episode")}`];
+		});
+	}
+	return series.credits?.cast.slice(0, CAST_LIMIT).map((member) => [member.name, member.character || "—"]);
+}
+
 const usage = `Usage: tmdb tv <id> [options]
        tmdb tv <list> [options]
 
-Show a TV series' details, creators, networks and main cast across all seasons — or one of TMDB's curated TV lists.
+Show a TV series' details — or one of TMDB's curated TV lists.
+Details are exactly what TMDB's /tv/{id} returns; add more data with --append.
 
 Lists:
   airing_today  Episodes airing today
@@ -20,13 +61,18 @@ Lists:
   (dashes work too: top-rated, on-the-air)
 
 Options:
+  -a, --append <list> Extra data in the same request (details only), comma-separated:
+                      ${TV_APPENDS.join(", ")}
+                      "aggregate_credits" adds the cast across all seasons to the view,
+                      "credits" the latest season's cast.
   -p, --page <n>      Results page (lists only)
   -l, --language <l>  Response language, e.g. it-IT
   --json              Print the raw API response
 
 Examples:
   tmdb tv 1396
-  tmdb tv 1396 --json | jq '.number_of_episodes'
+  tmdb tv 1396 --append aggregate_credits
+  tmdb tv 1396 -a content_ratings --json | jq '.content_ratings.results[0]'
   tmdb tv top-rated
   tmdb tv airing_today -p 2
 
@@ -61,23 +107,32 @@ async function runList(ctx: CliContext, list: TVList): Promise<void> {
 	printResults(ctx, response, response.results.map(tvRow), `No ${LIST_TITLES[list]} TV series found.`);
 }
 
-/** `tmdb tv <id|list>` — details via `tmdb.tv_series.details` (+ aggregate credits), or a curated list via `tmdb.tv_lists`. */
+/** `tmdb tv <id|list>` — details via `tmdb.tv_series.details` (appends only via `--append`), or a curated list via `tmdb.tv_lists`. */
 export const tvCommand: CliCommand = {
 	name: "tv",
 	summary: "Show TV series details, or a list (popular, top_rated…)",
 	usage,
 	options: {
+		...APPEND_OPTION,
 		page: { type: "string", short: "p" },
 	},
 	async run(ctx) {
 		const { positionals, flags, json, io, style, width, getClient } = ctx;
 		const list = parseListArg(positionals, TV_LISTS, "tv");
-		if (list) return runList(ctx, list);
+		if (list) {
+			if (flags.append !== undefined)
+				throw new CliUsageError("--append only applies to details, e.g. `tmdb tv 1396 --append credits`.");
+			return runList(ctx, list);
+		}
 
 		rejectListFlags(flags, ["page"], "`tmdb tv popular --page 2`");
 		const id = parseIdArg(positionals, "tmdb tv <id|list>");
+		const appends = appendFlag(flags, TV_APPENDS);
 		const tmdb = await getClient();
-		const series = await tmdb.tv_series.details({ series_id: id, append_to_response: ["aggregate_credits"] });
+		// Only send append_to_response when asked for, so the default request is exactly GET /tv/{id}.
+		const series: SeriesWithCredits = await tmdb.tv_series.details(
+			appends.length > 0 ? { series_id: id, append_to_response: appends } : { series_id: id },
+		);
 
 		if (json) {
 			io.stdout(formatJson(series));
@@ -104,18 +159,14 @@ export const tvCommand: CliCommand = {
 						["Status", series.status],
 					],
 					body: series.overview,
-					list: {
-						title: "Cast",
-						rows: series.aggregate_credits.cast.slice(0, CAST_LIMIT).map((member) => {
-							const character = member.roles[0]?.character || "—";
-							return [member.name, `${character} · ${plural(member.total_episode_count, "episode")}`];
-						}),
-					},
+					list: { title: "Cast", rows: castRows(series) ?? [] },
 					url: `${TMDB_WEB_URL}/tv/${series.id}`,
 				},
 				style,
 				width,
 			),
 		);
+		const note = formatAppendNote(style, appends, RENDERED_APPENDS, "--append aggregate_credits adds the cast.");
+		if (note) io.stdout(note);
 	},
 };
