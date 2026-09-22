@@ -15,8 +15,9 @@
  */
 
 import { execSync } from "node:child_process";
-import { readFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
+import { copyFileSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const VALID_TYPES = ["patch", "minor", "major", "prepatch", "preminor", "premajor"];
@@ -62,15 +63,20 @@ run("git pull --rebase origin main");
 
 // Bump version in packages/tmdb only (no git tag — we do that manually below)
 const versionArgs = bumpType.startsWith("pre") ? "--preid=beta" : "";
-const versionCmd = `npm version ${bumpType} ${versionArgs} --no-git-tag-version`
-	.trim()
-	.replace(/\s+/g, " ");
+const versionCmd = `npm version ${bumpType} ${versionArgs} --no-git-tag-version`.trim().replace(/\s+/g, " ");
 
 let version;
 if (dryRun) {
-	// --dry-run prints the would-be version without modifying the file
-	const output = execSync(`${versionCmd} --dry-run`, { cwd: packageDir }).toString().trim();
-	version = output.replace(/^v/, "");
+	// `npm version --dry-run` still rewrites package.json (npm ignores the flag for `version`), so run the
+	// real command against a throwaway copy instead: exact npm semver semantics, working tree untouched.
+	const scratch = mkdtempSync(join(tmpdir(), "tmdb-release-"));
+	try {
+		copyFileSync(resolve(packageDir, "package.json"), join(scratch, "package.json"));
+		execSync(versionCmd, { cwd: scratch, stdio: "ignore" });
+		version = JSON.parse(readFileSync(join(scratch, "package.json"), "utf-8")).version;
+	} finally {
+		rmSync(scratch, { recursive: true, force: true });
+	}
 	console.log(`[dry-run] ${versionCmd}  →  would bump to v${version}`);
 } else {
 	run(versionCmd, packageDir);
