@@ -287,6 +287,25 @@ const lists = await tmdb.v4.lists.list({ account_id: "me" });
 
 ---
 
+## CLI
+
+The package includes a `tmdb` command for quick lookups from the terminal:
+
+```bash
+export TMDB_BEARER_TOKEN=your_read_access_token   # or: npx @lorenzopant/tmdb config set-token <token>
+
+npx @lorenzopant/tmdb search inception
+npx @lorenzopant/tmdb movie 27205 --append credits
+npx @lorenzopant/tmdb tv top-rated
+npx @lorenzopant/tmdb trending movie --week
+npx @lorenzopant/tmdb discover movie --genre "science fiction" --sort rating
+npx @lorenzopant/tmdb movie 550 --json | jq .title
+```
+
+The CLI is bundled separately (`dist/cli.mjs`), so the SDK keeps zero runtime dependencies. See the [CLI guide](https://tmdb.lorenzopant.dev/docs/getting-started/cli) for every command and option.
+
+---
+
 ## Requirements
 
 - Node.js 20+

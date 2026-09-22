@@ -1,0 +1,178 @@
+import { parseArgs, type ParseArgsConfig } from "node:util";
+
+import { CliUsageError } from "./command";
+
+/** Flag definitions in `node:util` `parseArgs` format. */
+export type CliOptions = NonNullable<ParseArgsConfig["options"]>;
+
+/** Parsed flag values, keyed by long flag name. */
+export type CliFlags = Record<string, string | boolean | (string | boolean)[] | undefined>;
+
+/** Flags accepted by every command. */
+export const GLOBAL_OPTIONS = {
+	help: { type: "boolean", short: "h" },
+	version: { type: "boolean", short: "v" },
+	token: { type: "string" },
+	json: { type: "boolean" },
+	language: { type: "string", short: "l" },
+} as const satisfies CliOptions;
+
+export type ParsedCliArgs = {
+	/** First positional argument, i.e. the sub-command name. */
+	command?: string;
+	/** Remaining positional arguments. */
+	positionals: string[];
+	help: boolean;
+	version: boolean;
+	/** Credential passed via `--token`. */
+	token?: string;
+	/** `--json`: print raw API responses instead of formatted output. */
+	json: boolean;
+	/** `--language` / `-l`: ISO 639-1 language, optionally with region (e.g. `it-IT`). */
+	language?: string;
+	/** All parsed flags, including command-specific ones. */
+	flags: CliFlags;
+};
+
+/**
+ * Returns the sub-command name (first positional) without validating flags, so the caller can look up
+ * the command's own options before the strict parse.
+ */
+export function peekCommand(argv: string[]): string | undefined {
+	const { tokens } = parseArgs({ args: argv, options: GLOBAL_OPTIONS, allowPositionals: true, strict: false, tokens: true });
+	return tokens.find((token) => token.kind === "positional")?.value;
+}
+
+/**
+ * Parses raw CLI arguments (without the `node` and script path) into a command name, positionals and flags.
+ *
+ * @param argv - Raw arguments.
+ * @param commandOptions - Extra flags accepted by the selected command.
+ * @throws {CliUsageError} On unknown or malformed flags.
+ */
+export function parseCliArgs(argv: string[], commandOptions: CliOptions = {}): ParsedCliArgs {
+	try {
+		const { values, positionals } = parseArgs({
+			args: argv,
+			options: { ...GLOBAL_OPTIONS, ...commandOptions },
+			allowPositionals: true,
+			strict: true,
+		});
+		const [command, ...rest] = positionals;
+		return {
+			command,
+			positionals: rest,
+			help: values.help === true,
+			version: values.version === true,
+			token: typeof values.token === "string" ? values.token : undefined,
+			json: values.json === true,
+			language: typeof values.language === "string" ? values.language : undefined,
+			flags: values,
+		};
+	} catch (error) {
+		throw new CliUsageError(error instanceof Error ? error.message : String(error));
+	}
+}
+
+/** Reads a string flag, or `undefined` when absent. */
+export function stringFlag(flags: CliFlags, name: string): string | undefined {
+	const value = flags[name];
+	return typeof value === "string" ? value : undefined;
+}
+
+/**
+ * Parses a positive integer flag (e.g. `--page 2`).
+ *
+ * @throws {CliUsageError} When the value is not a positive integer.
+ */
+export function positiveIntFlag(flags: CliFlags, name: string): number | undefined {
+	const value = stringFlag(flags, name);
+	if (value === undefined) return undefined;
+	if (!/^\d+$/.test(value) || Number(value) < 1) throw new CliUsageError(`--${name} must be a positive integer, got "${value}".`);
+	return Number(value);
+}
+
+/**
+ * Parses the single `<id>` positional of a details command.
+ *
+ * @throws {CliUsageError} When missing, not a positive integer, or followed by extra arguments.
+ */
+export function parseIdArg(positionals: string[], usage: string): number {
+	const [raw, ...extra] = positionals;
+	if (raw === undefined) throw new CliUsageError(`Missing id. Usage: ${usage}`);
+	if (extra.length > 0) throw new CliUsageError(`Unexpected arguments: ${extra.join(" ")}. Usage: ${usage}`);
+	if (!/^\d+$/.test(raw) || Number(raw) < 1) {
+		throw new CliUsageError(`Id must be a positive integer, got "${raw}". Find ids with \`tmdb search\`.`);
+	}
+	return Number(raw);
+}
+
+/**
+ * For commands that take either an `<id>` or a list name (`tmdb movie 550` vs `tmdb movie popular`):
+ * returns the list name when the first positional is one (`top-rated` and `top_rated` both match),
+ * or `undefined` when it looks like an id.
+ *
+ * @throws {CliUsageError} On an unknown word, or extra arguments after a list name.
+ */
+export function parseListArg<T extends string>(positionals: string[], lists: readonly T[], command: string): T | undefined {
+	const [raw, ...extra] = positionals;
+	if (raw === undefined || /^\d+$/.test(raw) || raw.startsWith("-")) return undefined;
+	const name = raw.toLowerCase().replace(/-/g, "_");
+	if (!(lists as readonly string[]).includes(name)) {
+		throw new CliUsageError(`Unknown list "${raw}". Use an id or one of: ${lists.join(", ")}. Usage: tmdb ${command} <id|list>`);
+	}
+	if (extra.length > 0) throw new CliUsageError(`Unexpected arguments: ${extra.join(" ")}. Usage: tmdb ${command} ${name}`);
+	return name as T;
+}
+
+/**
+ * Rejects list-only flags in details mode, where they would otherwise be silently ignored.
+ *
+ * @param example - Shown after the error, e.g. `` `tmdb movie popular --page 2` ``.
+ * @throws {CliUsageError} When any of `names` was passed.
+ */
+export function rejectListFlags(flags: CliFlags, names: string[], example: string): void {
+	const passed = names.filter((name) => flags[name] !== undefined).map((name) => `--${name}`);
+	if (passed.length === 0) return;
+	throw new CliUsageError(`${passed.join(", ")} ${passed.length === 1 ? "only applies" : "only apply"} to lists, e.g. ${example}.`);
+}
+
+/**
+ * Parses a two-letter ISO 3166-1 country code (e.g. `--region it` → `"IT"`).
+ *
+ * @throws {CliUsageError} When the value is not two letters.
+ */
+export function regionFlag(flags: CliFlags, name = "region"): string | undefined {
+	const value = stringFlag(flags, name);
+	if (value === undefined) return undefined;
+	if (!/^[a-z]{2}$/i.test(value)) throw new CliUsageError(`--${name} must be a two-letter country code (e.g. US, IT), got "${value}".`);
+	return value.toUpperCase();
+}
+
+/**
+ * Parses `--append` / `-a` for details commands: comma-separated and/or repeated
+ * (`-a credits,videos` or `-a credits -a videos`). Dashes are accepted for underscores (`alternative-titles`).
+ *
+ * @param valid - The endpoint's `append_to_response` namespaces.
+ * @returns Unique namespaces in the order given; empty when the flag is absent.
+ * @throws {CliUsageError} On an unknown namespace.
+ */
+export function appendFlag<T extends string>(flags: CliFlags, valid: readonly T[]): T[] {
+	const raw = flags.append;
+	const values = (Array.isArray(raw) ? raw : [raw]).filter((value): value is string => typeof value === "string");
+	const names = values
+		.flatMap((value) => value.split(","))
+		.map((name) => name.trim().toLowerCase().replace(/-/g, "_"))
+		.filter(Boolean);
+
+	const unknown = names.filter((name) => !(valid as readonly string[]).includes(name));
+	if (unknown.length > 0) {
+		throw new CliUsageError(
+			`Unknown --append value${unknown.length > 1 ? "s" : ""}: ${unknown.join(", ")}. Available: ${valid.join(", ")}.`,
+		);
+	}
+	return [...new Set(names)] as T[];
+}
+
+/** Flag definition for `--append`, shared by the details commands. */
+export const APPEND_OPTION = { append: { type: "string", short: "a", multiple: true } } as const satisfies CliOptions;

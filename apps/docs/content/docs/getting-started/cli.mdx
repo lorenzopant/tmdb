@@ -1,0 +1,264 @@
+---
+title: CLI
+description: Search and look up movies, TV series and people from your terminal with the tmdb command.
+icon: Terminal
+---
+
+`@lorenzopant/tmdb` ships a `tmdb` command-line tool for quick lookups: search, details, trending,
+curated lists and discover — as readable tables, or as JSON you can pipe into `jq`.
+
+```bash
+npx @lorenzopant/tmdb search inception
+```
+
+```text
+     ID  TYPE   TITLE                     YEAR  RATING
+  27205  movie  Inception                 2010     8.4
+  64956  movie  Inception: The Cobol Job  2010     7.2
+  …
+
+Page 1 of 1 · 13 results
+```
+
+The CLI is a thin layer over the same [`TMDB`](/docs/getting-started) client you use in code, so it
+behaves exactly like the SDK: same credentials, same endpoints, same responses.
+
+<Callout type="info">
+	The SDK keeps **zero runtime dependencies**. The CLI lives in its own bundle (`dist/cli.mjs`) that is never imported by the library
+	entry points, so adding `@lorenzopant/tmdb` to an app does not pull in any CLI code or packages.
+</Callout>
+
+---
+
+## Installation
+
+Requires Node.js 20 or later.
+
+<Tabs items={["npx (no install)", "Global", "Project"]}>
+<Tab value="npx (no install)">
+
+```bash
+npx @lorenzopant/tmdb --help
+```
+
+</Tab>
+<Tab value="Global">
+
+```bash
+npm install --global @lorenzopant/tmdb
+tmdb --help
+```
+
+</Tab>
+<Tab value="Project">
+
+```bash
+npm install @lorenzopant/tmdb
+npx tmdb --help
+```
+
+</Tab>
+</Tabs>
+
+The examples below use `tmdb`; with `npx`, prefix them with `npx @lorenzopant/tmdb`.
+
+---
+
+## Credentials
+
+The CLI accepts the same two credentials as the SDK (see [Authentication](/docs/getting-started/authentication)):
+the **API Read Access Token** (a JWT, recommended — it's sent as a header) or a **v3 API key**
+(sent in the URL). Get either from your [TMDB API settings](https://www.themoviedb.org/settings/api).
+
+The first one found wins:
+
+| Priority | Source                  | Example                                 |
+| -------- | ----------------------- | --------------------------------------- |
+| 1        | `--token` flag          | `tmdb search dune --token eyJhbGciOi…`  |
+| 2        | `TMDB_BEARER_TOKEN` env | `export TMDB_BEARER_TOKEN=eyJhbGciOi…`  |
+| 3        | `TMDB_API_KEY` env      | `export TMDB_API_KEY=0123456789abcdef…` |
+| 4        | Config file             | saved with `tmdb config set-token`      |
+
+Environment variables are the simplest option and never touch the disk. To save a credential instead:
+
+```bash
+tmdb config set-token <token>     # or pipe it in, keeping it out of your shell history:
+echo "$TOKEN" | tmdb config set-token -
+
+tmdb config get                   # config path + masked credential and where it came from
+tmdb config clear                 # delete the config file
+```
+
+`set-token` validates the value (a JWT, or a 32-character hex API key) before saving. The config file
+is only created when you run it, and lives at:
+
+| Platform      | Location                                                               |
+| ------------- | ---------------------------------------------------------------------- |
+| Linux / macOS | `$XDG_CONFIG_HOME/tmdb/config.json`, else `~/.config/tmdb/config.json` |
+| Windows       | `%APPDATA%\tmdb\config.json`                                           |
+| Any           | `$TMDB_CONFIG_DIR/config.json` when `TMDB_CONFIG_DIR` is set           |
+
+<Callout type="warn">
+	The config file stores the credential as plain text, readable only by your user (permissions `0600`). Prefer environment variables on
+	shared machines.
+</Callout>
+
+---
+
+## Commands
+
+Run `tmdb --help` for the list, and `tmdb <command> --help` for every flag of a command.
+
+### `search`
+
+```bash
+tmdb search <query> [--type multi|movie|tv|person] [--year <yyyy>] [--page <n>]
+```
+
+Searches all media by default (`multi`). `--year` filters by primary release year (movies) or first
+air year (TV).
+
+```bash
+tmdb search "breaking bad" --type tv
+tmdb search dune --type movie --year 2021
+```
+
+### `movie`, `tv`, `person` — details
+
+```bash
+tmdb movie <id> [--append <list>]
+tmdb tv <id> [--append <list>]
+tmdb person <id> [--append <list>]
+```
+
+Shows a compact view of the entity. The request is exactly TMDB's `/movie/{id}`, `/tv/{id}` or
+`/person/{id}` — nothing is appended behind your back. Use `-a/--append` to add
+[`append_to_response`](https://developer.themoviedb.org/docs/append-to-response) data in the same
+request, comma-separated or repeated:
+
+```bash
+tmdb movie 27205 --append credits          # adds director and top-billed cast
+tmdb tv 1396 --append aggregate_credits    # adds the cast across all seasons
+tmdb person 525 --append combined_credits  # adds their best-known credits
+tmdb movie 550 -a credits,videos --json    # anything else is in the JSON
+```
+
+```text
+Inception (2010)
+Your mind is the scene of the crime.
+Action, Science Fiction, Adventure · 2h 28m · ★ 8.4/10 (40,234 votes)
+Directed by Christopher Nolan
+
+Cobb, a skilled thief who commits corporate espionage by infiltrating the subconscious of his
+targets is offered a chance to regain his old life as payment for a task considered to be
+impossible: "inception", the implantation of another person's idea into a target's subconscious.
+
+Cast
+  Leonardo DiCaprio     Dom Cobb
+  Joseph Gordon-Levitt  Arthur
+  …
+
+https://www.themoviedb.org/movie/27205
+```
+
+| View shows     | `movie`   | `tv`                                                     | `person`           |
+| -------------- | --------- | -------------------------------------------------------- | ------------------ |
+| Cast / credits | `credits` | `aggregate_credits` (or `credits` for the latest season) | `combined_credits` |
+
+Every other append value is accepted (the command's `--help` lists them) and shows up in `--json`;
+the text view notes which ones it didn't render.
+
+### `movie`, `tv` — curated lists
+
+Pass a list name instead of an id:
+
+| Command             | Lists                                                |
+| ------------------- | ---------------------------------------------------- |
+| `tmdb movie <list>` | `now_playing`, `popular`, `top_rated`, `upcoming`    |
+| `tmdb tv <list>`    | `airing_today`, `on_the_air`, `popular`, `top_rated` |
+
+```bash
+tmdb movie popular
+tmdb movie now-playing --region IT --page 2   # dashes work too
+tmdb tv top-rated
+```
+
+`--page` works on every list; `--region` (a two-letter country code) on movie lists.
+
+<Callout type="info">
+	Lists show exactly what TMDB returns. `top_rated` in particular can surface recent titles with few votes at the top — that's TMDB's
+	ranking, not the CLI's.
+</Callout>
+
+### `trending`
+
+```bash
+tmdb trending [all|movie|tv|person] [--week] [--page <n>]
+```
+
+Today's trending items, or this week's with `-w/--week`.
+
+### `discover`
+
+```bash
+tmdb discover <movie|tv> [--genre <genres>] [--year <yyyy>] [--min-rating <n>] [--min-votes <n>]
+                         [--sort <key>] [--asc] [--page <n>]
+```
+
+Maps flags onto the [Discover Query Builder](/docs/getting-started/discover-query-builder):
+
+- `-g/--genre` takes English genre names or ids. `"action,comedy"` matches **all** of them,
+  `"drama|crime"` **any** of them. An unknown name lists the available genres.
+- `-s/--sort` is one of `popularity` (default), `rating`, `votes`, `date`, `title`, `revenue` (movies only),
+  descending unless `--asc` is set.
+- Sorting by `rating` applies `--min-votes 200` unless you pass your own, so titles with a single
+  10/10 vote don't take over.
+
+```bash
+tmdb discover movie --genre "science fiction" --year 2014 --sort rating
+tmdb discover tv -g "drama|crime" --min-rating 8
+```
+
+### `config`
+
+Manages the saved credential — see [Credentials](#credentials).
+
+---
+
+## Global options
+
+| Option               | Description                                                  |
+| -------------------- | ------------------------------------------------------------ |
+| `--json`             | Print the raw response as JSON instead of the formatted view |
+| `-l, --language <l>` | Response language, e.g. `it-IT` (titles, overviews, genres)  |
+| `--token <token>`    | Credential for this call; overrides env and config           |
+| `-h, --help`         | Show help (`tmdb <command> --help` for a command)            |
+| `-v, --version`      | Show the installed version                                   |
+
+---
+
+## Scripting
+
+`--json` prints the response as the SDK returns it, ready for `jq`:
+
+```bash
+tmdb movie 550 --json | jq -r .title
+tmdb search "fight club" --type movie --json | jq '.results[0].id'
+tmdb trending movie --week --json | jq -r '.results[].title'
+```
+
+<Callout type="info">
+	Like the SDK, the CLI converts `null` fields to `undefined`, so they are **omitted** from `--json` output (e.g. a movie outside any
+	collection has no `belongs_to_collection` key). Test for a missing key rather than for `null`.
+</Callout>
+
+With `--json`, stdout contains only the JSON; errors and warnings always go to stderr. Exit codes:
+
+| Code | Meaning                                                                          |
+| ---- | -------------------------------------------------------------------------------- |
+| `0`  | Success                                                                          |
+| `1`  | Runtime error — TMDB error (e.g. not found, invalid key), no credential, network |
+| `2`  | Usage error — unknown command or flag, invalid argument                          |
+
+Colors are enabled only when writing to a terminal. Set `NO_COLOR=1` to disable them, or
+`FORCE_COLOR=1` to force them on (e.g. in CI logs).

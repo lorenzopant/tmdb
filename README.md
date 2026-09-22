@@ -79,6 +79,23 @@ You can instantiate single API modules or use the full client for all features. 
 - `tmdb.genres` - Movie and TV genres.
 - and more...
 
+## 💻 CLI
+
+The package also ships a `tmdb` command for quick lookups from the terminal — no code required:
+
+```bash
+export TMDB_BEARER_TOKEN=your_read_access_token   # or: npx @lorenzopant/tmdb config set-token <token>
+
+npx @lorenzopant/tmdb search inception
+npx @lorenzopant/tmdb movie 27205 --append credits
+npx @lorenzopant/tmdb tv top-rated
+npx @lorenzopant/tmdb trending movie --week
+npx @lorenzopant/tmdb discover movie --genre "science fiction" --sort rating
+npx @lorenzopant/tmdb movie 550 --json | jq .title
+```
+
+Output is a readable table or detail view, or raw JSON with `--json`. The CLI is bundled separately, so the SDK itself keeps zero runtime dependencies. See the [CLI guide](https://tmdb.lorenzopant.dev/docs/getting-started/cli) for every command and option.
+
 ## 📚 Docs
 
 The documentation site (<https://lorenzopant-tmdb-docs.vercel.app>) includes:
@@ -144,9 +161,9 @@ pnpm lint
 
 The following features are planned to improve developer experience and extend the wrapper's capabilities.
 
-- [ ] **CLI** — A command-line tool (e.g. `npx @lorenzopant/tmdb search "inception"`) for quick lookups from the terminal.
+- [x] **CLI** — A command-line tool (e.g. `npx @lorenzopant/tmdb search "inception"`) for quick lookups from the terminal. See [💻 CLI](#-cli).
 - [ ] **React utilities subpackage** (`@lorenzopant/tmdb/react`) — React hooks (e.g. `useMovieDetails`, `useDiscoverMovies`) built on top of the core client.
-- [ ] **Discover query builder** — A fluent, chainable builder for the `discover` endpoints to replace raw param objects.
+- [x] **Discover query builder** — A fluent, chainable builder for the `discover` endpoints to replace raw param objects. See the [Discover Query Builder guide](https://tmdb.lorenzopant.dev/docs/getting-started/discover-query-builder).
 
 > 💡 Have a feature request? Open an issue or submit a PR!
 
