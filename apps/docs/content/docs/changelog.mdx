@@ -4,6 +4,22 @@ description: Latest updates and announcements
 icon: History
 ---
 
+## 🚀 2.0.0 - 22 September 2026
+
+> **Upgrading from 1.x requires no code changes** — this major release adds the CLI; the SDK's public API is unchanged.
+
+#### ✨ New
+
+- **`tmdb` command-line tool** — the package now ships a [CLI](/docs/getting-started/cli) for quick lookups from the terminal: `npx @lorenzopant/tmdb search inception`. Commands: `search`, `movie` / `tv` / `person` details (with opt-in `--append` for `append_to_response` data), curated lists (`tmdb movie popular`, `tmdb tv top_rated`, …), `trending`, `discover` (genre names, year, rating and sort flags mapped onto the [Discover Query Builder](/docs/getting-started/discover-query-builder)) and `config`. Output is an aligned table or detail view, or the raw response with `--json` for piping into `jq`. It reads the same credentials as the SDK — `--token`, `TMDB_BEARER_TOKEN`, `TMDB_API_KEY`, or a config file saved with `tmdb config set-token` — and exits with `0` / `1` (runtime error) / `2` (usage error) ([#149](https://github.com/lorenzopant/tmdb/pull/149)).
+
+#### 📦 Package
+
+- New `bin` entry (`tmdb` → `dist/cli.mjs`). The CLI is a separate bundle that the library entry points never import, and its only third-party code (`chalk`, for colors) is bundled into it as a devDependency — **the SDK still has zero runtime dependencies** ([#149](https://github.com/lorenzopant/tmdb/pull/149)).
+
+#### 📖 Docs
+
+- New [CLI](/docs/getting-started/cli) guide ([#149](https://github.com/lorenzopant/tmdb/pull/149)).
+
 ## 🚀 1.26.0 - 21 September 2026
 
 #### ✨ New
