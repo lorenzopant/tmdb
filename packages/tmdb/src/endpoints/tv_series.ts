@@ -62,7 +62,7 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	): Promise<T extends [] ? TVSeriesDetails : TVDetailsWithAppends<T>> {
 		const { language = this.defaultOptions.language, series_id, ...rest } = params;
 		const endpoint = this.seriesPath(series_id);
-		return this.client.request(endpoint, this.injectImageLanguageForAppends({ language, ...rest }));
+		return this.client.request(endpoint, this.injectVideoLanguageForAppends(this.injectImageLanguageForAppends({ language, ...rest })));
 	}
 
 	/**
@@ -345,7 +345,7 @@ export class TVSeriesAPI extends TMDBAPIBase {
 	async videos(params: TVVideosParams): Promise<TVVideos> {
 		const { series_id, language = this.defaultOptions.language, ...rest } = params;
 		const endpoint = this.seriesSubPath(series_id, ENDPOINTS.TV_SERIES.VIDEOS);
-		return this.client.request<TVVideos>(endpoint, { language, ...rest });
+		return this.client.request<TVVideos>(endpoint, this.injectVideoLanguage({ language, ...rest }));
 	}
 
 	/**

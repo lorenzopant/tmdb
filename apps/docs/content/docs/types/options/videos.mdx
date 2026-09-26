@@ -1,0 +1,18 @@
+---
+title: Videos
+description: Type definitions for the videos configuration option.
+---
+
+## `VideosConfig`
+
+Top-level video configuration passed to the constructor via the [`videos`](/docs/getting-started/options#videos) option.
+
+| Property                 | Type                            | Default | Description                                                                                                                                                                                 |
+| ------------------------ | ------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `include_video_language` | `(LanguageISO6391 \| "null")[]` | —       | Video languages sent as `include_video_language` on every `.videos()` call and on `.details()` calls that append `videos`. Use `"null"` for untagged videos. A call-site value always wins. |
+
+```ts
+type VideosConfig = {
+	include_video_language?: (LanguageISO6391 | "null")[];
+};
+```

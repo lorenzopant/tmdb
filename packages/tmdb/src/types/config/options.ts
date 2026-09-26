@@ -7,6 +7,7 @@ import { CountryISO3166_1 } from "./countries";
 import { ImagesConfig } from "./images";
 import { Language } from "./languages";
 import { Timezone } from "./timezones";
+import { VideosConfig } from "./videos";
 
 /**
  * Context object passed to every request interceptor before a TMDB API call is made.
@@ -106,6 +107,10 @@ export type TMDBOptions = {
 	 * Provide images default configuration
 	 */
 	images?: ImagesConfig;
+	/**
+	 * Provide videos default configuration
+	 */
+	videos?: VideosConfig;
 	/**
 	 * Provide a timezone default for all the TV Series related queries
 	 * which support the timezone param.
