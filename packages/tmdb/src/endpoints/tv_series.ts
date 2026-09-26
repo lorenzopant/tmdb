@@ -31,6 +31,7 @@ import {
 	TVSimilarParams,
 	TVTranslations,
 	TVVideos,
+	TVVideosParams,
 } from "../types/tv-series";
 
 export class TVSeriesAPI extends TMDBAPIBase {
@@ -332,16 +333,19 @@ export class TVSeriesAPI extends TMDBAPIBase {
 
 	/**
 	 * Videos
-	 * GET - https://api.themoviedb.org/3/movie/{series_id}/videos
+	 * GET - https://api.themoviedb.org/3/tv/{series_id}/videos
 	 *
 	 * Get the videos that belong to a TV show.
 	 * @param series_id The ID of the TV Series
+	 * @param language The language to use for the response.
+	 * @param include_video_language Comma-separated ISO 639-1 codes of extra video languages to include (e.g. "en,null").
 	 * @returns A promise that resolves to the videos for the tv show.
 	 * @reference https://developer.themoviedb.org/reference/tv-series-videos
 	 */
-	async videos(params: TVBaseParam): Promise<TVVideos> {
-		const endpoint = this.seriesSubPath(params.series_id, ENDPOINTS.TV_SERIES.VIDEOS);
-		return this.client.request<TVVideos>(endpoint);
+	async videos(params: TVVideosParams): Promise<TVVideos> {
+		const { series_id, language = this.defaultOptions.language, ...rest } = params;
+		const endpoint = this.seriesSubPath(series_id, ENDPOINTS.TV_SERIES.VIDEOS);
+		return this.client.request<TVVideos>(endpoint, { language, ...rest });
 	}
 
 	/**

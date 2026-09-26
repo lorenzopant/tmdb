@@ -281,6 +281,8 @@ export class MoviesAPI extends TMDBAPIBase {
 	 *
 	 * Get the available videos for a movie.
 	 * @param movie_id The ID of the movie
+	 * @param language The language to use for the response.
+	 * @param include_video_language Comma-separated ISO 639-1 codes of extra video languages to include (e.g. "en,null").
 	 * @returns A promise that resolves to a list of videos for the movie.
 	 * @reference https://developer.themoviedb.org/reference/movie-videos
 	 */

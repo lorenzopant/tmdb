@@ -106,6 +106,10 @@ Alias for [`VideoResults`](/docs/types/common#videoresults).
 			type: '(Language | "null")[]',
 			description: 'Extra languages for an appended `images` block. Use "null" for untagged images. Serialized comma-separated.',
 		},
+		include_video_language: {
+			type: "string",
+			description: 'Extra video languages for an appended `videos` block, as comma-separated ISO 639-1 codes (e.g. "it,en,null").',
+		},
 	}}
 />
 
@@ -119,6 +123,24 @@ Alias for [`VideoResults`](/docs/types/common#videoresults).
 		season_number: { type: "number", required: true, description: "Season number within the TV series." },
 		episode_number: { type: "number", required: true, description: "Episode number within the season." },
 		language: { type: "Language", description: "Language for localized results.", default: "en-US" },
+	}}
+/>
+
+---
+
+### `TVEpisodeVideosParams`
+
+<TypeTable
+	type={{
+		series_id: { type: "number", required: true, description: "TMDB TV series identifier." },
+		season_number: { type: "number", required: true, description: "Season number within the TV series." },
+		episode_number: { type: "number", required: true, description: "Episode number within the season." },
+		language: { type: "Language", description: "Language for localized results.", default: "en-US" },
+		include_video_language: {
+			type: "string",
+			description:
+				'Comma-separated ISO 639-1 codes of extra video languages to include (e.g. "it,en,null"). Without it, only videos tagged with `language` are returned.',
+		},
 	}}
 />
 

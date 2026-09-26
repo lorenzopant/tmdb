@@ -62,4 +62,9 @@ describe("TV Episodes API", () => {
 		const videos = await tmdb.tv_episodes.videos({ ...params });
 		expect(Array.isArray(videos.results)).toBe(true);
 	});
+
+	it("(VIDEOS) should only return videos in the requested languages", async () => {
+		const videos = await tmdb.tv_episodes.videos({ ...params, language: "it-IT", include_video_language: "it,en" });
+		for (const video of videos.results) expect(["it", "en"]).toContain(video.iso_639_1);
+	});
 });

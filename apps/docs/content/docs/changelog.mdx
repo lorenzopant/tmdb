@@ -4,6 +4,14 @@ description: Latest updates and announcements
 icon: History
 ---
 
+## 🚧 Unreleased
+
+#### 🐞 Bug Fixes
+
+- **`include_video_language` on every videos endpoint** — [`movies.videos()`](/docs/api-reference/movies/videos), [`tv_series.videos()`](/docs/api-reference/tv-series/videos) and [`tv_episodes.videos()`](/docs/api-reference/tv-episodes/videos) now accept `include_video_language` (already supported by [`tv_seasons.videos()`](/docs/api-reference/tv-seasons/videos)). TMDB only returns videos tagged with the request `language` otherwise, so non-English callers often got an empty list.
+- **`include_video_language` on `details()`** — [`movies.details()`](/docs/api-reference/movies/details), [`tv_series.details()`](/docs/api-reference/tv-series/details), [`tv_seasons.details()`](/docs/api-reference/tv-seasons/details) and [`tv_episodes.details()`](/docs/api-reference/tv-episodes/details) accept `include_video_language` for an appended `videos` block (`append_to_response: ["videos"]`).
+- [`tv_series.videos()`](/docs/api-reference/tv-series/videos) and [`tv_episodes.videos()`](/docs/api-reference/tv-episodes/videos) now send `language` (falling back to the client's default `language`) instead of no query params, matching the other videos endpoints. Callers who set a non-English default `language` will now get localized videos — add `include_video_language` to keep the English ones.
+
 ## 🚀 2.0.0 - 22 September 2026
 
 > **Upgrading from 1.x requires no code changes** — this major release adds the CLI; the SDK's public API is unchanged.
