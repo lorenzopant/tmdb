@@ -91,16 +91,45 @@ export abstract class TMDBAPIBase {
 	 * untouched either way.
 	 */
 	protected injectImageLanguageForAppends<T extends { append_to_response?: unknown }>(params: T): T {
+		if (!this.appendsInclude(params, "images")) return params;
+		return this.injectImageLanguage(params);
+	}
+
+	/**
+	 * Injects `videos.include_video_language` from the client options as the
+	 * `include_video_language` query param, serialized comma-separated.
+	 *
+	 * - An explicit `include_video_language` on the call site always wins.
+	 * - Has no effect when `videos.include_video_language` is not configured or empty.
+	 */
+	protected injectVideoLanguage<T extends object>(params: T): T {
+		if ((params as Record<string, unknown>).include_video_language !== undefined) return params;
+
+		const langs = this.defaultOptions.videos?.include_video_language;
+		if (!langs?.length) return params;
+		return { ...params, include_video_language: [...new Set(langs)].join(",") } as T;
+	}
+
+	/**
+	 * {@link injectVideoLanguage} scoped to `details()` calls: only injects when
+	 * `append_to_response` asks for a `videos` block, for the same cache/dedup-key
+	 * reasons as {@link injectImageLanguageForAppends}.
+	 */
+	protected injectVideoLanguageForAppends<T extends { append_to_response?: unknown }>(params: T): T {
+		if (!this.appendsInclude(params, "videos")) return params;
+		return this.injectVideoLanguage(params);
+	}
+
+	/** Whether `append_to_response` (array or comma-separated string) includes `name`. */
+	private appendsInclude(params: { append_to_response?: unknown }, name: string): boolean {
 		const append = params.append_to_response;
 		const entries = Array.isArray(append) ? append : append === undefined ? [] : [append];
 
 		// TMDB takes append_to_response as a comma-separated list and the endpoint JSDoc
 		// documents it that way, so "credits,images" has to resolve the same as
 		// ["credits", "images"]. Array entries are split too — an array holding a joined
-		// string is just as valid on the wire. Non-string entries can never be "images".
-		const appends = entries.flatMap((entry) => (typeof entry === "string" ? entry.split(",").map((name) => name.trim()) : []));
-
-		if (!appends.includes("images")) return params;
-		return this.injectImageLanguage(params);
+		// string is just as valid on the wire. Non-string entries can never match.
+		const appends = entries.flatMap((entry) => (typeof entry === "string" ? entry.split(",").map((n) => n.trim()) : []));
+		return appends.includes(name);
 	}
 }

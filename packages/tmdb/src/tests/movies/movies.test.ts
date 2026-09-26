@@ -37,6 +37,15 @@ describe("MoviesAPI", () => {
 		});
 	});
 
+	it("should forward include_video_language for an appended videos block", async () => {
+		await moviesAPI.details({ movie_id: 550, language: "it-IT", append_to_response: ["videos"], include_video_language: "it,en" });
+		expect(clientMock.request).toHaveBeenCalledWith("/movie/550", {
+			language: "it-IT",
+			append_to_response: ["videos"],
+			include_video_language: "it,en",
+		});
+	});
+
 	it("should return the result from client.request", async () => {
 		const fakeResponse = { id: 550, title: "Fight Club" };
 		(clientMock.request as ReturnType<typeof vi.fn>).mockResolvedValue(fakeResponse);
@@ -342,6 +351,14 @@ describe("MoviesAPI", () => {
 			const api = new MoviesAPI(clientMock, { language: "ko-KR" });
 			await api.videos({ movie_id: 550 });
 			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/videos", { language: "ko-KR" });
+		});
+
+		it("should forward include_video_language param", async () => {
+			await moviesAPI.videos({ movie_id: 550, language: "it-IT", include_video_language: "it,en,null" });
+			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/videos", {
+				language: "it-IT",
+				include_video_language: "it,en,null",
+			});
 		});
 	});
 

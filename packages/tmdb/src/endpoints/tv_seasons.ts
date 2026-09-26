@@ -52,7 +52,7 @@ export class TVSeasonsAPI extends TMDBAPIBase {
 	): Promise<T extends [] ? TVSeason : TVSeasonDetailsWithAppends<T>> {
 		const { language = this.defaultOptions.language, series_id, season_number, ...rest } = params;
 		const endpoint = this.seasonPath({ series_id, season_number });
-		return this.client.request(endpoint, this.injectImageLanguageForAppends({ language, ...rest }));
+		return this.client.request(endpoint, this.injectVideoLanguageForAppends(this.injectImageLanguageForAppends({ language, ...rest })));
 	}
 
 	/**
@@ -178,7 +178,7 @@ export class TVSeasonsAPI extends TMDBAPIBase {
 	async videos(params: TVSeasonVideosParams): Promise<TVSeasonVideos> {
 		const { language = this.defaultOptions.language, include_video_language, ...rest } = params;
 		const endpoint = this.seasonSubPath(rest, ENDPOINTS.TV_SEASONS.VIDEOS);
-		return this.client.request<TVSeasonVideos>(endpoint, { language, include_video_language });
+		return this.client.request<TVSeasonVideos>(endpoint, this.injectVideoLanguage({ language, include_video_language }));
 	}
 
 	/**

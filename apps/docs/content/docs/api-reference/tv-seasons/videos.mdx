@@ -13,12 +13,14 @@ async videos(params: TVSeasonVideosParams): Promise<TVSeasonVideos>
 
 ## Parameters
 
-| Name                     | Type                                                | Required | Description                                       |
-| ------------------------ | --------------------------------------------------- | -------- | ------------------------------------------------- |
-| `series_id`              | `number`                                            | ✅       | TMDB TV series identifier.                        |
-| `season_number`          | `number`                                            | ✅       | Season number within the TV series.               |
-| `language`               | [`Language`](/docs/types/options/language#language) | ❌       | Language for video metadata. Defaults to `en-US`. |
-| `include_video_language` | `string`                                            | ❌       | Include videos with additional language tags.     |
+| Name                     | Type                                                | Required | Description                                                                                                                                             |
+| ------------------------ | --------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `series_id`              | `number`                                            | ✅       | TMDB TV series identifier.                                                                                                                              |
+| `season_number`          | `number`                                            | ✅       | Season number within the TV series.                                                                                                                     |
+| `language`               | [`Language`](/docs/types/options/language#language) | ❌       | Language for video metadata. Defaults to `en-US`.                                                                                                       |
+| `include_video_language` | `string`                                            | ❌       | Comma-separated ISO 639-1 codes of extra video languages to include (e.g. `"it,en,null"`). Without it, only videos tagged with `language` are returned. |
+
+By default TMDB only returns videos tagged with `language`, which is often nothing for non-English languages. Pass `include_video_language` to widen the set, e.g. `"it,en,null"` for Italian, English and untagged videos.
 
 ## Returns
 

@@ -29,3 +29,20 @@ export type WithPage = WithParams<"page">;
 export type WithRegion = WithParams<"region">;
 export type WithLanguagePage = WithParams<"language" | "page">;
 export type WithPageAndDateRange = WithParams<"page"> & DateRange;
+
+/**
+ * Widen a videos response beyond the request `language`.
+ */
+export type WithIncludeVideoLanguage = {
+	/**
+	 * Comma-separated ISO 639-1 codes of the video languages to include (e.g. `"it,en,null"`).
+	 * Use `"null"` to include videos without a language tag.
+	 *
+	 * Without it, TMDB returns only videos tagged with the request `language`, which is often
+	 * nothing for non-English languages.
+	 *
+	 * On `details()` it applies to the appended `videos` block, so it is only meaningful together
+	 * with `append_to_response: ["videos"]`.
+	 */
+	include_video_language?: string;
+};

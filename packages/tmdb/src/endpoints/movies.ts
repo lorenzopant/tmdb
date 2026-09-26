@@ -63,7 +63,7 @@ export class MoviesAPI extends TMDBAPIBase {
 	): Promise<T extends [] ? MovieDetails : MovieDetailsWithAppends<T>> {
 		const { language = this.defaultOptions.language, movie_id, ...rest } = params;
 		const endpoint = this.moviePath(movie_id);
-		return this.client.request(endpoint, this.injectImageLanguageForAppends({ language, ...rest }));
+		return this.client.request(endpoint, this.injectVideoLanguageForAppends(this.injectImageLanguageForAppends({ language, ...rest })));
 	}
 
 	/**
@@ -281,13 +281,15 @@ export class MoviesAPI extends TMDBAPIBase {
 	 *
 	 * Get the available videos for a movie.
 	 * @param movie_id The ID of the movie
+	 * @param language The language to use for the response.
+	 * @param include_video_language Comma-separated ISO 639-1 codes of extra video languages to include (e.g. "en,null").
 	 * @returns A promise that resolves to a list of videos for the movie.
 	 * @reference https://developer.themoviedb.org/reference/movie-videos
 	 */
 	async videos(params: MovieVideosParams): Promise<MovieVideos> {
 		const { movie_id, language = this.defaultOptions.language, ...rest } = params;
 		const endpoint = this.movieSubPath(movie_id, ENDPOINTS.MOVIES.VIDEOS);
-		return this.client.request<MovieVideos>(endpoint, { language, ...rest });
+		return this.client.request<MovieVideos>(endpoint, this.injectVideoLanguage({ language, ...rest }));
 	}
 
 	/**

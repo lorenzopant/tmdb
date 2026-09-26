@@ -16,6 +16,7 @@ import {
 	Review,
 	SpokenLanguage,
 	TranslationResults,
+	WithIncludeVideoLanguage,
 	WithLanguage,
 	WithLanguagePage,
 	WithParams,
@@ -527,8 +528,14 @@ export type TVDetailsParams = Prettify<
 		 * language — no logos (which are always language-tagged) and no untagged backdrops.
 		 */
 		include_image_language?: (Language | "null")[];
-	} & WithParams<"language">
+	} & WithParams<"language"> &
+		WithIncludeVideoLanguage
 >;
+
+/**
+ * Parameters for fetching the videos of a TV show.
+ */
+export type TVVideosParams = Prettify<TVBaseParam & WithParams<"language"> & WithIncludeVideoLanguage>;
 
 /**
  * Parameters for fetching aggregate credits for a TV show (cast and crew across all seasons).

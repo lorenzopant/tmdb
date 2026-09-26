@@ -32,6 +32,7 @@ const tmdb = new TMDB("your-api-key", {
 | `language`      | `Language`                                               | Default language for all responses (ISO 639-1 or primary translation code).                        |
 | `region`        | `CountryISO3166_1`                                       | Default region for localized content like release dates and watch providers.                       |
 | `images`        | `ImagesConfig`                                           | Configuration for image base URLs, default image sizes, and optional response path autocompletion. |
+| `videos`        | `VideosConfig`                                           | Default `include_video_language` for videos requests and appended `videos` blocks.                 |
 | `timezone`      | `Timezone`                                               | Default timezone for TV series airing time calculations.                                           |
 | `logger`        | `boolean \| TMDBLoggerFn`                                | Enable the built-in console logger or supply a custom logging function.                            |
 | `deduplication` | `boolean`                                                | Deduplicate concurrent identical requests. Defaults to `true`.                                     |
@@ -108,6 +109,36 @@ of TMDB-relative paths. See the [Images configuration reference](/docs/getting-s
 for supported fields, defaults, and examples.
 
 See the [Images configuration reference](/docs/getting-started/options/images) for all available size options per category.
+
+---
+
+### `videos`
+
+**Type:** [`VideosConfig`](/docs/types/options/videos#videosconfig) · **Optional**
+
+TMDB returns only videos tagged with the request `language`, so with `language: "it-IT"` most titles come back
+with few or no videos. Set `include_video_language` to widen every videos request:
+
+```ts
+const tmdb = new TMDB(apiKey, {
+	language: "it-IT",
+	// Sends include_video_language=it,en on every .videos() call
+	videos: { include_video_language: ["it", "en"] },
+});
+
+// Italian videos plus the English trailers
+const { results } = await tmdb.movies.videos({ movie_id: 550 });
+
+// Also injected when details() appends a videos block
+const movie = await tmdb.movies.details({ movie_id: 550, append_to_response: ["videos"] });
+
+// Explicit call-site value always takes precedence
+const french = await tmdb.movies.videos({ movie_id: 550, include_video_language: "fr" });
+```
+
+Applies to `movies`, `tv_series`, `tv_seasons` and `tv_episodes` — both `.videos()` and `.details()` with
+`append_to_response: ["videos"]`. Details calls that don't append videos are left alone. Use `"null"` to include
+videos without a language tag.
 
 ---
 

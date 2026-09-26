@@ -18,6 +18,7 @@ import {
 	TranslationResults,
 	VideoResults,
 	WatchProvider,
+	WithIncludeVideoLanguage,
 	WithLanguagePage,
 	WithParams,
 } from "./common";
@@ -353,7 +354,8 @@ export type MovieDetailsParams = Prettify<
 		 * language — no logos (which are always language-tagged) and no untagged backdrops.
 		 */
 		include_image_language?: (Language | "null")[];
-	} & WithParams<"language">
+	} & WithParams<"language"> &
+		WithIncludeVideoLanguage
 >;
 
 /**
@@ -432,7 +434,7 @@ export type MovieSimilarParams = MovieRecommendationsParams;
 /**
  * Parameters for fetching movie videos (trailers, teasers, clips).
  */
-export type MovieVideosParams = Prettify<MovieBaseParam & WithParams<"language">>;
+export type MovieVideosParams = Prettify<MovieBaseParam & WithParams<"language"> & WithIncludeVideoLanguage>;
 
 /**
  * Parameters for fetching movie reviews.
