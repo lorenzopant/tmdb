@@ -343,6 +343,14 @@ describe("MoviesAPI", () => {
 			await api.videos({ movie_id: 550 });
 			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/videos", { language: "ko-KR" });
 		});
+
+		it("should forward include_video_language param", async () => {
+			await moviesAPI.videos({ movie_id: 550, language: "it-IT", include_video_language: "it,en,null" });
+			expect(clientMock.request).toHaveBeenCalledWith("/movie/550/videos", {
+				language: "it-IT",
+				include_video_language: "it,en,null",
+			});
+		});
 	});
 
 	describe("watch_providers", () => {

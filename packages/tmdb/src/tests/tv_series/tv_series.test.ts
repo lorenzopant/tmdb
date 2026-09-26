@@ -222,10 +222,24 @@ describe("TVSeriesAPI", () => {
 	});
 
 	describe("videos", () => {
-		it("should call client.request with the correct endpoint and no params", async () => {
+		it("should call client.request with the correct endpoint", async () => {
 			await tvSeriesAPI.videos({ series_id: 1396 });
 			expect(clientMock.request).toHaveBeenCalledOnce();
-			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396/videos");
+			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396/videos", { language: undefined });
+		});
+
+		it("should forward language and include_video_language params", async () => {
+			await tvSeriesAPI.videos({ series_id: 1396, language: "it-IT", include_video_language: "it,en,null" });
+			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396/videos", {
+				language: "it-IT",
+				include_video_language: "it,en,null",
+			});
+		});
+
+		it("should use defaultOptions.language when not provided", async () => {
+			tvSeriesAPI = new TVSeriesAPI(clientMock, { language: "it-IT" });
+			await tvSeriesAPI.videos({ series_id: 1396 });
+			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396/videos", { language: "it-IT" });
 		});
 	});
 

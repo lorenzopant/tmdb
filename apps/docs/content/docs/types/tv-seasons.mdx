@@ -166,7 +166,8 @@ Alias for [`VideoResults`](/docs/types/common#videoresults).
 		language: { type: "Language", description: "Language for video metadata.", default: "en-US" },
 		include_video_language: {
 			type: "string",
-			description: "Include videos with additional language tags.",
+			description:
+				'Comma-separated ISO 639-1 codes of extra video languages to include (e.g. "it,en,null"). Without it, only videos tagged with `language` are returned.',
 		},
 	}}
 />

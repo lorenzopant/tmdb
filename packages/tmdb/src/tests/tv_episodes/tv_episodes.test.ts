@@ -139,10 +139,30 @@ describe("TVEpisodesAPI", () => {
 	});
 
 	describe("videos", () => {
-		it("should call client.request with the correct endpoint and no params", async () => {
+		it("should call client.request with the correct endpoint", async () => {
 			await tvEpisodesAPI.videos(BASE_EPISODE_PARAMS);
 			expect(clientMock.request).toHaveBeenCalledOnce();
-			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396/season/1/episode/1/videos");
+			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396/season/1/episode/1/videos", {
+				language: undefined,
+				include_video_language: undefined,
+			});
+		});
+
+		it("should forward language and include_video_language params", async () => {
+			await tvEpisodesAPI.videos({ ...BASE_EPISODE_PARAMS, language: "it-IT", include_video_language: "it,en,null" });
+			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396/season/1/episode/1/videos", {
+				language: "it-IT",
+				include_video_language: "it,en,null",
+			});
+		});
+
+		it("should use defaultOptions.language when not provided", async () => {
+			tvEpisodesAPI = new TVEpisodesAPI(clientMock, { language: "pt-BR" });
+			await tvEpisodesAPI.videos(BASE_EPISODE_PARAMS);
+			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396/season/1/episode/1/videos", {
+				language: "pt-BR",
+				include_video_language: undefined,
+			});
 		});
 	});
 });

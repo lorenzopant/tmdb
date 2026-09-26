@@ -187,6 +187,11 @@ describe("Movies (integration)", () => {
 		expect(videos.results[0].id).toBeDefined();
 	});
 
+	it("(MOVIE VIDEOS) should only return videos in the requested languages", async () => {
+		const videos = await tmdb.movies.videos({ movie_id: 550, language: "it-IT", include_video_language: "it,en" });
+		for (const video of videos.results) expect(["it", "en"]).toContain(video.iso_639_1);
+	});
+
 	it("(MOVIE WATCH PROVIDERS) should get watch providers for a movie", async () => {
 		const movie_id = 550;
 		const watch_providers = await tmdb.movies.watch_providers({ movie_id });

@@ -14,6 +14,7 @@ import {
 	TVEpisodeImagesParams,
 	TVEpisodeTranslations,
 	TVEpisodeVideos,
+	TVEpisodeVideosParams,
 } from "../types";
 
 import { TMDBAPIBase } from "./base";
@@ -159,11 +160,14 @@ export class TVEpisodesAPI extends TMDBAPIBase {
 	 * @param series_id The ID of the TV series.
 	 * @param season_number The number of the season within the TV show
 	 * @param episode_number The number of the episode within the season
+	 * @param language The language to use for the response.
+	 * @param include_video_language Comma-separated ISO 639-1 codes of extra video languages to include (e.g. "en,null").
 	 * @returns A promise that resolves to the videos for the tv episode.
 	 * @reference https://developer.themoviedb.org/reference/tv-episode-videos
 	 */
-	async videos(params: TVEpisodeBaseParams): Promise<TVEpisodeVideos> {
-		const endpoint = this.episodeSubPath(params, ENDPOINTS.TV_EPISODES.VIDEOS);
-		return this.client.request<TVEpisodeVideos>(endpoint);
+	async videos(params: TVEpisodeVideosParams): Promise<TVEpisodeVideos> {
+		const { language = this.defaultOptions.language, include_video_language, ...rest } = params;
+		const endpoint = this.episodeSubPath(rest, ENDPOINTS.TV_EPISODES.VIDEOS);
+		return this.client.request<TVEpisodeVideos>(endpoint, { language, include_video_language });
 	}
 }

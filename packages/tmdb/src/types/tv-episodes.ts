@@ -1,4 +1,15 @@
-import { Cast, Crew, DateRange, ImageItem, ImagesResult, TranslationResults, VideoResults, WithLanguage, WithParams } from "./common";
+import {
+	Cast,
+	Crew,
+	DateRange,
+	ImageItem,
+	ImagesResult,
+	TranslationResults,
+	VideoResults,
+	WithIncludeVideoLanguage,
+	WithLanguage,
+	WithParams,
+} from "./common";
 import { Language } from "./config";
 import { TVSeasonBaseParams } from "./tv-seasons";
 import { TVExternalIDs } from "./tv-series";
@@ -123,6 +134,9 @@ export type TVEpisodeDetailsParams = Prettify<
 		include_image_language?: (Language | "null")[];
 	} & WithParams<"language">
 >;
+
+/** Parameters for tv episode videos endpoint */
+export type TVEpisodeVideosParams = TVEpisodeBaseParams & WithLanguage & WithIncludeVideoLanguage;
 
 /** Parameters for tv episode credits endpoint */
 export type TVEpisodeCreditsParams = TVEpisodeBaseParams & WithLanguage;

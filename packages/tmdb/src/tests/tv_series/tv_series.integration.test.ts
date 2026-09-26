@@ -160,6 +160,11 @@ describe("TV Series (integration)", () => {
 		expect(typeof show.results[0].key).toBe("string");
 	});
 
+	it("(VIDEOS) should only return videos in the requested languages", async () => {
+		const show = await tmdb.tv_series.videos({ series_id: 1399, language: "it-IT", include_video_language: "it,en" });
+		for (const video of show.results) expect(["it", "en"]).toContain(video.iso_639_1);
+	});
+
 	it("(WATCH PROVIDERS) should get tv shows watch providers", async () => {
 		const show = await tmdb.tv_series.watch_providers({ series_id: 1399 });
 		expect(show.results).toBeDefined();

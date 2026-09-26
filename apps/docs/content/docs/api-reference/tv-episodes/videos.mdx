@@ -6,18 +6,22 @@ description: Get trailers, teasers, and clips for a TV episode.
 Get the videos that belong to a TV episode, including trailers, teasers, and clips.
 
 ```ts
-async videos(params: TVEpisodeBaseParams): Promise<TVEpisodeVideos>
+async videos(params: TVEpisodeVideosParams): Promise<TVEpisodeVideos>
 ```
 
 > **TMDB Reference:** [TV Episode Videos](https://developer.themoviedb.org/reference/tv-episode-videos)
 
 ## Parameters
 
-| Name             | Type     | Required | Description                         |
-| ---------------- | -------- | -------- | ----------------------------------- |
-| `series_id`      | `number` | ✅       | TMDB TV series identifier.          |
-| `season_number`  | `number` | ✅       | Season number within the TV series. |
-| `episode_number` | `number` | ✅       | Episode number within the season.   |
+| Name                     | Type                                                | Required | Description                                                                                                                                             |
+| ------------------------ | --------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `series_id`              | `number`                                            | ✅       | TMDB TV series identifier.                                                                                                                              |
+| `season_number`          | `number`                                            | ✅       | Season number within the TV series.                                                                                                                     |
+| `episode_number`         | `number`                                            | ✅       | Episode number within the season.                                                                                                                       |
+| `language`               | [`Language`](/docs/types/options/language#language) | ❌       | Language for localized results. Defaults to `en-US`.                                                                                                    |
+| `include_video_language` | `string`                                            | ❌       | Comma-separated ISO 639-1 codes of extra video languages to include (e.g. `"it,en,null"`). Without it, only videos tagged with `language` are returned. |
+
+By default TMDB only returns videos tagged with `language`, which is often nothing for non-English languages. Pass `include_video_language` to widen the set, e.g. `"it,en,null"` for Italian, English and untagged videos.
 
 ## Returns
 

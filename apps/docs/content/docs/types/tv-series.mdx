@@ -274,6 +274,22 @@ Used by [`airing_today()`](/docs/api-reference/tv-series-lists/airing-today), [`
 
 ---
 
+### `TVVideosParams`
+
+<TypeTable
+	type={{
+		series_id: { type: "number", required: true, description: "TMDB TV series identifier." },
+		language: { type: "Language", description: "Language for localized results.", default: "en-US" },
+		include_video_language: {
+			type: "string",
+			description:
+				'Comma-separated ISO 639-1 codes of extra video languages to include (e.g. "it,en,null"). Without it, only videos tagged with `language` are returned.',
+		},
+	}}
+/>
+
+---
+
 ### `TVCreditsParams`
 
 <TypeTable

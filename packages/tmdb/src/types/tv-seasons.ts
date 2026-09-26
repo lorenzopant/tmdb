@@ -1,4 +1,15 @@
-import { Cast, Crew, DateRange, ImageItem, ImagesResult, TranslationResults, VideoResults, WithLanguage, WithParams } from "./common";
+import {
+	Cast,
+	Crew,
+	DateRange,
+	ImageItem,
+	ImagesResult,
+	TranslationResults,
+	VideoResults,
+	WithIncludeVideoLanguage,
+	WithLanguage,
+	WithParams,
+} from "./common";
 import { Language } from "./config";
 import { TVAggregateCredits, TVBaseParam, TVEpisodeItem, TVExternalIDs } from "./tv-series";
 import { MediaWatchProviders } from "./common/media";
@@ -184,7 +195,7 @@ export type TVSeasonImagesParams = TVSeasonBaseParams &
 	};
 
 /** Parameters for the season videos endpoint, with optional language filtering. */
-export type TVSeasonVideosParams = TVSeasonBaseParams & WithLanguage & { include_video_language?: string };
+export type TVSeasonVideosParams = TVSeasonBaseParams & WithLanguage & WithIncludeVideoLanguage;
 
 /** Parameters for the season watch providers endpoint. */
 export type TVSeasonWatchProvidersParams = TVSeasonBaseParams & WithLanguage;
