@@ -33,6 +33,20 @@ describe("TVEpisodesAPI", () => {
 			});
 		});
 
+		it("should forward include_video_language for an appended videos block", async () => {
+			await tvEpisodesAPI.details({
+				...BASE_EPISODE_PARAMS,
+				language: "it-IT",
+				append_to_response: ["videos"],
+				include_video_language: "it,en",
+			});
+			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396/season/1/episode/1", {
+				language: "it-IT",
+				append_to_response: ["videos"],
+				include_video_language: "it,en",
+			});
+		});
+
 		it("should use defaultOptions.language when no language is provided", async () => {
 			tvEpisodesAPI = new TVEpisodesAPI(clientMock, { language: "it-IT" });
 			await tvEpisodesAPI.details(BASE_EPISODE_PARAMS);

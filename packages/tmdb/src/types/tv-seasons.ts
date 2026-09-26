@@ -178,7 +178,8 @@ export type TVSeasonDetailsParams = Prettify<
 		 * language.
 		 */
 		include_image_language?: (Language | "null")[];
-	} & WithParams<"language">
+	} & WithParams<"language"> &
+		WithIncludeVideoLanguage
 >;
 
 /** Parameters for the season aggregate credits endpoint. */

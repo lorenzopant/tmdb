@@ -40,6 +40,9 @@ export type WithIncludeVideoLanguage = {
 	 *
 	 * Without it, TMDB returns only videos tagged with the request `language`, which is often
 	 * nothing for non-English languages.
+	 *
+	 * On `details()` it applies to the appended `videos` block, so it is only meaningful together
+	 * with `append_to_response: ["videos"]`.
 	 */
 	include_video_language?: string;
 };

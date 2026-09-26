@@ -37,6 +37,15 @@ describe("MoviesAPI", () => {
 		});
 	});
 
+	it("should forward include_video_language for an appended videos block", async () => {
+		await moviesAPI.details({ movie_id: 550, language: "it-IT", append_to_response: ["videos"], include_video_language: "it,en" });
+		expect(clientMock.request).toHaveBeenCalledWith("/movie/550", {
+			language: "it-IT",
+			append_to_response: ["videos"],
+			include_video_language: "it,en",
+		});
+	});
+
 	it("should return the result from client.request", async () => {
 		const fakeResponse = { id: 550, title: "Fight Club" };
 		(clientMock.request as ReturnType<typeof vi.fn>).mockResolvedValue(fakeResponse);

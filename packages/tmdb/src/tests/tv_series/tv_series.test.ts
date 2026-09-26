@@ -28,6 +28,20 @@ describe("TVSeriesAPI", () => {
 			});
 		});
 
+		it("should forward include_video_language for an appended videos block", async () => {
+			await tvSeriesAPI.details({
+				series_id: 1396,
+				language: "it-IT",
+				append_to_response: ["videos"],
+				include_video_language: "it,en",
+			});
+			expect(clientMock.request).toHaveBeenCalledWith("/tv/1396", {
+				language: "it-IT",
+				append_to_response: ["videos"],
+				include_video_language: "it,en",
+			});
+		});
+
 		it("should use defaultOptions.language when not provided", async () => {
 			tvSeriesAPI = new TVSeriesAPI(clientMock, { language: "it-IT" });
 			await tvSeriesAPI.details({ series_id: 1396 });

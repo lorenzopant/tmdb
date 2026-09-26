@@ -354,7 +354,8 @@ export type MovieDetailsParams = Prettify<
 		 * language — no logos (which are always language-tagged) and no untagged backdrops.
 		 */
 		include_image_language?: (Language | "null")[];
-	} & WithParams<"language">
+	} & WithParams<"language"> &
+		WithIncludeVideoLanguage
 >;
 
 /**

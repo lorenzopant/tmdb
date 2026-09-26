@@ -132,7 +132,8 @@ export type TVEpisodeDetailsParams = Prettify<
 		 * language — episode stills are mostly untagged, so the block usually comes back empty.
 		 */
 		include_image_language?: (Language | "null")[];
-	} & WithParams<"language">
+	} & WithParams<"language"> &
+		WithIncludeVideoLanguage
 >;
 
 /** Parameters for tv episode videos endpoint */
