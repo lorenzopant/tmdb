@@ -1,108 +1,150 @@
 name: Schema Drift
 
 on:
-  schedule:
-    # Every Monday at 14:00 UTC
-    - cron: "0 14 * * 1"
-  workflow_dispatch:
+    schedule:
+        # Every Monday at 14:00 UTC
+        - cron: "0 14 * * 1"
+    workflow_dispatch:
 
 permissions:
-  contents: read
-  issues: write
+    contents: read
+    issues: write
 
 jobs:
-  schema-drift:
-    runs-on: ubuntu-latest
-    env:
-      TMDB_BEARER_TOKEN: ${{ secrets.TMDB_BEARER_TOKEN }}
-      TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+    schema-drift:
+        runs-on: ubuntu-latest
+        env:
+            TMDB_BEARER_TOKEN: ${{ secrets.TMDB_BEARER_TOKEN }}
+            TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
 
-      - name: Setup action
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9.15.9
-          run_install: false
+            - name: Setup action
+              uses: pnpm/action-setup@v4
+              with:
+                  version: 9.15.9
+                  run_install: false
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: 20
-          cache: pnpm
+            - name: Set up Node.js
+              uses: actions/setup-node@v5
+              with:
+                  node-version: 20
+                  cache: pnpm
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
 
-      - name: Run schema drift tests
-        id: drift
-        continue-on-error: true
-        run: |
-          set -o pipefail
-          pnpm run test:drift 2>&1 | tee drift-output.txt
+            - name: Run schema drift tests
+              id: drift
+              continue-on-error: true
+              # Run the package script directly, not through turbo: turbo's strict env mode would drop
+              # DRIFT_REPORT_FILE, and its banner/telemetry notice only adds noise to the issue.
+              env:
+                  DRIFT_REPORT_FILE: ${{ github.workspace }}/drift-report.json
+                  NO_COLOR: "1"
+                  FORCE_COLOR: "0"
+              run: |
+                  set -o pipefail
+                  pnpm --filter @lorenzopant/tmdb run test:drift 2>&1 | tee drift-output.txt
 
-      - name: Open or update drift issue
-        if: steps.drift.outcome == 'failure'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require("fs");
+            - name: Open or update drift issue
+              if: steps.drift.outcome == 'failure'
+              uses: actions/github-script@v7
+              with:
+                  script: |
+                      const fs = require("fs");
 
-            const output = fs.readFileSync("drift-output.txt", "utf8");
-            const tail = output.split("\n").slice(-200).join("\n");
-            const title = "TMDB schema drift detected";
-            const body = [
-              "The scheduled schema-drift check (`pnpm run test:drift`) failed, which means the live TMDB API response and our hand-written types in `packages/tmdb/src/types` disagree.",
-              "",
-              "The baseline is derived FROM the types (`scripts/gen-type-tree.ts`), so each failure is one of:",
-              "- `+ path` — the API returns a field the types don't declare → add it to the corresponding type.",
-              "- `- path` — a required type field the API no longer returns → the API renamed/removed it, or the type is wrong.",
-              "",
-              "Tail of the drift output (exact property paths per endpoint):",
-              "",
-              "```",
-              tail,
-              "```",
-              "",
-              "Fix by updating the types in `packages/tmdb/src/types` to match the API. `pnpm run test:drift` regenerates the type-derived baseline and re-checks — there is no separate bless step.",
-            ].join("\n");
+                      const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+                      const date = new Date().toISOString().slice(0, 10);
+                      const code = (s) => "`" + s + "`";
 
-            // Paginate: a single page (per_page: 100) misses the existing
-            // issue once the repo has >100 open issues, which would spawn a
-            // duplicate drift issue on every run.
-            const issues = await github.paginate(github.rest.issues.listForRepo, {
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              state: "open",
-              per_page: 100,
-            });
+                      // Belt and braces: NO_COLOR should already suppress colours, but strip any ANSI escapes left.
+                      const raw = fs.readFileSync("drift-output.txt", "utf8").replace(/\x1b\[[0-9;]*[A-Za-z]/g, "");
+                      const tail = raw.trimEnd().split("\n").slice(-80).join("\n");
 
-            const existing = issues.find((issue) => issue.title === title);
+                      // Written by src/drift/shape.drift.test.ts. Missing when the run died before the suite finished
+                      // (install/typegen failure, crash) — then only the raw log can explain it.
+                      let report = null;
+                      try {
+                        report = JSON.parse(fs.readFileSync("drift-report.json", "utf8"));
+                      } catch {}
 
-            if (existing) {
-              await github.rest.issues.update({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: existing.number,
-                body,
-              });
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: existing.number,
-                body: "Schema drift detected again on a scheduled run — issue body updated with the latest diff.",
-              });
-            } else {
-              await github.rest.issues.create({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                title,
-                body,
-              });
-            }
+                      const summary = [];
+                      if (!report) {
+                        summary.push("No drift report was produced — the run failed before the drift tests finished. See the raw output below.");
+                      } else if (report.failures.length === 0) {
+                        summary.push("The drift suite reported no shape differences, but the run still failed. See the raw output below.");
+                      } else {
+                        summary.push(`**${report.failures.length} of ${report.total}** endpoints no longer match ${code("packages/tmdb/src/types")}.`);
+                        for (const f of report.failures) {
+                          summary.push("", `### ${code(f.label)}`);
+                          if (f.error) summary.push("", `**Request failed:** ${code(f.error)}`);
+                          if (f.removed.length) {
+                            summary.push("", "**Missing from the API** — required in our types, but TMDB did not return it (removed/renamed, or the field should be optional):");
+                            for (const path of f.removed) summary.push(`- ${code(path)}`);
+                          }
+                          if (f.apiOnly.length) {
+                            summary.push("", "**New in the API** — TMDB returned it, but our types don't declare it:");
+                            for (const path of f.apiOnly) summary.push(`- ${code(path)}`);
+                          }
+                        }
+                      }
 
-      - name: Fail job if drift was detected
-        if: steps.drift.outcome == 'failure'
-        run: exit 1
+                      const title = "TMDB schema drift detected";
+                      const body = [
+                        `The scheduled schema-drift check failed on ${date} ([workflow run](${runUrl})).`,
+                        "",
+                        ...summary,
+                        "",
+                        "---",
+                        "",
+                        "**How to fix:** edit the types in `packages/tmdb/src/types` so they match the API, then run `pnpm test:drift` (needs `TMDB_BEARER_TOKEN`). The baseline is regenerated from the types on every run — there is no snapshot to bless.",
+                        "",
+                        "<details><summary>Raw test output (last 80 lines)</summary>",
+                        "",
+                        "```text",
+                        tail,
+                        "```",
+                        "",
+                        "</details>",
+                      ].join("\n");
+
+                      // Paginate: a single page (per_page: 100) misses the existing
+                      // issue once the repo has >100 open issues, which would spawn a
+                      // duplicate drift issue on every run.
+                      const issues = await github.paginate(github.rest.issues.listForRepo, {
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        state: "open",
+                        per_page: 100,
+                      });
+
+                      const existing = issues.find((issue) => issue.title === title);
+
+                      if (existing) {
+                        await github.rest.issues.update({
+                          owner: context.repo.owner,
+                          repo: context.repo.repo,
+                          issue_number: existing.number,
+                          body,
+                        });
+                        await github.rest.issues.createComment({
+                          owner: context.repo.owner,
+                          repo: context.repo.repo,
+                          issue_number: existing.number,
+                          body: [`Schema drift detected again on ${date} ([workflow run](${runUrl})) — issue body updated.`, "", ...summary].join("\n"),
+                        });
+                      } else {
+                        await github.rest.issues.create({
+                          owner: context.repo.owner,
+                          repo: context.repo.repo,
+                          title,
+                          body,
+                        });
+                      }
+
+            - name: Fail job if drift was detected
+              if: steps.drift.outcome == 'failure'
+              run: exit 1
