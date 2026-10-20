@@ -53,6 +53,25 @@ Important behavior:
 - `cache`, `rate_limit`, and `retry` are opt-in
 - `deduplication` is enabled by default
 - `tmdb.cache` is available only when caching is enabled
+- `cache.ttl` is a number (ms, same for every entry) or a function `({ key, endpoint, params, data }) => ms` called once when each response is stored; `<= 0` skips caching, and a throwing/non-numeric result never fails the request:
+
+```ts
+const DAY = 86_400_000;
+const tmdb = new TMDB(token, {
+	cache: {
+		max_size: 5000,
+		ttl: ({ endpoint, data }) => {
+			if (!/^\/(movie|tv)\/\d+$/.test(endpoint)) return DAY;
+			const d = data as { release_date?: string; first_air_date?: string; status?: string };
+			const released = d.release_date || d.first_air_date;
+			const ageDays = released ? (Date.now() - Date.parse(released)) / DAY : 0;
+			if (!released || ageDays < 90) return DAY;
+			if (d.status === "Returning Series") return 30 * DAY;
+			return 90 * DAY;
+		},
+	},
+});
+```
 
 Useful docs:
 - Docs home: https://lorenzopant-tmdb-docs.vercel.app/docs
