@@ -1,6 +1,8 @@
 // src/drift/shape.drift.test.ts
 
-import { describe, expect, it } from "vitest";
+import { writeFileSync } from "node:fs";
+
+import { afterAll, describe, expect, it } from "vitest";
 
 import { TMDB } from "../tmdb";
 import { CALLS } from "./endpoints";
@@ -23,6 +25,16 @@ const trees = typeTrees as Record<string, Record<string, boolean>>;
 // A green run without this line could silently hide missing coverage — make the
 // count visible so a shrinking CALLS list doesn't slip by unnoticed.
 console.log(`drift: covering ${CALLS.length} shapes against TS types`);
+
+// CI (.github/workflows/drift.yml) sets DRIFT_REPORT_FILE and renders this JSON into the drift
+// issue, so the issue shows the exact paths per endpoint instead of a raw, ANSI-coloured log.
+type DriftFailure = { label: string; apiOnly: string[]; removed: string[]; error?: string };
+const failures: DriftFailure[] = [];
+
+afterAll(() => {
+	const file = process.env.DRIFT_REPORT_FILE;
+	if (file) writeFileSync(file, JSON.stringify({ total: CALLS.length, failures }, null, 2));
+});
 
 function report(label: string, apiOnly: string[], removed: string[]): string {
 	const lines = [`Schema drift for "${label}" (live TMDB response vs src/types):`];
@@ -48,8 +60,15 @@ describe("Schema drift (live API shape vs TS types)", () => {
 				`No type-tree for "${label}". Regenerate with \`pnpm run test:drift\` (runs scripts/gen-type-tree.ts).`,
 			).toBeDefined();
 
-			const res = await call(tmdb);
+			let res: unknown;
+			try {
+				res = await call(tmdb);
+			} catch (error) {
+				failures.push({ label, apiOnly: [], removed: [], error: error instanceof Error ? error.message : String(error) });
+				throw error;
+			}
 			const { apiOnly, removed } = diffShape(keyTree(res), typeTree);
+			if (apiOnly.length || removed.length) failures.push({ label, apiOnly, removed });
 
 			expect({ apiOnly, removed }, report(label, apiOnly, removed)).toEqual({
 				apiOnly: [],
