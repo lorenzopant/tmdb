@@ -52,7 +52,7 @@ const tmdb = new TMDB(accessToken, options?);
 - `interceptors`: request and response hooks
 - `rate_limit`: `true` or `{ max_requests, per_ms }`
 - `retry`: `true` or a `RetryOptions` object
-- `cache`: `true` or a cache options object
+- `cache`: `true` or a cache options object (`ttl` as a number or a per-entry function, `max_size`, `excluded_endpoints`)
 
 Important defaults and constraints:
 - `deduplication` is on by default
@@ -233,6 +233,35 @@ const tmdb = new TMDB(token, {
 tmdb.cache?.invalidate("/movie/now_playing");
 tmdb.cache?.clear();
 console.log(tmdb.cache?.size);
+```
+
+### Per-entry cache TTL
+
+`cache.ttl` can be a function instead of a number. It is called once, when a response is stored (never on reads), with a `CacheTTLContext`:
+
+- `key`: the full cache key (`endpoint?param=value&…`), as `excluded_endpoints` sees it
+- `endpoint`: the request path, e.g. `"/movie/550"`
+- `params`: the request params the key was built from
+- `data`: the parsed response about to be cached
+
+It returns milliseconds. `0` or a negative number means "don't cache this response" (the request still succeeds). If the function throws or returns a non-finite number, the request still succeeds, the response is not cached, and the problem is reported through `logger` when one is configured. `excluded_endpoints` is checked first, so the function never runs for excluded keys. `max_size` eviction stays insertion-ordered regardless of each entry's TTL.
+
+```ts
+const DAY = 86_400_000;
+const tmdb = new TMDB(token, {
+	cache: {
+		max_size: 5000,
+		ttl: ({ endpoint, data }) => {
+			if (!/^\/(movie|tv)\/\d+$/.test(endpoint)) return DAY;
+			const d = data as { release_date?: string; first_air_date?: string; status?: string };
+			const released = d.release_date || d.first_air_date;
+			const ageDays = released ? (Date.now() - Date.parse(released)) / DAY : 0;
+			if (!released || ageDays < 90) return DAY;
+			if (d.status === "Returning Series") return 30 * DAY;
+			return 90 * DAY;
+		},
+	},
+});
 ```
 
 ### Enable rate limiting

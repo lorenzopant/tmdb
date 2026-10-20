@@ -47,11 +47,59 @@ const tmdb = new TMDB("your-api-key", {
 });
 ```
 
-| Option               | Type                   | Default           | Description                                                       |
-| -------------------- | ---------------------- | ----------------- | ----------------------------------------------------------------- |
-| `ttl`                | `number`               | `300_000` (5 min) | How long each entry is valid, in milliseconds.                    |
-| `max_size`           | `number`               | unlimited         | Maximum entries in memory. Oldest is evicted when exceeded.       |
-| `excluded_endpoints` | `(string \| RegExp)[]` | `[]`              | Endpoints that should never be read from or written to the cache. |
+| Option               | Type                        | Default           | Description                                                                                            |
+| -------------------- | --------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------ |
+| `ttl`                | `number \| (ctx) => number` | `300_000` (5 min) | How long each entry is valid, in milliseconds — or a [function deciding it per entry](#per-entry-ttl). |
+| `max_size`           | `number`                    | unlimited         | Maximum entries in memory. Oldest is evicted when exceeded.                                            |
+| `excluded_endpoints` | `(string \| RegExp)[]`      | `[]`              | Endpoints that should never be read from or written to the cache.                                      |
+
+---
+
+## Per-entry TTL
+
+A single TTL rarely fits every endpoint: feeds and search change daily, details for a decades-old
+film almost never, and details for an unreleased film change often. Pass a function as `ttl` to
+decide each entry's lifetime when it is stored:
+
+```ts
+const DAY = 86_400_000;
+
+const tmdb = new TMDB("your-api-key", {
+	cache: {
+		max_size: 5000,
+		ttl: ({ endpoint, data }) => {
+			// Feeds, search, lists, … — one day
+			if (!/^\/(movie|tv)\/\d+$/.test(endpoint)) return DAY;
+			const d = data as { release_date?: string; first_air_date?: string; status?: string };
+			const released = d.release_date || d.first_air_date;
+			const ageDays = released ? (Date.now() - Date.parse(released)) / DAY : 0;
+			if (!released || ageDays < 90) return DAY; // recent or unreleased
+			if (d.status === "Returning Series") return 30 * DAY;
+			return 90 * DAY;
+		},
+	},
+});
+```
+
+The function receives a `CacheTTLContext`:
+
+| Field      | Type                      | Description                                                                     |
+| ---------- | ------------------------- | ------------------------------------------------------------------------------- |
+| `key`      | `string`                  | The full cache key (`endpoint?param=value&…`), as `excluded_endpoints` sees it. |
+| `endpoint` | `string`                  | The request path, e.g. `"/movie/550"`.                                          |
+| `params`   | `Record<string, unknown>` | The request params the key was built from.                                      |
+| `data`     | `unknown`                 | The parsed response about to be cached.                                         |
+
+Rules:
+
+- It runs **once**, when a successful `GET` response is stored. Reads never call it.
+- It returns milliseconds. `0` or a negative number means "don't cache this response" — the request
+  still succeeds.
+- If it throws or returns something that isn't a finite number, the request still succeeds, the
+  response is not cached, and the problem is reported through the [`logger`](/docs/getting-started/options/logging)
+  as an `error` entry, if one is configured.
+- `excluded_endpoints` is checked first — the function never runs for excluded keys.
+- `max_size` eviction stays first-in-first-out by insertion order, whatever each entry's TTL.
 
 ---
 

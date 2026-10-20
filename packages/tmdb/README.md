@@ -146,6 +146,27 @@ tmdb.cache?.clear(); // remove all entries
 console.log(tmdb.cache?.size); // number of cached entries
 ```
 
+`ttl` can also be a function that decides each entry's lifetime once, when the response is stored. It receives a `CacheTTLContext` — `{ key, endpoint, params, data }` — and returns milliseconds. Returning `0` or less skips caching that response; a function that throws or returns a non-finite number never fails the request — the response is simply not cached and the problem is reported through `logger`. Excluded endpoints never reach the function.
+
+```typescript
+const DAY = 86_400_000;
+const tmdb = new TMDB(token, {
+	cache: {
+		max_size: 5000,
+		ttl: ({ endpoint, data }) => {
+			// Feeds, search, lists, … — one day
+			if (!/^\/(movie|tv)\/\d+$/.test(endpoint)) return DAY;
+			const d = data as { release_date?: string; first_air_date?: string; status?: string };
+			const released = d.release_date || d.first_air_date;
+			const ageDays = released ? (Date.now() - Date.parse(released)) / DAY : 0;
+			if (!released || ageDays < 90) return DAY; // recent or unreleased
+			if (d.status === "Returning Series") return 30 * DAY;
+			return 90 * DAY;
+		},
+	},
+});
+```
+
 ### `interceptors`
 
 Hook into every request or response globally.

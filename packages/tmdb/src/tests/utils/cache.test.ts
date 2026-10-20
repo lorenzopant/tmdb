@@ -66,6 +66,44 @@ describe("ResponseCache", () => {
 			vi.advanceTimersByTime(1);
 			expect(cache.get("k")).toBeUndefined();
 		});
+
+		it("accepts a ttl function without validating it up front", () => {
+			expect(() => new ResponseCache({ ttl: () => -1 })).not.toThrow();
+		});
+	});
+
+	// -------------------------------------------------------------------------
+	// ttl function
+	// -------------------------------------------------------------------------
+
+	describe("ttl function", () => {
+		it("derives endpoint from the key and uses empty params when set() gets no request", () => {
+			const ttl = vi.fn(() => 1_000);
+			const cache = new ResponseCache({ ttl });
+			cache.set("/movie/550?language=en-US", { id: 550 });
+			expect(ttl).toHaveBeenCalledWith({ key: "/movie/550?language=en-US", endpoint: "/movie/550", params: {}, data: { id: 550 } });
+		});
+
+		it("leaves an existing entry and its expiry untouched when a later set() is not cacheable", () => {
+			let lifetime = 1_000;
+			const cache = new ResponseCache({ ttl: () => lifetime });
+			cache.set("k", "v1");
+			lifetime = 0;
+			cache.set("k", "v2");
+			expect(cache.get("k")).toBe("v1");
+			vi.advanceTimersByTime(1_001);
+			expect(cache.has("k")).toBe(false);
+		});
+
+		it("does not throw when no logger is configured and the function throws", () => {
+			const cache = new ResponseCache({
+				ttl: () => {
+					throw new Error("boom");
+				},
+			});
+			expect(() => cache.set("k", "v")).not.toThrow();
+			expect(cache.size).toBe(0);
+		});
 	});
 
 	// -------------------------------------------------------------------------

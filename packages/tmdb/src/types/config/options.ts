@@ -240,6 +240,9 @@ export type TMDBOptions = {
 	 *
 	 * // Custom TTL and bounded size
 	 * const tmdb = new TMDB(token, { cache: { ttl: 60_000, max_size: 500 } });
+	 *
+	 * // Per-entry TTL, decided once when each response is stored
+	 * const tmdb = new TMDB(token, { cache: { ttl: ({ endpoint }) => (endpoint.startsWith("/movie/") ? 86_400_000 : 60_000) } });
 	 * ```
 	 */
 	cache?: boolean | CacheOptions;

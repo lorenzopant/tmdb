@@ -297,4 +297,178 @@ describe("ApiClient response caching", () => {
 		const client = new ApiClient(token);
 		expect(client.cacheSize).toBe(0);
 	});
+
+	// -------------------------------------------------------------------------
+	// ttl as a function
+	// -------------------------------------------------------------------------
+
+	describe("ttl function", () => {
+		const fetchMock = () => globalThis.fetch as ReturnType<typeof vi.fn>;
+
+		it("keeps a number ttl applying the same lifetime to every entry", async () => {
+			const client = new ApiClient(token, { cache: { ttl: 1_000 }, deduplication: false });
+
+			fetchMock().mockImplementation(async () => makeResponse({ ok: true }));
+
+			await client.request("/movie/1");
+			await client.request("/search/movie", { query: "fight" });
+			vi.advanceTimersByTime(999);
+			await client.request("/movie/1");
+			await client.request("/search/movie", { query: "fight" });
+			expect(globalThis.fetch).toHaveBeenCalledTimes(2);
+
+			vi.advanceTimersByTime(2);
+			await client.request("/movie/1");
+			await client.request("/search/movie", { query: "fight" });
+			expect(globalThis.fetch).toHaveBeenCalledTimes(4);
+		});
+
+		it("gives each entry the lifetime returned for it", async () => {
+			const ttl = vi.fn(({ endpoint }: { endpoint: string }) => (endpoint === "/movie/550" ? 10_000 : 1_000));
+			const client = new ApiClient(token, { cache: { ttl }, deduplication: false });
+
+			fetchMock().mockImplementation(async () => makeResponse({ ok: true }));
+
+			await client.request("/movie/550");
+			await client.request("/trending/movie/day");
+
+			vi.advanceTimersByTime(1_001);
+			await client.request("/movie/550"); // still cached
+			await client.request("/trending/movie/day"); // expired
+			expect(globalThis.fetch).toHaveBeenCalledTimes(3);
+
+			vi.advanceTimersByTime(9_000);
+			await client.request("/movie/550"); // now expired
+			expect(globalThis.fetch).toHaveBeenCalledTimes(4);
+		});
+
+		it("calls the function once per insert with key, endpoint, params and data — never on reads", async () => {
+			const ttl = vi.fn(() => 60_000);
+			// Default deduplication path
+			const client = new ApiClient(token, { cache: { ttl } });
+
+			fetchMock().mockResolvedValueOnce(makeResponse({ id: 550, tagline: null }));
+
+			await client.request("/movie/550", { language: "en-US", page: undefined });
+			await client.request("/movie/550", { language: "en-US" });
+			await client.request("/movie/550", { language: "en-US" });
+
+			expect(ttl).toHaveBeenCalledTimes(1);
+			expect(ttl).toHaveBeenCalledWith({
+				key: "/movie/550?language=en-US",
+				endpoint: "/movie/550",
+				params: { language: "en-US", page: undefined },
+				data: { id: 550, tagline: undefined },
+			});
+		});
+
+		it("does not cache a response when the function returns 0 or a negative number", async () => {
+			const client = new ApiClient(token, {
+				cache: { ttl: ({ endpoint }) => (endpoint === "/movie/1" ? 0 : -5) },
+				deduplication: false,
+			});
+
+			fetchMock().mockImplementation(async () => makeResponse({ ok: true }));
+
+			expect(await client.request("/movie/1")).toEqual({ ok: true });
+			await client.request("/movie/1");
+			await client.request("/movie/2");
+			await client.request("/movie/2");
+
+			expect(globalThis.fetch).toHaveBeenCalledTimes(4);
+			expect(client.cacheSize).toBe(0);
+		});
+
+		it("returns the response, caches nothing and logs when the function throws", async () => {
+			const logger = vi.fn();
+			const client = new ApiClient(token, {
+				logger,
+				cache: {
+					ttl: () => {
+						throw new Error("boom");
+					},
+				},
+			});
+
+			fetchMock()
+				.mockResolvedValueOnce(makeResponse({ id: 550 }))
+				.mockResolvedValueOnce(makeResponse({ id: 550 }));
+
+			await expect(client.request("/movie/550")).resolves.toEqual({ id: 550 });
+			await expect(client.request("/movie/550")).resolves.toEqual({ id: 550 });
+
+			expect(globalThis.fetch).toHaveBeenCalledTimes(2);
+			expect(client.cacheSize).toBe(0);
+			expect(logger).toHaveBeenCalledWith({
+				type: "error",
+				method: "GET",
+				endpoint: "/movie/550",
+				errorMessage: "cache.ttl function threw: Error: boom",
+			});
+		});
+
+		it("does not cache and logs when the function returns a non-finite number", async () => {
+			const logger = vi.fn();
+			const client = new ApiClient(token, {
+				logger,
+				cache: { ttl: (() => undefined) as unknown as () => number },
+				deduplication: false,
+			});
+
+			fetchMock().mockImplementation(async () => makeResponse({ ok: true }));
+
+			await expect(client.request("/movie/550")).resolves.toEqual({ ok: true });
+			expect(client.cacheSize).toBe(0);
+			expect(logger).toHaveBeenCalledWith(
+				expect.objectContaining({ type: "error", errorMessage: "cache.ttl function must return a finite number (got undefined)" }),
+			);
+		});
+
+		it("never calls the function for excluded endpoints", async () => {
+			const ttl = vi.fn(() => 60_000);
+			const client = new ApiClient(token, {
+				cache: { ttl, excluded_endpoints: ["/trending"] },
+				deduplication: false,
+			});
+
+			fetchMock().mockImplementation(async () => makeResponse({ results: [] }));
+
+			await client.request("/trending/movie/day");
+			await client.request("/trending/movie/day");
+
+			expect(ttl).not.toHaveBeenCalled();
+			expect(globalThis.fetch).toHaveBeenCalledTimes(2);
+		});
+
+		it("evicts by insertion order under max_size regardless of each entry's ttl", async () => {
+			const lifetimes: Record<string, number> = { "/movie/1": 100_000, "/movie/2": 1_000, "/movie/3": 0, "/movie/4": 50_000 };
+			const client = new ApiClient(token, {
+				cache: { ttl: ({ endpoint }) => lifetimes[endpoint], max_size: 2 },
+				deduplication: false,
+			});
+
+			fetchMock().mockImplementation(async () => makeResponse({ ok: true }));
+
+			await client.request("/movie/1");
+			await client.request("/movie/2");
+			await client.request("/movie/3"); // ttl 0 — not inserted, so nothing is evicted
+			expect(client.cacheSize).toBe(2);
+
+			await client.request("/movie/4"); // evicts /movie/1 (oldest), despite its long ttl
+			expect(client.cacheSize).toBe(2);
+			expect(globalThis.fetch).toHaveBeenCalledTimes(4);
+
+			await client.request("/movie/2"); // cached
+			await client.request("/movie/4"); // cached
+			expect(globalThis.fetch).toHaveBeenCalledTimes(4);
+
+			await client.request("/movie/1"); // was evicted — re-fetch, evicts /movie/2
+			expect(globalThis.fetch).toHaveBeenCalledTimes(5);
+
+			vi.advanceTimersByTime(50_001);
+			await client.request("/movie/4"); // expired by its own ttl
+			await client.request("/movie/1"); // still within 100s
+			expect(globalThis.fetch).toHaveBeenCalledTimes(6);
+		});
+	});
 });

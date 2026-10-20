@@ -4,6 +4,16 @@ description: Latest updates and announcements
 icon: History
 ---
 
+## 🚀 2.2.0 - 20 October 2026
+
+#### ✨ New
+
+- **Per-entry cache TTL** — [`cache.ttl`](/docs/getting-started/options/cache#per-entry-ttl) now also accepts a function `({ key, endpoint, params, data }) => ms`, called once when each response is stored, so long-lived data (details for an old film) and volatile data (feeds, search, unreleased titles) can share one cache with different lifetimes. Returning `0` or less skips caching that response; a function that throws or returns a non-finite number never fails the request — the response just isn't cached and the problem is reported through `logger`. A number `ttl` behaves exactly as before.
+
+#### 📦 Package
+
+- `CacheOptions` and the new `CacheTTLContext` type are now exported from the package entry.
+
 ## 🚀 2.1.0 - 26 September 2026
 
 #### ✨ New

@@ -68,16 +68,14 @@ export class ApiClient {
 		}
 		if (options.cache) {
 			const cOpts = options.cache === true ? {} : options.cache;
-			this.responseCache = new ResponseCache(cOpts);
+			this.responseCache = new ResponseCache(cOpts, this.logger);
 		}
 		const raw = options.interceptors?.request;
 		this.requestInterceptors = raw == null ? [] : Array.isArray(raw) ? raw : [raw];
 		this.onSuccessInterceptor = options.interceptors?.response?.onSuccess;
 		this.onErrorInterceptor = options.interceptors?.response?.onError;
 		this.imageApi =
-			options.images?.autocomplete_paths || options.images?.fallback_url != null
-				? new ImageAPI(options.images)
-				: undefined;
+			options.images?.autocomplete_paths || options.images?.fallback_url != null ? new ImageAPI(options.images) : undefined;
 		this.imageOptions = options.images;
 	}
 
@@ -141,14 +139,8 @@ export class ApiClient {
 		if (cacheable && this.responseCache!.has(key)) return this.responseCache!.get<T>(key) as T;
 
 		if (!this.deduplication) {
-			const result = await this.execute<T>(
-				"GET",
-				effectiveEndpoint,
-				effectiveParams,
-				undefined,
-				true,
-			);
-			if (cacheable) this.responseCache!.set(key, result);
+			const result = await this.execute<T>("GET", effectiveEndpoint, effectiveParams, undefined, true);
+			if (cacheable) this.responseCache!.set(key, result, { endpoint: effectiveEndpoint, params: effectiveParams });
 			return result;
 		}
 
@@ -158,7 +150,7 @@ export class ApiClient {
 		const cache = cacheable ? this.responseCache : undefined;
 		const promise = this.execute<T>("GET", effectiveEndpoint, effectiveParams, undefined, true)
 			.then((result) => {
-				cache?.set(key, result);
+				cache?.set(key, result, { endpoint: effectiveEndpoint, params: effectiveParams });
 				return result;
 			})
 			.finally(() => {
@@ -196,9 +188,7 @@ export class ApiClient {
 	 * Runs all registered request interceptors in order, threading the context through each one.
 	 * If an interceptor returns a new context, it replaces the current context for the next interceptor.
 	 */
-	private async runRequestInterceptors(
-		context: RequestInterceptorContext,
-	): Promise<RequestInterceptorContext> {
+	private async runRequestInterceptors(context: RequestInterceptorContext): Promise<RequestInterceptorContext> {
 		let current = context;
 		for (const interceptor of this.requestInterceptors) {
 			const result = await interceptor(current);
@@ -233,11 +223,7 @@ export class ApiClient {
 		return sanitized as T;
 	}
 
-	private async normalizeError(
-		res: Response,
-		endpoint: string,
-		method: "GET" | "POST" | "PUT" | "DELETE",
-	): Promise<TMDBError> {
+	private async normalizeError(res: Response, endpoint: string, method: "GET" | "POST" | "PUT" | "DELETE"): Promise<TMDBError> {
 		let errorMessage = res.statusText;
 		let tmdbStatusCode: number = -1;
 
@@ -387,9 +373,7 @@ export class ApiClient {
 
 		let res: Response;
 		try {
-			res = this.retryManager
-				? await this.retryManager.execute(attemptFetch)
-				: await attemptFetch();
+			res = this.retryManager ? await this.retryManager.execute(attemptFetch) : await attemptFetch();
 		} catch (error) {
 			if (error instanceof TMDBError) {
 				await this.notifyErrorInterceptor(error);

@@ -1,9 +1,45 @@
+import type { TMDBLogger } from "./logger";
+
+/**
+ * Context passed to a {@link CacheOptions.ttl} function when a response is about to be cached.
+ */
+export type CacheTTLContext = {
+	/** The full cache key (`endpoint?param=value&…`), as `excluded_endpoints` sees it. */
+	key: string;
+	/** The request endpoint, e.g. `"/movie/550"`. */
+	endpoint: string;
+	/** The request params the key was built from. */
+	params: Record<string, unknown>;
+	/** The parsed (null-sanitised) response about to be cached. */
+	data: unknown;
+};
+
 export type CacheOptions = {
 	/**
 	 * How long (in milliseconds) each cached entry remains valid.
+	 *
+	 * - A `number` applies the same TTL to every entry. Must be a finite integer >= 1.
+	 * - A function decides the TTL per entry. It runs once, when the response is stored —
+	 *   never on reads. Returning `0` or a negative number skips caching that response.
+	 *   If it throws or returns a non-finite number, the response is not cached, the
+	 *   request still succeeds, and the problem is reported through the `logger` (if any).
+	 *
+	 * The function never runs for keys matched by `excluded_endpoints`.
+	 *
 	 * @default 300_000 (5 minutes)
+	 *
+	 * @example
+	 * ```ts
+	 * const DAY = 86_400_000;
+	 * const tmdb = new TMDB(token, {
+	 *   cache: {
+	 *     // Movie details live a week, everything else an hour
+	 *     ttl: ({ endpoint }) => (/^\/movie\/\d+$/.test(endpoint) ? 7 * DAY : DAY / 24),
+	 *   },
+	 * });
+	 * ```
 	 */
-	ttl?: number;
+	ttl?: number | ((ctx: CacheTTLContext) => number);
 	/**
 	 * Maximum number of entries to hold in memory.
 	 * When the store is full the oldest entry is evicted before a new one is inserted.
@@ -48,15 +84,16 @@ type CacheEntry = {
  * store is full.
  */
 export class ResponseCache {
-	private readonly ttl: number;
+	private readonly ttl: number | ((ctx: CacheTTLContext) => number);
 	private readonly maxSize: number | undefined;
 	private readonly excludedEndpoints: (string | RegExp)[];
+	private readonly logger?: TMDBLogger;
 	private store: Map<string, CacheEntry> = new Map();
 
-	constructor(options: CacheOptions = {}) {
+	constructor(options: CacheOptions = {}, logger?: TMDBLogger) {
 		const ttl = options.ttl ?? 300_000;
-		if (!Number.isFinite(ttl) || !Number.isInteger(ttl) || ttl < 1) {
-			throw new RangeError(`cache.ttl must be a finite integer >= 1 (got ${ttl})`);
+		if (typeof ttl !== "function" && (!Number.isFinite(ttl) || !Number.isInteger(ttl) || ttl < 1)) {
+			throw new RangeError(`cache.ttl must be a finite integer >= 1 or a function (got ${String(ttl)})`);
 		}
 		if (options.max_size !== undefined) {
 			if (!Number.isFinite(options.max_size) || !Number.isInteger(options.max_size) || options.max_size < 1) {
@@ -65,6 +102,7 @@ export class ResponseCache {
 		}
 		this.ttl = ttl;
 		this.maxSize = options.max_size;
+		this.logger = logger;
 		// Strip global/sticky flags from RegExp patterns so repeated .test() calls
 		// never mutate lastIndex and produce inconsistent results.
 		this.excludedEndpoints = (options.excluded_endpoints ?? []).map((pattern) => {
@@ -118,12 +156,40 @@ export class ResponseCache {
 	/**
 	 * Stores `value` under `key` with a fresh TTL.
 	 * If `max_size` is set and the store is full, the oldest entry is evicted first.
+	 *
+	 * When `ttl` is a function it is called here, once, with `request` (defaulting to the
+	 * key's path and no params). A non-positive, non-finite, or thrown result skips the
+	 * insert; any existing entry for `key` keeps its own expiry.
 	 */
-	set(key: string, value: unknown): void {
+	set(key: string, value: unknown, request?: { endpoint: string; params: Record<string, unknown> }): void {
+		const ttl = this.resolveTtl(key, value, request);
+		if (ttl === undefined) return;
 		if (this.maxSize !== undefined && !this.store.has(key) && this.store.size >= this.maxSize) {
 			this.store.delete(this.store.keys().next().value as string);
 		}
-		this.store.set(key, { value, expiresAt: Date.now() + this.ttl });
+		this.store.set(key, { value, expiresAt: Date.now() + ttl });
+	}
+
+	/** Returns the TTL for a new entry, or `undefined` when it should not be cached. */
+	private resolveTtl(key: string, data: unknown, request?: { endpoint: string; params: Record<string, unknown> }): number | undefined {
+		if (typeof this.ttl === "number") return this.ttl;
+		const endpoint = request?.endpoint ?? key.split("?")[0];
+		let ttl: unknown;
+		try {
+			ttl = this.ttl({ key, endpoint, params: request?.params ?? {}, data });
+		} catch (error) {
+			this.reportTtlError(endpoint, `cache.ttl function threw: ${String(error)}`);
+			return undefined;
+		}
+		if (typeof ttl !== "number" || !Number.isFinite(ttl)) {
+			this.reportTtlError(endpoint, `cache.ttl function must return a finite number (got ${String(ttl)})`);
+			return undefined;
+		}
+		return ttl > 0 ? ttl : undefined;
+	}
+
+	private reportTtlError(endpoint: string, errorMessage: string): void {
+		this.logger?.log({ type: "error", method: "GET", endpoint, errorMessage });
 	}
 
 	delete(key: string): boolean {
