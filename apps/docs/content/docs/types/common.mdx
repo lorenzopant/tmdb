@@ -170,7 +170,8 @@ A single content rating entry for a specific country.
 		},
 		value: {
 			type: "object",
-			description: "The changed data object (structure varies by change type).",
+			description:
+				"The changed data object (structure varies by change type). Absent on `deleted` actions, which only carry `original_value`.",
 		},
 		original_value: {
 			type: "object",

@@ -4,6 +4,12 @@ description: Latest updates and announcements
 icon: History
 ---
 
+## 🚧 Unreleased
+
+#### 🐞 Bug Fixes
+
+- **`ChangeItem.value` is now optional** — TMDB omits `value` on `deleted` change entries (they only carry `original_value`), so the type no longer promises it on every item returned by the `changes()` endpoints and the `changes` append. Code that reads `item.value` must now handle `undefined` ([#152](https://github.com/lorenzopant/tmdb/issues/152)).
+
 ## 🚀 2.2.0 - 20 October 2026
 
 #### ✨ New

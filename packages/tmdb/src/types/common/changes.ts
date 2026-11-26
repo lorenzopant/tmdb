@@ -30,8 +30,8 @@ export type ChangeItem = {
 	iso_639_1?: string;
 	/** ISO 3166-1 country code associated with the change */
 	iso_3166_1?: string;
-	/** The changed data object (structure varies by change type) */
-	value: object | string;
+	/** The changed data object (structure varies by change type). Absent on `deleted` actions, which only carry `original_value` */
+	value?: object | string;
 	/** The original data object (structure varies by change type) */
 	original_value?: object | string;
 };
