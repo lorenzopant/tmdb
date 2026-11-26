@@ -10,6 +10,14 @@ icon: History
 
 - **`ChangeItem.value` is now optional** — TMDB omits `value` on `deleted` change entries (they only carry `original_value`), so the type no longer promises it on every item returned by the `changes()` endpoints and the `changes` append. Code that reads `item.value` must now handle `undefined` ([#152](https://github.com/lorenzopant/tmdb/issues/152)).
 
+#### 📦 Package
+
+- Resolved all open Dependabot security alerts in the workspace's dev and docs dependencies: bumped `next` to `16.4.6`, `@modelcontextprotocol/sdk` to `1.32.2`, `zod` to `4.6.7`, `vitest` to `4.1.12` and `vite` to `8.3.8`, and raised the `pnpm.overrides` floors for `hono`, `@hono/node-server`, `body-parser`, `proxy-addr`, `fast-uri`, `ip-address`, `brace-expansion`, `minimatch`, `qs`, `sharp`, `source-map-js` and `tinypool`. None of these ship with the published package — **the SDK still has zero runtime dependencies** ([#155](https://github.com/lorenzopant/tmdb/pull/155)).
+
+#### 🔧 Internal
+
+- The CI workflow now declares a read-only `GITHUB_TOKEN` (`permissions: contents: read`), resolving the CodeQL `actions/missing-workflow-permissions` alert ([#155](https://github.com/lorenzopant/tmdb/pull/155)).
+
 ## 🚀 2.2.0 - 20 October 2026
 
 #### ✨ New
